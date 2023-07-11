@@ -1,7 +1,7 @@
 # Strukturovaný TODO seznam
 ## A. Studie
 1. [ ] Prostudovat existující mobilní aplikace pro koordinaci jednotek na bojišti. Analyzovat jejich možnosti, nedostatky a dostupnost.
-    - [ ] [Personal Eye System](https://milsistemika.com/products-services/command-control/pes-personal-eye-system/) (PES)
+    - [X] [Personal Eye System](https://milsistemika.com/products-services/command-control/pes-personal-eye-system/) (PES)
     - [ ] [Leonardo BMS](https://www.leonardodrs.com/what-we-do/products-and-services/battle-management-systems/)
     - [ ] [BMS Jasmine](https://www.teldat.com.pl/en/offer/products/systems/167-bms-jasmine.html)
 2. [ ] Prostudovat nejpoužívanější souřadnicové systémy (na mapě). Krátce shrnout teorii a uplatnění.
