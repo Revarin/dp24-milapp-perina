@@ -22,6 +22,36 @@ Zdroj: https://electronics.leonardo.com/documents/16277707/18386644/Bowman+BMDT-
 ## C4I systémy
 https://electronics.leonardo.com/documents/16277707/18375660/body_Land_Naval_C4I_Systems_LQ_mm08781_.pdf?t=1542835193315
 
+### The Digital Brigate
+Digitálně propojené jednotky si mohou mnohem lépe vymněňovat kritické informace a dosáhnout zvýšené kolektivní _situational awareness_. Digitální brigáda je vytvořena jakmile jsou všechny jednotky v brigádě připojeny do jedné C4I infrastruktury. Jednotky brigáty zahrnují: velitelské stanoviště (pevné, ve vozidlech), bojové platformy, vozidla, výbava vojáka a další.
+
+Všechny jednotky v digitální brigádě mohou identifikovat přátelské a nepřátelské objekty a vyhnout se tak _blue-on_blue_ incidentům. Jednotky mají lepší pojem o vlastní poloze a poloze ostatních jednotek a mohou se tak rychleji pohybovat a vykonávat operace. Velitelé zase mají lepší ponětí o celkové situaci a mohou tak lépe velet a využívat zdroje.
+
+### Land C4I
+C4I systém pro pozemní síly. Poskytuje efektivní sdílení taktických informací všem jednotkám a velitelství. Obsahuje pokročilé command & control aplikace pro různé operační úrovně. Obsahuje systémy a infrastrukturu pro podporu typických operací:
+- Manévrování
+- Intel
+- Dohled, průzkum, identifikace cílů
+- Artilérie
+- Mobilita a proti-mobilita
+- Elektronická válka
+- Přenos a signály
+- Logistické služby (zásobování, údržba, transport)
+
+Systém má modulární architekturu a může být uzpůsoben pro různé doktríny a situace.
+
+### Soldier C4I
+Skládá se ze dvou komponent: command & control modul (Land Tactical C2SA) a komunikační subsystém. Dohromady umožňují vojákům bezpečně komunikovat a odesílat data/informace. Obsahují také prvky pro _situational awareness_, navigační podporu, nástroje pro hlášení a plánování. Systém automaticky rozesílá taktické informace mezi členy týmu - pozici a status členů týmu, taktický scénář...
+
+__Land Tactical C2SA__ je kolekce SW aplikací pro plánování a vykonávání misí. Skládá se z desktopové aplikace a vojácké aplikace. Desktopová aplikace zařizuje plánování mise, konfigurace rádiových zařízení, přípravu map. Vojácká aplikace poskytuje funkce jako je update a prezentaci operačního scénáře, navigaci, příjem příkazů, hlášení atd.
+
+## Zhodnocení
+- Profesionální a komerční sada nástrojů a aplikací
+- Většina pracuje na vlastním specializovaným HW
+- Není volně dostupné
+- O jednotlivých systémech jsou jen obecné informace, konkrétní funkce a vlastnosti jsou neznámé?
+- Použít jako příklad profesionálního systému
+
 ## Zdroje
 - https://www.leonardodrs.com/what-we-do/products-and-services/battle-management-systems/
 - https://www.leonardodrs.com/media/9203/tear-sheet_peacekeeper-spring-18_leonardo.pdf
