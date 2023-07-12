@@ -7,3 +7,4 @@
 - __Blue force tracking__ - Vojenský pojem pro sdílení pozic přátelských i nepřátelských sil pomocí GPS. Slouží velitelům a štábu pro velení a rozhodování. V NATO symbologii se pojem používá především pro přátelské jednotky.
 - __UAV__ - Unmanned Aerial Vehicles
 - __MANET Radio__ - Military Tactical Radio
+- __Common Operational Picture__ (COP) - Jeden identický display všech relevantních informací, který je sdílený ve více veliteltví.
