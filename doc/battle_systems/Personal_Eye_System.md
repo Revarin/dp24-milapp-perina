@@ -44,7 +44,6 @@ Systém byl navržen jako náhrada GPS, papírových map a mobilních telefonů.
 - Šablony zpráv jsou pouze textové
 - Trochu kostrbaté zacházení se značkami na mapě
 
-
 ## Zdroje
 - https://milsistemika.com/products-services/command-control/
 - https://milsistemika.com/products-services/command-control/pes-personal-eye-system/

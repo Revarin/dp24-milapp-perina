@@ -25,7 +25,7 @@ https://electronics.leonardo.com/documents/16277707/18375660/body_Land_Naval_C4I
 ### The Digital Brigate
 Digitálně propojené jednotky si mohou mnohem lépe vymněňovat kritické informace a dosáhnout zvýšené kolektivní _situational awareness_. Digitální brigáda je vytvořena jakmile jsou všechny jednotky v brigádě připojeny do jedné C4I infrastruktury. Jednotky brigáty zahrnují: velitelské stanoviště (pevné, ve vozidlech), bojové platformy, vozidla, výbava vojáka a další.
 
-Všechny jednotky v digitální brigádě mohou identifikovat přátelské a nepřátelské objekty a vyhnout se tak _blue-on_blue_ incidentům. Jednotky mají lepší pojem o vlastní poloze a poloze ostatních jednotek a mohou se tak rychleji pohybovat a vykonávat operace. Velitelé zase mají lepší ponětí o celkové situaci a mohou tak lépe velet a využívat zdroje.
+Všechny jednotky v digitální brigádě mohou identifikovat přátelské a nepřátelské objekty a vyhnout se tak _blue-on-blue_ incidentům. Jednotky mají lepší pojem o vlastní poloze a poloze ostatních jednotek a mohou se tak rychleji pohybovat a vykonávat operace. Velitelé zase mají lepší ponětí o celkové situaci a mohou tak lépe velet a využívat zdroje.
 
 ### Land C4I
 C4I systém pro pozemní síly. Poskytuje efektivní sdílení taktických informací všem jednotkám a velitelství. Obsahuje pokročilé command & control aplikace pro různé operační úrovně. Obsahuje systémy a infrastrukturu pro podporu typických operací:
