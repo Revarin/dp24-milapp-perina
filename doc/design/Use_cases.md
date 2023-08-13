@@ -61,7 +61,7 @@ Tento dokumentu obsahuje rozepsané případy užití aplikace RAT. Případy po
 | __AKTÉR__ | Voják v terénu, operátor ve štábu
 | __PRECONDITIONS__ | Žádné, pro sdílení je nutné připojení k síti.
 | __POSTCONDITIONS__ | Na mapě je na vybrané lokalitě zobrazena plocha s danmi vlastnostmi.
-| __SCÉNÁŘ__ | Uživatel v _rychlém menu_ zvolí _vytvořit plochu_. Nastaví zaměřovač na mapě na požadovanou plochu a zvolí _přidat bod_. Takto pokračuje dokud nejsou zadané všechny hranové body plochy. Pro dokončení zmáčkně tlačítko _vytvořit plochu_. Při vytvoření se spojí první a poslední bod. Zobrazí se formulář s tvorbou plochy. Uživatel vybere buď šablonu nebo zadá požadované informace. Uživatel zmáčkně tlačítko _uložit_.
+| __SCÉNÁŘ__ | Uživatel v _rychlém menu_ zvolí _vytvořit plochu_. Nastaví zaměřovač na mapě na požadované místo a zvolí _přidat bod_. Takto pokračuje dokud nejsou zadané všechny hranové body plochy. Pro dokončení zmáčkně tlačítko _vytvořit plochu_. Při vytvoření se spojí první a poslední bod. Zobrazí se formulář s tvorbou plochy. Uživatel vybere buď šablonu nebo zadá požadované informace. Uživatel zmáčkně tlačítko _uložit_.
 
 ## Zadání cesty na mapě
 |  |  |
@@ -71,7 +71,7 @@ Tento dokumentu obsahuje rozepsané případy užití aplikace RAT. Případy po
 | __AKTÉR__ | Voják v terénu, operátor ve štábu
 | __PRECONDITIONS__ | Žádné, pro sdílení je nutné připojení k síti.
 | __POSTCONDITIONS__ | Na mapě je na vybrané lokalitě zobrazena plocha s danmi vlastnostmi.
-| __SCÉNÁŘ__ | Uživatel v _rychlém menu_ zvolí _vytvořit cestu_. Nastaví zaměřovač na mapě na požadovanou plochu a zvolí _přidat bod_. Takto pokračuje dokud nejsou zadané všechny body cesty. Pro dokončení zmáčkně tlačítko _vytvořit cestu_. Zobrazí se formulář s tvorbou cesty. Uživatel vybere buď šablonu nebo zadá požadované informace. Uživatel zmáčkně tlačítko uložit.
+| __SCÉNÁŘ__ | Uživatel v _rychlém menu_ zvolí _vytvořit cestu_. Nastaví zaměřovač na mapě na požadované místo a zvolí _přidat bod_. Takto pokračuje dokud nejsou zadané všechny body cesty. Pro dokončení zmáčkně tlačítko _vytvořit cestu_. Zobrazí se formulář s tvorbou cesty. Uživatel vybere buď šablonu nebo zadá požadované informace. Uživatel zmáčkně tlačítko uložit.
 
 ## Odeslání rozkazu
 |  |  |
@@ -80,7 +80,7 @@ Tento dokumentu obsahuje rozepsané případy užití aplikace RAT. Případy po
 | __DŮLEŽITOST__ | 4
 | __AKTÉR__ | Operátor ve štábu
 | __PRECONDITIONS__ | Zařízení s aplikací je připojené k síti. Existuje další zařízení, které je připojené k síti.
-| __POSTCONDITIONS__ | Zpráva zůstává v chatroomu (historie)
+| __POSTCONDITIONS__ | Zpráva zůstává v chatroomu (historie).
 | __SCÉNÁŘ__ | Operátor ve štábním zařízení v _hlavním menu_ zvolí _kontakty_ a vyberé požadovaný kontakt. Zobrazí se chatroom s polem pro zadání a odeslání zprávy. Po odeslání se na cílovém zařízení zobrazí upozornění se zprávou.
 | __ALT SCÉNÁŘ 1__ | Operátor ve štábním zařízení v _hlavním menu_ zvolí _kontakty_ a vybere možnost _odeslat všem_. Zobrazí se chatroom s polem pro zadání a odeslání zprávy. Po odeslání se na všech zařízení zobrazí upozornění se zprávou. Cílové zařízení nemohou na tuto zprávu odpovídat.
 
@@ -101,7 +101,7 @@ Tento dokumentu obsahuje rozepsané případy užití aplikace RAT. Případy po
 | __DŮLEŽITOST__ | 3
 | __AKTÉR__ | Voják v terénu
 | __PRECONDITIONS__ | Zařízení s aplikací je připojené k síti. Existuje další zařízení, které je připojené k síti.
-| __POSTCONDITIONS__ | Zpráva zůstává v chatroomu (historie)
+| __POSTCONDITIONS__ | Zpráva zůstává v chatroomu (historie).
 | __SCÉNÁŘ__ | Uživatel v _hlavním menu_ zvolí _kontakty_ a vybere požadovaný kontakt. Zobrazí se chatroom s polem pro zadání a odeslání zprávy. Po odeslání se na cílovém zařízení zobrazí upozornění.
 | __ALT SCÉNÁŘ 1__ | Uživatel na mapě vyhledá značku požadovaného zařízení a klikne na ni. Zobrazí se chatroom s polem pro zadání a odeslání zprávy. Po odeslání se na cílovém zařízení zobrazí upozornění.
 | __ALT SCÉNÁŘ 2__ | Uživatel v _hlavním menu_ zvolí _kontakty_ a vybere kontakt skupiny. Zobrazí se chatroom s polem pro zadání a odeslání zprávy. Po odeslání se na všech zařízení ve skupině zobrazí upozornění.
@@ -115,8 +115,6 @@ Tento dokumentu obsahuje rozepsané případy užití aplikace RAT. Případy po
 | __PRECONDITIONS__ | Zařízení má uloženou fotografii nebo má zapnutý fotoaparát. Existuje bod/plocha/cesta na mapě.
 | __POSTCONDITIONS__ | Ve vybraném bodě/ploše/cestě je uložena fotografie.
 | __SCÉNÁŘ__ | Uživatel zvolí požadovaný bod/plochu/cestu a v zobrazených detailních informacích zvolí _přidat fotku_. Otevře se aplikace fotoaparát. Po vyfocení se vrací zpět na detailní informace objektu a fotka se automaticky nahraje. Po přijmutí změn je fotka uložena v objektu.
-| __ALT SCÉNÁŘ 1__ | Uživatel zvolí požadovaný objekt a v zobrazených detailních informacích zvolí _nahrát obráze_. Zobrazí se souborový systém zařízení. Po zvolení souboru se vrací zpět na detailní informace objektu a obrázek se nahraje. Po přijmutí změn je obrázek uložen v objektu.
+| __ALT SCÉNÁŘ 1__ | Uživatel zvolí požadovaný objekt a v zobrazených detailních informacích zvolí _nahrát obrázek_. Zobrazí se souborový systém zařízení. Po zvolení souboru se vrací zpět na detailní informace objektu a obrázek se nahraje. Po přijmutí změn je obrázek uložen v objektu.
 | __ALT SCÉNÁŘ 2__ | Po nahrání fotky/obrázku může uživatel vyfotit/nahrát další. Při uložení se do objektu uloží všechny soubory.
-| __ALT SCÉNÁŘ 3__ | Po náhrání fotky/obrázku může uživatel soubor zrušit a do objektu ho nenahrávat.
-
-
+| __ALT SCÉNÁŘ 3__ | Po nahrání fotky/obrázku může uživatel soubor zrušit a do objektu ho nenahrávat.
