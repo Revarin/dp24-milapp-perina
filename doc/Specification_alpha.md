@@ -26,7 +26,7 @@ Tento soubor obsahuje prvotní (__alfa__) specifikace. Vyskytují se zde volné 
 - Na mapě bude možné vyznačovat body.
 - Na mapě bude možné vyznačovat plochy (kruh, obdélník).
 - Při vytváření značení bude na výběr již předdefinované druhy značení (kombinace barva-tvar-značka).
-- Při editaci bude možné měni barvu-tvar-značka značení.
+- Při editaci bude možné měnit barvu-tvar-značka značení.
 - Značení bude obsahovat jméno, popis, kategorii, přiložené soubory.
 - U značení bude zobrazen koordináty, doba vytvoření (a věk).
 - U značení bude možné zadat časovač, po jehož uplynutí se značení zruší.
