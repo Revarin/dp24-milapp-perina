@@ -1,10 +1,10 @@
 # Návrh obrazovek
-Tento soubor obsahuje první návrh obrazovek, které se budou v aplikace vyskytovat. Pro každou obrazovku je zde umístěn obrázek návrhu a popis. V popisu je vystvětlen význam a funkce jednotlivých prvků na obrazovce.
+Tento soubor obsahuje první návrh obrazovek, které se budou v aplikaci vyskytovat. Pro každou obrazovku je zde umístěn obrázek návrhu a popis. V popisu je vysvětlen význam a funkce jednotlivých prvků na obrazovce.
 
 ## Mapa (hlavní obrazovka)
 ![Hlavní obrazovka](./img/map_screen.png)
 
-Hlavní obrazovka obsahující mapu. Tato obrazovka bude sloužit jako úvodní, uživatel se po zapnutí aplikace ocitne na této obrazovce. Obrazovka je rozdělena na dvě části: __mapa__ a __spodní lišta__.
+Hlavní obrazovka obsahující mapu. Tato obrazovka bude sloužit jako úvodní obrazovka. Uživatel se po zapnutí aplikace ocitne na této obrazovce. Obrazovka je rozdělena na dvě části: __mapa__ a __spodní lišta__.
 
 V části __mapa__ bde zobrazena načtená mapa. Na mapě se mohou vyskytovat následující prvky:
 - __Aktuální pozice zařízení__ [1] - Vlastní pozice bude vizuálně odlišena od všech ostatních značek na mapě.
