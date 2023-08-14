@@ -47,3 +47,29 @@ Hlavní menu obsahuje tlačítka odkazující na další obrazovky/pohledy aplik
 - __Nastavení bodů__ [PS] - Zobrazí seznam šablon bodů/cest/ploch a možnost přidávat nebo editovat šablonu.
 - __Další nastavení__ [OS] - Další nastavení, které nespadají do ostatních kategorií.
 - __Nastavení spojení__ [CS] - Systémová nastavení.
+
+## Seznam kontaktů
+![Seznam kontaktů](./img/contacts_screen.png)
+
+Seznam kontaktů obsahuje seznam všech kontaktů, se kterými je možné ze zařízení komunikovat. Kontakty budou rozděleny do tří skupin:
+1. skupina bude obsahovat kontakty se štábem. Budou zde tři kontakty:
+    - __Globální rozkazy__ [GO] - Rozkazy štábu určené pro všechny zařízení. Pouze pro čtení.
+    - __Globální chat__ [GO+Ch] - Kopie rozkazů štábu určené pro všechny zařízení, navíc zde bude možné i posílat zprávy. Bude sloužit jako globální chat (pro všechny).
+    - __Soukromé rozkazy__ [PO] - Soukromý chatroom mezi daným zařízením a štábem. Bude sloužit pro podávání hlášení.
+2. skupina bude obsahovat skupinové místnosti [G1]. Budou zde všechny skupiny, ke kterým dané zařízení patří.
+3. skupina bude obsahovat individuální kontakty [D1]. Budou zde všechny zařízení, které lze pozorovat na mapě.
+
+## Chatroom
+[TODO]: Standardní chatroom. Prvky navíc budou řešeny až po návrhu (šablony zpráv, souřadnice, šifrování, zobrazení pozice na mapě).
+
+## Nastavení skupin
+[TODO]: Bude vyřešeno po navrhnutí funkcí skupin.
+
+## Nastavení šablon hlášení a rozkazů
+[TODO]: Bude vyřešeno po navrhnutí editoru hlášení a rozkazů.
+
+## Nastavení šablon objektů na mapě
+[TODO]: Bude vyřešeno po navrhnutí editoru mapových objektů.
+
+## Nastavení připojení
+[TODO]: Bude vyřešeno po návrhu architektury.
