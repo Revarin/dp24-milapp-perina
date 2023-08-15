@@ -1,5 +1,5 @@
 # Beta specifikace
-Tento soubor obsahuje rozvedenou (__beta__) specifikaci. Požadavky na funkce a vlastnosti aplikace jsou zde dále rozvedeny. Jednotlivé požadavky jsou seřazeny do několika kategorií, které důležitost pro celkovou funkci/použití aplikace. Čím výš kategorie je, tím je důležitější. Kategorie tak naznačují jak bude zhruba probíhat implementace aplikace.
+Tento soubor obsahuje rozvedenou (__beta__) specifikaci. Požadavky na funkce a vlastnosti aplikace jsou zde dále rozepsány. Jednotlivé požadavky jsou seřazeny do několika kategorií podle jejich důležitosti pro celkovou funkci/použití aplikace. Čím výš kategorie je, tím je důležitější. Kategorie tak naznačují jak bude zhruba probíhat implementace aplikace.
 
 ## Kategie 1. (Základní zobrazení)
 - Uživatel si bude moct v aplikaci zobrazit __Google mapy__ a manipulovat s nimi (pohyb, přiblízení, oddálení).
@@ -9,7 +9,7 @@ Tento soubor obsahuje rozvedenou (__beta__) specifikaci. Požadavky na funkce a 
     - Označení vlastní pozice bude v aplikaci unikátní symbol.
 - V aplikaci bude na mapě vidět __poloha dalších zařízení__, na kterých je aplikace spuštěna.
     - Označená pozice bude mít jméno a symbol.
-    - Jméno a symbol pro ostatní bude možné nastavit v nastavení aplikace.
+    - Jméno a symbol pro zobrazení na ostatních zařízení (tedy pro jiné) bude možné nastavit v nastavení aplikace.
 
 ## Kategorie 2. (Štáb a základní komunikace)
 - V aplikaci bude možné __vytvořit akci__.
@@ -21,6 +21,7 @@ Tento soubor obsahuje rozvedenou (__beta__) specifikaci. Požadavky na funkce a 
 - Zařízení bude moct __odeslat hlášení__ štábnímu zařízení.
 - Štábní zařízení může __odeslat rozkaz__ danému zařízení.
     - Štábní zařízení může __odeslat hromadný rozkaz__ všem zařízením v terénu.
+    - Hromadný rozkaz může mít různé úrovně důležitosti, podle které se na zařízení v terénu zobrazí upozornění.
 - Zařízení může __odeslat zprávu__ jinému zařízení v terénu.
 
 ## Kategorie 3. (Základní značení)
@@ -63,11 +64,11 @@ Tento soubor obsahuje rozvedenou (__beta__) specifikaci. Požadavky na funkce a 
     - Vytvořenou cestu může editovat nebo smazat pouze autor nebo štábní zařízení.
     - Ostatní zařízení mohou k objektu psát komentáře.
 - V aplikace budou __předdefinované grafické značení__ pro standardní druhy ploch a cest.
-    - V aplikace nebude možné vytvářet nové grafické značení pro plochy a cesty.
+    - V aplikaci nebude možné vytvářet nové grafické značení pro plochy a cesty.
 
 ## Kategorie 7. (Skupiny)
 - Zařízení může být __přiřazené k 0-N skupinám__.
-    - Skupina je označena názvem, barvou, značkou a svými členy.
+    - Skupina je označena názvem, barvou, značkou a má X členů.
     - Členové v jedné skupině jsou na mapě speciálně označeni značkou nebo barvou skupiny.
     - Zařízení ve více skupinách je na mapě označeno svou hlavní skupinou.
 - Zařízení ve skupině mohou přímo komunikovat ve __skupinovém chatu__.
