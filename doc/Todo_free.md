@@ -7,3 +7,14 @@ Nastudovat literaturu. Stačí zběžně projít části abstrakt, úvod a záv�
 - _Lowell_, _John R._ __Military applications of localization, tracking, and targeting.__ IEEE Wireless Communications 18, no. 2 (2011): 60-65.
 
 Jako bonus překonvertovat poskytnuté vojenské mapy do formátu umožňující použití v PES. Použít například nástroj __Global mapper__. 
+
+- Odkazy na užitečné informace/inspiraci do discordu
+- Import map je důležitý (vojenské mapy)
+- Navigace k bodu (stačí směr)
+- Export značení -> 6. kategorie
+- Zhodnotit ostatní systém, co umí, co neumí, proč používat naši aplikaci
+
+## Závěry z meetingu 16.08.
+- Prioritizovat import map (především nasdílených vojenských map) a export značení.
+- Umožnit navigaci k bodu - bude stačit šipka/čára označující směr.
+- V textu DP dát důraz na zhodnocení a porovnání existujících systémů, vymezit se proti nim.
