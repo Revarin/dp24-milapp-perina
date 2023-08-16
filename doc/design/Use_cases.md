@@ -20,7 +20,7 @@ Tento dokumentu obsahuje rozepsané případy užití aplikace RAT. Případy po
 | __POSTCONDITIONS__ | Žádné
 | __SCÉNÁŘ__ | Uživatel zapne aplikaci. Po jejím načtení se zobrazí mapa, která se vystředí na aktuální polohu zařízení.
 | __ALT SCÉNÁŘ 1__ | Aplikace požádá o povolení k přístupu ke GPS. Pokud není povolen zobrazí se mapa na poslední nebo výchozí pozici.
-| __ALT SCÉNÁŘ 2__ | Uživatel zmáčkne tlačítko _zobrazit vlastní pozici_ na obrazovce s mapou.
+| __ALT SCÉNÁŘ 2__ | Uživatel zmáčkne tlačítko _zobrazit vlastní pozici_ na obrazovce (nebo v _rychlém menu_) s mapou.
 
 ## Odeslání hlášení
 |  |  |
@@ -29,9 +29,9 @@ Tento dokumentu obsahuje rozepsané případy užití aplikace RAT. Případy po
 | __DŮLEŽITOST__ | 5
 | __AKTÉR__ | Voják v terénu
 | __PRECONDITIONS__ | Zařízení s aplikací je připojené k síti (ethernet, data).
-| __POSTCONDITIONS__ | Zpráva zůstává v chatroomu (historie)
+| __POSTCONDITIONS__ | Zpráva zůstává v chatroomu (historie).
 | __SCÉNÁŘ__ | Uživatel v _rychlém menu_ zvolí _odeslat hlášení_. Zobrazí se chatroom s polem pro zadání zprávy.
-| __ALT SCÉNÁŘ 1__ | Uživatel v _hlavním menu_ zvolí _kontakty_ a vybere odpovídající kontaktu štábu. Zobrazí se chatroom s polem pro zadání zprávy.
+| __ALT SCÉNÁŘ 1__ | Uživatel v _hlavním menu_ zvolí _kontakty_ a vybere odpovídající kontakt štábu. Zobrazí se chatroom s polem pro zadání zprávy.
 
 ## Zadání bodu na mapě
 |  |  |
@@ -51,7 +51,7 @@ Tento dokumentu obsahuje rozepsané případy užití aplikace RAT. Případy po
 | __AKTÉR__ | Voják v terénu
 | __PRECONDITIONS__ | Zařízení s aplikací je připojené k síti. Existují další zařízení s aplikací, které jsou připojené k síti a mají zapnuté GPS.
 | __POSTCONDITIONS__ | Žádné
-| __SCÉNÁŘ__ | Uživatel si zobrazí mapu a vyhledá v ní symboly ostatních členů týmu.
+| __SCÉNÁŘ__ | Uživatel si zobrazí mapu a vyhledá v ní symboly ostatních členů týmu. Symboly ostatních členů týmu budou mít speciální značení.
 
 ## Zadání plochy na mapě
 |  |  |
@@ -61,7 +61,7 @@ Tento dokumentu obsahuje rozepsané případy užití aplikace RAT. Případy po
 | __AKTÉR__ | Voják v terénu, operátor ve štábu
 | __PRECONDITIONS__ | Žádné, pro sdílení je nutné připojení k síti.
 | __POSTCONDITIONS__ | Na mapě je na vybrané lokalitě zobrazena plocha s danmi vlastnostmi.
-| __SCÉNÁŘ__ | Uživatel v _rychlém menu_ zvolí _vytvořit plochu_. Nastaví zaměřovač na mapě na požadované místo a zvolí _přidat bod_. Takto pokračuje dokud nejsou zadané všechny hranové body plochy. Pro dokončení zmáčkně tlačítko _vytvořit plochu_. Při vytvoření se spojí první a poslední bod. Zobrazí se formulář s tvorbou plochy. Uživatel vybere buď šablonu nebo zadá požadované informace. Uživatel zmáčkně tlačítko _uložit_.
+| __SCÉNÁŘ__ | Uživatel v _rychlém menu_ zvolí _vytvořit plochu_. Nastaví zaměřovač na mapě na požadované místo a zvolí _přidat bod_. Takto pokračuje dokud nejsou zadané všechny hranové body plochy. Pro dokončení zmáčkně tlačítko _vytvořit plochu_. Při vytvoření se spojí první a poslední bod. Zobrazí se formulář s tvorbou plochy. Uživatel vybere buď šablonu nebo zadá požadované informace. Uživatel pak zmáčkně tlačítko _uložit_.
 
 ## Zadání cesty na mapě
 |  |  |
@@ -71,7 +71,7 @@ Tento dokumentu obsahuje rozepsané případy užití aplikace RAT. Případy po
 | __AKTÉR__ | Voják v terénu, operátor ve štábu
 | __PRECONDITIONS__ | Žádné, pro sdílení je nutné připojení k síti.
 | __POSTCONDITIONS__ | Na mapě je na vybrané lokalitě zobrazena plocha s danmi vlastnostmi.
-| __SCÉNÁŘ__ | Uživatel v _rychlém menu_ zvolí _vytvořit cestu_. Nastaví zaměřovač na mapě na požadované místo a zvolí _přidat bod_. Takto pokračuje dokud nejsou zadané všechny body cesty. Pro dokončení zmáčkně tlačítko _vytvořit cestu_. Zobrazí se formulář s tvorbou cesty. Uživatel vybere buď šablonu nebo zadá požadované informace. Uživatel zmáčkně tlačítko uložit.
+| __SCÉNÁŘ__ | Uživatel v _rychlém menu_ zvolí _vytvořit cestu_. Nastaví zaměřovač na mapě na požadované místo a zvolí _přidat bod_. Takto pokračuje dokud nejsou zadané všechny body cesty. Pro dokončení zmáčkně tlačítko _vytvořit cestu_. Zobrazí se formulář s tvorbou cesty. Uživatel vybere buď šablonu nebo zadá požadované informace. Uživatel pak zmáčkně tlačítko uložit.
 
 ## Odeslání rozkazu
 |  |  |
@@ -91,7 +91,7 @@ Tento dokumentu obsahuje rozepsané případy užití aplikace RAT. Případy po
 | __DŮLEŽITOST__ | 1
 | __AKTÉR__ | Operátor ve štábu
 | __PRECONDITIONS__ | Zařízení s aplikací je připojené k síti. Existuje další zařízení, které je připojené k síti.
-| __POSTCONDITIONS__ | Vypnuté zařízení nemá přístup k veškerému obsahu.
+| __POSTCONDITIONS__ | Vypnuté zařízení nemá přístup k datům.
 | __SCÉNÁŘ__ | Operátor ve štábním zařízení v _hlavním menu_ zvolí _přerušit spojení_ a vyberé cílové zařízení. Vypnuté zařízení ztratí přístup k datům o poloze ostatních, bodům a plochám na mapě, kontakty a historii komunikace.
 
 ## Odeslání zprávy spolubojovníkovy
