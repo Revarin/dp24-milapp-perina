@@ -2,7 +2,7 @@
 Tento soubor obsahuje rozvedenou (__beta__) specifikaci. Požadavky na funkce a vlastnosti aplikace jsou zde dále rozepsány. Jednotlivé požadavky jsou seřazeny do několika kategorií podle jejich důležitosti pro celkovou funkci/použití aplikace. Čím výš kategorie je, tím je důležitější. Kategorie tak naznačují jak bude zhruba probíhat implementace aplikace.
 
 ## Kategie 1. (Základní zobrazení)
-- Uživatel si bude moct v aplikaci zobrazit __Google mapy__ a manipulovat s nimi (pohyb, přiblízení, oddálení).
+- Uživatel si bude moct v aplikaci zobrazit __Google mapy__ a manipulovat s nimi (pohyb, přiblížení, oddálení).
     - _Google mapy_ budou představovat výchozí zdroj map.
 - Při zapnutí GPS uživatel uvidí na mapě __svou pozici__.
     - Tato pozice se bude průběžně aktualizovat aby reflektovala pohyb uživatele.
@@ -70,7 +70,7 @@ Tento soubor obsahuje rozvedenou (__beta__) specifikaci. Požadavky na funkce a 
 - Zařízení může být __přiřazené k 0-N skupinám__.
     - Skupina je označena názvem, barvou, značkou a má X členů.
     - Členové v jedné skupině jsou na mapě speciálně označeni značkou nebo barvou skupiny.
-    - Zařízení ve více skupinách je na mapě označeno svou hlavní skupinou.
+    - Zařízení ve více skupinách je na mapě označeno svou hlavní (první) skupinou.
 - Zařízení ve skupině mohou přímo komunikovat ve __skupinovém chatu__.
     - Do skupinového chatu mají přístup pouze členové dané skupiny a štábní zařízení.
 - Štábní zařízení mohou __spravovat skupiny__: vytvářit novou skupinu, přidat zařízení do skupiny, odebrat zařízení ze skupiny a rozpustit skupiny.
