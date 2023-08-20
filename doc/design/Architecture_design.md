@@ -18,4 +18,10 @@ Schéma komunikace klienta se serverem bude poté vypadat následovně:
 4. Zodpovědný modul vrátí odpověď `SessionManagerAPI`, který odešle odpověď klientovy.
 
 ## Klient
-Klient představuje mobilní aplikaci, se kterou budou pracovat uživatelé. Jeho struktura bude následující:
+Klient představuje mobilní aplikaci, se kterou budou pracovat uživatelé. Jeho struktura bude z větší části odpovídat architektuře serveru, se kterým bude komunikovat. Struktura klienta bude následující:
+
+- `MapManager` (správce mapy) - Stará se o získání a zobrazení mapy. Získává a vykresluje mapové objekty. Poskytuje formuláře pro vytváření nových mapových objektů. Poskytuje formuláře pro vytváření nových šablon mapových značení.
+- `ChatManager` (správce komunikace) - Stará se o komunikaci mezi uživately. Odesílá a získává zprávy v daném chatroomu. Zpracovává upozornění na novou zprávu od serveru. Poskytuje formuláře pro vytváření nových šablon zpráv.
+- `UserManager` (správce uživatelů) - Poskytuje nástroje pro štáb pro správu uživatelů v sezení. Umožňuje nastavovat práva jednotlivých uživatelů. Umožňuje vytvářet skupiny uživatelé a přiřazovat jim různé vlastnosti a práva.
+- `NotificationManager` (správce upozornění) - Poskytuje mechanismy pro zobrazení upozornění v aplikaci.
+- `SettingsManager` (správce nastavení) - Obsahuje nastavení sezení, komunikace se serverem a další. Je využíván ostatními moduly.
