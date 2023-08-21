@@ -18,3 +18,9 @@ Jako bonus překonvertovat poskytnuté vojenské mapy do formátu umožňující
 - Prioritizovat import map (především nasdílených vojenských map) a export značení.
 - Umožnit navigaci k bodu - bude stačit šipka/čára označující směr.
 - V textu DP dát důraz na zhodnocení a porovnání existujících systémů, vymezit se proti nim.
+
+## Literatura
+- https://sci-hub.se/https://link.springer.com/article/10.1023/A:1022491825047
+- https://sci-hub.se/https://www.tandfonline.com/doi/abs/10.1559/152304002782008387
+- https://www.geos.ed.ac.uk/~gisteac/gis_book_abridged/files/ch63.pdf
+- https://joiv.org/index.php/joiv/article/view/14/6
