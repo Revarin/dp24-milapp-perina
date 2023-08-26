@@ -14,3 +14,7 @@ Tento soubor obsahuje odkazy na návody a ukázkové zdroje k __Xamarin__.
 ## Google Maps Platform
 - [Maps SDK for Android: Get started](https://developers.google.com/maps/documentation/android-sdk)
 - [Microsoft: Using the Google Maps API in your application](https://learn.microsoft.com/en-us/xamarin/android/platform/maps-and-location/maps/maps-api)
+- [Microsoft: Xamarin.Forms Map](https://learn.microsoft.com/en-us/xamarin/xamarin-forms/user-interface/map/)
+
+## Knihovny
+- [Alternativa k Xamarin.Forms.Maps: Xamarin.Forms.GoogleMaps](https://github.com/amay077/Xamarin.Forms.GoogleMaps)

@@ -2,7 +2,8 @@
 Tento soubor obsahuje odkazy na využité programové konstrukce.
 
 ## Mapy
-- https://stackoverflow.com/questions/51171542/xamarin-can-i-use-maps-without-using-google-maps-api
-- http://www.osmsharp.com/
-- https://github.com/asamm/mapsforge
-- https://github.com/xamarin/Xamarin.Forms
+- [Custom tiles with the Google Maps JS API](https://gist.github.com/clhenrick/dcce31036d3e3940c55b31ddb86ca1ec)
+- [Google: Custom map types](https://developers.google.com/maps/documentation/javascript/maptypes#CustomMapTypes)
+- [Google: Image map types](https://developers.google.com/maps/documentation/javascript/maptypes#ImageMapTypes)
+- [Leaftlet](https://leafletjs.com/)
+- [Adding ovelay to the map](https://developer.here.com/documentation/examples/maps-js/data/custom-tile-overlay)
