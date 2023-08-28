@@ -1,9 +1,10 @@
 # Beta specifikace
 Tento soubor obsahuje rozvedenou (__beta__) specifikaci. Požadavky na funkce a vlastnosti aplikace jsou zde dále rozepsány. Jednotlivé požadavky jsou seřazeny do několika kategorií podle jejich důležitosti pro celkovou funkci/použití aplikace. Čím výš kategorie je, tím je důležitější. Kategorie tak naznačují jak bude zhruba probíhat implementace aplikace.
 
-## Kategie 1. (Základní zobrazení)
-- Uživatel si bude moct v aplikaci zobrazit __Google mapy__ a manipulovat s nimi (pohyb, přiblížení, oddálení).
-    - _Google mapy_ budou představovat výchozí zdroj map.
+## Kategorie 1. (Základní zobrazení)
+- Uživatel si bude moct v aplikaci zobrazit __mapy stažené ze serveru__ a manipulovat s nimi (pohyb, přiblížení, oddálení).
+    - Při prvním spuštění aplikace bude dotaz pro výběr zdroje map.
+    - Import mapy zatím pouze ze strany serveru.
 - Při zapnutí GPS uživatel uvidí na mapě __svou pozici__.
     - Tato pozice se bude průběžně aktualizovat aby reflektovala pohyb uživatele.
     - Označení vlastní pozice bude v aplikaci unikátní symbol.
@@ -38,9 +39,9 @@ Tento soubor obsahuje rozvedenou (__beta__) specifikaci. Požadavky na funkce a 
 
 ## Kategorie 4. (Zdroje map)
 - V nastavení zařízení bude možné vybrat z __více zdrojů online map__.
-- Do zařízení bude možné importovat vlastní mapy. Import bude dvojího druhu:
+    - Základní možnost budou google mapy
+- Do zařízení bude možné importovat vlastní mapy.
     - Globální import uloží mapy na server pod kódem akce. Ty se tak stanou dostupné pro všechny zařízení, které jsou součástí dané akce.
-    - Lokální import ponechá mapu pouze na zařízení, pouze se začne používat v aplikaci.
 
 ## Kategorie 5. (Pokročilá komunikace)
 - Při komunikace bude možné využívat __šablony zpráv__, podle kterých je zpráva sestavena.
@@ -88,3 +89,4 @@ Tento soubor obsahuje rozvedenou (__beta__) specifikaci. Požadavky na funkce a 
     - Ostatní soubory bude možné uložit na zařízení.
 - Možnost exportu aktuálního stavu mapy (vytvořené body, plochy, cesty a poloha všech zařízení).
     - Formát GPX.
+- Umožnit uživately navigovat k vybranému bodu. Navigace bude zobrazena pouze jako šipka, směřující přímo k danému bodu (žádná cesta).
