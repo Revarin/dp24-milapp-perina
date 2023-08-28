@@ -7,3 +7,6 @@ Tento soubor obsahuje odkazy na využité programové konstrukce.
 - [Google: Image map types](https://developers.google.com/maps/documentation/javascript/maptypes#ImageMapTypes)
 - [Leaftlet](https://leafletjs.com/)
 - [Adding ovelay to the map](https://developer.here.com/documentation/examples/maps-js/data/custom-tile-overlay)
+
+## Xamarin
+- [Themes](https://github.com/xamarin/xamarin-forms-samples/tree/main/UserInterface/ThemingDemo)
