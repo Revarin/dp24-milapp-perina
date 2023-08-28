@@ -1,6 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="com.companyname.kris.app">
-    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="33" />
-    <application android:label="Kris.App.Android" android:theme="@style/MainTheme"></application>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+﻿<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0.0" package="dp.perina.kris">
+	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="33" />
+
+	<uses-feature android:glEsVersion="0x00020000" android:required="true" />
+
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="sandbox.permission.MAPS_RECEIVE" />
+	
+	<permission android:name="sandbox.permission.MAPS_RECEIVE" android:protectionLevel="signature" />
+
+	<application android:label="Kris" android:theme="@style/MainTheme">
+		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="TMP" />
+		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+		<uses-library android:name="org.apache.http.legacy" android:required="false" />
+	</application>
 </manifest>
