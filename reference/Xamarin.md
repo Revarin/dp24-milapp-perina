@@ -11,6 +11,7 @@ Tento soubor obsahuje odkazy na návody a ukázkové zdroje k __Xamarin__.
 - [Microsoft: Create a Xamarin.Forms application quickstart](https://learn.microsoft.com/en-us/xamarin/get-started/quickstarts/app?pivots=windows)
 - [Microsoft: Creating Mobile Apps with Xamarin.Forms book](https://learn.microsoft.com/en-us/xamarin/xamarin-forms/creating-mobile-apps-xamarin-forms/) (PDF na stažení)
 - [Microsoft: Color themes](https://learn.microsoft.com/en-us/xamarin/xamarin-forms/user-interface/theming/theming)
+- [Microsoft: Shell tabs](https://learn.microsoft.com/en-us/xamarin/xamarin-forms/app-fundamentals/shell/tabs)
 
 ## Google Maps Platform
 - [Maps SDK for Android: Get started](https://developers.google.com/maps/documentation/android-sdk)
