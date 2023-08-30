@@ -13,3 +13,4 @@ Tento soubor obsahuje odkazy na využité programové konstrukce.
 ### Xamarin
 - [Xamarin.Forms application quickstart](https://github.com/xamarin/xamarin-forms-samples/tree/main/GetStarted/Notes/App)
 - [Themes](https://github.com/xamarin/xamarin-forms-samples/tree/main/UserInterface/ThemingDemo)
+- [Xamarin.Forms: basic android permissions](https://learn.microsoft.com/en-us/xamarin/xamarin-forms/user-interface/map/setup)
