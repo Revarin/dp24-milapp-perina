@@ -4,9 +4,9 @@ using Xamarin.Forms.Xaml;
 namespace Kris.App.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class MenuPage : ContentPage
+    public partial class TestPage : ContentPage
     {
-        public MenuPage()
+        public TestPage()
         {
             InitializeComponent();
         }

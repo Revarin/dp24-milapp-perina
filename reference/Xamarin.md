@@ -5,6 +5,7 @@ Tento soubor obsahuje odkazy na návody a ukázkové zdroje k __Xamarin__.
 - [Enterprise Application Patterns using .NET MAUI](https://devblogs.microsoft.com/dotnet/xamarin-patterns/) (PDF na stažení)
 - [MVVM — the design pattern for Xamarin apps](https://medium.com/@jimbobbennett/mvvm-the-design-pattern-for-xamarin-apps-9781e60ef587)
 - [The 5 Essential Patterns in Xamarin Applications](https://visualstudiomagazine.com/articles/2018/08/02/xamarin-design-patterns.aspx)
+- [Xamarin MVVM](https://learn.microsoft.com/en-us/xamarin/xamarin-forms/enterprise-application-patterns/mvvm)
 
 ## Pro začátečníky
 - [Microsoft: Build your first Xamarin.Forms app](https://learn.microsoft.com/en-us/xamarin/get-started/first-app/?pivots=windows-vs2022)

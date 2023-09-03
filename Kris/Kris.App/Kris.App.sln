@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kris.App.Android", "..\Kris
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kris.App.Map", "..\Kris.App.Map\Kris.App.Map.csproj", "{7C9A939C-CD58-4E4C-A575-53A34223D29F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kris.App.Common", "..\Kris.App.Common\Kris.App.Common.csproj", "{F03A3AD8-CBF6-42F0-B4B6-B791191F06F5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,18 @@ Global
 		{7C9A939C-CD58-4E4C-A575-53A34223D29F}.Release|iPhone.Build.0 = Release|Any CPU
 		{7C9A939C-CD58-4E4C-A575-53A34223D29F}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{7C9A939C-CD58-4E4C-A575-53A34223D29F}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{F03A3AD8-CBF6-42F0-B4B6-B791191F06F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F03A3AD8-CBF6-42F0-B4B6-B791191F06F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F03A3AD8-CBF6-42F0-B4B6-B791191F06F5}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{F03A3AD8-CBF6-42F0-B4B6-B791191F06F5}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{F03A3AD8-CBF6-42F0-B4B6-B791191F06F5}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{F03A3AD8-CBF6-42F0-B4B6-B791191F06F5}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{F03A3AD8-CBF6-42F0-B4B6-B791191F06F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F03A3AD8-CBF6-42F0-B4B6-B791191F06F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F03A3AD8-CBF6-42F0-B4B6-B791191F06F5}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{F03A3AD8-CBF6-42F0-B4B6-B791191F06F5}.Release|iPhone.Build.0 = Release|Any CPU
+		{F03A3AD8-CBF6-42F0-B4B6-B791191F06F5}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{F03A3AD8-CBF6-42F0-B4B6-B791191F06F5}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

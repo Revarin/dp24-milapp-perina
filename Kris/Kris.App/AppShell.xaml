@@ -8,7 +8,7 @@
     <TabBar>
         <ShellContent Title="Map" 
                       ContentTemplate="{DataTemplate views:MapPage}" />
-        <ShellContent Title="Menu"
-                      ContentTemplate="{DataTemplate views:MenuPage}" />
+        <ShellContent Title="Test"
+                      ContentTemplate="{DataTemplate views:TestPage}" />
     </TabBar>
 </Shell>
