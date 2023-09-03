@@ -8,19 +8,21 @@
     <ContentPage.BindingContext>
         <local:Test />
     </ContentPage.BindingContext>
-    <StackLayout>
-        <Label Text="Random MENU text"
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Random MENU text"
                Style="{StaticResource LargeLabelStyle}"
                VerticalOptions="CenterAndExpand" 
                HorizontalOptions="CenterAndExpand" />
-        <Label Text="{Binding Text}"
+            <Label Text="{Binding Text}"
                Style="{StaticResource MediumLabelStyle}"
                VerticalOptions="CenterAndExpand"
                HorizontalOptions="CenterAndExpand" />
-        <Button Text="Change text">
-            <Button.Behaviors>
-                <local:Test EventName="Clicked" Command="{Binding SwitchText}" />
-            </Button.Behaviors>
-        </Button>
-    </StackLayout>
+            <Button Text="Change text">
+                <Button.Behaviors>
+                    <local:Test EventName="Clicked" Command="{Binding SwitchTextCommand}" />
+                </Button.Behaviors>
+            </Button>
+        </StackLayout>
+    </ContentPage.Content>
 </ContentPage>
