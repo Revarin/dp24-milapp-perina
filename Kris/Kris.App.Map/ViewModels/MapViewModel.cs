@@ -2,6 +2,7 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Kris.App.Common;
+using Newtonsoft.Json;
 
 namespace Kris.App.Map
 {
@@ -9,29 +10,32 @@ namespace Kris.App.Map
     {
         private readonly PreferencesManager _preferencesManager;
 
-        private MapSpan _position;
-        public MapSpan Position
+        private MapSpan _currentRegion;
+        public MapSpan CurrentRegion
         {
-            get { return _position; }
-            set
-            { 
-                SetPropertyValue(ref _position, value);
-                _preferencesManager.Set("POSITION", _position);
-            }
+            get { return _currentRegion; }
+            set { SetPropertyValue(ref _currentRegion, value); }
         }
+
+        public MoveToRegionRequest MoveToRegion { get; } = new MoveToRegionRequest();
+
 
         public MapViewModel()
         {
             _preferencesManager = new PreferencesManager();
 
             // Cant do this, needs to be after initialization
-            var savedPosition = _preferencesManager.Get<MapSpan>("POSITION");
-            if (savedPosition != null)
-            {
-                _position = savedPosition;
-            }
+            //var savedPosition = _preferencesManager.Get<MapSpan>("POSITION");
+            //if (savedPosition != null)
+            //{
+            //    _position = savedPosition;
+            //}
+        }
 
-            Position = new MapSpan(Position.Center, 10, 10);
+        public void OnLoaded(object sender, System.EventArgs e)
+        {
+            var pos = new Position(0, 0);
+            MoveToRegion.Execute(MapSpan.FromCenterAndRadius(pos, Distance.FromKilometers(2000)));
         }
 
         private string _text;
@@ -40,11 +44,14 @@ namespace Kris.App.Map
             get { return _text; }
             set { SetPropertyValue(ref _text, value); }
         }
-
         public ICommand DebugCommand => new Command(ShowDebugText);
         public void ShowDebugText()
         {
-            Text = Position?.ToString() ?? "ERROR";
+            var nspan = CurrentRegion;
+            var x = new Position(nspan.Center.Latitude + 10, nspan.Center.Longitude);
+            MoveToRegion.Execute(MapSpan.FromCenterAndRadius(x, nspan.Radius));
+
+            Text = CurrentRegion?.LongitudeDegrees.ToString() ?? "ERROR";
         }
     }
 }
