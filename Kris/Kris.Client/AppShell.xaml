@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:local="clr-namespace:Kris.Client"
+       x:Class="Kris.Client.AppShell"
+       Shell.FlyoutBehavior="Disabled">
+    <TabBar>
+        <ShellContent Title="Map"
+                      ContentTemplate="{DataTemplate local:MapPage}"
+                      Route="MapPage" />
+        <ShellContent Title="Test"
+                      ContentTemplate="{DataTemplate local:TestPage}"
+                      Route="TestPage" />
+    </TabBar>
+</Shell>

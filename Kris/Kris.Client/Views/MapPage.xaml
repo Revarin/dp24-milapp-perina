@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
+             xmlns:vm="clr-namespace:Kris.Client.ViewModels"
+             x:Class="Kris.Client.MapPage"
+             Title="Map page">
+    <ContentPage.BindingContext>
+        <vm:MapViewModel />
+    </ContentPage.BindingContext>
+    <StackLayout BackgroundColor="Red">
+        <maps:Map MapType="Street" IsZoomEnabled="True"
+                  VerticalOptions="FillAndExpand">
+        </maps:Map>
+        <Button Text="Test">
+        </Button>
+    </StackLayout>
+</ContentPage>
