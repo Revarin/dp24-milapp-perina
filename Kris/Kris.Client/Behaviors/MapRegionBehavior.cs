@@ -1,4 +1,4 @@
-﻿using Microsoft.Maui.Controls.Maps;
+﻿using System.ComponentModel;
 using Microsoft.Maui.Maps;
 
 using MauiMap = Microsoft.Maui.Controls.Maps.Map;
@@ -8,21 +8,65 @@ namespace Kris.Client.Behaviors
     public class MapRegionBehavior : BindableBehavior<MauiMap>
     {
         public static readonly BindableProperty CurrentRegionProperty = BindableProperty.Create(
-            "CurrentRegion", typeof(MapSpan), typeof(MapRegionBehavior), default(MapSpan), BindingMode.TwoWay,
-            propertyChanged: OnCurrentRegionChanged);
+            "CurrentRegion", typeof(MapSpan), typeof(MapRegionBehavior), default(MapSpan), BindingMode.OneWayToSource);
+        public static readonly BindableProperty MoveToRegionProperty = BindableProperty.Create(
+            "MoveToRegion", typeof(MoveToRegionRequest), typeof(MapRegionBehavior), default(MoveToRegionRequest), BindingMode.OneWay,
+            propertyChanged: OnMoveToRegionChanged);
 
         public MapSpan CurrentRegion
         {
             get { return (MapSpan)GetValue(CurrentRegionProperty); }
-            set { SetValue(CurrentRegionProperty, value); }
+            private set { SetValue(CurrentRegionProperty, value); }
+        }
+        public MoveToRegionRequest MoveToRegion
+        {
+            get { return (MoveToRegionRequest)GetValue(MoveToRegionProperty); }
+            set { SetValue(MoveToRegionProperty, value); }
         }
 
-        private static void OnCurrentRegionChanged(BindableObject bindable, object oldValue, object newValue)
+        protected override void OnAttachedTo(MauiMap bindable)
         {
-            var thisInstance = (bindable as MapRegionBehavior)?.AssociatedObject;
-            var newRegion = newValue as MapSpan;
+            base.OnAttachedTo(bindable);
+            bindable.PropertyChanged += OnCurrentRegionChanged;
+        }
 
-            thisInstance?.MoveToRegion(newRegion);
+        protected override void OnDetachingFrom(MauiMap bindable)
+        {
+            bindable.PropertyChanged -= OnCurrentRegionChanged;
+            base.OnDetachingFrom(bindable);
+        }
+
+        private void OnCurrentRegionChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "VisibleRegion")
+            {
+                CurrentRegion = AssociatedObject.VisibleRegion;
+            }
+        }
+
+        private static void OnMoveToRegionChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            (bindable as MapRegionBehavior)?.OnMoveToRegionChanged(oldValue as MoveToRegionRequest, newValue as MoveToRegionRequest);
+        }
+
+        private void OnMoveToRegionChanged(MoveToRegionRequest oldValue, MoveToRegionRequest newValue)
+        {
+            if (oldValue != null)
+            {
+                oldValue.MoveToRegionRequested -= OnMoveToRegionRequested;
+            }
+            if (newValue != null)
+            {
+                newValue.MoveToRegionRequested += OnMoveToRegionRequested;
+            }
+        }
+
+        private void OnMoveToRegionRequested(object sender, MoveToRegionRequestEventArgs e)
+        {
+            if (e.MapSpan != null)
+            {
+                AssociatedObject.MoveToRegion(e.MapSpan);
+            }
         }
     }
 }

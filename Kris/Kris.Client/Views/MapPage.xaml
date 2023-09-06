@@ -14,7 +14,9 @@
         <maps:Map MapType="Street" IsZoomEnabled="True"
                   VerticalOptions="FillAndExpand">
             <maps:Map.Behaviors>
-                <behaviors:MapRegionBehavior CurrentRegion="{Binding CurrentRegion}" />
+                <behaviors:MapRegionBehavior CurrentRegion="{Binding CurrentRegion}"
+                                             MoveToRegion="{Binding MoveToRegion}"/>
+                <toolkit:EventToCommandBehavior EventName="Loaded" Command="{Binding LoadedCommand}" />
             </maps:Map.Behaviors>
         </maps:Map>
         <Button Text="Test">
