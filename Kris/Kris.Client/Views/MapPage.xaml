@@ -17,6 +17,7 @@
                 <behaviors:MapRegionBehavior CurrentRegion="{Binding CurrentRegion}"
                                              MoveToRegion="{Binding MoveToRegion}"/>
                 <toolkit:EventToCommandBehavior EventName="Loaded" Command="{Binding LoadedCommand}" />
+                <toolkit:EventToCommandBehavior EventName="Unloaded" Command="{Binding UnloadedCommand}" />
             </maps:Map.Behaviors>
         </maps:Map>
         <Button Text="Test">

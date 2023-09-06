@@ -1,32 +1,48 @@
 ﻿using System.Windows.Input;
 using Microsoft.Maui.Maps;
 using Kris.Client.Behaviors;
+using Kris.Client.Common;
 
 namespace Kris.Client.ViewModels
 {
     public class MapViewModel : ViewModelBase
     {
-        private readonly MapSpan _currentRegion;
+        private readonly PreferencesStore _preferencesStore;
+
+        private MapSpan _currentRegion;
         public MapSpan CurrentRegion
         {
             get { return _currentRegion; }
-            init { SetPropertyValue(ref _currentRegion, value); }
+            set { SetPropertyValue(ref _currentRegion, value); }
         }
         public MoveToRegionRequest MoveToRegion { get; init; } = new MoveToRegionRequest();
 
         public ICommand LoadedCommand { get; init; }
+        public ICommand UnloadedCommand { get; init; }
         public ICommand TestCommand { get; init; }
 
         public MapViewModel()
         {
+            _preferencesStore = new PreferencesStore();
+
             CurrentRegion = new MapSpan(new Location(), 10, 10);
             LoadedCommand = new Command(OnLoaded);
+            UnloadedCommand = new Command(OnUnloaded);
             TestCommand = new Command(OnTest);
         }
 
         private void OnLoaded()
         {
-            MoveToRegion.Execute(MapSpan.FromCenterAndRadius(new Location(), Distance.FromKilometers(4000)));
+            var lastRegion = _preferencesStore.Get(Constants.PreferencesStore.LastRegionKey);
+            if (lastRegion != null)
+            {
+                MoveToRegion.Execute(lastRegion);
+            }
+        }
+
+        private void OnUnloaded()
+        {
+            _preferencesStore.Set(Constants.PreferencesStore.LastRegionKey, CurrentRegion);
         }
 
         private void OnTest()
