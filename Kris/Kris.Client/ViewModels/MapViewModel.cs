@@ -7,7 +7,7 @@ namespace Kris.Client.ViewModels
 {
     public class MapViewModel : ViewModelBase
     {
-        private readonly PreferencesStore _preferencesStore;
+        private readonly IPreferencesStore _preferencesStore;
 
         private MapSpan _currentRegion;
         public MapSpan CurrentRegion
@@ -21,9 +21,9 @@ namespace Kris.Client.ViewModels
         public ICommand UnloadedCommand { get; init; }
         public ICommand TestCommand { get; init; }
 
-        public MapViewModel()
+        public MapViewModel(IPreferencesStore preferencesStore)
         {
-            _preferencesStore = new PreferencesStore();
+            _preferencesStore = preferencesStore;
 
             CurrentRegion = new MapSpan(new Location(), 10, 10);
             LoadedCommand = new Command(OnLoaded);
@@ -33,7 +33,7 @@ namespace Kris.Client.ViewModels
 
         private void OnLoaded()
         {
-            var lastRegion = _preferencesStore.Get(Constants.PreferencesStore.LastRegionKey);
+            MapSpan lastRegion = _preferencesStore.Get(Constants.PreferencesStore.LastRegionKey, null);
             if (lastRegion != null)
             {
                 MoveToRegion.Execute(lastRegion);

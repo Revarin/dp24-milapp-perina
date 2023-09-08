@@ -59,10 +59,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Views\TestPage.xaml">
+	  <Compile Update="Views\MapView.xaml.cs">
+	    <DependentUpon>MapView.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\TestView.xaml.cs">
+	    <DependentUpon>TestView.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Views\TestView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\MapPage.xaml">
+	  <MauiXaml Update="Views\MapView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

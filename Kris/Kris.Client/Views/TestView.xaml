@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:vm="clr-namespace:Kris.Client.ViewModels"
-             x:Class="Kris.Client.TestPage"
+             x:Class="Kris.Client.TestView"
+             x:DataType="vm:TestViewModel"
              Title="Test page">
     <ContentPage.BindingContext>
         <vm:TestViewModel />

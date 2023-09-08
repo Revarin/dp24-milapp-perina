@@ -12,6 +12,9 @@ namespace Kris.Client
                 .UseMauiApp<App>()
                 .UseMauiMaps()
                 .UseMauiCommunityToolkit()
+                .RegisterViews()
+                .RegisterViewModels()
+                .RegisterServices()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

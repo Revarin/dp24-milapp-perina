@@ -5,11 +5,9 @@
              xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
              xmlns:viewModels="clr-namespace:Kris.Client.ViewModels"
              xmlns:behaviors="clr-namespace:Kris.Client.Behaviors"
-             x:Class="Kris.Client.MapPage"
+             x:Class="Kris.Client.MapView"
+             x:DataType="viewModels:MapViewModel"
              Title="Map page">
-    <ContentPage.BindingContext>
-        <viewModels:MapViewModel />
-    </ContentPage.BindingContext>
     <StackLayout>
         <maps:Map MapType="Street" IsZoomEnabled="True"
                   VerticalOptions="FillAndExpand">

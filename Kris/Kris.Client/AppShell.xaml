@@ -6,10 +6,10 @@
        Shell.FlyoutBehavior="Disabled">
     <TabBar>
         <ShellContent Title="Map"
-                      ContentTemplate="{DataTemplate local:MapPage}"
-                      Route="MapPage" />
+                      ContentTemplate="{DataTemplate local:MapView}"
+                      Route="MapView" />
         <ShellContent Title="Test"
-                      ContentTemplate="{DataTemplate local:TestPage}"
-                      Route="TestPage" />
+                      ContentTemplate="{DataTemplate local:TestView}"
+                      Route="TestView" />
     </TabBar>
 </Shell>
