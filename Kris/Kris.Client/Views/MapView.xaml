@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
+             xmlns:viewModels="clr-namespace:Kris.Client.ViewModels"
+             xmlns:behaviors="clr-namespace:Kris.Client.Behaviors"
+             x:Class="Kris.Client.MapView"
+             x:DataType="viewModels:MapViewModel"
+             Title="Map page">
+    <StackLayout>
+        <maps:Map MapType="Street" IsZoomEnabled="True"
+                  VerticalOptions="FillAndExpand">
+            <maps:Map.Behaviors>
+                <behaviors:CurrentRegionBehavior Value="{Binding CurrentRegion}" Cache="True" CachePeriod="2000" />
+                <behaviors:MoveToMapRegionBehavior Request="{Binding MoveToRegion}" />
+                <toolkit:EventToCommandBehavior EventName="Loaded" Command="{Binding LoadedCommand}" />
+                <toolkit:EventToCommandBehavior EventName="Unloaded" Command="{Binding UnloadedCommand}" />
+            </maps:Map.Behaviors>
+        </maps:Map>
+        <Button Text="Test">
+            <Button.Behaviors>
+                <toolkit:EventToCommandBehavior EventName="Clicked" Command="{Binding TestCommand}" />
+            </Button.Behaviors>
+        </Button>
+    </StackLayout>
+</ContentPage>

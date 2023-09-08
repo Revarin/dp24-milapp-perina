@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:vm="clr-namespace:Kris.Client.ViewModels"
+             x:Class="Kris.Client.TestView"
+             x:DataType="vm:TestViewModel"
+             Title="Test page">
+    <ContentPage.BindingContext>
+        <vm:TestViewModel />
+    </ContentPage.BindingContext>
+    <VerticalStackLayout>
+        <Label Text="This is test page"
+               VerticalOptions="CenterAndExpand" 
+               HorizontalOptions="Center" />
+        <Label Text="{Binding Text}"
+               VerticalOptions="CenterAndExpand"
+               HorizontalOptions="Center" />
+        <Button Text="Switch text">
+            <Button.Behaviors>
+                <toolkit:EventToCommandBehavior EventName="Clicked"
+                                                Command="{Binding SwitchTextCommand}" />
+            </Button.Behaviors>
+        </Button>
+    </VerticalStackLayout>
+</ContentPage>
