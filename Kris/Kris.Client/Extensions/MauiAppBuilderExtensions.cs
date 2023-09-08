@@ -1,4 +1,5 @@
-﻿using Kris.Client.Common;
+﻿using Kris.Client.Behaviors;
+using Kris.Client.Common;
 using Kris.Client.ViewModels;
 
 namespace Kris.Client
@@ -22,7 +23,8 @@ namespace Kris.Client
         }
 
         public static MauiAppBuilder RegisterServices(this MauiAppBuilder builder)
-        { 
+        {
+            builder.Services.AddTransient<CurrentRegionBehavior>();
             builder.Services.AddSingleton<IPreferencesStore, PreferencesStore>();
 
             return builder;
