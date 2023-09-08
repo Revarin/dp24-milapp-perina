@@ -5,6 +5,11 @@ using MauiMap = Microsoft.Maui.Controls.Maps.Map;
 
 namespace Kris.Client.Behaviors
 {
+    // Source: https://github.com/nuitsjp/Xamarin.Forms.GoogleMaps.Bindings/tree/master
+    // Source: https://stackoverflow.com/questions/28098020/bind-to-xamarin-forms-maps-map-from-viewmodel/53804163#53804163
+    // TODO:
+    // Split to CurrentMapRegionBehavior and MoveToMapRegionBehavior
+    // Add SaveToPreferences property and StoringInterval property
     public class MapRegionBehavior : BindableBehavior<MauiMap>
     {
         public static readonly BindableProperty CurrentRegionProperty = BindableProperty.Create(

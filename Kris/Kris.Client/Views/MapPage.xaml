@@ -10,7 +10,7 @@
     <ContentPage.BindingContext>
         <viewModels:MapViewModel />
     </ContentPage.BindingContext>
-    <StackLayout BackgroundColor="Red">
+    <StackLayout>
         <maps:Map MapType="Street" IsZoomEnabled="True"
                   VerticalOptions="FillAndExpand">
             <maps:Map.Behaviors>

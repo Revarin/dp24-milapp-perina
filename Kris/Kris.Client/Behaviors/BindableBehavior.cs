@@ -1,5 +1,6 @@
 ﻿namespace Kris.Client.Behaviors
 {
+    // Source: https://github.com/xamarin/xamarin-forms-samples/blob/main/Behaviors/EventToCommandBehavior/EventToCommandBehavior/Behaviors/BehaviorBase.cs#L6
     public class BindableBehavior<T> : Behavior<T> where T : BindableObject
     {
         public T AssociatedObject { get; private set; }
