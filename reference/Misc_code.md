@@ -20,3 +20,4 @@ Tento soubor obsahuje odkazy na využité programové konstrukce.
     - ()[https://github.com/xamarin/xamarin-forms-samples/blob/main/Behaviors/EventToCommandBehavior/EventToCommandBehavior/Behaviors/EventToCommandBehavior.cs]
     - ()[https://github.com/xamarin/xamarin-forms-samples/blob/main/Behaviors/EventToCommandBehavior/EventToCommandBehavior/Behaviors/BehaviorBase.cs#L6]
 - [Bind to Xamarin.Forms.Maps.Map from ViewModel](https://stackoverflow.com/a/53804163)
+- ()[https://github.com/nuitsjp/Xamarin.Forms.GoogleMaps.Bindings/tree/master]
