@@ -8,6 +8,9 @@
              x:Class="Kris.Client.MapView"
              x:DataType="viewModels:MapViewModel"
              Title="Map page">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}" />
+    </ContentPage.Behaviors>
     <StackLayout>
         <maps:Map MapType="Street" IsZoomEnabled="True"
                   VerticalOptions="FillAndExpand">
@@ -15,7 +18,6 @@
                 <behaviors:CurrentRegionBehavior Value="{Binding CurrentRegion}" Cache="True" CachePeriod="2000" />
                 <behaviors:MoveToMapRegionBehavior Request="{Binding MoveToRegion}" />
                 <toolkit:EventToCommandBehavior EventName="Loaded" Command="{Binding LoadedCommand}" />
-                <toolkit:EventToCommandBehavior EventName="Unloaded" Command="{Binding UnloadedCommand}" />
             </maps:Map.Behaviors>
         </maps:Map>
         <Button Text="Test">

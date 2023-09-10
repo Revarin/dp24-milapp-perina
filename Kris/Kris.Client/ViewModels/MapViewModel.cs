@@ -7,6 +7,8 @@ namespace Kris.Client.ViewModels
 {
     public class MapViewModel : ViewModelBase
     {
+        private readonly IPermissionsService _permissionsService;
+        private readonly IAlertService _alertService;
         private readonly IPreferencesStore _preferencesStore;
 
         private MapSpan _currentRegion;
@@ -17,18 +19,29 @@ namespace Kris.Client.ViewModels
         }
         public MoveToRegionRequest MoveToRegion { get; init; } = new MoveToRegionRequest();
 
+        public ICommand AppearingCommand { get; init; }
         public ICommand LoadedCommand { get; init; }
-        public ICommand UnloadedCommand { get; init; }
         public ICommand TestCommand { get; init; }
 
-        public MapViewModel(IPreferencesStore preferencesStore)
+        public MapViewModel(IPermissionsService permissionsService, IAlertService alertService, IPreferencesStore preferencesStore)
         {
+            _permissionsService = permissionsService;
+            _alertService = alertService;
             _preferencesStore = preferencesStore;
 
             CurrentRegion = new MapSpan(new Location(), 10, 10);
+            AppearingCommand = new Command(OnAppearing);
             LoadedCommand = new Command(OnLoaded);
-            UnloadedCommand = new Command(OnUnloaded);
             TestCommand = new Command(OnTest);
+        }
+
+        private async void OnAppearing()
+        {
+            var status = await _permissionsService.CheckAndRequestPermissionAsync<Permissions.LocationWhenInUse>();
+            if (!status.HasFlag(PermissionStatus.Granted))
+            {
+                await _alertService.ShowAlertAsync(I18n.Keys.MapLocationPermissionDeniedTitle, I18n.Keys.MapLocationPermissionDeniedMessage);
+            }
         }
 
         private void OnLoaded()
@@ -38,11 +51,6 @@ namespace Kris.Client.ViewModels
             {
                 MoveToRegion.Execute(lastRegion);
             }
-        }
-
-        private void OnUnloaded()
-        {
-            _preferencesStore.Set(Constants.PreferencesStore.LastRegionKey, CurrentRegion);
         }
 
         private void OnTest()

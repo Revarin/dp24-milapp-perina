@@ -11,10 +11,11 @@ Tento soubor obsahuje odkazy na využité programové konstrukce.
 
 ## Využitý kód
 ### Xamarin
-- [Xamarin.Forms application quickstart](https://github.com/xamarin/xamarin-forms-samples/tree/main/GetStarted/Notes/App)
-- [Themes](https://github.com/xamarin/xamarin-forms-samples/tree/main/UserInterface/ThemingDemo)
-- [Xamarin.Forms: basic android permissions](https://learn.microsoft.com/en-us/xamarin/xamarin-forms/user-interface/map/setup)
-- [Should I put the code behind for a button click in my viewModel and if so how can I bind it?](https://stackoverflow.com/a/46033457)
 - [How to implement INotifyPropertyChanged in Xamarin.Forms](https://stackoverflow.com/a/32800248)
 - [Bind to Xamarin.Forms.Maps.Map from ViewModel](https://stackoverflow.com/a/53804163)
-- ()[https://github.com/nuitsjp/Xamarin.Forms.GoogleMaps.Bindings/tree/master]
+- [Xamarin Google maps binding](https://github.com/nuitsjp/Xamarin.Forms.GoogleMaps.Bindings/tree/master)
+
+### MAUI
+- [Alert (for DI)](https://stackoverflow.com/questions/72429055/how-to-displayalert-in-a-net-maui-viewmodel)
+- [Permissions (for DI)](https://stackoverflow.com/a/75574574)
+- [Permission info compedium](https://stackoverflow.com/questions/76275381/an-easy-way-to-check-and-request-maui-permissions-including-bluetooth)
