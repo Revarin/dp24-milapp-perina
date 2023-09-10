@@ -11,6 +11,12 @@ namespace Kris.Client.ViewModels
         private readonly IAlertService _alertService;
         private readonly IPreferencesStore _preferencesStore;
 
+        private bool _showingUserLocation;
+        public bool ShowingUserLocation
+        {
+            get { return _showingUserLocation; }
+            set { SetPropertyValue(ref _showingUserLocation, value); }
+        }
         private MapSpan _currentRegion;
         public MapSpan CurrentRegion
         {
@@ -29,6 +35,7 @@ namespace Kris.Client.ViewModels
             _alertService = alertService;
             _preferencesStore = preferencesStore;
 
+            ShowingUserLocation = false;
             CurrentRegion = new MapSpan(new Location(), 10, 10);
             AppearingCommand = new Command(OnAppearing);
             LoadedCommand = new Command(OnLoaded);
@@ -38,9 +45,14 @@ namespace Kris.Client.ViewModels
         private async void OnAppearing()
         {
             var status = await _permissionsService.CheckAndRequestPermissionAsync<Permissions.LocationWhenInUse>();
+
             if (!status.HasFlag(PermissionStatus.Granted))
             {
                 await _alertService.ShowAlertAsync(I18n.Keys.MapLocationPermissionDeniedTitle, I18n.Keys.MapLocationPermissionDeniedMessage);
+            }
+            else
+            {
+                ShowingUserLocation = true;
             }
         }
 

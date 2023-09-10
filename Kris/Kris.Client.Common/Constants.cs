@@ -4,10 +4,10 @@
     {
         public static class PreferencesStore
         {
-            public static readonly string LastRegionKey = "LAST-REGION";
+            public static readonly string LastRegionKey = "LastRegionKey";
 
-            public static readonly string MapSpanLocationKey = "LOCATION";
-            public static readonly string MapSpanDistanceKey = "DISTANCE";
+            public static readonly string MapSpanLocationKey = "Location";
+            public static readonly string MapSpanDistanceKey = "Distance";
         }
     }
 }

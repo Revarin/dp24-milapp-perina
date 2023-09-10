@@ -13,6 +13,7 @@
     </ContentPage.Behaviors>
     <StackLayout>
         <maps:Map MapType="Street" IsZoomEnabled="True"
+                  IsShowingUser="{Binding ShowingUserLocation}"
                   VerticalOptions="FillAndExpand">
             <maps:Map.Behaviors>
                 <behaviors:CurrentRegionBehavior Value="{Binding CurrentRegion}" Cache="True" CachePeriod="2000" />

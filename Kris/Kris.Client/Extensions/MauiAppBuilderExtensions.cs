@@ -8,6 +8,7 @@ namespace Kris.Client
         public static MauiAppBuilder RegisterViews(this MauiAppBuilder builder)
         {
             builder.Services.AddSingleton<MapView>();
+            builder.Services.AddSingleton<MenuView>();
             builder.Services.AddSingleton<TestView>();
 
             return builder;
@@ -15,7 +16,9 @@ namespace Kris.Client
 
         public static MauiAppBuilder RegisterViewModels(this MauiAppBuilder builder)
         {
+            builder.Services.AddSingleton<AppShellViewModel>();
             builder.Services.AddSingleton<MapViewModel>();
+            builder.Services.AddSingleton<MenuViewModel>();
             builder.Services.AddSingleton<TestViewModel>();
 
             return builder;
@@ -26,6 +29,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<IPreferencesStore, PreferencesStore>();
             builder.Services.AddSingleton<IAlertService, AlertService>();
             builder.Services.AddSingleton<IPermissionsService, PermissionsService>();
+            builder.Services.AddSingleton<INavigationService, NavigationService>();
 
             return builder;
         }
