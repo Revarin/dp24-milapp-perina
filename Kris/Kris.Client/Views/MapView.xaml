@@ -9,7 +9,6 @@
              x:DataType="viewModels:MapViewModel"
              Title="Map page">
     <ContentPage.Behaviors>
-        <toolkit:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}" />
     </ContentPage.Behaviors>
     <StackLayout>
         <maps:Map MapType="Street" IsZoomEnabled="True"

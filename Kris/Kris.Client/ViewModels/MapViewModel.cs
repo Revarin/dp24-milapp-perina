@@ -8,7 +8,6 @@ namespace Kris.Client.ViewModels
     public class MapViewModel : ViewModelBase
     {
         private readonly IPermissionsService _permissionsService;
-        private readonly IAlertService _alertService;
         private readonly IPreferencesStore _preferencesStore;
 
         private bool _showingUserLocation;
@@ -25,39 +24,25 @@ namespace Kris.Client.ViewModels
         }
         public MoveToRegionRequest MoveToRegion { get; init; } = new MoveToRegionRequest();
 
-        public ICommand AppearingCommand { get; init; }
         public ICommand LoadedCommand { get; init; }
         public ICommand TestCommand { get; init; }
 
-        public MapViewModel(IPermissionsService permissionsService, IAlertService alertService, IPreferencesStore preferencesStore)
+        public MapViewModel(IPermissionsService permissionsService, IPreferencesStore preferencesStore)
         {
             _permissionsService = permissionsService;
-            _alertService = alertService;
             _preferencesStore = preferencesStore;
 
             ShowingUserLocation = false;
             CurrentRegion = new MapSpan(new Location(), 10, 10);
-            AppearingCommand = new Command(OnAppearing);
             LoadedCommand = new Command(OnLoaded);
             TestCommand = new Command(OnTest);
         }
 
-        private async void OnAppearing()
+        private async void OnLoaded()
         {
-            var status = await _permissionsService.CheckAndRequestPermissionAsync<Permissions.LocationWhenInUse>();
+            var locationPermission = await _permissionsService.CheckPermissionAsync<Permissions.LocationWhenInUse>();
+            ShowingUserLocation = locationPermission.HasFlag(PermissionStatus.Granted);
 
-            if (!status.HasFlag(PermissionStatus.Granted))
-            {
-                await _alertService.ShowAlertAsync(I18n.Keys.MapLocationPermissionDeniedTitle, I18n.Keys.MapLocationPermissionDeniedMessage);
-            }
-            else
-            {
-                ShowingUserLocation = true;
-            }
-        }
-
-        private void OnLoaded()
-        {
             MapSpan lastRegion = _preferencesStore.Get(Constants.PreferencesStore.LastRegionKey, null);
             if (lastRegion != null)
             {

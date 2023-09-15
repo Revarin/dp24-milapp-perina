@@ -18,7 +18,6 @@ namespace Kris.Client.ViewModels
 
         private async void OnConnectionSettingsClicked()
         {
-            //await Shell.Current.GoToAsync(nameof(ConnectionSettingsView));
             await _navigationService.GoToAsync(nameof(ConnectionSettingsView));
         }
     }
