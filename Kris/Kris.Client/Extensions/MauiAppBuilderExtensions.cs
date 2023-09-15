@@ -1,4 +1,5 @@
 ﻿using Kris.Client.Common;
+using Kris.Client.Data;
 using Kris.Client.ViewModels;
 
 namespace Kris.Client
@@ -9,6 +10,7 @@ namespace Kris.Client
         {
             builder.Services.AddSingleton<MapView>();
             builder.Services.AddSingleton<MenuView>();
+            builder.Services.AddTransient<ConnectionSettingsView>();
             builder.Services.AddSingleton<TestView>();
 
             return builder;
@@ -19,6 +21,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<AppShellViewModel>();
             builder.Services.AddSingleton<MapViewModel>();
             builder.Services.AddSingleton<MenuViewModel>();
+            builder.Services.AddTransient<ConnectionSettingsViewModel>();
             builder.Services.AddSingleton<TestViewModel>();
 
             return builder;
@@ -30,6 +33,13 @@ namespace Kris.Client
             builder.Services.AddSingleton<IAlertService, AlertService>();
             builder.Services.AddSingleton<IPermissionsService, PermissionsService>();
             builder.Services.AddSingleton<INavigationService, NavigationService>();
+
+            return builder;
+        }
+
+        public static MauiAppBuilder RegisterDataSources(this MauiAppBuilder builder)
+        {
+            builder.Services.AddTransient<IDataSource<GpsIntervalItem>, GpsIntervalDataSource>();
 
             return builder;
         }

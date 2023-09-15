@@ -15,6 +15,7 @@ namespace Kris.Client
                 .RegisterViews()
                 .RegisterViewModels()
                 .RegisterServices()
+                .RegisterDataSources()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
