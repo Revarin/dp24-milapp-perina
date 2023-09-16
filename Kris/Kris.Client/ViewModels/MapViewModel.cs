@@ -3,6 +3,8 @@ using Microsoft.Maui.Maps;
 using Kris.Client.Behaviors;
 using Kris.Client.Common;
 using CommunityToolkit.Maui.Alerts;
+using System.Collections.ObjectModel;
+using Microsoft.Maui.Controls.Maps;
 
 namespace Kris.Client.ViewModels
 {
@@ -12,22 +14,21 @@ namespace Kris.Client.ViewModels
         private readonly IPreferencesStore _preferencesStore;
         private readonly IGpsService _gpsService;
 
-        private bool _showingUserLocation;
-        public bool ShowingUserLocation
-        {
-            get { return _showingUserLocation; }
-            set { SetPropertyValue(ref _showingUserLocation, value); }
-        }
         private MapSpan _currentRegion;
         public MapSpan CurrentRegion
         {
             get { return _currentRegion; }
             set { SetPropertyValue(ref _currentRegion, value); }
         }
+        private ObservableCollection<Pin> _pinsSource;
+        public ObservableCollection<Pin> PinsSource
+        {
+            get { return _pinsSource; }
+            set { SetPropertyValue(ref _pinsSource, value); }
+        }
         public MoveToRegionRequest MoveToRegion { get; init; } = new MoveToRegionRequest();
 
         public ICommand LoadedCommand { get; init; }
-        public ICommand TestCommand { get; init; }
 
         public MapViewModel(IPermissionsService permissionsService, IPreferencesStore preferencesStore, IGpsService gpsService)
         {
@@ -35,10 +36,8 @@ namespace Kris.Client.ViewModels
             _preferencesStore = preferencesStore;
             _gpsService = gpsService;
 
-            ShowingUserLocation = false;
             CurrentRegion = new MapSpan(new Location(), 10, 10);
             LoadedCommand = new Command(OnLoaded);
-            TestCommand = new Command(OnTest);
         }
 
         private async void OnLoaded()
@@ -57,22 +56,24 @@ namespace Kris.Client.ViewModels
                 _gpsService.RaiseGpsLocationEvent += OnGpsNewLocation;
                 if (!_gpsService.IsListening)
                 {
-                    await _gpsService.StartListeningAsync(gpsInterval, gpsInterval);
+                    _gpsService.SetupListener(gpsInterval, gpsInterval);
+                    await _gpsService.StartListeningAsync();
                 }
             }
         }
 
-        private void OnTest()
-        {
-            var nspan = CurrentRegion;
-            var ncenter = new Location(nspan.Center.Latitude + 5, nspan.Center.Longitude);
-            MoveToRegion.Execute(MapSpan.FromCenterAndRadius(ncenter, nspan.Radius));
-        }
-
         private async void OnGpsNewLocation(object sender, GpsLocationEventArgs e)
         {
-            var t = Toast.Make($"{e.Location}");
+            // DEBUG
+            var t = Toast.Make($"[{e.RequestInterval}]{e.Location}");
             await t.Show();
+
+            PinsSource.Clear();
+            PinsSource.Add(new Pin
+            {
+                Location = e.Location,
+                Label = "User",
+            });
         }
     }
 }

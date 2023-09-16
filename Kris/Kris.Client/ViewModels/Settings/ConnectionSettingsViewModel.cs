@@ -10,6 +10,7 @@ namespace Kris.Client.ViewModels
     public class ConnectionSettingsViewModel : ViewModelBase
     {
         private readonly IPreferencesStore _preferencesDataStore;
+        private readonly IGpsService _gpsService;
 
         private GpsIntervalItem _gpsIntervalselectedItem;
         public GpsIntervalItem GpsIntervalSelectedItem
@@ -26,9 +27,10 @@ namespace Kris.Client.ViewModels
 
         public ICommand SelectedIndexChangedCommand { get; init; }
 
-        public ConnectionSettingsViewModel(IPreferencesStore preferencesStore, IDataSource<GpsIntervalItem> gpsItervalDataSource)
+        public ConnectionSettingsViewModel(IPreferencesStore preferencesStore, IDataSource<GpsIntervalItem> gpsItervalDataSource, IGpsService gpsService)
         {
             _preferencesDataStore = preferencesStore;
+            _gpsService = gpsService;
 
             SelectedIndexChangedCommand = new Command(OnSelectedIndexChanged);
 
@@ -38,13 +40,16 @@ namespace Kris.Client.ViewModels
             GpsIntervalSelectedItem = GpsIntervalItems.Single(p => p.Value == currentGpsInterval);
         }
 
-        private void OnSelectedIndexChanged()
+        private async void OnSelectedIndexChanged()
         {
-            // DEBUG
-            var toast = Toast.Make($"{GpsIntervalSelectedItem.Display}: {GpsIntervalSelectedItem.Value}");
-            toast.Show();
+            var current = GpsIntervalSelectedItem;
 
-            _preferencesDataStore.Set(Constants.PreferencesStore.SettingsGpsInterval, GpsIntervalSelectedItem.Value);
+            // DEBUG
+            var toast = Toast.Make($"{current.Display}: {current.Value}");
+            await toast.Show();
+
+            _preferencesDataStore.Set(Constants.PreferencesStore.SettingsGpsInterval, current.Value);
+            _gpsService.SetupListener(current.Value, current.Value);
         }
     }
 }

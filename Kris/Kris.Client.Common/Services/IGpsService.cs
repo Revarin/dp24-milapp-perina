@@ -5,7 +5,8 @@
         event EventHandler<GpsLocationEventArgs> RaiseGpsLocationEvent;
         bool IsListening { get; set; }
 
-        Task StartListeningAsync(int millisecondsDelay, int millisecondsTimeout);
+        void SetupListener(int millisecondsDelay, int millisecondsTimeout);
+        Task StartListeningAsync();
         void StopListening();
         Task<Location> GetGpsLocationAsync(int millisecondsTimeout);
         void CancelRequest();

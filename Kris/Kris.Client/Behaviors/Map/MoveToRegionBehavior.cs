@@ -2,10 +2,10 @@
 
 namespace Kris.Client.Behaviors
 {
-    public class MoveToMapRegionBehavior : BindableBehavior<MauiMap>
+    public class MoveToRegionBehavior : BindableBehavior<MauiMap>
     {
         public static readonly BindableProperty RequestProperty = BindableProperty.Create(
-            "Request", typeof(MoveToRegionRequest), typeof(MoveToMapRegionBehavior), default(MoveToRegionRequest), BindingMode.OneWay,
+            "Request", typeof(MoveToRegionRequest), typeof(MoveToRegionBehavior), default(MoveToRegionRequest), BindingMode.OneWay,
             propertyChanged: OnMoveToRegionChanged);
 
         public MoveToRegionRequest Request
@@ -16,7 +16,7 @@ namespace Kris.Client.Behaviors
 
         private static void OnMoveToRegionChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            (bindable as MoveToMapRegionBehavior)?.OnMoveToRegionChanged(oldValue as MoveToRegionRequest, newValue as MoveToRegionRequest);
+            (bindable as MoveToRegionBehavior)?.OnMoveToRegionChanged(oldValue as MoveToRegionRequest, newValue as MoveToRegionRequest);
         }
 
         private void OnMoveToRegionChanged(MoveToRegionRequest oldValue, MoveToRegionRequest newValue)

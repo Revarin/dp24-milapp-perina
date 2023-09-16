@@ -3,27 +3,37 @@
     public class GpsService : IGpsService
     {
         public event EventHandler<GpsLocationEventArgs> RaiseGpsLocationEvent;
-        
+
         public bool IsListening { get; set; }
 
         private CancellationTokenSource _listenerCancelTokenSource;
         private CancellationTokenSource _requestCancelTokenSource;
         private bool _isCheckingLocation;
 
-        public async Task StartListeningAsync(int millisecondsDelay, int millisecondsTimeout)
+        private int? _delay;
+        private int? _timeout;
+
+        public void SetupListener(int millisecondsDelay, int millisecondsTimeout)
         {
+            _delay = millisecondsDelay;
+            _timeout = millisecondsTimeout;
+        }
+
+        public async Task StartListeningAsync()
+        {
+            if (!_delay.HasValue || !_timeout.HasValue) throw new Exception("Call SetupListener before starting listening");
+
             _listenerCancelTokenSource = new CancellationTokenSource();
             IsListening = true;
 
-            Location location = null;
             while (true)
             {
-                location = await GetGpsLocationAsync(millisecondsTimeout);
+                Location location = await GetGpsLocationAsync(_timeout.Value);
                 if (location != null)
                 {
-                    OnRaiseGpsLocationEvent(new GpsLocationEventArgs(location));
+                    OnRaiseGpsLocationEvent(new GpsLocationEventArgs(location, _delay.Value));
                 }
-                await Task.Delay(millisecondsDelay);
+                await Task.Delay(_delay.Value);
             }
         }
 
