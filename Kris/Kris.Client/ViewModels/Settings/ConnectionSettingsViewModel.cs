@@ -2,12 +2,15 @@
 using System.Windows.Input;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core.Extensions;
+using Kris.Client.Common;
 using Kris.Client.Data;
 
 namespace Kris.Client.ViewModels
 {
     public class ConnectionSettingsViewModel : ViewModelBase
     {
+        private readonly IPreferencesStore _preferencesDataStore;
+
         private GpsIntervalItem _gpsIntervalselectedItem;
         public GpsIntervalItem GpsIntervalSelectedItem
         {
@@ -23,18 +26,25 @@ namespace Kris.Client.ViewModels
 
         public ICommand SelectedIndexChangedCommand { get; init; }
 
-        public ConnectionSettingsViewModel(IDataSource<GpsIntervalItem> gpsItervalDataSource)
+        public ConnectionSettingsViewModel(IPreferencesStore preferencesStore, IDataSource<GpsIntervalItem> gpsItervalDataSource)
         {
-            GpsIntervalItems = gpsItervalDataSource.Get().ToObservableCollection();
-            GpsIntervalSelectedItem = GpsIntervalItems.Single(p => p.Value == 10000);
+            _preferencesDataStore = preferencesStore;
 
             SelectedIndexChangedCommand = new Command(OnSelectedIndexChanged);
+
+            var currentGpsInterval = _preferencesDataStore.Get(Constants.PreferencesStore.SettingsGpsInterval, Constants.DefaultSettings.GpsInterval);
+
+            GpsIntervalItems = gpsItervalDataSource.Get().ToObservableCollection();
+            GpsIntervalSelectedItem = GpsIntervalItems.Single(p => p.Value == currentGpsInterval);
         }
 
         private void OnSelectedIndexChanged()
         {
+            // DEBUG
             var toast = Toast.Make($"{GpsIntervalSelectedItem.Display}: {GpsIntervalSelectedItem.Value}");
             toast.Show();
+
+            _preferencesDataStore.Set(Constants.PreferencesStore.SettingsGpsInterval, GpsIntervalSelectedItem.Value);
         }
     }
 }

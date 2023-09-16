@@ -33,6 +33,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<IAlertService, AlertService>();
             builder.Services.AddSingleton<IPermissionsService, PermissionsService>();
             builder.Services.AddSingleton<INavigationService, NavigationService>();
+            builder.Services.AddSingleton<IGpsService, GpsService>();
 
             return builder;
         }
