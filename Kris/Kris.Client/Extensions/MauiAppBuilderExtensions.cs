@@ -2,6 +2,8 @@
 using Kris.Client.Data;
 using Kris.Client.ViewModels;
 
+using MauiMap = Microsoft.Maui.Controls.Maps.Map;
+
 namespace Kris.Client
 {
     public static class MauiAppBuilderExtensions
@@ -41,6 +43,18 @@ namespace Kris.Client
         public static MauiAppBuilder RegisterDataSources(this MauiAppBuilder builder)
         {
             builder.Services.AddTransient<IDataSource<GpsIntervalItem>, GpsIntervalDataSource>();
+
+            return builder;
+        }
+
+        public static MauiAppBuilder ConfigureHandlers(this MauiAppBuilder builder)
+        {
+            builder.ConfigureMauiHandlers(handlers =>
+            {
+#if ANDROID || IOS || MACCATALYST
+                handlers.AddHandler<MauiMap, CustomMapHandler>();
+#endif
+            });
 
             return builder;
         }

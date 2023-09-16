@@ -5,6 +5,7 @@ using Kris.Client.Common;
 using CommunityToolkit.Maui.Alerts;
 using System.Collections.ObjectModel;
 using Microsoft.Maui.Controls.Maps;
+using Kris.Client.Data;
 
 namespace Kris.Client.ViewModels
 {
@@ -20,12 +21,13 @@ namespace Kris.Client.ViewModels
             get { return _currentRegion; }
             set { SetPropertyValue(ref _currentRegion, value); }
         }
-        private ObservableCollection<Pin> _pinsSource;
-        public ObservableCollection<Pin> PinsSource
-        {
-            get { return _pinsSource; }
-            set { SetPropertyValue(ref _pinsSource, value); }
-        }
+        //private ObservableCollection<MapPin> _pinsSource;
+        //public ObservableCollection<MapPin> PinsSource
+        //{
+        //    get { return _pinsSource; }
+        //    set { SetPropertyValue(ref _pinsSource, value); }
+        //}
+        public ObservableCollection<MapPin> PinsSource { get; } = new();
         public MoveToRegionRequest MoveToRegion { get; init; } = new MoveToRegionRequest();
 
         public ICommand LoadedCommand { get; init; }
@@ -68,11 +70,14 @@ namespace Kris.Client.ViewModels
             var t = Toast.Make($"[{e.RequestInterval}]{e.Location}");
             await t.Show();
 
+            // TODO: Replace
             PinsSource.Clear();
-            PinsSource.Add(new Pin
+            PinsSource.Add(new MapPin
             {
                 Location = e.Location,
-                Label = "User",
+                PinType = CustomPinType.User,
+                ImageSource = ImageSource.FromFile("user.png"),
+                Name = "User",
             });
         }
     }

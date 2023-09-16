@@ -19,3 +19,4 @@ Tento soubor obsahuje odkazy na využité programové konstrukce.
 - [Alert (for DI)](https://stackoverflow.com/questions/72429055/how-to-displayalert-in-a-net-maui-viewmodel)
 - [Permissions (for DI)](https://stackoverflow.com/a/75574574)
 - [Permission info compedium](https://stackoverflow.com/questions/76275381/an-easy-way-to-check-and-request-maui-permissions-including-bluetooth)
+- [Custom map pins](https://vladislavantonyuk.github.io/articles/Customize-map-pins-in-.NET-MAUI/)
