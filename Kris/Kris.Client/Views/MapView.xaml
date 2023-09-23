@@ -5,23 +5,44 @@
              xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
              xmlns:viewModels="clr-namespace:Kris.Client.ViewModels"
              xmlns:behaviors="clr-namespace:Kris.Client.Behaviors"
+             xmlns:models="clr-namespace:Kris.Client.Data;assembly=Kris.Client.Data"
              x:Class="Kris.Client.MapView"
              x:DataType="viewModels:MapViewModel"
-             Title="Map page">
+             Shell.NavBarIsVisible="False">
+    <ContentPage.Behaviors>
+    </ContentPage.Behaviors>
     <StackLayout>
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand"
+                     Spacing="2"
+                     HeightRequest="60">
+            <Button HorizontalOptions="FillAndExpand"
+                    Text="Search">
+            </Button>
+            <Button HorizontalOptions="FillAndExpand"
+                    Text="Show user">
+                <Button.Behaviors>
+                    <toolkit:EventToCommandBehavior EventName="Clicked" Command="{Binding MoveToUserCommand}" />
+                </Button.Behaviors>
+            </Button>
+        </StackLayout>
         <maps:Map MapType="Street" IsZoomEnabled="True"
-                  VerticalOptions="FillAndExpand">
+                  VerticalOptions="FillAndExpand"
+                  ItemsSource="{Binding PinsSource}">
+            <maps:Map.ItemTemplate>
+                <DataTemplate x:DataType="{x:Type models:MapPin}">
+                    <behaviors:CustomPin Location="{Binding Location}"
+                                         Address="{Binding Address}"
+                                         Label="{Binding Name}"
+                                         ImageSource="{Binding ImageSource}"
+                                         Type="Place" />
+                </DataTemplate>
+            </maps:Map.ItemTemplate>
             <maps:Map.Behaviors>
                 <behaviors:CurrentRegionBehavior Value="{Binding CurrentRegion}" Cache="True" CachePeriod="2000" />
-                <behaviors:MoveToMapRegionBehavior Request="{Binding MoveToRegion}" />
+                <behaviors:MoveToRegionBehavior Request="{Binding MoveToRegion}" />
                 <toolkit:EventToCommandBehavior EventName="Loaded" Command="{Binding LoadedCommand}" />
-                <toolkit:EventToCommandBehavior EventName="Unloaded" Command="{Binding UnloadedCommand}" />
             </maps:Map.Behaviors>
         </maps:Map>
-        <Button Text="Test">
-            <Button.Behaviors>
-                <toolkit:EventToCommandBehavior EventName="Clicked" Command="{Binding TestCommand}" />
-            </Button.Behaviors>
-        </Button>
     </StackLayout>
 </ContentPage>

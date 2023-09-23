@@ -56,6 +56,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Kris.Client.Common\Kris.Client.Common.csproj" />
+	  <ProjectReference Include="..\Kris.Client.Data\Kris.Client.Data.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -68,12 +69,22 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Views\Settings\ConnectionSettingsView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\MenuView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\TestView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\MapView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Misc\" />
 	</ItemGroup>
 
 </Project>
