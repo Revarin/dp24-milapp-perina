@@ -40,13 +40,9 @@ namespace Kris.Client.ViewModels
             GpsIntervalSelectedItem = GpsIntervalItems.Single(p => p.Value == currentGpsInterval);
         }
 
-        private async void OnSelectedIndexChanged()
+        private void OnSelectedIndexChanged()
         {
             var current = GpsIntervalSelectedItem;
-
-            // DEBUG
-            var toast = Toast.Make($"{current.Display}: {current.Value}");
-            await toast.Show();
 
             _preferencesDataStore.Set(Constants.PreferencesStore.SettingsGpsInterval, current.Value);
             _gpsService.SetupListener(current.Value, current.Value);

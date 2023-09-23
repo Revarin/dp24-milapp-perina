@@ -1,4 +1,6 @@
-﻿namespace Kris.Client.Data
+﻿using System.ComponentModel;
+
+namespace Kris.Client.Data
 {
     public class MapPin : MapObject
     {

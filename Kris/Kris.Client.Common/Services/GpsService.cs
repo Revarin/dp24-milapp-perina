@@ -82,5 +82,25 @@
             var raiseEvent = RaiseGpsLocationEvent;
             raiseEvent?.Invoke(this, e);
         }
+
+        public async Task<Location> GetLastGpsLocationAsync()
+        {
+            return await Geolocation.Default.GetLastKnownLocationAsync();
+        }
+
+        public async Task<bool> IsGpsEnabled()
+        {
+            try
+            {
+                GeolocationRequest request = new GeolocationRequest(GeolocationAccuracy.Lowest, TimeSpan.FromSeconds(2));
+                _ = await Geolocation.Default.GetLocationAsync(request);
+            }
+            catch (FeatureNotEnabledException)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

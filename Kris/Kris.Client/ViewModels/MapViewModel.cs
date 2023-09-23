@@ -1,11 +1,11 @@
 ﻿using System.Windows.Input;
+using System.Collections.ObjectModel;
 using Microsoft.Maui.Maps;
+using CommunityToolkit.Maui.Alerts;
 using Kris.Client.Behaviors;
 using Kris.Client.Common;
-using CommunityToolkit.Maui.Alerts;
-using System.Collections.ObjectModel;
-using Microsoft.Maui.Controls.Maps;
 using Kris.Client.Data;
+using System.ComponentModel;
 
 namespace Kris.Client.ViewModels
 {
@@ -21,16 +21,11 @@ namespace Kris.Client.ViewModels
             get { return _currentRegion; }
             set { SetPropertyValue(ref _currentRegion, value); }
         }
-        //private ObservableCollection<MapPin> _pinsSource;
-        //public ObservableCollection<MapPin> PinsSource
-        //{
-        //    get { return _pinsSource; }
-        //    set { SetPropertyValue(ref _pinsSource, value); }
-        //}
         public ObservableCollection<MapPin> PinsSource { get; } = new();
         public MoveToRegionRequest MoveToRegion { get; init; } = new MoveToRegionRequest();
 
         public ICommand LoadedCommand { get; init; }
+        public ICommand MoveToUserCommand { get; init; }
 
         public MapViewModel(IPermissionsService permissionsService, IPreferencesStore preferencesStore, IGpsService gpsService)
         {
@@ -40,6 +35,7 @@ namespace Kris.Client.ViewModels
 
             CurrentRegion = new MapSpan(new Location(), 10, 10);
             LoadedCommand = new Command(OnLoaded);
+            MoveToUserCommand = new Command(OnMoveToUser);
         }
 
         private async void OnLoaded()
@@ -51,7 +47,7 @@ namespace Kris.Client.ViewModels
             }
 
             var locationPermission = await _permissionsService.CheckPermissionAsync<Permissions.LocationWhenInUse>();
-            if (locationPermission.HasFlag(PermissionStatus.Granted))
+            if (locationPermission.HasFlag(PermissionStatus.Granted) && await _gpsService.IsGpsEnabled())
             {
                 var gpsInterval = _preferencesStore.Get(Constants.PreferencesStore.SettingsGpsInterval, Constants.DefaultSettings.GpsInterval);
 
@@ -62,16 +58,35 @@ namespace Kris.Client.ViewModels
                     await _gpsService.StartListeningAsync();
                 }
             }
+            else
+            {
+                var gpsUnavailableToast = Toast.Make($"GPS service is not available.");
+                await gpsUnavailableToast.Show();
+            }
+        }
+
+        private void OnMoveToUser()
+        {
+            var user = PinsSource.SingleOrDefault(p => p.PinType == CustomPinType.User);
+            if (user != null)
+            {
+                var userRegion = MapSpan.FromCenterAndRadius(user.Location, CurrentRegion.Radius);
+                MoveToRegion.Execute(userRegion);
+            }
         }
 
         private async void OnGpsNewLocation(object sender, GpsLocationEventArgs e)
         {
-            // DEBUG
-            var t = Toast.Make($"[{e.RequestInterval}]{e.Location}");
+#if DEBUG
+            var t = Toast.Make($"LAT:{e.Location.Latitude} LONG:{e.Location.Longitude} ALT:{e.Location.Altitude}");
             await t.Show();
+#endif
 
-            // TODO: Replace
-            PinsSource.Clear();
+            var user = PinsSource.SingleOrDefault(p => p.PinType == CustomPinType.User);
+            if (user != null)
+            {
+                PinsSource.Remove(user);
+            }
             PinsSource.Add(new MapPin
             {
                 Location = e.Location,

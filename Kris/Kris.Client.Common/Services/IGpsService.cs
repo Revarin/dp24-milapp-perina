@@ -10,5 +10,7 @@
         void StopListening();
         Task<Location> GetGpsLocationAsync(int millisecondsTimeout);
         void CancelRequest();
+        Task<Location> GetLastGpsLocationAsync();
+        Task<bool> IsGpsEnabled();
     }
 }

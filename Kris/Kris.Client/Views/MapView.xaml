@@ -8,10 +8,24 @@
              xmlns:models="clr-namespace:Kris.Client.Data;assembly=Kris.Client.Data"
              x:Class="Kris.Client.MapView"
              x:DataType="viewModels:MapViewModel"
-             Title="Map page">
+             Shell.NavBarIsVisible="False">
     <ContentPage.Behaviors>
     </ContentPage.Behaviors>
     <StackLayout>
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand"
+                     Spacing="2"
+                     HeightRequest="60">
+            <Button HorizontalOptions="FillAndExpand"
+                    Text="Search">
+            </Button>
+            <Button HorizontalOptions="FillAndExpand"
+                    Text="Show user">
+                <Button.Behaviors>
+                    <toolkit:EventToCommandBehavior EventName="Clicked" Command="{Binding MoveToUserCommand}" />
+                </Button.Behaviors>
+            </Button>
+        </StackLayout>
         <maps:Map MapType="Street" IsZoomEnabled="True"
                   VerticalOptions="FillAndExpand"
                   ItemsSource="{Binding PinsSource}">
