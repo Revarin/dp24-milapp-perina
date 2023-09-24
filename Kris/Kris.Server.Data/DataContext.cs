@@ -1,0 +1,10 @@
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Kris.Server.Data
+{
+    public class DataContext : DbContext
+    {
+        public DbSet<UserEntity> Users { get; set; }
+        public DbSet<LocationRecordEntity> LocationRecords { get; set; }
+    }
+}

@@ -1,4 +1,6 @@
 
+using Kris.Server.Data;
+
 namespace Kris.Server
 {
     public class Program
@@ -8,11 +10,14 @@ namespace Kris.Server
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDbContext<DataContext>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<ILocationRecordRepository, LocationRecordRepository>();
 
             var app = builder.Build();
 
