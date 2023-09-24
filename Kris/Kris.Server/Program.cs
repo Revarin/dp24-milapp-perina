@@ -1,4 +1,4 @@
-
+using Microsoft.EntityFrameworkCore;
 using Kris.Server.Data;
 
 namespace Kris.Server
@@ -15,7 +15,10 @@ namespace Kris.Server
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddDbContext<DataContext>();
+            builder.Services.AddDbContext<DataContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<ILocationRecordRepository, LocationRecordRepository>();
 
