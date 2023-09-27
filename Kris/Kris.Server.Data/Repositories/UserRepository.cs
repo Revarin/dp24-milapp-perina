@@ -5,5 +5,10 @@
         public UserRepository(DataContext dataContext) : base(dataContext)
         {
         }
+
+        public bool UserExists(string name)
+        {
+            return _context.Users.Any(x => x.Name == name);
+        }
     }
 }

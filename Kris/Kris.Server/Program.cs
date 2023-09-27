@@ -19,8 +19,11 @@ namespace Kris.Server
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<ILocationRecordRepository, LocationRecordRepository>();
+
+            builder.Services.AddScoped<IUserService, UserService>();
 
             var app = builder.Build();
 

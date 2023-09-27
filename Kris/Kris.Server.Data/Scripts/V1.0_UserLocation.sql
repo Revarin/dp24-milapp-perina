@@ -1,6 +1,5 @@
 ﻿CREATE TABLE [USERS] (
 	[ID] int IDENTITY(1,1),
-	[IDENTIFICATION] varchar(64) NOT NULL,
 	[NAME] varchar(64) NOT NULL,
 	[CREATED_DATE] datetime NOT NULL,
 
