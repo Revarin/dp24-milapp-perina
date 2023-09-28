@@ -21,9 +21,10 @@ namespace Kris.Server
             });
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
-            builder.Services.AddScoped<ILocationRecordRepository, LocationRecordRepository>();
+            builder.Services.AddScoped<IUserLocationRepository, UserLocationRepository>();
 
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<ILocationService, LocationService>();
 
             var app = builder.Build();
 

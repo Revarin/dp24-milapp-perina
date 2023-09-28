@@ -2,7 +2,7 @@
 
 namespace Kris.Server
 {
-    public class UserService : IUserService
+    public class UserService : ServiceBase, IUserService
     {
         private readonly IUserRepository _userRepo;
 
@@ -13,12 +13,7 @@ namespace Kris.Server
 
         public UserEntity CreateUser(string name)
         {
-            if (name == null)
-            {
-                // TODO
-            }
-
-            if (_userRepo.UserExists(name)) return null;
+            if (_userRepo.UserExists(name)) return SetErrorMessage<UserEntity>("Username already exists");
 
             var newUser = _userRepo.Insert(new UserEntity
             {
@@ -32,8 +27,8 @@ namespace Kris.Server
         {
             var user = _userRepo.Get(id);
 
-            if (user == null) return false;
-            if (_userRepo.UserExists(name)) return false;
+            if (user == null) return SetErrorMessage("User not found", false);
+            if (_userRepo.UserExists(name)) return SetErrorMessage("Username already exists", false);
 
             user.Name = name;
             _userRepo.Update(user);

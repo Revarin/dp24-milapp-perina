@@ -2,7 +2,7 @@
 
 namespace Kris.Server
 {
-    public interface IUserService
+    public interface IUserService : IServiceBase
     {
         UserEntity CreateUser(string name);
         bool UpdateUserName(int id, string name);

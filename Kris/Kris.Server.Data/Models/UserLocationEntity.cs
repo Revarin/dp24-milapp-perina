@@ -2,8 +2,8 @@
 
 namespace Kris.Server.Data
 {
-    [Table("LOCATION_RECORDS")]
-    public class LocationRecordEntity : EntityBase<int>
+    [Table("USER_LOCATIONS")]
+    public class UserLocationEntity : EntityBase<int>
     {
         [Column("USER_ID")]
         public int UserId { get; set; }

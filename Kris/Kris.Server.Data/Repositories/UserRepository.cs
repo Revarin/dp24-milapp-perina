@@ -10,5 +10,10 @@
         {
             return _context.Users.Any(x => x.Name == name);
         }
+
+        public bool UserExists(int id)
+        {
+            return _context.Users.Any(x => x.Id == id);
+        }
     }
 }
