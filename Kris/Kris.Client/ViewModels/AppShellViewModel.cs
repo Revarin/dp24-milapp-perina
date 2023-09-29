@@ -1,13 +1,12 @@
 ﻿using System.Windows.Input;
-using Kris.Client.Common;
+using CommunityToolkit.Mvvm.Messaging;
+using Kris.Client.Core;
 
 namespace Kris.Client.ViewModels
 {
     public class AppShellViewModel : ViewModelBase
     {
-        private readonly INavigationService _navigationService;
-        private readonly IPermissionsService _permissionsService;
-        private readonly IAlertService _alertService;
+        private readonly IInitializationManager _initializationManager;
 
         public ICommand AppearingCommand { get; init; }
 
@@ -19,25 +18,22 @@ namespace Kris.Client.ViewModels
             typeof(TestView)
         };
 
-        public AppShellViewModel(INavigationService navigationService, IPermissionsService permissionsService, IAlertService alertService)
+        public AppShellViewModel(IInitializationManager initializationManager)
         {
-            _navigationService = navigationService;
-            _permissionsService = permissionsService;
-            _alertService = alertService;
+            _initializationManager = initializationManager;
 
             AppearingCommand = new Command(OnAppearing);
         }
 
         private async void OnAppearing()
         {
-            _navigationService.RegisterRoutes(_contentPages);
+            _initializationManager.InitializeNavigation(_contentPages);
 
-            // GPS permission
-            var permissionsStatus = await _permissionsService.CheckAndRequestPermissionAsync<Permissions.LocationWhenInUse>();
-            if (!permissionsStatus.HasFlag(PermissionStatus.Granted))
-            {
-                await _alertService.ShowAlertAsync(I18n.Keys.MapLocationPermissionDeniedTitle, I18n.Keys.MapLocationPermissionDeniedMessage);
-            }
+            await _initializationManager.InitializePermissionsAsync();
+
+            await _initializationManager.InitialiteUserDataAsync();
+
+            WeakReferenceMessenger.Default.Send(new AppInitializedMessage(null));
         }
     }
 }

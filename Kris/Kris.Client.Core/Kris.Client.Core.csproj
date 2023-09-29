@@ -18,8 +18,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Folder Include="Core\" />
-	  <Folder Include="Services\" />
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Kris.Client.Common\Kris.Client.Common.csproj" />
 	</ItemGroup>
 
 </Project>

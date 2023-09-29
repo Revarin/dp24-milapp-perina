@@ -1,4 +1,5 @@
 ﻿using Kris.Client.Common;
+using Kris.Client.Core;
 using Kris.Client.Data;
 using Kris.Client.ViewModels;
 
@@ -36,6 +37,8 @@ namespace Kris.Client
             builder.Services.AddSingleton<IPermissionsService, PermissionsService>();
             builder.Services.AddSingleton<INavigationService, NavigationService>();
             builder.Services.AddSingleton<IGpsService, GpsService>();
+
+            builder.Services.AddTransient<IInitializationManager, InitializationManager>();
 
             return builder;
         }

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Kris.Client.Common
+namespace Kris.Client.Core
 {
     public abstract class PreferencesBase : IPreferences
     {

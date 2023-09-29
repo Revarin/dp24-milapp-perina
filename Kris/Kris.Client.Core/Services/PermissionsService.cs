@@ -1,4 +1,4 @@
-﻿namespace Kris.Client.Common
+﻿namespace Kris.Client.Core
 {
     // Source: https://stackoverflow.com/a/75574574
     public class PermissionsService : IPermissionsService
