@@ -1,4 +1,6 @@
-﻿namespace Kris.Client.Core
+﻿using Kris.Client.Common;
+
+namespace Kris.Client.Core
 {
     public class GpsService : IGpsService
     {
@@ -7,74 +9,44 @@
         public bool IsListening { get; set; }
 
         private CancellationTokenSource _listenerCancelTokenSource;
-        private CancellationTokenSource _requestCancelTokenSource;
-        private bool _isCheckingLocation;
 
-        private int? _delay;
-        private int? _timeout;
-
-        public void SetupListener(int millisecondsDelay, int millisecondsTimeout)
+        public async Task StartListeningAsync(int delayMiliseconds, int timeoutMiliseconds)
         {
-            _delay = millisecondsDelay;
-            _timeout = millisecondsTimeout;
-        }
-
-        public async Task StartListeningAsync()
-        {
-            if (!_delay.HasValue || !_timeout.HasValue) throw new Exception("Call SetupListener before starting listening");
-
             _listenerCancelTokenSource = new CancellationTokenSource();
             IsListening = true;
 
             while (true)
             {
-                Location location = await GetGpsLocationAsync(_timeout.Value);
+                Location location = await GetGpsLocationAsync(timeoutMiliseconds);
                 if (location != null)
                 {
-                    OnRaiseGpsLocationEvent(new GpsLocationEventArgs(location, _delay.Value));
+                    OnRaiseGpsLocationEvent(new GpsLocationEventArgs(location, delayMiliseconds));
                 }
-                await Task.Delay(_delay.Value);
+                await TaskAddition.Delay(delayMiliseconds, _listenerCancelTokenSource.Token);
+
+                if (_listenerCancelTokenSource.IsCancellationRequested) break;
             }
+
+            IsListening = false;
+            _listenerCancelTokenSource.Dispose();
         }
 
-        public void StopListening()
+        public async Task StopListening()
         {
             if (_listenerCancelTokenSource != null && !_listenerCancelTokenSource.IsCancellationRequested)
             {
-                RaiseGpsLocationEvent = null;
-                IsListening = false;
                 _listenerCancelTokenSource.Cancel();
             }
+
+            await TaskAddition.DelayUntil(() => IsListening == false, 100);
         }
 
         public async Task<Location> GetGpsLocationAsync(int millisecondsTimeout)
         {
-            Location location = null;
-
-            try
-            {
-                _isCheckingLocation = true;
-
-                var request = new GeolocationRequest(GeolocationAccuracy.Best, TimeSpan.FromMilliseconds(millisecondsTimeout));
-
-                _requestCancelTokenSource = new CancellationTokenSource();
-
-                location = await Geolocation.Default.GetLocationAsync(request, _requestCancelTokenSource.Token);
-            }
-            finally
-            {
-                _isCheckingLocation = false;
-            }
+            var request = new GeolocationRequest(GeolocationAccuracy.Best, TimeSpan.FromMilliseconds(millisecondsTimeout));
+            var location = await Geolocation.Default.GetLocationAsync(request);
 
             return location;
-        }
-
-        public void CancelRequest()
-        {
-            if (_isCheckingLocation && _requestCancelTokenSource != null && !_requestCancelTokenSource.IsCancellationRequested)
-            {
-                _requestCancelTokenSource.Cancel();
-            }
         }
 
         private void OnRaiseGpsLocationEvent(GpsLocationEventArgs e)

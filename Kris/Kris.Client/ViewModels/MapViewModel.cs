@@ -64,8 +64,7 @@ namespace Kris.Client.ViewModels
                 _gpsService.RaiseGpsLocationEvent += OnGpsNewLocation;
                 if (!_gpsService.IsListening)
                 {
-                    _gpsService.SetupListener(_connectionSettings.GpsInterval, _connectionSettings.GpsInterval);
-                    await _gpsService.StartListeningAsync();
+                    await _gpsService.StartListeningAsync(_connectionSettings.GpsInterval, _connectionSettings.GpsInterval);
                 }
             }
             else
@@ -77,8 +76,13 @@ namespace Kris.Client.ViewModels
 
         private async void OnConnectionSettingsChanged(object sender, ConnectionSettingsChangedMessage message)
         {
-            var t = Toast.Make("Connection settings changed");
-            await t.Show();
+            _connectionSettings = message.Settings;
+
+            if (message.GpsIntervalChanged)
+            {
+                await _gpsService.StopListening();
+                await _gpsService.StartListeningAsync(_connectionSettings.GpsInterval, _connectionSettings.GpsInterval);
+            }
         }
 
         private void OnMoveToUser()
@@ -97,7 +101,6 @@ namespace Kris.Client.ViewModels
             var t = Toast.Make($"LAT:{e.Location.Latitude} LONG:{e.Location.Longitude} ALT:{e.Location.Altitude}");
             await t.Show();
 #endif
-
             var user = PinsSource.SingleOrDefault(p => p.PinType == CustomPinType.User);
             if (user != null)
             {
