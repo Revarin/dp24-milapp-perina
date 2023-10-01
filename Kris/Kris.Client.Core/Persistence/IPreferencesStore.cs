@@ -8,8 +8,6 @@ namespace Kris.Client.Core
         MapSpan GetLastRegion();
         void SetLastRegion(MapSpan value);
 
-        UserSettings GetUserSettings();
-        void SetUserSettings(UserSettings value);
         ConnectionSettings GetConnectionSettings();
         void SetConnectionSettings(ConnectionSettings value);
     }

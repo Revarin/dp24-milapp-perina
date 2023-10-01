@@ -8,15 +8,11 @@
             public static readonly string LastRegionDistance = "LastRegionDistance";
         }
 
-        public static class UserSettings
-        {
-            public static readonly string UserId = "UserSettingsUserId";
-            public static readonly string UserName = "UserSettingsUserName";
-        }
-
         public static class ConnectionSettings
         {
             public static readonly string GpsInterval = "ConnectionSettingsGpsInterval";
+            public static readonly string UserId = "UserSettingsUserId";
+            public static readonly string UserName = "UserSettingsUserName";
         }
 
         public static class DefaultSettings

@@ -42,6 +42,7 @@ namespace Kris.Client.ViewModels
             MoveToUserCommand = new Command(OnMoveToUser);
 
             _messageService.Register<ShellInitializedMessage>(this, OnShellInitialized);
+            _messageService.Register<ConnectionSettingsChangedMessage>(this, OnConnectionSettingsChanged);
 
             _connectionSettings = _preferencesStore.GetConnectionSettings();
         }
@@ -55,7 +56,7 @@ namespace Kris.Client.ViewModels
             }
         }
 
-        private async void OnShellInitialized(object sender, ShellInitializedMessage _)
+        private async void OnShellInitialized(object sender, ShellInitializedMessage message)
         {
             var locationPermission = await _permissionsService.CheckPermissionAsync<Permissions.LocationWhenInUse>();
             if (locationPermission.HasFlag(PermissionStatus.Granted) && await _gpsService.IsGpsEnabled(2))
@@ -72,6 +73,12 @@ namespace Kris.Client.ViewModels
                 var gpsUnavailableToast = Toast.Make($"GPS service is not available.");
                 await gpsUnavailableToast.Show();
             }
+        }
+
+        private async void OnConnectionSettingsChanged(object sender, ConnectionSettingsChangedMessage message)
+        {
+            var t = Toast.Make("Connection settings changed");
+            await t.Show();
         }
 
         private void OnMoveToUser()

@@ -27,31 +27,20 @@ namespace Kris.Client.Core
                 Distance.FromKilometers(JsonConvert.DeserializeObject<double>(distance)));
         }
 
-        public UserSettings GetUserSettings()
-        {
-            return new UserSettings
-            {
-                UserId = Get<int>(Constants.UserSettings.UserId, -1),
-                UserName = Get<string>(Constants.UserSettings.UserName)
-            };
-        }
-
-        public void SetUserSettings(UserSettings settings)
-        {
-            Set<int>(Constants.UserSettings.UserId, settings.UserId);
-            Set<string>(Constants.UserSettings.UserName, settings.UserName);
-        }
-
         public ConnectionSettings GetConnectionSettings()
         {
             return new ConnectionSettings
             {
-                GpsInterval = Get<int>(Constants.ConnectionSettings.GpsInterval, -1)
+                UserId = Get<int>(Constants.ConnectionSettings.UserId, -1),
+                UserName = Get<string>(Constants.ConnectionSettings.UserName),
+                GpsInterval = Get<int>(Constants.ConnectionSettings.GpsInterval, Constants.DefaultSettings.GpsInterval)
             };
         }
 
         public void SetConnectionSettings(ConnectionSettings settings)
         {
+            Set<int>(Constants.ConnectionSettings.UserId, settings.UserId);
+            Set<string>(Constants.ConnectionSettings.UserName, settings.UserName);
             Set<int>(Constants.ConnectionSettings.GpsInterval, settings.GpsInterval);
         }
     }

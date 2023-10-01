@@ -57,18 +57,18 @@ namespace Kris.Client.ViewModels
 
         private async Task LoadUserData()
         {
-            var userSettings = _preferencesStore.GetUserSettings();
+            var connectionSettings = _preferencesStore.GetConnectionSettings();
 
-            if (userSettings.UserId < 0 || string.IsNullOrEmpty(userSettings.UserName))
+            if (connectionSettings.UserId < 0 || string.IsNullOrEmpty(connectionSettings.UserName))
             {
                 var newUserName = await _alertService.ShowPromptAsync(I18n.Keys.NewUserNamePromptTitle, I18n.Keys.NewUserNamePromptMessage, cancel: null);
 
                 // TODO: Send to server
 
-                _preferencesStore.SetUserSettings(new UserSettings
+                _preferencesStore.SetConnectionSettings(new ConnectionSettings
                 {
                     UserId = 0,
-                    UserName = newUserName
+                    UserName = newUserName,
                 });
             }
         }

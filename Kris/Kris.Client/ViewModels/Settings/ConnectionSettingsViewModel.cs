@@ -9,14 +9,14 @@ namespace Kris.Client.ViewModels
 {
     public class ConnectionSettingsViewModel : ViewModelBase
     {
-        private readonly IPreferencesStore _preferencesDataStore;
-        private readonly IGpsService _gpsService;
+        private readonly IMessageService _messageService;
+        private readonly IPreferencesStore _preferencesStore;
 
-        private GpsIntervalItem _gpsIntervalselectedItem;
-        public GpsIntervalItem GpsIntervalSelectedItem
+        private string _userName;
+        public string UserName
         {
-            get { return _gpsIntervalselectedItem; }
-            set { SetPropertyValue(ref _gpsIntervalselectedItem, value); }
+            get { return _userName; }
+            set { SetPropertyValue(ref _userName, value); }
         }
         private ObservableCollection<GpsIntervalItem> _gpsIntervalitems;
         public ObservableCollection<GpsIntervalItem> GpsIntervalItems
@@ -24,28 +24,62 @@ namespace Kris.Client.ViewModels
             get { return _gpsIntervalitems; }
             set { SetPropertyValue(ref _gpsIntervalitems, value); }
         }
-
-        public ICommand SelectedIndexChangedCommand { get; init; }
-
-        public ConnectionSettingsViewModel(IPreferencesStore preferencesStore, IDataSource<GpsIntervalItem> gpsItervalDataSource, IGpsService gpsService)
+        private GpsIntervalItem _gpsIntervalselectedItem;
+        public GpsIntervalItem GpsIntervalSelectedItem
         {
-            _preferencesDataStore = preferencesStore;
-            _gpsService = gpsService;
-
-            SelectedIndexChangedCommand = new Command(OnSelectedIndexChanged);
-
-            var currentGpsInterval = _preferencesDataStore.Get(Constants.ConnectionSettings.GpsInterval, Constants.DefaultSettings.GpsInterval);
-
-            GpsIntervalItems = gpsItervalDataSource.Get().ToObservableCollection();
-            GpsIntervalSelectedItem = GpsIntervalItems.Single(p => p.Value == currentGpsInterval);
+            get { return _gpsIntervalselectedItem; }
+            set { SetPropertyValue(ref _gpsIntervalselectedItem, value); }
         }
 
-        private void OnSelectedIndexChanged()
-        {
-            var current = GpsIntervalSelectedItem;
+        public ICommand UserNameCompletedCommand { get; init; }
+        public ICommand GpsIntervalSelectedIndexChangedCommand { get; init; }
 
-            _preferencesDataStore.Set(Constants.ConnectionSettings.GpsInterval, current.Value);
-            _gpsService.SetupListener(current.Value, current.Value);
+        private ConnectionSettings _connectionSettings;
+
+        public ConnectionSettingsViewModel(IMessageService messageService, IPreferencesStore preferencesStore,
+            IDataSource<GpsIntervalItem> gpsItervalDataSource)
+        {
+            _messageService = messageService;
+            _preferencesStore = preferencesStore;
+
+            UserNameCompletedCommand = new Command(OnUserNameCompleted);
+            GpsIntervalSelectedIndexChangedCommand = new Command(OnGpsIntervalSelectedIndexChanged);
+
+            _connectionSettings = _preferencesStore.GetConnectionSettings();
+
+            UserName = _connectionSettings.UserName;
+            GpsIntervalItems = gpsItervalDataSource.Get().ToObservableCollection();
+            GpsIntervalSelectedItem = GpsIntervalItems.Single(p => p.Value == _connectionSettings.GpsInterval);
+        }
+
+        private void OnUserNameCompleted()
+        {
+            var newName = UserName;
+
+            _connectionSettings.UserName = newName;
+            _preferencesStore.SetConnectionSettings(_connectionSettings);
+
+            // TODO: Send to server
+
+            _messageService.Send(new ConnectionSettingsChangedMessage
+            {
+                UserNameChanged = true,
+                Settings = _connectionSettings
+            });
+        }
+
+        private void OnGpsIntervalSelectedIndexChanged()
+        {
+            var newInterval = GpsIntervalSelectedItem;
+
+            _connectionSettings.GpsInterval = newInterval.Value;
+            _preferencesStore.SetConnectionSettings(_connectionSettings);
+
+            _messageService.Send(new ConnectionSettingsChangedMessage
+            {
+                GpsIntervalChanged = true,
+                Settings = _connectionSettings
+            });
         }
     }
 }

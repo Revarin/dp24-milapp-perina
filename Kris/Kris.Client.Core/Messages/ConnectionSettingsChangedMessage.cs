@@ -1,0 +1,11 @@
+﻿using Kris.Client.Common;
+
+namespace Kris.Client.Core
+{
+    public class ConnectionSettingsChangedMessage : MessageBase
+    {
+        public bool UserNameChanged { get; set; }
+        public bool GpsIntervalChanged { get; set; }
+        public ConnectionSettings Settings { get; set; }
+    }
+}
