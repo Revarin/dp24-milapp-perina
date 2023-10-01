@@ -18,8 +18,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Folder Include="Core\" />
-	  <Folder Include="Services\" />
+	  <PackageReference Include="Microsoft.Maui.Maps" Version="7.0.92" />
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Kris.Client.Common\Kris.Client.Common.csproj" />
 	</ItemGroup>
 
 </Project>

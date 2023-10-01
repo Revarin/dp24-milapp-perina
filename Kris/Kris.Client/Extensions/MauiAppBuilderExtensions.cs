@@ -1,4 +1,4 @@
-﻿using Kris.Client.Common;
+﻿using Kris.Client.Core;
 using Kris.Client.Data;
 using Kris.Client.ViewModels;
 

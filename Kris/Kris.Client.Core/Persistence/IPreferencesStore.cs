@@ -1,6 +1,6 @@
 ﻿using Microsoft.Maui.Maps;
 
-namespace Kris.Client.Common
+namespace Kris.Client.Core
 {
     public interface IPreferencesStore : IPreferences
     {

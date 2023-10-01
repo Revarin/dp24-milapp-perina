@@ -5,6 +5,7 @@ using CommunityToolkit.Maui.Alerts;
 using Kris.Client.Behaviors;
 using Kris.Client.Common;
 using Kris.Client.Data;
+using Kris.Client.Core;
 
 namespace Kris.Client.ViewModels
 {

@@ -1,7 +1,8 @@
 ﻿using Microsoft.Maui.Maps;
 using Newtonsoft.Json;
+using Kris.Client.Common;
 
-namespace Kris.Client.Common
+namespace Kris.Client.Core
 {
     public class PreferencesStore : PreferencesBase, IPreferencesStore
     {

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using Microsoft.Maui.Maps;
+using Kris.Client.Core;
 using Kris.Client.Common;
 
 using MauiMap = Microsoft.Maui.Controls.Maps.Map;

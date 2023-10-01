@@ -1,8 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
-using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core.Extensions;
 using Kris.Client.Common;
+using Kris.Client.Core;
 using Kris.Client.Data;
 
 namespace Kris.Client.ViewModels

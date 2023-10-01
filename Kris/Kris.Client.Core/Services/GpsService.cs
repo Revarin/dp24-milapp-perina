@@ -1,4 +1,4 @@
-﻿namespace Kris.Client.Common
+﻿namespace Kris.Client.Core
 {
     public class GpsService : IGpsService
     {

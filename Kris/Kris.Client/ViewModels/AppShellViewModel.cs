@@ -1,4 +1,5 @@
 ﻿using System.Windows.Input;
+using Kris.Client.Core;
 using Kris.Client.Common;
 
 namespace Kris.Client.ViewModels
