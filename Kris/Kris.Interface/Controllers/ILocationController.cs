@@ -1,7 +1,6 @@
-﻿using Kris.Interface;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Kris.Server
+namespace Kris.Interface
 {
     public interface ILocationController
     {
