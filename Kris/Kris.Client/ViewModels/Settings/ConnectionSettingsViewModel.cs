@@ -34,7 +34,7 @@ namespace Kris.Client.ViewModels
 
             SelectedIndexChangedCommand = new Command(OnSelectedIndexChanged);
 
-            var currentGpsInterval = _preferencesDataStore.Get(Constants.PreferencesStore.SettingsGpsInterval, Constants.DefaultSettings.GpsInterval);
+            var currentGpsInterval = _preferencesDataStore.Get(Constants.ConnectionSettings.GpsInterval, Constants.DefaultSettings.GpsInterval);
 
             GpsIntervalItems = gpsItervalDataSource.Get().ToObservableCollection();
             GpsIntervalSelectedItem = GpsIntervalItems.Single(p => p.Value == currentGpsInterval);
@@ -44,7 +44,7 @@ namespace Kris.Client.ViewModels
         {
             var current = GpsIntervalSelectedItem;
 
-            _preferencesDataStore.Set(Constants.PreferencesStore.SettingsGpsInterval, current.Value);
+            _preferencesDataStore.Set(Constants.ConnectionSettings.GpsInterval, current.Value);
             _gpsService.SetupListener(current.Value, current.Value);
         }
     }

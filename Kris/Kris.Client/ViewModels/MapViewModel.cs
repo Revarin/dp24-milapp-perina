@@ -11,6 +11,7 @@ namespace Kris.Client.ViewModels
 {
     public class MapViewModel : ViewModelBase
     {
+        private readonly IMessageService _messageService;
         private readonly IPermissionsService _permissionsService;
         private readonly IPreferencesStore _preferencesStore;
         private readonly IGpsService _gpsService;
@@ -27,8 +28,11 @@ namespace Kris.Client.ViewModels
         public ICommand LoadedCommand { get; init; }
         public ICommand MoveToUserCommand { get; init; }
 
-        public MapViewModel(IPermissionsService permissionsService, IPreferencesStore preferencesStore, IGpsService gpsService)
+        private ConnectionSettings _connectionSettings;
+
+        public MapViewModel(IMessageService messageService, IPermissionsService permissionsService, IPreferencesStore preferencesStore, IGpsService gpsService)
         {
+            _messageService = messageService;
             _permissionsService = permissionsService;
             _preferencesStore = preferencesStore;
             _gpsService = gpsService;
@@ -36,25 +40,30 @@ namespace Kris.Client.ViewModels
             CurrentRegion = new MapSpan(new Location(), 10, 10);
             LoadedCommand = new Command(OnLoaded);
             MoveToUserCommand = new Command(OnMoveToUser);
+
+            _messageService.Register<ShellInitializedMessage>(this, OnShellInitialized);
+
+            _connectionSettings = _preferencesStore.GetConnectionSettings();
         }
 
-        private async void OnLoaded()
+        private void OnLoaded()
         {
-            MapSpan lastRegion = _preferencesStore.Get(Constants.PreferencesStore.LastRegionKey, null);
+            var lastRegion = _preferencesStore.GetLastRegion();
             if (lastRegion != null)
             {
                 MoveToRegion.Execute(lastRegion);
             }
+        }
 
+        private async void OnShellInitialized(object sender, ShellInitializedMessage _)
+        {
             var locationPermission = await _permissionsService.CheckPermissionAsync<Permissions.LocationWhenInUse>();
-            if (locationPermission.HasFlag(PermissionStatus.Granted) && await _gpsService.IsGpsEnabled())
+            if (locationPermission.HasFlag(PermissionStatus.Granted) && await _gpsService.IsGpsEnabled(2))
             {
-                var gpsInterval = _preferencesStore.Get(Constants.PreferencesStore.SettingsGpsInterval, Constants.DefaultSettings.GpsInterval);
-
                 _gpsService.RaiseGpsLocationEvent += OnGpsNewLocation;
                 if (!_gpsService.IsListening)
                 {
-                    _gpsService.SetupListener(gpsInterval, gpsInterval);
+                    _gpsService.SetupListener(_connectionSettings.GpsInterval, _connectionSettings.GpsInterval);
                     await _gpsService.StartListeningAsync();
                 }
             }

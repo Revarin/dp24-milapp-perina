@@ -4,12 +4,8 @@
     {
         public static class PreferencesStore
         {
-            public static readonly string LastRegionKey = "LastRegionKey";
-
-            public static readonly string MapSpanLocationKey = "Location";
-            public static readonly string MapSpanDistanceKey = "Distance";
-
-            public static readonly string SettingsGpsInterval = "SettingsGpsInterval";
+            public static readonly string LastRegionLocation = "LastRegionLocation";
+            public static readonly string LastRegionDistance = "LastRegionDistance";
         }
 
         public static class UserSettings

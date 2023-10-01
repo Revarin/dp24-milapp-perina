@@ -5,8 +5,8 @@ namespace Kris.Client.Core
 {
     public interface IPreferencesStore : IPreferences
     {
-        void Set(string key, MapSpan value);
-        MapSpan Get(string key, MapSpan defaultValue = null);
+        MapSpan GetLastRegion();
+        void SetLastRegion(MapSpan value);
 
         UserSettings GetUserSettings();
         void SetUserSettings(UserSettings value);

@@ -2,6 +2,6 @@
 {
     public class ConnectionSettings
     {
-        public int GpsRequestInterval { get; set; }
+        public int GpsInterval { get; set; }
     }
 }

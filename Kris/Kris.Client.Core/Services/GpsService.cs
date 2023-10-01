@@ -88,11 +88,11 @@
             return await Geolocation.Default.GetLastKnownLocationAsync();
         }
 
-        public async Task<bool> IsGpsEnabled()
+        public async Task<bool> IsGpsEnabled(int timeoutSeconds)
         {
             try
             {
-                GeolocationRequest request = new GeolocationRequest(GeolocationAccuracy.Lowest, TimeSpan.FromSeconds(2));
+                GeolocationRequest request = new GeolocationRequest(GeolocationAccuracy.Lowest, TimeSpan.FromSeconds(timeoutSeconds));
                 _ = await Geolocation.Default.GetLocationAsync(request);
             }
             catch (FeatureNotEnabledException)

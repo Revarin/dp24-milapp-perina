@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using Microsoft.Maui.Maps;
 using Kris.Client.Core;
-using Kris.Client.Common;
 
 using MauiMap = Microsoft.Maui.Controls.Maps.Map;
 
@@ -63,7 +62,7 @@ namespace Kris.Client.Behaviors
                 Value = AssociatedObject.VisibleRegion;
                 if (Cache && DateTime.Now > _nextSave)
                 {
-                    _preferencesStore.Set(Constants.PreferencesStore.LastRegionKey, Value);
+                    _preferencesStore.SetLastRegion(Value);
                     _nextSave = _nextSave.AddMilliseconds(CachePeriod);
                 }
             }

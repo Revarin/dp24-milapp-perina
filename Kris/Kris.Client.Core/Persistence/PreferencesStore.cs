@@ -6,21 +6,21 @@ namespace Kris.Client.Core
 {
     public class PreferencesStore : PreferencesBase, IPreferencesStore
     {
-        public void Set(string key, MapSpan value)
+        public void SetLastRegion(MapSpan value)
         {
             var location = JsonConvert.SerializeObject(value.Center);
             var distance = JsonConvert.SerializeObject(value.Radius.Kilometers);
 
-            Preferences.Set($"{key}-{Constants.PreferencesStore.MapSpanLocationKey}", location);
-            Preferences.Set($"{key}-{Constants.PreferencesStore.MapSpanDistanceKey}", distance);
+            Set<string>(Constants.PreferencesStore.LastRegionLocation, location);
+            Set<string>(Constants.PreferencesStore.LastRegionDistance, distance);
         }
 
-        public MapSpan Get(string key, MapSpan defaultValue = default)
+        public MapSpan GetLastRegion()
         {
-            var location = Get<string>($"{key}-{Constants.PreferencesStore.MapSpanLocationKey}", null);
-            var distance = Get<string>($"{key}-{Constants.PreferencesStore.MapSpanDistanceKey}", null);
+            var location = Get<string>(Constants.PreferencesStore.LastRegionLocation, null);
+            var distance = Get<string>(Constants.PreferencesStore.LastRegionDistance, null);
 
-            if (string.IsNullOrEmpty(location) || string.IsNullOrEmpty(distance)) return defaultValue;
+            if (string.IsNullOrEmpty(location) || string.IsNullOrEmpty(distance)) return null;
 
             return MapSpan.FromCenterAndRadius(
                 JsonConvert.DeserializeObject<Location>(location),
@@ -46,13 +46,13 @@ namespace Kris.Client.Core
         {
             return new ConnectionSettings
             {
-                GpsRequestInterval = Get<int>(Constants.ConnectionSettings.GpsInterval, -1)
+                GpsInterval = Get<int>(Constants.ConnectionSettings.GpsInterval, -1)
             };
         }
 
         public void SetConnectionSettings(ConnectionSettings settings)
         {
-            Set<int>(Constants.ConnectionSettings.GpsInterval, settings.GpsRequestInterval);
+            Set<int>(Constants.ConnectionSettings.GpsInterval, settings.GpsInterval);
         }
     }
 }
