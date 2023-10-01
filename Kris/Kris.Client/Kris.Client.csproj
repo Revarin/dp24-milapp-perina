@@ -56,7 +56,6 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Kris.Client.Common\Kris.Client.Common.csproj" />
-	  <ProjectReference Include="..\Kris.Client.Core\Kris.Client.Core.csproj" />
 	  <ProjectReference Include="..\Kris.Client.Data\Kris.Client.Data.csproj" />
 	</ItemGroup>
 

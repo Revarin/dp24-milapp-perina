@@ -1,8 +1,7 @@
 ﻿using Microsoft.Maui.Maps;
 using Newtonsoft.Json;
-using Kris.Client.Common;
 
-namespace Kris.Client.Core
+namespace Kris.Client.Common
 {
     public class PreferencesStore : PreferencesBase, IPreferencesStore
     {
@@ -17,26 +16,14 @@ namespace Kris.Client.Core
 
         public MapSpan Get(string key, MapSpan defaultValue = default)
         {
-            var location = Get<string>($"{key}-{Constants.PreferencesStore.MapSpanLocationKey}", null);
-            var distance = Get<string>($"{key}-{Constants.PreferencesStore.MapSpanDistanceKey}", null);
+            string location = Preferences.Get($"{key}-{Constants.PreferencesStore.MapSpanLocationKey}", null);
+            string distance = Preferences.Get($"{key}-{Constants.PreferencesStore.MapSpanDistanceKey}", null);
 
             if (string.IsNullOrEmpty(location) || string.IsNullOrEmpty(distance)) return defaultValue;
 
             return MapSpan.FromCenterAndRadius(
                 JsonConvert.DeserializeObject<Location>(location),
                 Distance.FromKilometers(JsonConvert.DeserializeObject<double>(distance)));
-        }
-
-        public UserSettings GetUserSettings()
-        {
-            var userId = Get<int>(Constants.UserSettings.UserId, -1);
-            var userName = Get<string>(Constants.UserSettings.UserName);
-
-            return new UserSettings
-            {
-                UserId = userId,
-                UserName = userName
-            };
         }
     }
 }

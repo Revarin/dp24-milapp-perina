@@ -1,4 +1,4 @@
-﻿namespace Kris.Client.Core
+﻿namespace Kris.Client.Common
 {
     public interface IAlertService
     {

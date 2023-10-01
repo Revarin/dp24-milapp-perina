@@ -1,4 +1,4 @@
-﻿namespace Kris.Client.Core
+﻿namespace Kris.Client.Common
 {
     // Source: https://stackoverflow.com/a/72439742
     public class AlertService : IAlertService
