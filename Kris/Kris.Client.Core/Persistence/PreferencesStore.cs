@@ -17,14 +17,42 @@ namespace Kris.Client.Core
 
         public MapSpan Get(string key, MapSpan defaultValue = default)
         {
-            string location = Preferences.Get($"{key}-{Constants.PreferencesStore.MapSpanLocationKey}", null);
-            string distance = Preferences.Get($"{key}-{Constants.PreferencesStore.MapSpanDistanceKey}", null);
+            var location = Get<string>($"{key}-{Constants.PreferencesStore.MapSpanLocationKey}", null);
+            var distance = Get<string>($"{key}-{Constants.PreferencesStore.MapSpanDistanceKey}", null);
 
             if (string.IsNullOrEmpty(location) || string.IsNullOrEmpty(distance)) return defaultValue;
 
             return MapSpan.FromCenterAndRadius(
                 JsonConvert.DeserializeObject<Location>(location),
                 Distance.FromKilometers(JsonConvert.DeserializeObject<double>(distance)));
+        }
+
+        public UserSettings GetUserSettings()
+        {
+            return new UserSettings
+            {
+                UserId = Get<int>(Constants.UserSettings.UserId, -1),
+                UserName = Get<string>(Constants.UserSettings.UserName)
+            };
+        }
+
+        public void SetUserSettings(UserSettings settings)
+        {
+            Set<int>(Constants.UserSettings.UserId, settings.UserId);
+            Set<string>(Constants.UserSettings.UserName, settings.UserName);
+        }
+
+        public ConnectionSettings GetConnectionSettings()
+        {
+            return new ConnectionSettings
+            {
+                GpsRequestInterval = Get<int>(Constants.ConnectionSettings.GpsInterval, -1)
+            };
+        }
+
+        public void SetConnectionSettings(ConnectionSettings settings)
+        {
+            Set<int>(Constants.ConnectionSettings.GpsInterval, settings.GpsRequestInterval);
         }
     }
 }

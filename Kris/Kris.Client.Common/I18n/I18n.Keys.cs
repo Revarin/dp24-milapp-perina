@@ -7,6 +7,9 @@
             public static readonly string MapLocationPermissionDeniedTitle = "MapLocationPermissionDeniedTitle";
             public static readonly string MapLocationPermissionDeniedMessage = "MapLocationPermissionDeniedMessage";
 
+            public static readonly string NewUserNamePromptTitle = "NewUserNamePromptTitle";
+            public static readonly string NewUserNamePromptMessage = "NewUserNamePromptMessage";
+
             public static readonly string GpsInterval2sTitle = "GpsInterval2sTitle";
             public static readonly string GpsInterval5sTitle = "GpsInterval5sTitle";
             public static readonly string GpsInterval10sTitle = "GpsInterval10sTitle";

@@ -6,13 +6,15 @@ namespace Kris.Client.ViewModels
 {
     public class AppShellViewModel : ViewModelBase
     {
+        private readonly IMessageService _messageService;
         private readonly INavigationService _navigationService;
         private readonly IPermissionsService _permissionsService;
         private readonly IAlertService _alertService;
+        private readonly IPreferencesStore _preferencesStore;
 
         public ICommand AppearingCommand { get; init; }
 
-        private List<Type> _contentPages = new List<Type>()
+        private List<Type> _contentPages = new()
         {
             typeof(MapView),
             typeof(MenuView),
@@ -20,11 +22,14 @@ namespace Kris.Client.ViewModels
             typeof(TestView)
         };
 
-        public AppShellViewModel(INavigationService navigationService, IPermissionsService permissionsService, IAlertService alertService)
+        public AppShellViewModel(IMessageService messageService, INavigationService navigationService,
+            IPermissionsService permissionsService, IAlertService alertService, IPreferencesStore preferencesStore)
         {
+            _messageService = messageService;
             _navigationService = navigationService;
             _permissionsService = permissionsService;
             _alertService = alertService;
+            _preferencesStore = preferencesStore;
 
             AppearingCommand = new Command(OnAppearing);
         }
@@ -33,11 +38,38 @@ namespace Kris.Client.ViewModels
         {
             _navigationService.RegisterRoutes(_contentPages);
 
+            await AskForPermissions();
+            await LoadUserData();
+
+            _messageService.Send(new ShellInitializedMessage());
+        }
+
+        private async Task AskForPermissions()
+        {
             // GPS permission
             var permissionsStatus = await _permissionsService.CheckAndRequestPermissionAsync<Permissions.LocationWhenInUse>();
             if (!permissionsStatus.HasFlag(PermissionStatus.Granted))
             {
                 await _alertService.ShowAlertAsync(I18n.Keys.MapLocationPermissionDeniedTitle, I18n.Keys.MapLocationPermissionDeniedMessage);
+            }
+            // TODO: GPS when not in use
+        }
+
+        private async Task LoadUserData()
+        {
+            var userSettings = _preferencesStore.GetUserSettings();
+
+            if (userSettings.UserId < 0 || string.IsNullOrEmpty(userSettings.UserName))
+            {
+                var newUserName = await _alertService.ShowPromptAsync(I18n.Keys.NewUserNamePromptTitle, I18n.Keys.NewUserNamePromptMessage, cancel: null);
+
+                // TODO: Send to server
+
+                _preferencesStore.SetUserSettings(new UserSettings
+                {
+                    UserId = 0,
+                    UserName = newUserName
+                });
             }
         }
     }

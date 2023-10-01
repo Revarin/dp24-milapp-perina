@@ -1,4 +1,5 @@
-﻿using Microsoft.Maui.Maps;
+﻿using Kris.Client.Common;
+using Microsoft.Maui.Maps;
 
 namespace Kris.Client.Core
 {
@@ -6,5 +7,10 @@ namespace Kris.Client.Core
     {
         void Set(string key, MapSpan value);
         MapSpan Get(string key, MapSpan defaultValue = null);
+
+        UserSettings GetUserSettings();
+        void SetUserSettings(UserSettings value);
+        ConnectionSettings GetConnectionSettings();
+        void SetConnectionSettings(ConnectionSettings value);
     }
 }

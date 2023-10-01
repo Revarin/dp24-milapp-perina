@@ -27,5 +27,19 @@
         {
             return Application.Current.MainPage.DisplayAlert(title, message, accept, cancel);
         }
+
+        public void ShowPrompt(string title, string message, Action<string> callback, string accept = "OK", string cancel = "Cancel", string placeholder = null, int maxLenght = -1, string initialValue = null)
+        {
+            Application.Current.MainPage.Dispatcher.Dispatch(async () =>
+            {
+                var result = await ShowPromptAsync(title, message, accept, cancel, placeholder, maxLenght, initialValue);
+                callback(result);
+            });
+        }
+
+        public Task<string> ShowPromptAsync(string title, string message, string accept = "OK", string cancel = "Cancel", string placeholder = null, int maxLenght = -1, string initialValue = null)
+        {
+            return Application.Current.MainPage.DisplayPromptAsync(title, message, accept, cancel, placeholder, maxLenght, null, initialValue);
+        }
     }
 }
