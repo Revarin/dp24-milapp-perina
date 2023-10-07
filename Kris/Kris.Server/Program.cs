@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Kris.Server.Data;
+using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace Kris.Server
 {
@@ -38,7 +40,6 @@ namespace Kris.Server
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

@@ -3,6 +3,7 @@ using Kris.Interface;
 
 namespace Kris.Server
 {
+    [Route("[controller]/[action]")]
     public class LocationController : ControllerBase, ILocationController
     {
         private readonly ILocationService _locationService;
@@ -12,26 +13,28 @@ namespace Kris.Server
             _locationService = locationService;
         }
 
-        public ActionResult SaveUserLocation(SaveUserLocationRequest request)
+        [HttpPost]
+        public Task SaveUserLocation(SaveUserLocationRequest request)
         {
-            if (request == null) return BadRequest();
+            if (request == null) throw new BadHttpRequestException("Missing request body");
 
             var result = _locationService.SaveUserLocation(request.UserId, request.TimeStamp, request.Location);
 
-            if (!result) return BadRequest(_locationService.GetErrorMessage());
+            if (!result) throw new BadHttpRequestException(_locationService.GetErrorMessage());
 
-            return Ok();
+            return Task.CompletedTask;
         }
 
-        public ActionResult<LoadUsersLocationsResponse> LoadUsersLocations(LoadUsersLocationsRequest request)
+        [HttpPost]
+        public Task<LoadUsersLocationsResponse> LoadUsersLocations(LoadUsersLocationsRequest request)
         {
-            if (request == null) return BadRequest();
+            if (request == null) throw new BadHttpRequestException("Missing request body");
 
             var locations = _locationService.LoadUsersLocationLocations(request.UserId, request.LastUpdate);
 
-            if (locations == null) return BadRequest(_locationService.GetErrorMessage());
+            if (locations == null) throw new BadHttpRequestException(_locationService.GetErrorMessage());
 
-            return Ok(new LoadUsersLocationsResponse
+            return Task.FromResult(new LoadUsersLocationsResponse
             {
                 TimeStamp = DateTime.UtcNow,
                 UserLocations = locations

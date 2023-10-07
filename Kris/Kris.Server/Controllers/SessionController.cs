@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Kris.Interface;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Kris.Server
 {
+    [Route("[controller]/[action]")]
     public class SessionController : ControllerBase, ISessionController
     {
         private readonly IUserService _userService;
@@ -14,26 +14,34 @@ namespace Kris.Server
         }
 
         [HttpPost]
-        public ActionResult<CreateUserResponse> CreateUser(CreateUserRequest request)
+        public Task<CreateUserResponse> CreateUser(CreateUserRequest request)
         {
-            if (string.IsNullOrEmpty(request.Name)) return BadRequest("Missing user name");
+            if (request == null) throw new BadHttpRequestException("Missing request body");
+            if (string.IsNullOrEmpty(request.Name)) throw new BadHttpRequestException("Missing request body");
 
             var newUser = _userService.CreateUser(request.Name);
 
-            if (newUser == null) return Conflict(_userService.GetErrorMessage());
+            if (newUser == null) throw new BadHttpRequestException(_userService.GetErrorMessage());
 
-            return Ok(newUser);
+            return Task.FromResult(new CreateUserResponse
+            {
+                Id = newUser.Id,
+                Name = newUser.Name,
+                CreatedDate = newUser.CreatedDate
+            });
         }
 
         [HttpPut]
-        public ActionResult UpdateUserName(UpdateUserNameRequest request)
+        public Task UpdateUserName(UpdateUserNameRequest request)
         {
-            if (string.IsNullOrEmpty(request.Name)) return BadRequest("Missing user name");
+            if (request == null) throw new BadHttpRequestException("Missing request body");
+            if (string.IsNullOrEmpty(request.Name)) throw new BadHttpRequestException("Missing request body");
 
             var result = _userService.UpdateUserName(request.Id, request.Name);
 
-            if (result) return Ok();
-            else return Conflict(_userService.GetErrorMessage());
+            if (!result) throw new BadHttpRequestException(_userService.GetErrorMessage());
+
+            return Task.CompletedTask;
         }
     }
 }

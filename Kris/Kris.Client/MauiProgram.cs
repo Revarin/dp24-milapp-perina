@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Maui;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Reflection;
 
 namespace Kris.Client
 {
@@ -7,6 +9,13 @@ namespace Kris.Client
     {
         public static MauiApp CreateMauiApp()
         {
+            var assembly = Assembly.GetExecutingAssembly();
+            using var stream = assembly.GetManifestResourceStream("Kris.Client.appsettings.json");
+
+            var config = new ConfigurationBuilder()
+                .AddJsonStream(stream)
+                .Build();
+
             var builder = MauiApp.CreateBuilder();
             builder.UseMauiApp<App>()
                 .UseMauiMaps()
@@ -21,6 +30,8 @@ namespace Kris.Client
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+
+            builder.Configuration.AddConfiguration(config);
 
 #if DEBUG
 		builder.Logging.AddDebug();
