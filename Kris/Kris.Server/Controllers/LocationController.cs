@@ -14,7 +14,7 @@ namespace Kris.Server
         }
 
         [HttpPost]
-        public Task SaveUserLocation(SaveUserLocationRequest request)
+        public Task SaveUserLocation([FromBody]SaveUserLocationRequest request)
         {
             if (request == null) throw new BadHttpRequestException("Missing request body");
 
@@ -26,7 +26,7 @@ namespace Kris.Server
         }
 
         [HttpPost]
-        public Task<LoadUsersLocationsResponse> LoadUsersLocations(LoadUsersLocationsRequest request)
+        public Task<LoadUsersLocationsResponse> LoadUsersLocations([FromBody]LoadUsersLocationsRequest request)
         {
             if (request == null) throw new BadHttpRequestException("Missing request body");
 

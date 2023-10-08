@@ -14,7 +14,7 @@ namespace Kris.Server
         }
 
         [HttpPost]
-        public Task<CreateUserResponse> CreateUser(CreateUserRequest request)
+        public Task<CreateUserResponse> CreateUser([FromBody]CreateUserRequest request)
         {
             if (request == null) throw new BadHttpRequestException("Missing request body");
             if (string.IsNullOrEmpty(request.Name)) throw new BadHttpRequestException("Missing request body");
@@ -32,7 +32,7 @@ namespace Kris.Server
         }
 
         [HttpPut]
-        public Task UpdateUserName(UpdateUserNameRequest request)
+        public Task UpdateUserName([FromBody]UpdateUserNameRequest request)
         {
             if (request == null) throw new BadHttpRequestException("Missing request body");
             if (string.IsNullOrEmpty(request.Name)) throw new BadHttpRequestException("Missing request body");

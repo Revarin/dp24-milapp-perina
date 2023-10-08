@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Kris.Interface;
 
@@ -14,8 +13,9 @@ namespace Kris.Client.Core
         public async Task<CreateUserResponse> CreateUser(CreateUserRequest request)
         {
             var content = GetRequestContent(request);
-            
-            var response = await _httpClient.PostAsync(MethodBase.GetCurrentMethod().Name, content);
+
+            var uri = GetUri("CreateUser");
+            var response = await _httpClient.PostAsync(uri, content);
 
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<CreateUserResponse>(await response.Content.ReadAsStringAsync());
@@ -25,7 +25,8 @@ namespace Kris.Client.Core
         {
             var content = GetRequestContent(request);
 
-            var response = await _httpClient.PutAsync(MethodBase.GetCurrentMethod().Name, content);
+            var uri = GetUri("UpdateUserName");
+            var response = await _httpClient.PutAsync(uri, content);
 
             response.EnsureSuccessStatusCode();
         }

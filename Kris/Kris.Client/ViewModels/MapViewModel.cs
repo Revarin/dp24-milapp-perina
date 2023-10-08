@@ -40,8 +40,8 @@ namespace Kris.Client.ViewModels
             LoadedCommand = new Command(OnLoaded);
             MoveToUserCommand = new Command(OnMoveToUser);
 
-            _messageService.Register<ShellInitializedMessage>(this, OnShellInitialized);
-            _messageService.Register<ConnectionSettingsChangedMessage>(this, OnConnectionSettingsChanged);
+            _messageService.Register<ShellInitializedMessage>(this, OnShellInitializedAsync);
+            _messageService.Register<ConnectionSettingsChangedMessage>(this, OnConnectionSettingsChangedAsync);
 
             _connectionSettings = _preferencesStore.GetConnectionSettings();
         }
@@ -55,12 +55,12 @@ namespace Kris.Client.ViewModels
             }
         }
 
-        private async void OnShellInitialized(object sender, ShellInitializedMessage message)
+        private async void OnShellInitializedAsync(object sender, ShellInitializedMessage message)
         {
             var locationPermission = await _permissionsService.CheckPermissionAsync<Permissions.LocationWhenInUse>();
             if (locationPermission.HasFlag(PermissionStatus.Granted) && await _gpsService.IsGpsEnabled(2))
             {
-                _gpsService.RaiseGpsLocationEvent += OnGpsNewLocation;
+                _gpsService.RaiseGpsLocationEvent += OnGpsNewLocationAsync;
                 if (!_gpsService.IsListening)
                 {
                     await _gpsService.StartListeningAsync(_connectionSettings.GpsInterval, _connectionSettings.GpsInterval);
@@ -73,7 +73,7 @@ namespace Kris.Client.ViewModels
             }
         }
 
-        private async void OnConnectionSettingsChanged(object sender, ConnectionSettingsChangedMessage message)
+        private async void OnConnectionSettingsChangedAsync(object sender, ConnectionSettingsChangedMessage message)
         {
             _connectionSettings = message.Settings;
 
@@ -94,7 +94,7 @@ namespace Kris.Client.ViewModels
             }
         }
 
-        private async void OnGpsNewLocation(object sender, GpsLocationEventArgs e)
+        private async void OnGpsNewLocationAsync(object sender, GpsLocationEventArgs e)
         {
 #if DEBUG
             var t = Toast.Make($"LAT:{e.Location.Latitude} LONG:{e.Location.Longitude} ALT:{e.Location.Altitude}");

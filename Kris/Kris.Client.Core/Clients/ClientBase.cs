@@ -1,8 +1,7 @@
-﻿using System.Text.Json;
+﻿using System.Text;
 using Microsoft.Extensions.Configuration;
-using Kris.Client.Common;
 using Newtonsoft.Json;
-using System.Text;
+using Kris.Client.Common;
 
 namespace Kris.Client.Core
 {
@@ -11,19 +10,37 @@ namespace Kris.Client.Core
         protected readonly HttpClient _httpClient;
         protected readonly AppSettings _settings;
 
-        public ClientBase(IConfiguration config, string controllerName = null)
+        private readonly string _controller;
+
+        public ClientBase(IConfiguration config, string controller)
         {
             _settings = config.GetRequiredSection("Settings").Get<AppSettings>();
+            _controller = controller;
 
-            _httpClient = new HttpClient();
-            _httpClient.BaseAddress = string.IsNullOrEmpty(controllerName) ?
-                new Uri(_settings.ServerUrl) :
-                new Uri($"{_settings.ServerUrl}/{controllerName}");
+            // TODO: Insecure
+            _httpClient = new HttpClient(GetInsecureHandler());
         }
 
         protected StringContent GetRequestContent<T>(T body)
         {
             return new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
+        }
+
+        protected Uri GetUri(string path)
+        {
+            return new Uri($"{_settings.ServerUrl}/{_controller}/{path}");
+        }
+
+        private HttpClientHandler GetInsecureHandler()
+        {
+            HttpClientHandler handler = new HttpClientHandler();
+            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
+            {
+                if (cert.Issuer.Equals("CN=localhost"))
+                    return true;
+                return errors == System.Net.Security.SslPolicyErrors.None;
+            };
+            return handler;
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Kris.Client.Core;
 using Kris.Client.Data;
 using Kris.Client.ViewModels;
-
+using Kris.Interface;
 using MauiMap = Microsoft.Maui.Controls.Maps.Map;
 
 namespace Kris.Client
@@ -13,6 +13,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<MapView>();
             builder.Services.AddSingleton<MenuView>();
             builder.Services.AddTransient<ConnectionSettingsView>();
+
             builder.Services.AddSingleton<TestView>();
 
             return builder;
@@ -24,6 +25,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<MapViewModel>();
             builder.Services.AddSingleton<MenuViewModel>();
             builder.Services.AddTransient<ConnectionSettingsViewModel>();
+
             builder.Services.AddSingleton<TestViewModel>();
 
             return builder;
@@ -37,6 +39,11 @@ namespace Kris.Client
             builder.Services.AddSingleton<INavigationService, NavigationService>();
             builder.Services.AddSingleton<IGpsService, GpsService>();
             builder.Services.AddSingleton<IMessageService, MessageService>();
+
+            builder.Services.AddTransient<ISessionFacade, SessionFacade>();
+
+            builder.Services.AddTransient<ISessionController, SessionClient>();
+            builder.Services.AddTransient<ILocationController, LocationClient>();
 
             return builder;
         }

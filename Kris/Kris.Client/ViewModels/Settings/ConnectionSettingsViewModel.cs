@@ -10,6 +10,7 @@ namespace Kris.Client.ViewModels
     {
         private readonly IMessageService _messageService;
         private readonly IPreferencesStore _preferencesStore;
+        private readonly ISessionFacade _sessionFacade;
 
         private string _userName;
         public string UserName
@@ -36,12 +37,13 @@ namespace Kris.Client.ViewModels
         private ConnectionSettings _connectionSettings;
 
         public ConnectionSettingsViewModel(IMessageService messageService, IPreferencesStore preferencesStore,
-            IDataSource<GpsIntervalItem> gpsItervalDataSource)
+            IDataSource<GpsIntervalItem> gpsItervalDataSource, ISessionFacade sessionFacade)
         {
             _messageService = messageService;
             _preferencesStore = preferencesStore;
+            _sessionFacade = sessionFacade;
 
-            UserNameCompletedCommand = new Command(OnUserNameCompleted);
+            UserNameCompletedCommand = new Command(OnUserNameCompletedAsync);
             GpsIntervalSelectedIndexChangedCommand = new Command(OnGpsIntervalSelectedIndexChanged);
 
             _connectionSettings = _preferencesStore.GetConnectionSettings();
@@ -51,14 +53,22 @@ namespace Kris.Client.ViewModels
             GpsIntervalSelectedItem = GpsIntervalItems.Single(p => p.Value == _connectionSettings.GpsInterval);
         }
 
-        private void OnUserNameCompleted()
+        private async void OnUserNameCompletedAsync()
         {
             var newName = UserName;
 
+            if (_connectionSettings.UserId > 0)
+            {
+                await _sessionFacade.UpdateUserAsync(_connectionSettings.UserId, newName);
+            }
+            else
+            {
+                var user = await _sessionFacade.CreateUserAsync(newName);
+                _connectionSettings.UserId = user.Id;
+            }
+
             _connectionSettings.UserName = newName;
             _preferencesStore.SetConnectionSettings(_connectionSettings);
-
-            // TODO: Send to server
 
             _messageService.Send(new ConnectionSettingsChangedMessage
             {

@@ -32,23 +32,29 @@ namespace Kris.Server.Data
 
         public T Insert(T entity)
         {
-            return _context.Add(entity).Entity;
+            var x = _dbSet.Add(entity);
+            _context.SaveChanges();
+            return x.Entity;
         }
 
         public T Update(T entity)
         {
-            return _context.Update(entity).Entity;
+            var x = _dbSet.Update(entity);
+            _context.SaveChanges();
+            return x.Entity;
         }
 
         public void Delete(T entity)
         {
-            _context.Remove(entity);
+            _dbSet.Remove(entity);
+            _context.SaveChanges();
         }
 
         public void Delete(int id)
         {
-            var entity = _context.Find<T>(id);
-            _context.Remove(entity);
+            var entity = _dbSet.Find(id);
+            _dbSet.Remove(entity);
+            _context.SaveChanges();
         }
     }
 }

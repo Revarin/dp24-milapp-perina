@@ -11,6 +11,7 @@ namespace Kris.Client.ViewModels
         private readonly IPermissionsService _permissionsService;
         private readonly IAlertService _alertService;
         private readonly IPreferencesStore _preferencesStore;
+        private readonly ISessionFacade _sessionFacade;
 
         public ICommand AppearingCommand { get; init; }
 
@@ -23,28 +24,31 @@ namespace Kris.Client.ViewModels
         };
 
         public AppShellViewModel(IMessageService messageService, INavigationService navigationService,
-            IPermissionsService permissionsService, IAlertService alertService, IPreferencesStore preferencesStore)
+            IPermissionsService permissionsService, IAlertService alertService, IPreferencesStore preferencesStore,
+            ISessionFacade sessionFacade)
         {
             _messageService = messageService;
             _navigationService = navigationService;
             _permissionsService = permissionsService;
             _alertService = alertService;
             _preferencesStore = preferencesStore;
+            _sessionFacade = sessionFacade;
 
-            AppearingCommand = new Command(OnAppearing);
+            AppearingCommand = new Command(OnAppearingAsync);
+            _sessionFacade = sessionFacade;
         }
 
-        private async void OnAppearing()
+        private async void OnAppearingAsync()
         {
             _navigationService.RegisterRoutes(_contentPages);
 
-            await AskForPermissions();
-            await LoadUserData();
+            await AskForPermissionsAsync();
+            await LoadUserDataAsync();
 
             _messageService.Send(new ShellInitializedMessage());
         }
 
-        private async Task AskForPermissions()
+        private async Task AskForPermissionsAsync()
         {
             // GPS permission
             var permissionsStatus = await _permissionsService.CheckAndRequestPermissionAsync<Permissions.LocationWhenInUse>();
@@ -55,20 +59,20 @@ namespace Kris.Client.ViewModels
             // TODO: GPS when not in use
         }
 
-        private async Task LoadUserData()
+        private async Task LoadUserDataAsync()
         {
             var connectionSettings = _preferencesStore.GetConnectionSettings();
 
             if (connectionSettings.UserId < 0 || string.IsNullOrEmpty(connectionSettings.UserName))
             {
-                var newUserName = await _alertService.ShowPromptAsync(I18n.Keys.NewUserNamePromptTitle, I18n.Keys.NewUserNamePromptMessage, cancel: null);
+                var userName = await _alertService.ShowPromptAsync(I18n.Keys.NewUserNamePromptTitle, I18n.Keys.NewUserNamePromptMessage, cancel: null);
 
-                // TODO: Send to server
+                var newUser = await _sessionFacade.CreateUserAsync(userName);
 
                 _preferencesStore.SetConnectionSettings(new ConnectionSettings
                 {
-                    UserId = 0,
-                    UserName = newUserName,
+                    UserId = newUser.Id,
+                    UserName = newUser.Name,
                 });
             }
         }
