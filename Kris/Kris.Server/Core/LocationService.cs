@@ -18,14 +18,30 @@ namespace Kris.Server
         {
             if (!_userRepo.UserExists(userId)) return SetErrorMessage("User does not exists", false);
 
-            _locationRepo.Insert(new UserLocationEntity
-            {
-                UserId = userId,
-                Latitude = location.Latitude,
-                Longitude = location.Longitude,
-                UpdatedDate = timeStamp
-            });
+            var userLocation = _locationRepo.GetUserLocation(userId);
 
+            if (userLocation != null)
+            {
+                _locationRepo.Update(new UserLocationEntity
+                {
+                    Id = userLocation.Id,
+                    UserId = userId,
+                    Latitude = location.Latitude,
+                    Longitude = location.Longitude,
+                    UpdatedDate = timeStamp
+                });
+            }
+            else
+            {
+                _locationRepo.Insert(new UserLocationEntity
+                {
+                    UserId = userId,
+                    Latitude = location.Latitude,
+                    Longitude = location.Longitude,
+                    UpdatedDate = timeStamp
+                });
+            }
+            
             return true;
         }
 
@@ -34,8 +50,8 @@ namespace Kris.Server
             if (!_userRepo.UserExists(userId)) return SetErrorMessage<IEnumerable<UserLocation>>("User does not exists", null);
 
             var locations = timeStamp.HasValue ?
-                _locationRepo.GetUserLocations(userId, timeStamp.Value) :
-                _locationRepo.GetUserLocations(userId);
+                _locationRepo.GetUsersLocations(userId, timeStamp.Value) :
+                _locationRepo.GetUsersLocations(userId);
 
             return locations.Select(s => new UserLocation
             {

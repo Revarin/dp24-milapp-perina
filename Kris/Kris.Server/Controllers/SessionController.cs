@@ -43,5 +43,15 @@ namespace Kris.Server
 
             return Task.CompletedTask;
         }
+
+        [HttpPost]
+        public Task<bool> UserExists([FromBody]UserExistsRequest request)
+        {
+            if (request == null) throw new BadHttpRequestException("Missing request body");
+
+            var result = _userService.UserExists(request.Id);
+
+            return Task.FromResult(result);
+        }
     }
 }

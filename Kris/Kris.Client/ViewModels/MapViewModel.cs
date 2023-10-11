@@ -14,6 +14,7 @@ namespace Kris.Client.ViewModels
         private readonly IPermissionsService _permissionsService;
         private readonly IPreferencesStore _preferencesStore;
         private readonly IGpsService _gpsService;
+        private readonly ILocationFacade _locationFacade;
 
         private MapSpan _currentRegion;
         public MapSpan CurrentRegion
@@ -29,12 +30,14 @@ namespace Kris.Client.ViewModels
 
         private ConnectionSettings _connectionSettings;
 
-        public MapViewModel(IMessageService messageService, IPermissionsService permissionsService, IPreferencesStore preferencesStore, IGpsService gpsService)
+        public MapViewModel(IMessageService messageService, IPermissionsService permissionsService,
+            IPreferencesStore preferencesStore, IGpsService gpsService, ILocationFacade locationFacade)
         {
             _messageService = messageService;
             _permissionsService = permissionsService;
             _preferencesStore = preferencesStore;
             _gpsService = gpsService;
+            _locationFacade = locationFacade;
 
             CurrentRegion = new MapSpan(new Location(), 10, 10);
             LoadedCommand = new Command(OnLoaded);
@@ -63,13 +66,27 @@ namespace Kris.Client.ViewModels
                 _gpsService.RaiseGpsLocationEvent += OnGpsNewLocationAsync;
                 if (!_gpsService.IsListening)
                 {
-                    await _gpsService.StartListeningAsync(_connectionSettings.GpsInterval, _connectionSettings.GpsInterval);
+                    _gpsService.StartListeningAsync(_connectionSettings.GpsInterval, _connectionSettings.GpsInterval);
                 }
             }
             else
             {
                 var gpsUnavailableToast = Toast.Make($"GPS service is not available.");
                 await gpsUnavailableToast.Show();
+            }
+
+            if (_connectionSettings.UserId > 0)
+            {
+                _locationFacade.RaiseUserLocationsEvent += OnLoadUsersLocationsAsync;
+                if (!_locationFacade.IsListening)
+                {
+                    _locationFacade.StartListeningToUserLocationsAsync(_connectionSettings.UserId, _connectionSettings.UsersLocationInterval);
+                }
+            }
+            else
+            {
+                var usersLocationsUnavailableToast = Toast.Make($"Cannot load users locations.");
+                await usersLocationsUnavailableToast.Show();
             }
         }
 
@@ -80,13 +97,18 @@ namespace Kris.Client.ViewModels
             if (message.GpsIntervalChanged)
             {
                 await _gpsService.StopListening();
-                await _gpsService.StartListeningAsync(_connectionSettings.GpsInterval, _connectionSettings.GpsInterval);
+                _gpsService.StartListeningAsync(_connectionSettings.GpsInterval, _connectionSettings.GpsInterval);
+            }
+            if (message.UsersLocationIntervalChanged)
+            {
+                await _locationFacade.StopListening();
+                _locationFacade.StartListeningToUserLocationsAsync(_connectionSettings.UserId, _connectionSettings.UsersLocationInterval);
             }
         }
 
         private void OnMoveToUser()
         {
-            var user = PinsSource.SingleOrDefault(p => p.PinType == CustomPinType.User);
+            var user = PinsSource.SingleOrDefault(p => p.PinType == CustomPinType.Myself);
             if (user != null)
             {
                 var userRegion = MapSpan.FromCenterAndRadius(user.Location, CurrentRegion.Radius);
@@ -100,7 +122,12 @@ namespace Kris.Client.ViewModels
             var t = Toast.Make($"LAT:{e.Location.Latitude} LONG:{e.Location.Longitude} ALT:{e.Location.Altitude}");
             await t.Show();
 #endif
-            var user = PinsSource.SingleOrDefault(p => p.PinType == CustomPinType.User);
+            if (_connectionSettings.UserId > 0)
+            {
+                await _locationFacade.SaveUserLocationAsync(_connectionSettings.UserId, e.Location);
+            }
+
+            var user = PinsSource.SingleOrDefault(p => p.PinType == CustomPinType.Myself);
             if (user != null)
             {
                 PinsSource.Remove(user);
@@ -108,12 +135,35 @@ namespace Kris.Client.ViewModels
             PinsSource.Add(new MapPin
             {
                 Location = e.Location,
-                PinType = CustomPinType.User,
-                ImageSource = ImageSource.FromFile("user.png"),
-                Name = "User",
+                PinType = CustomPinType.Myself,
+                ImageSource = ImageSource.FromFile("myself.png"),
+                Name = "Myself",
             });
+        }
 
-            // TODO: Send to server
+        private async void OnLoadUsersLocationsAsync(object sender, UsersLocationsEventArgs e)
+        {
+#if DEBUG
+            var t = Toast.Make($"User locations loaded");
+            await t.Show();
+#endif
+            foreach (var location in e.UserLocations)
+            {
+                var pin = PinsSource.SingleOrDefault(p => p.Id == location.UserId);
+                if (pin != null)
+                {
+                    PinsSource.Remove(pin);
+                }
+
+                PinsSource.Add(new MapPin
+                {
+                    Location = location.Location,
+                    PinType = CustomPinType.Users,
+                    ImageSource = ImageSource.FromFile("users.png"),
+                    Name = location.UserName,
+                    Id = location.UserId.Value
+                });
+            }
         }
     }
 }

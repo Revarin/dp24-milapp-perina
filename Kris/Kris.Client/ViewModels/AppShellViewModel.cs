@@ -62,8 +62,13 @@ namespace Kris.Client.ViewModels
         private async Task LoadUserDataAsync()
         {
             var connectionSettings = _preferencesStore.GetConnectionSettings();
+            var userExists = false;
 
-            if (connectionSettings.UserId < 0 || string.IsNullOrEmpty(connectionSettings.UserName))
+            if (connectionSettings.UserId > 0)
+            {
+                userExists = await _sessionFacade.UserExistsAsync(connectionSettings.UserId);
+            }
+            else if (!userExists || connectionSettings.UserId < 0 || string.IsNullOrEmpty(connectionSettings.UserName))
             {
                 var userName = await _alertService.ShowPromptAsync(I18n.Keys.NewUserNamePromptTitle, I18n.Keys.NewUserNamePromptMessage, cancel: null);
 

@@ -35,5 +35,10 @@ namespace Kris.Server
 
             return true;
         }
+
+        public bool UserExists(int id)
+        {
+            return _userRepo.UserExists(id);
+        }
     }
 }

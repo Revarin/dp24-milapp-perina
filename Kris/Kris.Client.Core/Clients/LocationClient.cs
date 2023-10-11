@@ -15,7 +15,8 @@ namespace Kris.Client.Core
         {
             var content = GetRequestContent(request);
 
-            var response = await _httpClient.PostAsync(MethodBase.GetCurrentMethod().Name, content);
+            var uri = GetUri("LoadUsersLocations");
+            var response = await _httpClient.PostAsync(uri, content);
 
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<LoadUsersLocationsResponse>(await response.Content.ReadAsStringAsync());
@@ -25,7 +26,8 @@ namespace Kris.Client.Core
         {
             var content = GetRequestContent(request);
 
-            var response = await _httpClient.PostAsync(MethodBase.GetCurrentMethod().Name, content);
+            var uri = GetUri("SaveUserLocation");
+            var response = await _httpClient.PostAsync(uri, content);
 
             response.EnsureSuccessStatusCode();
         }

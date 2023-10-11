@@ -1,4 +1,6 @@
-﻿namespace Kris.Server.Data
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Kris.Server.Data
 {
     public class UserLocationRepository : RepositoryBase<UserLocationEntity>, IUserLocationRepository
     {
@@ -6,30 +8,21 @@
         {
         }
 
-        public IQueryable<UserLocationViewModel> GetUserLocations(int userId)
+        public UserLocationEntity GetUserLocation(int userId)
         {
             var db = _context;
             var query = from location in db.Locations
-                        where location.UserId != userId
-                        join user in db.Users on location.UserId equals user.Id
-                        select new UserLocationViewModel
-                        {
-                            Id = location.Id,
-                            UserId = location.UserId,
-                            UserName = user.Name,
-                            Latitude = location.Latitude,
-                            Longitude = location.Longitude,
-                            UpdatedDate = location.UpdatedDate
-                        };
+                        where location.UserId == userId
+                        select location;
 
-            return query;
+            return query.AsNoTracking().FirstOrDefault();
         }
 
-        public IQueryable<UserLocationViewModel> GetUserLocations(int userId, DateTime dateFrom)
+        public IQueryable<UserLocationViewModel> GetUsersLocations(int excludedUserId)
         {
             var db = _context;
             var query = from location in db.Locations
-                        where location.UserId != userId && location.UpdatedDate > dateFrom
+                        where location.UserId != excludedUserId
                         join user in db.Users on location.UserId equals user.Id
                         select new UserLocationViewModel
                         {
@@ -41,7 +34,26 @@
                             UpdatedDate = location.UpdatedDate
                         };
 
-            return query;
+            return query.AsNoTracking();
+        }
+
+        public IQueryable<UserLocationViewModel> GetUsersLocations(int excludedUserId, DateTime dateFrom)
+        {
+            var db = _context;
+            var query = from location in db.Locations
+                        where location.UserId != excludedUserId && location.UpdatedDate > dateFrom
+                        join user in db.Users on location.UserId equals user.Id
+                        select new UserLocationViewModel
+                        {
+                            Id = location.Id,
+                            UserId = location.UserId,
+                            UserName = user.Name,
+                            Latitude = location.Latitude,
+                            Longitude = location.Longitude,
+                            UpdatedDate = location.UpdatedDate
+                        };
+
+            return query.AsNoTracking();
         }
     }
 }

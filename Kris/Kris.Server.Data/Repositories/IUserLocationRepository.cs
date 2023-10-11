@@ -2,7 +2,8 @@
 {
     public interface IUserLocationRepository : IRepository<UserLocationEntity>
     {
-        IQueryable<UserLocationViewModel> GetUserLocations(int userId);
-        IQueryable<UserLocationViewModel> GetUserLocations(int userId, DateTime from);
+        UserLocationEntity GetUserLocation(int userId);
+        IQueryable<UserLocationViewModel> GetUsersLocations(int excludedUserId);
+        IQueryable<UserLocationViewModel> GetUsersLocations(int excludedUserId, DateTime from);
     }
 }

@@ -15,16 +15,16 @@ namespace Kris.Client.Core
             _listenerCancelTokenSource = new CancellationTokenSource();
             IsListening = true;
 
-            while (true)
+            while (!_listenerCancelTokenSource.IsCancellationRequested)
             {
                 Location location = await GetGpsLocationAsync(timeoutMiliseconds);
+
                 if (location != null)
                 {
                     OnRaiseGpsLocationEvent(new GpsLocationEventArgs(location, delayMiliseconds));
                 }
-                await TaskAddition.Delay(delayMiliseconds, _listenerCancelTokenSource.Token);
 
-                if (_listenerCancelTokenSource.IsCancellationRequested) break;
+                await TaskAddition.Delay(delayMiliseconds, _listenerCancelTokenSource.Token);
             }
 
             IsListening = false;

@@ -6,5 +6,6 @@ namespace Kris.Server
     {
         UserEntity CreateUser(string name);
         bool UpdateUserName(int id, string name);
+        bool UserExists(int id);
     }
 }

@@ -8,7 +8,7 @@
              x:DataType="viewModels:ConnectionSettingsViewModel"
              Title="Connection settings">
     <StackLayout>
-        <StackLayout Orientation="Horizontal">
+        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
             <Label Text="User name">
             </Label>
             <Entry Placeholder="User name"
@@ -18,7 +18,7 @@
                 </Entry.Behaviors>
             </Entry>
         </StackLayout>
-        <StackLayout Orientation="Horizontal">
+        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
             <Label Text="GPS request interval">
             </Label>
             <Picker Title="GPS request interval"
@@ -27,6 +27,18 @@
                     SelectedItem="{Binding GpsIntervalSelectedItem}">
                 <Picker.Behaviors>
                     <toolkit:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding GpsIntervalSelectedIndexChangedCommand}" />
+                </Picker.Behaviors>
+            </Picker>
+        </StackLayout>
+        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+            <Label Text="Others locations request interval">
+            </Label>
+            <Picker Title="Others locations request interval"
+                    ItemsSource="{Binding UsersLocationIntervalItems}"
+                    ItemDisplayBinding="{Binding Display}"
+                    SelectedItem="{Binding UsersLocationIntervalSelectedItem}">
+                <Picker.Behaviors>
+                    <toolkit:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding UsersLocationIntervalSelectedIndexChangedCommand}" />
                 </Picker.Behaviors>
             </Picker>
         </StackLayout>

@@ -37,11 +37,11 @@ namespace Kris.Server.Data
             return x.Entity;
         }
 
-        public T Update(T entity)
+        public void Update(T entity)
         {
-            var x = _dbSet.Update(entity);
+            _dbSet.Update(entity);
             _context.SaveChanges();
-            return x.Entity;
+            return;
         }
 
         public void Delete(T entity)

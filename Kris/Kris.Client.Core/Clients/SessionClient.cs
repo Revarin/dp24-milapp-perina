@@ -30,5 +30,16 @@ namespace Kris.Client.Core
 
             response.EnsureSuccessStatusCode();
         }
+
+        public async Task<bool> UserExists(UserExistsRequest request)
+        {
+            var content = GetRequestContent(request);
+
+            var uri = GetUri("UserExists");
+            var response = await _httpClient.PostAsync(uri, content);
+
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<bool>(await response.Content.ReadAsStringAsync());
+        }
     }
 }

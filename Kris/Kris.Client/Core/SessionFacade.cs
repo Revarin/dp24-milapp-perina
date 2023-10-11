@@ -34,5 +34,13 @@ namespace Kris.Client
                 Name = userName
             });
         }
+
+        public async Task<bool> UserExistsAsync(int id)
+        {
+            return await _sessionClient.UserExists(new UserExistsRequest
+            {
+                Id = id
+            });
+        }
     }
 }

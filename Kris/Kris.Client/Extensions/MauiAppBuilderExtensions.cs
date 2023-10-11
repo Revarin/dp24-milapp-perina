@@ -41,6 +41,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<IMessageService, MessageService>();
 
             builder.Services.AddTransient<ISessionFacade, SessionFacade>();
+            builder.Services.AddTransient<ILocationFacade, LocationFacade>();
 
             builder.Services.AddTransient<ISessionController, SessionClient>();
             builder.Services.AddTransient<ILocationController, LocationClient>();
@@ -51,6 +52,7 @@ namespace Kris.Client
         public static MauiAppBuilder RegisterDataSources(this MauiAppBuilder builder)
         {
             builder.Services.AddTransient<IDataSource<GpsIntervalItem>, GpsIntervalDataSource>();
+            builder.Services.AddTransient<IDataSource<UsersLocationIntervalItem>, UsersLocationIntervalDataSource>();
 
             return builder;
         }

@@ -27,6 +27,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Kris.Client.Common\Kris.Client.Common.csproj" />
+	  <ProjectReference Include="..\Kris.Client.Data\Kris.Client.Data.csproj" />
 	  <ProjectReference Include="..\Kris.Interface\Kris.Interface.csproj" />
 	</ItemGroup>
 

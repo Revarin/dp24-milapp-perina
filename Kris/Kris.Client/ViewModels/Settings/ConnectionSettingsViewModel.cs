@@ -18,26 +18,39 @@ namespace Kris.Client.ViewModels
             get { return _userName; }
             set { SetPropertyValue(ref _userName, value); }
         }
-        private ObservableCollection<GpsIntervalItem> _gpsIntervalitems;
+        private ObservableCollection<GpsIntervalItem> _gpsIntervalItems;
         public ObservableCollection<GpsIntervalItem> GpsIntervalItems
         {
-            get { return _gpsIntervalitems; }
-            set { SetPropertyValue(ref _gpsIntervalitems, value); }
+            get { return _gpsIntervalItems; }
+            set { SetPropertyValue(ref _gpsIntervalItems, value); }
         }
-        private GpsIntervalItem _gpsIntervalselectedItem;
+        private GpsIntervalItem _gpsIntervalSelectedItem;
         public GpsIntervalItem GpsIntervalSelectedItem
         {
-            get { return _gpsIntervalselectedItem; }
-            set { SetPropertyValue(ref _gpsIntervalselectedItem, value); }
+            get { return _gpsIntervalSelectedItem; }
+            set { SetPropertyValue(ref _gpsIntervalSelectedItem, value); }
+        }
+        private ObservableCollection<UsersLocationIntervalItem> _usersLocationIntervalItems;
+        public ObservableCollection<UsersLocationIntervalItem> UsersLocationIntervalItems
+        {
+            get { return _usersLocationIntervalItems; }
+            set { SetPropertyValue(ref _usersLocationIntervalItems, value); }
+        }
+        private UsersLocationIntervalItem _usersLocationIntervalSelectedItem;
+        public UsersLocationIntervalItem UsersLocationIntervalSelectedItem
+        {
+            get { return _usersLocationIntervalSelectedItem; }
+            set { SetPropertyValue(ref _usersLocationIntervalSelectedItem, value); }
         }
 
         public ICommand UserNameCompletedCommand { get; init; }
         public ICommand GpsIntervalSelectedIndexChangedCommand { get; init; }
+        public ICommand UsersLocationIntervalSelectedIndexChangedCommand { get; init; }
 
         private ConnectionSettings _connectionSettings;
 
-        public ConnectionSettingsViewModel(IMessageService messageService, IPreferencesStore preferencesStore,
-            IDataSource<GpsIntervalItem> gpsItervalDataSource, ISessionFacade sessionFacade)
+        public ConnectionSettingsViewModel(IMessageService messageService, IPreferencesStore preferencesStore, ISessionFacade sessionFacade,
+            IDataSource<GpsIntervalItem> gpsItervalDataSource, IDataSource<UsersLocationIntervalItem> usersLocationIntervalDataSource)
         {
             _messageService = messageService;
             _preferencesStore = preferencesStore;
@@ -45,12 +58,15 @@ namespace Kris.Client.ViewModels
 
             UserNameCompletedCommand = new Command(OnUserNameCompletedAsync);
             GpsIntervalSelectedIndexChangedCommand = new Command(OnGpsIntervalSelectedIndexChanged);
+            UsersLocationIntervalSelectedIndexChangedCommand = new Command(OnUsersLocationIntervalSelectedIndexChanged);
 
             _connectionSettings = _preferencesStore.GetConnectionSettings();
 
             UserName = _connectionSettings.UserName;
             GpsIntervalItems = gpsItervalDataSource.Get().ToObservableCollection();
             GpsIntervalSelectedItem = GpsIntervalItems.Single(p => p.Value == _connectionSettings.GpsInterval);
+            UsersLocationIntervalItems = usersLocationIntervalDataSource.Get().ToObservableCollection();
+            UsersLocationIntervalSelectedItem = UsersLocationIntervalItems.Single(p => p.Value == _connectionSettings.UsersLocationInterval);
         }
 
         private async void OnUserNameCompletedAsync()
@@ -87,6 +103,20 @@ namespace Kris.Client.ViewModels
             _messageService.Send(new ConnectionSettingsChangedMessage
             {
                 GpsIntervalChanged = true,
+                Settings = _connectionSettings
+            });
+        }
+
+        private void OnUsersLocationIntervalSelectedIndexChanged()
+        {
+            var newInterval = UsersLocationIntervalSelectedItem;
+
+            _connectionSettings.UsersLocationInterval = newInterval.Value;
+            _preferencesStore.SetConnectionSettings(_connectionSettings);
+
+            _messageService.Send(new ConnectionSettingsChangedMessage
+            {
+                UsersLocationIntervalChanged = true,
                 Settings = _connectionSettings
             });
         }

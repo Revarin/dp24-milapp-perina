@@ -33,7 +33,8 @@ namespace Kris.Client.Core
             {
                 UserId = Get<int>(Constants.ConnectionSettings.UserId, -1),
                 UserName = Get<string>(Constants.ConnectionSettings.UserName),
-                GpsInterval = Get<int>(Constants.ConnectionSettings.GpsInterval, Constants.DefaultSettings.GpsInterval)
+                GpsInterval = Get<int>(Constants.ConnectionSettings.GpsInterval, Constants.DefaultSettings.GpsInterval),
+                UsersLocationInterval = Get<int>(Constants.ConnectionSettings.UsersLocationInterval, Constants.DefaultSettings.UsersLocationInterval)
             };
         }
 
@@ -42,6 +43,7 @@ namespace Kris.Client.Core
             Set<int>(Constants.ConnectionSettings.UserId, settings.UserId);
             Set<string>(Constants.ConnectionSettings.UserName, settings.UserName);
             Set<int>(Constants.ConnectionSettings.GpsInterval, settings.GpsInterval);
+            Set<int>(Constants.ConnectionSettings.UsersLocationInterval, settings.UsersLocationInterval);
         }
     }
 }
