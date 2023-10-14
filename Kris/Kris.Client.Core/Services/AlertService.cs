@@ -1,4 +1,6 @@
-﻿namespace Kris.Client.Core
+﻿using CommunityToolkit.Maui.Alerts;
+
+namespace Kris.Client.Core
 {
     // Source: https://stackoverflow.com/a/72439742
     public class AlertService : IAlertService
@@ -40,6 +42,20 @@
         public Task<string> ShowPromptAsync(string title, string message, string accept = "OK", string cancel = "Cancel", string placeholder = null, int maxLenght = -1, string initialValue = null)
         {
             return Application.Current.MainPage.DisplayPromptAsync(title, message, accept, cancel, placeholder, maxLenght, null, initialValue);
+        }
+
+        public void ShowToast(string message)
+        {
+            Application.Current.MainPage.Dispatcher.Dispatch(async () =>
+            {
+                var toast = Toast.Make(message);
+                await toast.Show();
+            });
+        }
+
+        public Task ShowToastAsync(string message)
+        {
+            throw new NotImplementedException();
         }
     }
 }

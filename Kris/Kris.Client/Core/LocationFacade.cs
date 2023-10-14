@@ -34,54 +34,61 @@ namespace Kris.Client
             });
         }
 
-        public async Task StartListeningToUserLocationsAsync(int userId, int delayMiliseconds)
+        public void StartListeningToUserLocations(int userId, int delayMiliseconds)
         {
-            _listenerCancelTokenSource = new CancellationTokenSource();
-            IsListening = true;
-
-            while (!_listenerCancelTokenSource.IsCancellationRequested)
+            Task.Run(async () =>
             {
-                var locationsResponse = await _locationClient.LoadUsersLocations(new LoadUsersLocationsRequest
+                if (_listenerCancelTokenSource != null)
                 {
-                    UserId = userId,
-                    LastUpdate = LastUpdate,
-                });
-
-                if (locationsResponse != null)
-                {
-                    OnRaiseUserLocationsEvent(new UsersLocationsEventArgs(
-                        locationsResponse.TimeStamp,
-                        locationsResponse.UserLocations.Select(s => new Data.UserLocation
-                        {
-                            UserId = s.UserId,
-                            UserName = s.UserName,
-                            Location = new Location(s.Latitude, s.Longitude)
-                        })));
-
-                    LastUpdate = locationsResponse.TimeStamp;
+                    await TaskAddition.DelayUntil(() => _listenerCancelTokenSource == null, 50);
                 }
 
-                await TaskAddition.Delay(delayMiliseconds, _listenerCancelTokenSource.Token);
-            }
+                _listenerCancelTokenSource = new CancellationTokenSource();
+                IsListening = true;
 
-            IsListening = false;
-            _listenerCancelTokenSource.Dispose();
+                while (!_listenerCancelTokenSource.IsCancellationRequested)
+                {
+                    var locationsResponse = await _locationClient.LoadUsersLocations(new LoadUsersLocationsRequest
+                    {
+                        UserId = userId,
+                        LastUpdate = LastUpdate,
+                    });
+
+                    if (locationsResponse != null)
+                    {
+                        OnRaiseUserLocationsEvent(new UsersLocationsEventArgs(
+                            locationsResponse.TimeStamp,
+                            locationsResponse.UserLocations.Select(s => new Data.UserLocation
+                            {
+                                UserId = s.UserId,
+                                UserName = s.UserName,
+                                Location = new Location(s.Latitude, s.Longitude)
+                            })));
+
+                        LastUpdate = locationsResponse.TimeStamp;
+                    }
+
+                    await TaskAddition.Delay(delayMiliseconds, _listenerCancelTokenSource.Token);
+                }
+
+                IsListening = false;
+                _listenerCancelTokenSource.Dispose();
+                _listenerCancelTokenSource = null;
+            });
         }
 
-        public async Task StopListening()
+        public void StopListening()
         {
             if (_listenerCancelTokenSource != null && !_listenerCancelTokenSource.IsCancellationRequested)
             {
                 _listenerCancelTokenSource.Cancel();
             }
-
-            await TaskAddition.DelayUntil(() => IsListening == false, 100);
         }
 
         private void OnRaiseUserLocationsEvent(UsersLocationsEventArgs e)
         {
             var raiseEvent = RaiseUserLocationsEvent;
-            raiseEvent?.Invoke(this, e);
+            Application.Current.Dispatcher.Dispatch(() => raiseEvent?.Invoke(this, e));
         }
     }
 }

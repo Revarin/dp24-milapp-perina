@@ -1,15 +1,18 @@
 ﻿using System.Windows.Input;
 using System.Collections.ObjectModel;
 using Microsoft.Maui.Maps;
-using CommunityToolkit.Maui.Alerts;
 using Kris.Client.Behaviors;
 using Kris.Client.Data;
 using Kris.Client.Core;
+using Microsoft.Extensions.Configuration;
+using Kris.Client.Common;
 
 namespace Kris.Client.ViewModels
 {
     public class MapViewModel : ViewModelBase
     {
+        private readonly AppSettings _appSettings;
+        private readonly IAlertService _alertService;
         private readonly IMessageService _messageService;
         private readonly IPermissionsService _permissionsService;
         private readonly IPreferencesStore _preferencesStore;
@@ -30,23 +33,23 @@ namespace Kris.Client.ViewModels
 
         private ConnectionSettings _connectionSettings;
 
-        public MapViewModel(IMessageService messageService, IPermissionsService permissionsService,
-            IPreferencesStore preferencesStore, IGpsService gpsService, ILocationFacade locationFacade)
+        public MapViewModel(IAlertService alertService, IMessageService messageService, IPermissionsService permissionsService,
+            IPreferencesStore preferencesStore, IGpsService gpsService, ILocationFacade locationFacade, IConfiguration config)
         {
+            _alertService = alertService;
             _messageService = messageService;
             _permissionsService = permissionsService;
             _preferencesStore = preferencesStore;
             _gpsService = gpsService;
             _locationFacade = locationFacade;
+            _appSettings = config.GetRequiredSection("Settings").Get<AppSettings>();
 
             CurrentRegion = new MapSpan(new Location(), 10, 10);
             LoadedCommand = new Command(OnLoaded);
             MoveToUserCommand = new Command(OnMoveToUser);
 
             _messageService.Register<ShellInitializedMessage>(this, OnShellInitializedAsync);
-            _messageService.Register<ConnectionSettingsChangedMessage>(this, OnConnectionSettingsChangedAsync);
-
-            _connectionSettings = _preferencesStore.GetConnectionSettings();
+            _messageService.Register<ConnectionSettingsChangedMessage>(this, OnConnectionSettingsChanged);
         }
 
         private void OnLoaded()
@@ -60,49 +63,49 @@ namespace Kris.Client.ViewModels
 
         private async void OnShellInitializedAsync(object sender, ShellInitializedMessage message)
         {
+            _connectionSettings = _preferencesStore.GetConnectionSettings();
+
             var locationPermission = await _permissionsService.CheckPermissionAsync<Permissions.LocationWhenInUse>();
             if (locationPermission.HasFlag(PermissionStatus.Granted) && await _gpsService.IsGpsEnabled(2))
             {
-                _gpsService.RaiseGpsLocationEvent += OnGpsNewLocationAsync;
+                _gpsService.RaiseGpsLocationEvent += OnGpsNewLocation;
                 if (!_gpsService.IsListening)
                 {
-                    _gpsService.StartListeningAsync(_connectionSettings.GpsInterval, _connectionSettings.GpsInterval);
+                    _gpsService.StartListening(_connectionSettings.GpsInterval, _connectionSettings.GpsInterval);
                 }
             }
             else
             {
-                var gpsUnavailableToast = Toast.Make($"GPS service is not available.");
-                await gpsUnavailableToast.Show();
+                _alertService.ShowToast($"GPS service is not available.");
             }
 
-            if (_connectionSettings.UserId > 0)
+            if (_connectionSettings.UserId > 0 && _appSettings.ServerEnabled)
             {
-                _locationFacade.RaiseUserLocationsEvent += OnLoadUsersLocationsAsync;
+                _locationFacade.RaiseUserLocationsEvent += OnLoadUsersLocations;
                 if (!_locationFacade.IsListening)
                 {
-                    _locationFacade.StartListeningToUserLocationsAsync(_connectionSettings.UserId, _connectionSettings.UsersLocationInterval);
+                    _locationFacade.StartListeningToUserLocations(_connectionSettings.UserId, _connectionSettings.UsersLocationInterval);
                 }
             }
             else
             {
-                var usersLocationsUnavailableToast = Toast.Make($"Cannot load users locations.");
-                await usersLocationsUnavailableToast.Show();
+                _alertService.ShowToast($"Cannot load users locations.");
             }
         }
 
-        private async void OnConnectionSettingsChangedAsync(object sender, ConnectionSettingsChangedMessage message)
+        private void OnConnectionSettingsChanged(object sender, ConnectionSettingsChangedMessage message)
         {
             _connectionSettings = message.Settings;
 
             if (message.GpsIntervalChanged)
             {
-                await _gpsService.StopListening();
-                _gpsService.StartListeningAsync(_connectionSettings.GpsInterval, _connectionSettings.GpsInterval);
+                _gpsService.StopListening();
+                _gpsService.StartListening(_connectionSettings.GpsInterval, _connectionSettings.GpsInterval);
             }
-            if (message.UsersLocationIntervalChanged)
+            if (message.UsersLocationIntervalChanged && _appSettings.ServerEnabled)
             {
-                await _locationFacade.StopListening();
-                _locationFacade.StartListeningToUserLocationsAsync(_connectionSettings.UserId, _connectionSettings.UsersLocationInterval);
+                _locationFacade.StopListening();
+                _locationFacade.StartListeningToUserLocations(_connectionSettings.UserId, _connectionSettings.UsersLocationInterval);
             }
         }
 
@@ -116,11 +119,10 @@ namespace Kris.Client.ViewModels
             }
         }
 
-        private async void OnGpsNewLocationAsync(object sender, GpsLocationEventArgs e)
+        private async void OnGpsNewLocation(object sender, GpsLocationEventArgs e)
         {
 #if DEBUG
-            var t = Toast.Make($"LAT:{e.Location.Latitude} LONG:{e.Location.Longitude} ALT:{e.Location.Altitude}");
-            await t.Show();
+            _alertService.ShowToast($"LAT:{e.Location.Latitude} LONG:{e.Location.Longitude} ALT:{e.Location.Altitude}");
 #endif
             if (_connectionSettings.UserId > 0)
             {
@@ -141,11 +143,10 @@ namespace Kris.Client.ViewModels
             });
         }
 
-        private async void OnLoadUsersLocationsAsync(object sender, UsersLocationsEventArgs e)
+        private void OnLoadUsersLocations(object sender, UsersLocationsEventArgs e)
         {
 #if DEBUG
-            var t = Toast.Make($"User locations loaded");
-            await t.Show();
+            _alertService.ShowToast($"User locations loaded");
 #endif
             foreach (var location in e.UserLocations)
             {

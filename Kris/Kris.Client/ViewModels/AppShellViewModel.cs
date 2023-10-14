@@ -1,11 +1,13 @@
 ﻿using System.Windows.Input;
 using Kris.Client.Core;
 using Kris.Client.Common;
+using Microsoft.Extensions.Configuration;
 
 namespace Kris.Client.ViewModels
 {
     public class AppShellViewModel : ViewModelBase
     {
+        private readonly AppSettings _appSettings;
         private readonly IMessageService _messageService;
         private readonly INavigationService _navigationService;
         private readonly IPermissionsService _permissionsService;
@@ -25,7 +27,7 @@ namespace Kris.Client.ViewModels
 
         public AppShellViewModel(IMessageService messageService, INavigationService navigationService,
             IPermissionsService permissionsService, IAlertService alertService, IPreferencesStore preferencesStore,
-            ISessionFacade sessionFacade)
+            ISessionFacade sessionFacade, IConfiguration config)
         {
             _messageService = messageService;
             _navigationService = navigationService;
@@ -33,6 +35,7 @@ namespace Kris.Client.ViewModels
             _alertService = alertService;
             _preferencesStore = preferencesStore;
             _sessionFacade = sessionFacade;
+            _appSettings = config.GetRequiredSection("Settings").Get<AppSettings>();
 
             AppearingCommand = new Command(OnAppearingAsync);
             _sessionFacade = sessionFacade;
@@ -61,6 +64,8 @@ namespace Kris.Client.ViewModels
 
         private async Task LoadUserDataAsync()
         {
+            if (!_appSettings.ServerEnabled) return;
+
             var connectionSettings = _preferencesStore.GetConnectionSettings();
             var userExists = false;
 
@@ -68,17 +73,15 @@ namespace Kris.Client.ViewModels
             {
                 userExists = await _sessionFacade.UserExistsAsync(connectionSettings.UserId);
             }
-            else if (!userExists || connectionSettings.UserId < 0 || string.IsNullOrEmpty(connectionSettings.UserName))
+            if (!userExists || connectionSettings.UserId < 0 || string.IsNullOrEmpty(connectionSettings.UserName))
             {
                 var userName = await _alertService.ShowPromptAsync(I18n.Keys.NewUserNamePromptTitle, I18n.Keys.NewUserNamePromptMessage, cancel: null);
 
                 var newUser = await _sessionFacade.CreateUserAsync(userName);
 
-                _preferencesStore.SetConnectionSettings(new ConnectionSettings
-                {
-                    UserId = newUser.Id,
-                    UserName = newUser.Name,
-                });
+                connectionSettings.UserId = newUser.Id;
+                connectionSettings.UserName = newUser.Name;
+                _preferencesStore.SetConnectionSettings(connectionSettings);
             }
         }
     }
