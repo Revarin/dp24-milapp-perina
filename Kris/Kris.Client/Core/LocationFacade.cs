@@ -34,7 +34,7 @@ namespace Kris.Client
             });
         }
 
-        public void StartListeningToUserLocations(int userId, int delayMiliseconds)
+        public void StartListeningToUsersLocations(int userId, int delayMiliseconds)
         {
             Task.Run(async () =>
             {
@@ -77,7 +77,7 @@ namespace Kris.Client
             });
         }
 
-        public void StopListening()
+        public void StopListeningToUsersLocation()
         {
             if (_listenerCancelTokenSource != null && !_listenerCancelTokenSource.IsCancellationRequested)
             {

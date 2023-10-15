@@ -1,6 +1,4 @@
-﻿using Kris.Client.Common;
-
-namespace Kris.Client.Core
+﻿namespace Kris.Client.Core
 {
     public class ConnectionSettingsChangedMessage : MessageBase
     {

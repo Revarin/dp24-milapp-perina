@@ -1,5 +1,4 @@
-﻿using Kris.Client.Common;
-using Microsoft.Maui.Maps;
+﻿using Microsoft.Maui.Maps;
 
 namespace Kris.Client.Core
 {

@@ -14,10 +14,8 @@ namespace Kris.Client.Core
         {
             Task.Run(async () =>
             {
-                if (_listenerCancelTokenSource != null)
-                {
-                    await TaskAddition.DelayUntil(() => _listenerCancelTokenSource == null, 50);
-                }
+                // Wait until previous listener ended
+                await TaskAddition.DelayUntil(() => _listenerCancelTokenSource == null, 50);
 
                 _listenerCancelTokenSource = new CancellationTokenSource();
                 IsListening = true;
@@ -56,18 +54,12 @@ namespace Kris.Client.Core
             return location;
         }
 
-        private void OnRaiseGpsLocationEvent(GpsLocationEventArgs e)
-        {
-            var raiseEvent = RaiseGpsLocationEvent;
-            Application.Current.Dispatcher.Dispatch(() => raiseEvent?.Invoke(this, e));
-        }
-
         public async Task<Location> GetLastGpsLocationAsync()
         {
             return await Geolocation.Default.GetLastKnownLocationAsync();
         }
 
-        public async Task<bool> IsGpsEnabled(int timeoutSeconds)
+        public async Task<bool> IsGpsEnabledAsync(int timeoutSeconds)
         {
             try
             {
@@ -80,6 +72,12 @@ namespace Kris.Client.Core
             }
 
             return true;
+        }
+
+        private void OnRaiseGpsLocationEvent(GpsLocationEventArgs e)
+        {
+            var raiseEvent = RaiseGpsLocationEvent;
+            Application.Current.Dispatcher.Dispatch(() => raiseEvent?.Invoke(this, e));
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Kris.Server
         public Task UpdateUserName([FromBody]UpdateUserNameRequest request)
         {
             if (request == null) throw new BadHttpRequestException("Missing request body");
-            if (string.IsNullOrEmpty(request.Name)) throw new BadHttpRequestException("Missing request body");
+            if (string.IsNullOrEmpty(request.Name)) throw new BadHttpRequestException("Missing user name");
 
             var result = _userService.UpdateUserName(request.Id, request.Name);
 

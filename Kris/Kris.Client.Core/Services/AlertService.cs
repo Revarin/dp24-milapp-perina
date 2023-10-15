@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
 
 namespace Kris.Client.Core
 {
@@ -44,18 +45,19 @@ namespace Kris.Client.Core
             return Application.Current.MainPage.DisplayPromptAsync(title, message, accept, cancel, placeholder, maxLenght, null, initialValue);
         }
 
-        public void ShowToast(string message)
+        public void ShowToast(string message, ToastDuration toastDuration = ToastDuration.Short, double textSize = 14)
         {
             Application.Current.MainPage.Dispatcher.Dispatch(async () =>
             {
-                var toast = Toast.Make(message);
-                await toast.Show();
+                await ShowToastAsync(message, toastDuration, textSize);
             });
         }
 
-        public Task ShowToastAsync(string message)
+        // Can only be used in UI thread, use ShowToast instead
+        public Task ShowToastAsync(string message, ToastDuration toastDuration = ToastDuration.Short, double textSize = 14)
         {
-            throw new NotImplementedException();
+            var toast = Toast.Make(message, toastDuration, textSize);
+            return toast.Show();
         }
     }
 }

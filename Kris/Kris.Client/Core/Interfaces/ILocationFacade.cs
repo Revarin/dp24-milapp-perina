@@ -9,7 +9,7 @@ namespace Kris.Client
         bool IsListening { get; }
 
         Task SaveUserLocationAsync(int userId, Location location);
-        void StartListeningToUserLocations(int userId, int delayMiliseconds);
-        void StopListening();
+        void StartListeningToUsersLocations(int userId, int delayMiliseconds);
+        void StopListeningToUsersLocation();
     }
 }

@@ -1,7 +1,7 @@
-﻿using CommunityToolkit.Maui;
+﻿using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Reflection;
+using CommunityToolkit.Maui;
 
 namespace Kris.Client
 {
@@ -34,7 +34,7 @@ namespace Kris.Client
             builder.Configuration.AddConfiguration(config);
 
 #if DEBUG
-		builder.Logging.AddDebug();
+		    builder.Logging.AddDebug();
 #endif
 
             return builder.Build();
