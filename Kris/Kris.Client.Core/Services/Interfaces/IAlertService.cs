@@ -1,4 +1,6 @@
-﻿namespace Kris.Client.Core
+﻿using CommunityToolkit.Maui.Core;
+
+namespace Kris.Client.Core
 {
     public interface IAlertService
     {
@@ -8,7 +10,7 @@
         void ShowConfirmation(string title, string message, Action<bool> callback, string accept = "Yes", string cancel = "No");
         Task<string> ShowPromptAsync(string title, string message, string accept = "OK", string cancel = "Cancel", string placeholder = null, int maxLenght = -1, string initialValue = null);
         public void ShowPrompt(string title, string message, Action<string> callback, string accept = "OK", string cancel = "Cancel", string placeholder = null, int maxLenght = -1, string initialValue = null);
-        Task ShowToastAsync(string message);
-        void ShowToast(string message);
+        Task ShowToastAsync(string message, ToastDuration toastDuration = ToastDuration.Short, double textSize = 14);
+        void ShowToast(string message, ToastDuration toastDuration = ToastDuration.Short, double textSize = 14);
     }
 }

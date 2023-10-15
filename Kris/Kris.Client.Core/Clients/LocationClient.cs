@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Kris.Interface;
-using System.Reflection;
 using Newtonsoft.Json;
+using Kris.Interface;
 
 namespace Kris.Client.Core
 {

@@ -1,13 +1,13 @@
 ﻿using System.Windows.Input;
+using Microsoft.Extensions.Configuration;
 using Kris.Client.Core;
 using Kris.Client.Common;
-using Microsoft.Extensions.Configuration;
 
 namespace Kris.Client.ViewModels
 {
     public class AppShellViewModel : ViewModelBase
     {
-        private readonly AppSettings _appSettings;
+        private readonly AppSettings _settings;
         private readonly IMessageService _messageService;
         private readonly INavigationService _navigationService;
         private readonly IPermissionsService _permissionsService;
@@ -35,13 +35,13 @@ namespace Kris.Client.ViewModels
             _alertService = alertService;
             _preferencesStore = preferencesStore;
             _sessionFacade = sessionFacade;
-            _appSettings = config.GetRequiredSection("Settings").Get<AppSettings>();
+            _settings = config.GetRequiredSection("Settings").Get<AppSettings>();
 
-            AppearingCommand = new Command(OnAppearingAsync);
+            AppearingCommand = new Command(OnAppearing);
             _sessionFacade = sessionFacade;
         }
 
-        private async void OnAppearingAsync()
+        private async void OnAppearing()
         {
             _navigationService.RegisterRoutes(_contentPages);
 
@@ -64,7 +64,7 @@ namespace Kris.Client.ViewModels
 
         private async Task LoadUserDataAsync()
         {
-            if (!_appSettings.ServerEnabled) return;
+            if (!_settings.ServerEnabled) return;
 
             var connectionSettings = _preferencesStore.GetConnectionSettings();
             var userExists = false;

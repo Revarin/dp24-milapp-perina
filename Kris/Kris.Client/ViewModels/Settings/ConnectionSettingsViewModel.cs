@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
+using Microsoft.Extensions.Configuration;
 using CommunityToolkit.Maui.Core.Extensions;
+using Kris.Client.Common;
 using Kris.Client.Core;
 using Kris.Client.Data;
 
@@ -8,6 +10,7 @@ namespace Kris.Client.ViewModels
 {
     public class ConnectionSettingsViewModel : ViewModelBase
     {
+        private readonly AppSettings _settings;
         private readonly IMessageService _messageService;
         private readonly IPreferencesStore _preferencesStore;
         private readonly ISessionFacade _sessionFacade;
@@ -50,11 +53,13 @@ namespace Kris.Client.ViewModels
         private ConnectionSettings _connectionSettings;
 
         public ConnectionSettingsViewModel(IMessageService messageService, IPreferencesStore preferencesStore, ISessionFacade sessionFacade,
-            IDataSource<GpsIntervalItem> gpsItervalDataSource, IDataSource<UsersLocationIntervalItem> usersLocationIntervalDataSource)
+            IDataSource<GpsIntervalItem> gpsItervalDataSource, IDataSource<UsersLocationIntervalItem> usersLocationIntervalDataSource,
+            IConfiguration config)
         {
             _messageService = messageService;
             _preferencesStore = preferencesStore;
             _sessionFacade = sessionFacade;
+            _settings = config.GetRequiredSection("Settings").Get<AppSettings>();
 
             UserNameCompletedCommand = new Command(OnUserNameCompletedAsync);
             GpsIntervalSelectedIndexChangedCommand = new Command(OnGpsIntervalSelectedIndexChanged);
@@ -73,14 +78,18 @@ namespace Kris.Client.ViewModels
         {
             var newName = UserName;
 
-            if (_connectionSettings.UserId > 0)
+            if (_settings.ServerEnabled)
             {
-                await _sessionFacade.UpdateUserAsync(_connectionSettings.UserId, newName);
-            }
-            else
-            {
-                var user = await _sessionFacade.CreateUserAsync(newName);
-                _connectionSettings.UserId = user.Id;
+                if (_connectionSettings.UserId > 0)
+                {
+                    await _sessionFacade.UpdateUserAsync(_connectionSettings.UserId, newName);
+                }
+                else
+                {
+                    var user = await _sessionFacade.CreateUserAsync(newName);
+                    _connectionSettings.UserId = user.Id;
+                }
+
             }
 
             _connectionSettings.UserName = newName;

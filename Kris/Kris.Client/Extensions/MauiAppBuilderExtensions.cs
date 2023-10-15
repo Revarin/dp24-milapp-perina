@@ -2,6 +2,7 @@
 using Kris.Client.Data;
 using Kris.Client.ViewModels;
 using Kris.Interface;
+
 using MauiMap = Microsoft.Maui.Controls.Maps.Map;
 
 namespace Kris.Client

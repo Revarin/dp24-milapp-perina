@@ -1,17 +1,17 @@
 ﻿using System.Windows.Input;
 using System.Collections.ObjectModel;
 using Microsoft.Maui.Maps;
+using Microsoft.Extensions.Configuration;
 using Kris.Client.Behaviors;
 using Kris.Client.Data;
 using Kris.Client.Core;
-using Microsoft.Extensions.Configuration;
 using Kris.Client.Common;
 
 namespace Kris.Client.ViewModels
 {
     public class MapViewModel : ViewModelBase
     {
-        private readonly AppSettings _appSettings;
+        private readonly AppSettings _settings;
         private readonly IAlertService _alertService;
         private readonly IMessageService _messageService;
         private readonly IPermissionsService _permissionsService;
@@ -42,7 +42,7 @@ namespace Kris.Client.ViewModels
             _preferencesStore = preferencesStore;
             _gpsService = gpsService;
             _locationFacade = locationFacade;
-            _appSettings = config.GetRequiredSection("Settings").Get<AppSettings>();
+            _settings = config.GetRequiredSection("Settings").Get<AppSettings>();
 
             CurrentRegion = new MapSpan(new Location(), 10, 10);
             LoadedCommand = new Command(OnLoaded);
@@ -66,7 +66,7 @@ namespace Kris.Client.ViewModels
             _connectionSettings = _preferencesStore.GetConnectionSettings();
 
             var locationPermission = await _permissionsService.CheckPermissionAsync<Permissions.LocationWhenInUse>();
-            if (locationPermission.HasFlag(PermissionStatus.Granted) && await _gpsService.IsGpsEnabled(2))
+            if (locationPermission.HasFlag(PermissionStatus.Granted) && await _gpsService.IsGpsEnabledAsync(2))
             {
                 _gpsService.RaiseGpsLocationEvent += OnGpsNewLocation;
                 if (!_gpsService.IsListening)
@@ -79,12 +79,12 @@ namespace Kris.Client.ViewModels
                 _alertService.ShowToast($"GPS service is not available.");
             }
 
-            if (_connectionSettings.UserId > 0 && _appSettings.ServerEnabled)
+            if (_connectionSettings.UserId > 0 && _settings.ServerEnabled)
             {
                 _locationFacade.RaiseUserLocationsEvent += OnLoadUsersLocations;
                 if (!_locationFacade.IsListening)
                 {
-                    _locationFacade.StartListeningToUserLocations(_connectionSettings.UserId, _connectionSettings.UsersLocationInterval);
+                    _locationFacade.StartListeningToUsersLocations(_connectionSettings.UserId, _connectionSettings.UsersLocationInterval);
                 }
             }
             else
@@ -102,10 +102,10 @@ namespace Kris.Client.ViewModels
                 _gpsService.StopListening();
                 _gpsService.StartListening(_connectionSettings.GpsInterval, _connectionSettings.GpsInterval);
             }
-            if (message.UsersLocationIntervalChanged && _appSettings.ServerEnabled)
+            if (message.UsersLocationIntervalChanged && _settings.ServerEnabled)
             {
-                _locationFacade.StopListening();
-                _locationFacade.StartListeningToUserLocations(_connectionSettings.UserId, _connectionSettings.UsersLocationInterval);
+                _locationFacade.StopListeningToUsersLocation();
+                _locationFacade.StartListeningToUsersLocations(_connectionSettings.UserId, _connectionSettings.UsersLocationInterval);
             }
         }
 
@@ -124,9 +124,10 @@ namespace Kris.Client.ViewModels
 #if DEBUG
             _alertService.ShowToast($"LAT:{e.Location.Latitude} LONG:{e.Location.Longitude} ALT:{e.Location.Altitude}");
 #endif
+            Task SaveUserLocationTask = null;
             if (_connectionSettings.UserId > 0)
             {
-                await _locationFacade.SaveUserLocationAsync(_connectionSettings.UserId, e.Location);
+                SaveUserLocationTask = _locationFacade.SaveUserLocationAsync(_connectionSettings.UserId, e.Location);
             }
 
             var user = PinsSource.SingleOrDefault(p => p.PinType == CustomPinType.Myself);
@@ -141,6 +142,8 @@ namespace Kris.Client.ViewModels
                 ImageSource = ImageSource.FromFile("myself.png"),
                 Name = "Myself",
             });
+
+            if (SaveUserLocationTask != null) await SaveUserLocationTask;
         }
 
         private void OnLoadUsersLocations(object sender, UsersLocationsEventArgs e)
