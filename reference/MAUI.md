@@ -13,6 +13,7 @@ Tento soubor obsahuje odkazy na návody a ukázkové zdroje k __MAUI__.
 - [Microsoft: Grids](https://learn.microsoft.com/en-us/dotnet/maui/user-interface/layouts/grid)
 - [Microsoft: Shell navigation](https://learn.microsoft.com/en-us/dotnet/maui/fundamentals/shell/navigation)
 - [Microsoft: Picker](https://learn.microsoft.com/en-us/dotnet/maui/user-interface/controls/picker)
+- [Microsoft: REST](https://learn.microsoft.com/en-us/dotnet/maui/data-cloud/rest)
 
 ## Geolocation
 

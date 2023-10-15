@@ -8,19 +8,39 @@
              x:DataType="viewModels:ConnectionSettingsViewModel"
              Title="Connection settings">
     <StackLayout>
-        <HorizontalStackLayout>
+        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+            <Label Text="User name">
+            </Label>
+            <Entry Placeholder="User name"
+                   Text="{Binding UserName}">
+                <Entry.Behaviors>
+                    <toolkit:EventToCommandBehavior EventName="Completed" Command="{Binding UserNameCompletedCommand}" />
+                </Entry.Behaviors>
+            </Entry>
+        </StackLayout>
+        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
             <Label Text="GPS request interval">
             </Label>
-            <Picker x:Name="GpsInterval"
-                    Title="GPS request interval"
+            <Picker Title="GPS request interval"
                     ItemsSource="{Binding GpsIntervalItems}"
                     ItemDisplayBinding="{Binding Display}"
                     SelectedItem="{Binding GpsIntervalSelectedItem}">
                 <Picker.Behaviors>
-                    <toolkit:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SelectedIndexChangedCommand}" />
+                    <toolkit:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding GpsIntervalSelectedIndexChangedCommand}" />
                 </Picker.Behaviors>
             </Picker>
-        </HorizontalStackLayout>
-        
+        </StackLayout>
+        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+            <Label Text="Others locations request interval">
+            </Label>
+            <Picker Title="Others locations request interval"
+                    ItemsSource="{Binding UsersLocationIntervalItems}"
+                    ItemDisplayBinding="{Binding Display}"
+                    SelectedItem="{Binding UsersLocationIntervalSelectedItem}">
+                <Picker.Behaviors>
+                    <toolkit:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding UsersLocationIntervalSelectedIndexChangedCommand}" />
+                </Picker.Behaviors>
+            </Picker>
+        </StackLayout>
     </StackLayout>
 </ContentPage>

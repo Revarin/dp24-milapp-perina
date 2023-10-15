@@ -4,17 +4,22 @@
     {
         public static class PreferencesStore
         {
-            public static readonly string LastRegionKey = "LastRegionKey";
+            public static readonly string LastRegionLocation = "LastRegionLocation";
+            public static readonly string LastRegionDistance = "LastRegionDistance";
+        }
 
-            public static readonly string MapSpanLocationKey = "Location";
-            public static readonly string MapSpanDistanceKey = "Distance";
-
-            public static readonly string SettingsGpsInterval = "SettingsGpsInterval";
+        public static class ConnectionSettings
+        {
+            public static readonly string GpsInterval = "ConnectionSettingsGpsInterval";
+            public static readonly string UserId = "UserSettingsUserId";
+            public static readonly string UserName = "UserSettingsUserName";
+            public static readonly string UsersLocationInterval = "ConnectionSettingsUsersLocationInterval";
         }
 
         public static class DefaultSettings
         {
             public static readonly int GpsInterval = 10000;
+            public static readonly int UsersLocationInterval = 10000;
         }
     }
 }

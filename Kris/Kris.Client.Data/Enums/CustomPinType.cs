@@ -3,6 +3,7 @@
     public enum CustomPinType
     {
         Generic,
-        User
+        Myself,
+        Users
     }
 }

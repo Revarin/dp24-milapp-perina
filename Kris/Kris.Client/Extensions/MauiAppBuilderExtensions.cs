@@ -1,7 +1,7 @@
-﻿using Kris.Client.Common;
+﻿using Kris.Client.Core;
 using Kris.Client.Data;
 using Kris.Client.ViewModels;
-
+using Kris.Interface;
 using MauiMap = Microsoft.Maui.Controls.Maps.Map;
 
 namespace Kris.Client
@@ -13,6 +13,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<MapView>();
             builder.Services.AddSingleton<MenuView>();
             builder.Services.AddTransient<ConnectionSettingsView>();
+
             builder.Services.AddSingleton<TestView>();
 
             return builder;
@@ -24,6 +25,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<MapViewModel>();
             builder.Services.AddSingleton<MenuViewModel>();
             builder.Services.AddTransient<ConnectionSettingsViewModel>();
+
             builder.Services.AddSingleton<TestViewModel>();
 
             return builder;
@@ -36,6 +38,13 @@ namespace Kris.Client
             builder.Services.AddSingleton<IPermissionsService, PermissionsService>();
             builder.Services.AddSingleton<INavigationService, NavigationService>();
             builder.Services.AddSingleton<IGpsService, GpsService>();
+            builder.Services.AddSingleton<IMessageService, MessageService>();
+
+            builder.Services.AddTransient<ISessionFacade, SessionFacade>();
+            builder.Services.AddTransient<ILocationFacade, LocationFacade>();
+
+            builder.Services.AddTransient<ISessionController, SessionClient>();
+            builder.Services.AddTransient<ILocationController, LocationClient>();
 
             return builder;
         }
@@ -43,6 +52,7 @@ namespace Kris.Client
         public static MauiAppBuilder RegisterDataSources(this MauiAppBuilder builder)
         {
             builder.Services.AddTransient<IDataSource<GpsIntervalItem>, GpsIntervalDataSource>();
+            builder.Services.AddTransient<IDataSource<UsersLocationIntervalItem>, UsersLocationIntervalDataSource>();
 
             return builder;
         }
