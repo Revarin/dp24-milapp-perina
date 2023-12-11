@@ -29,13 +29,13 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/kris-server
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/kris-app
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
-          name: .kris-server
-          path: ${{env.DOTNET_ROOT}}/kris-server
+          name: .kris-app
+          path: ${{env.DOTNET_ROOT}}/kris-app
 
   deploy:
     runs-on: windows-latest
@@ -51,13 +51,13 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
-          name: .kris-server
+          name: .kris-app
       
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'kris-server'
+          app-name: 'kris-app'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EB9CFB92AA844E399950B9F7241F9584 }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE  }}
