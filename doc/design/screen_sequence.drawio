@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-12-25T21:45:44.326Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" version="22.1.11" etag="_ee9CHIH9aKzny3ITpvx" type="device">
+<mxfile host="app.diagrams.net" modified="2023-12-29T14:54:45.936Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" etag="D1DwqTxKKkXms8hni2FJ" version="22.1.13" type="device">
   <diagram name="Stránka-1" id="4uzDfmDRNhCInwvL7MMY">
     <mxGraphModel dx="1434" dy="746" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -20,7 +20,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="WGg2hFcMqNZgMdjpp8JN-2" value="Přihlašovací obrazovka" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="WGg2hFcMqNZgMdjpp8JN-2" value="Přihlašovací obrazovka" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCE5FF;" parent="1" vertex="1">
           <mxGeometry x="240" y="80" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="WGg2hFcMqNZgMdjpp8JN-5" value="Zpět" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="WGg2hFcMqNZgMdjpp8JN-3" target="WGg2hFcMqNZgMdjpp8JN-2" edge="1">
@@ -39,7 +39,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="WGg2hFcMqNZgMdjpp8JN-3" value="Registrační obrazovka" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="WGg2hFcMqNZgMdjpp8JN-3" value="Registrační obrazovka" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCE5FF;" parent="1" vertex="1">
           <mxGeometry x="480" y="80" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="WGg2hFcMqNZgMdjpp8JN-10" value="Menu" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="WGg2hFcMqNZgMdjpp8JN-6" target="WGg2hFcMqNZgMdjpp8JN-9" edge="1">
@@ -68,7 +68,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="WGg2hFcMqNZgMdjpp8JN-6" value="Digitální mapa" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="WGg2hFcMqNZgMdjpp8JN-6" value="Digitální mapa" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCE5FF;" parent="1" vertex="1">
           <mxGeometry x="240" y="200" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="WGg2hFcMqNZgMdjpp8JN-12" value="Mapa" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="WGg2hFcMqNZgMdjpp8JN-9" target="WGg2hFcMqNZgMdjpp8JN-6" edge="1">
@@ -131,13 +131,13 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="WGg2hFcMqNZgMdjpp8JN-9" value="Hlavní menu" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="WGg2hFcMqNZgMdjpp8JN-9" value="Hlavní menu" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCE5FF;" parent="1" vertex="1">
           <mxGeometry x="240" y="320" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="WGg2hFcMqNZgMdjpp8JN-13" value="Nastavení mapy" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="WGg2hFcMqNZgMdjpp8JN-13" value="Nastavení mapy" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCE5FF;" parent="1" vertex="1">
           <mxGeometry x="140" y="440" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="WGg2hFcMqNZgMdjpp8JN-14" value="Nastavení připojení&lt;br&gt;k sezení" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="WGg2hFcMqNZgMdjpp8JN-14" value="Nastavení připojení&lt;br&gt;k sezení" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCE5FF;" parent="1" vertex="1">
           <mxGeometry x="340" y="440" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="WGg2hFcMqNZgMdjpp8JN-21" value="Zpět" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="WGg2hFcMqNZgMdjpp8JN-19" target="WGg2hFcMqNZgMdjpp8JN-9" edge="1">
@@ -156,7 +156,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="WGg2hFcMqNZgMdjpp8JN-19" value="Seznam kontaktů" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="WGg2hFcMqNZgMdjpp8JN-19" value="Seznam kontaktů" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCE5FF;" parent="1" vertex="1">
           <mxGeometry x="480" y="320" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="WGg2hFcMqNZgMdjpp8JN-24" value="Zpět" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="WGg2hFcMqNZgMdjpp8JN-22" target="WGg2hFcMqNZgMdjpp8JN-19" edge="1">
@@ -175,7 +175,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="WGg2hFcMqNZgMdjpp8JN-22" value="Chatovací obrazovka" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="WGg2hFcMqNZgMdjpp8JN-22" value="Chatovací obrazovka" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCE5FF;" parent="1" vertex="1">
           <mxGeometry x="480" y="200" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="WGg2hFcMqNZgMdjpp8JN-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="WGg2hFcMqNZgMdjpp8JN-28" target="WGg2hFcMqNZgMdjpp8JN-2" edge="1">
@@ -192,7 +192,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="WGg2hFcMqNZgMdjpp8JN-30" value="Formulář pro přidání/upravení mapových objektů" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="WGg2hFcMqNZgMdjpp8JN-30" value="Formulář pro přidání/upravení mapových objektů" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCE5FF;" parent="1" vertex="1">
           <mxGeometry y="200" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="WGg2hFcMqNZgMdjpp8JN-37" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="WGg2hFcMqNZgMdjpp8JN-33" target="WGg2hFcMqNZgMdjpp8JN-9" edge="1">
@@ -204,7 +204,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="WGg2hFcMqNZgMdjpp8JN-33" value="Správa mapových symbolů" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="WGg2hFcMqNZgMdjpp8JN-33" value="Správa mapových symbolů" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCE5FF;" parent="1" vertex="1">
           <mxGeometry y="360" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="WGg2hFcMqNZgMdjpp8JN-38" value="Zpět" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="WGg2hFcMqNZgMdjpp8JN-34" target="WGg2hFcMqNZgMdjpp8JN-9" edge="1">
@@ -216,7 +216,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="WGg2hFcMqNZgMdjpp8JN-34" value="Správa šablon zpráv" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="WGg2hFcMqNZgMdjpp8JN-34" value="Správa šablon zpráv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCE5FF;" parent="1" vertex="1">
           <mxGeometry y="280" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="WGg2hFcMqNZgMdjpp8JN-41" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="WGg2hFcMqNZgMdjpp8JN-39" target="WGg2hFcMqNZgMdjpp8JN-9" edge="1">
@@ -226,7 +226,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="WGg2hFcMqNZgMdjpp8JN-39" value="Nastavení uživatele" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="WGg2hFcMqNZgMdjpp8JN-39" value="Nastavení uživatele" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCE5FF;" parent="1" vertex="1">
           <mxGeometry x="140" y="520" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="WGg2hFcMqNZgMdjpp8JN-40" value="Zpět" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="WGg2hFcMqNZgMdjpp8JN-13" target="WGg2hFcMqNZgMdjpp8JN-9" edge="1">
@@ -244,7 +244,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="WGg2hFcMqNZgMdjpp8JN-46" value="Systémové&lt;br&gt;nastavení" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="WGg2hFcMqNZgMdjpp8JN-46" value="Systémové&lt;br&gt;nastavení" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCE5FF;" parent="1" vertex="1">
           <mxGeometry x="340" y="520" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="WGg2hFcMqNZgMdjpp8JN-42" value="Zpět" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="WGg2hFcMqNZgMdjpp8JN-14" target="WGg2hFcMqNZgMdjpp8JN-9" edge="1">
