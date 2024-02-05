@@ -5,9 +5,9 @@ VisualStudioVersion = 17.7.34009.444
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kris.Server", "Kris.Server.csproj", "{2C5CFDD8-868B-43D9-813A-42262956BADE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kris.Interface", "..\Kris.Interface\Kris.Interface.csproj", "{789DD69A-B799-41D3-A9DF-9B2A6EB06036}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kris.Interface", "..\Kris.Interface\Kris.Interface.csproj", "{789DD69A-B799-41D3-A9DF-9B2A6EB06036}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kris.Server.Data", "..\Kris.Server.Data\Kris.Server.Data.csproj", "{EE451750-9844-4588-9830-89C957F258D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kris.Server.Data", "..\Kris.Server.Data\Kris.Server.Data.csproj", "{EE451750-9844-4588-9830-89C957F258D3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

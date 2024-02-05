@@ -7,7 +7,7 @@ namespace Kris.Server.Data
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<UserLocationEntity> Locations { get; set; }
 
-        public DataContext(DbContextOptions<DataContext> options) : base(options)
+        public DataContext(DbContextOptions options) : base(options)
         {
         }
     }

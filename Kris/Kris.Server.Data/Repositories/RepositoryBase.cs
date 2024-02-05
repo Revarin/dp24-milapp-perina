@@ -1,60 +1,57 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Kris.Server.Data.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace Kris.Server.Data
+namespace Kris.Server.Data.Repositories;
+
+public abstract class RepositoryBase<T> : IRepository<T> where T : EntityBase
 {
-    public abstract class RepositoryBase<T> : IRepository<T> where T : class
+    protected DataContext _context { get; set; }
+    private DbSet<T> _dbSet => _context.Set<T>();
+
+    public RepositoryBase(DataContext dataContext)
     {
-        protected DataContext _context { get; set; }
-        private DbSet<T> _dbSet
-        {
-            get => _context.Set<T>();
-        }
+        _context = dataContext;
+    }
 
-        public RepositoryBase(DataContext dataContext)
-        {
-            _context = dataContext;
-        }
+    public async Task<T?> GetAsync(Guid id, CancellationToken ct)
+    {
+        return await _dbSet.FindAsync(id, ct);
+    }
 
-        public T Get(int id)
-        {
-            return _dbSet.Find(id);
-        }
+    public async Task<IEnumerable<T>> GetAsync(CancellationToken ct)
+    {
+        return await _dbSet.ToListAsync(ct);
+    }
 
-        public IQueryable<T> Get()
-        {
-            return _dbSet;
-        }
+    public async Task<IEnumerable<T>> GetAsync(Func<T, bool> predicate, CancellationToken ct)
+    {
+        return await Task.Run(() => _dbSet.Where(predicate).ToList());
+    }
 
-        public IQueryable<T> Get(Func<T, bool> predicate)
-        {
-            return _dbSet.Where(predicate).AsQueryable();
-        }
+    public async Task<T> InsertAsync(T entity, CancellationToken ct)
+    {
+        var entry = await _dbSet.AddAsync(entity, ct);
+        await _context.SaveChangesAsync(ct);
+        return entry.Entity;
+    }
 
-        public T Insert(T entity)
-        {
-            var x = _dbSet.Add(entity);
-            _context.SaveChanges();
-            return x.Entity;
-        }
+    public async Task<bool> UpdateAsync(T entity, CancellationToken ct)
+    {
+        var entityExists = await _dbSet.AnyAsync(p => p.Id == entity.Id, ct);
+        if (!entityExists) return false;
 
-        public void Update(T entity)
-        {
-            _dbSet.Update(entity);
-            _context.SaveChanges();
-            return;
-        }
+        _dbSet.Update(entity);
+        await _context.SaveChangesAsync(ct);
+        return true;
+    }
 
-        public void Delete(T entity)
-        {
-            _dbSet.Remove(entity);
-            _context.SaveChanges();
-        }
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken ct)
+    {
+        var entity = await _dbSet.FindAsync(id, ct);
+        if (entity == null) return false;
 
-        public void Delete(int id)
-        {
-            var entity = _dbSet.Find(id);
-            _dbSet.Remove(entity);
-            _context.SaveChanges();
-        }
+        _dbSet.Remove(entity);
+        await _context.SaveChangesAsync(ct);
+        return true;
     }
 }
