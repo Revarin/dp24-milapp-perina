@@ -7,12 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.0" />
     <PackageReference Include="FluentResults" Version="3.15.2" />
     <PackageReference Include="MediatR" Version="12.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Handlers\" />
+    <ProjectReference Include="..\Kris.Interface\Kris.Interface.csproj" />
+    <ProjectReference Include="..\Kris.Server.Common\Kris.Server.Common.csproj" />
+    <ProjectReference Include="..\Kris.Server.Data\Kris.Server.Data.csproj" />
   </ItemGroup>
 
 </Project>

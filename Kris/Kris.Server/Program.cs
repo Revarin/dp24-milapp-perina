@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Kris.Server.Data;
+using Kris.Server.Core.Mappers;
 
 namespace Kris.Server
 {
@@ -25,6 +26,11 @@ namespace Kris.Server
 
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<ILocationService, LocationService>();
+
+            builder.Services.AddAutoMapper(config =>
+            {
+                config.AddProfile(new UserMappingProfile());
+            });
 
             var app = builder.Build();
 

@@ -1,6 +1,5 @@
-﻿namespace Kris.Interface
+﻿namespace Kris.Interface.Requests;
+
+public abstract class RequestBase
 {
-    public abstract class RequestBase
-    {
-    }
 }
