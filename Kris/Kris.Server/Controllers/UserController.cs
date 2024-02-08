@@ -34,11 +34,22 @@ public sealed class UserController : ControllerBase, IUserController
         return Ok();
     }
 
-    public Task<ActionResult<object>> LoginUser(LoginUserRequest request)
+    [HttpPost]
+    public async Task<ActionResult> LoginUser(LoginUserRequest request, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var command = new LoginUserCommand { LoginUser = request };
+        var result = await _mediator.Send(command, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<InvalidCredentialsError>()) return Unauthorized(result.Errors.Select(e => e.Message));
+            else return BadRequest();
+        }
+
+        return Ok();
     }
 
+    // TODO
     public Task<ActionResult<object>> StoreUserSettings(StoreUserSettingsRequest request)
     {
         throw new NotImplementedException();

@@ -6,6 +6,6 @@ namespace Kris.Interface.Interfaces;
 public interface IUserController
 {
     Task<ActionResult> RegisterUser(RegisterUserRequest request, CancellationToken ct);
-    Task<ActionResult<object>> LoginUser(LoginUserRequest request);
+    Task<ActionResult> LoginUser(LoginUserRequest request, CancellationToken ct);
     Task<ActionResult<object>> StoreUserSettings(StoreUserSettingsRequest request);
 }

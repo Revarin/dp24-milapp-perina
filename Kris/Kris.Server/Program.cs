@@ -25,11 +25,6 @@ public class Program
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
         });
 
-        builder.Services.AddAutoMapper(config =>
-        {
-            config.AddProfile(new UserMappingProfile());
-        });
-
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
