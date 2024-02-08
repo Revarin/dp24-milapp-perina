@@ -6,6 +6,9 @@ using Microsoft.IdentityModel.Tokens;
 using Kris.Server.Common.Options;
 using Kris.Server.Data.Models;
 using Kris.Server.Common.Models;
+using Kris.Common.Enums;
+using Kris.Server.Common;
+using Kris.Server.Core.Models;
 
 namespace Kris.Server.Core.Services;
 
@@ -28,7 +31,31 @@ public sealed class JwtService : IJwtService
         {
             Subject = new ClaimsIdentity(new Claim[]
             {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Login)
+            }),
+            Expires = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpirationMinutes),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return new JwtToken(tokenHandler.WriteToken(token));
+    }
+
+    public JwtToken CreateToken(UserModel user, SessionEntity session, UserType userType = UserType.Basic)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(_jwtOptions.Key);
+
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Login),
+                new Claim(KrisClaimTypes.SessionId, session.Id.ToString()),
+                new Claim(KrisClaimTypes.SessionName, session.Name),
+                new Claim(ClaimTypes.Role, userType.ToString())
             }),
             Expires = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpirationMinutes),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

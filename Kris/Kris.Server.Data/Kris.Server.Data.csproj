@@ -11,12 +11,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\" />
+    <ProjectReference Include="..\Kris.Common\Kris.Common.csproj" />
+    <ProjectReference Include="..\Kris.Server.Common\Kris.Server.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Kris.Common\Kris.Common.csproj" />
-    <ProjectReference Include="..\Kris.Server.Common\Kris.Server.Common.csproj" />
+    <Folder Include="ViewModels\" />
   </ItemGroup>
 
 </Project>

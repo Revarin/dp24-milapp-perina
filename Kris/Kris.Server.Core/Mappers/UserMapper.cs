@@ -1,4 +1,5 @@
-﻿using Kris.Server.Core.Requests;
+﻿using Kris.Server.Core.Models;
+using Kris.Server.Core.Requests;
 using Kris.Server.Core.Services;
 using Kris.Server.Data.Models;
 
@@ -22,6 +23,17 @@ public sealed class UserMapper : IUserMapper
         };
 
         user.Password = _passwordService.HashPassword(user, command.RegisterUser.Password);
+
+        return user;
+    }
+
+    public UserModel Map(UserEntity entity)
+    {
+        var user = new UserModel
+        {
+            Id = entity.Id,
+            Login = entity.Login
+        };
 
         return user;
     }

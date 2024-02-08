@@ -5,6 +5,7 @@ using Kris.Interface.Requests;
 using Kris.Server.Core.Requests;
 using Kris.Server.Common.Errors;
 using Microsoft.AspNetCore.Authorization;
+using Kris.Interface.Responses;
 
 namespace Kris.Server.Controllers;
 
@@ -26,7 +27,7 @@ public sealed class UserController : KrisController, IUserController
 
         if (result.IsFailed)
         {
-            if (result.HasError<UserExistsError>()) return BadRequest(result.Errors.Select(e => e.Message));
+            if (result.HasError<EntityExistsError>()) return BadRequest(result.Errors.Select(e => e.Message));
             else return BadRequest();
         }
 
@@ -35,7 +36,7 @@ public sealed class UserController : KrisController, IUserController
 
     [HttpPost("Login")]
     [AllowAnonymous]
-    public async Task<ActionResult<string>> LoginUser(LoginUserRequest request, CancellationToken ct)
+    public async Task<ActionResult<JwtTokenResponse>> LoginUser(LoginUserRequest request, CancellationToken ct)
     {
         var command = new LoginUserCommand { LoginUser = request };
         var result = await _mediator.Send(command, ct);
@@ -46,7 +47,7 @@ public sealed class UserController : KrisController, IUserController
             else return BadRequest();
         }
 
-        return Ok(result.Value.Token);
+        return Ok(new JwtTokenResponse { Token = result.Value.Token });
     }
 
     // TODO

@@ -19,7 +19,7 @@ public sealed class RegisterUserCommandHandler : UserHandler, IRequestHandler<Re
         var login = request.RegisterUser.Login;
 
         var userExists = await _userRepository.UserExistsAsync(login, cancellationToken);
-        if (userExists) return Result.Fail(new UserExistsError(login));
+        if (userExists) return Result.Fail(new EntityExistsError("User", login));
 
         var user = _userMapper.Map(request);
 
