@@ -1,16 +1,16 @@
-﻿using AutoMapper;
-using FluentResults;
-using Kris.Server.Common.Errors;
-using Kris.Server.Core.Requests;
-using Kris.Server.Data.Models;
-using Kris.Server.Data.Repositories;
+﻿using FluentResults;
 using MediatR;
+using Kris.Server.Common.Errors;
+using Kris.Server.Core.Mappers;
+using Kris.Server.Core.Requests;
+using Kris.Server.Data.Repositories;
 
 namespace Kris.Server.Core.Handlers.User;
 
 public sealed class RegisterUserCommandHandler : UserHandler, IRequestHandler<RegisterUserCommand, Result>
 {
-    public RegisterUserCommandHandler(IUserRepository userRepository, IMapper mapper) : base(userRepository, mapper)
+    public RegisterUserCommandHandler(IUserRepository userRepository, IUserMapper mapper)
+        : base(userRepository, mapper)
     {
     }
 
@@ -21,8 +21,7 @@ public sealed class RegisterUserCommandHandler : UserHandler, IRequestHandler<Re
         var userExists = await _userRepository.UserExistsAsync(login, cancellationToken);
         if (userExists) return Result.Fail(new UserExistsError(login));
 
-        var user = _mapper.Map<UserEntity>(request);
-        if (user == null) throw new AutoMapperMappingException(nameof(request));
+        var user = _userMapper.Map(request);
 
         await _userRepository.InsertAsync(user, cancellationToken);
 
