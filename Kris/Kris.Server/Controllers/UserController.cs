@@ -4,12 +4,13 @@ using Kris.Interface.Interfaces;
 using Kris.Interface.Requests;
 using Kris.Server.Core.Requests;
 using Kris.Server.Common.Errors;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Kris.Server.Controllers;
 
 [ApiController]
+[Route("api/[controller]")]
 [Produces("application/json")]
-[Route("api/user")]
 public sealed class UserController : ControllerBase, IUserController
 {
     private readonly IMediator _mediator;
@@ -19,7 +20,8 @@ public sealed class UserController : ControllerBase, IUserController
         _mediator = mediator;
     }
 
-    [HttpPost]
+    [HttpPost("Register")]
+    [AllowAnonymous]
     public async Task<ActionResult> RegisterUser(RegisterUserRequest request, CancellationToken ct)
     {
         var commmand = new RegisterUserCommand { RegisterUser = request };
@@ -34,8 +36,9 @@ public sealed class UserController : ControllerBase, IUserController
         return Ok();
     }
 
-    [HttpPost]
-    public async Task<ActionResult> LoginUser(LoginUserRequest request, CancellationToken ct)
+    [HttpPost("Login")]
+    [AllowAnonymous]
+    public async Task<ActionResult<string>> LoginUser(LoginUserRequest request, CancellationToken ct)
     {
         var command = new LoginUserCommand { LoginUser = request };
         var result = await _mediator.Send(command, ct);
@@ -46,7 +49,7 @@ public sealed class UserController : ControllerBase, IUserController
             else return BadRequest();
         }
 
-        return Ok();
+        return Ok(result.Value.Token);
     }
 
     // TODO

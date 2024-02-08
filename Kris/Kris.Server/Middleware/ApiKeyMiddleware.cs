@@ -7,9 +7,9 @@ namespace Kris.Server.Middleware;
 public sealed class ApiKeyMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly AppSettingsOptions _settings;
+    private readonly SettingsOptions _settings;
 
-    public ApiKeyMiddleware(RequestDelegate next, IOptions<AppSettingsOptions> settings)
+    public ApiKeyMiddleware(RequestDelegate next, IOptions<SettingsOptions> settings)
     {
         _next = next;
         _settings = settings.Value;

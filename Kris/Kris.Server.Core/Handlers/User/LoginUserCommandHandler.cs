@@ -1,5 +1,7 @@
 ﻿using FluentResults;
 using Kris.Server.Common.Errors;
+using Kris.Server.Common.Exceptions;
+using Kris.Server.Common.Models;
 using Kris.Server.Core.Mappers;
 using Kris.Server.Core.Requests;
 using Kris.Server.Core.Services;
@@ -9,17 +11,19 @@ using MediatR;
 
 namespace Kris.Server.Core.Handlers.User;
 
-public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<LoginUserCommand, Result>
+public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<LoginUserCommand, Result<JwtToken>>
 {
     private readonly IPasswordService<UserEntity> _passwordService;
+    private readonly IJwtService _jwtService;
 
-    public LoginUserCommandHandler(IPasswordService<UserEntity> passwordService, IUserRepository userRepository, IUserMapper mapper)
+    public LoginUserCommandHandler(IPasswordService<UserEntity> passwordService, IJwtService jwtService, IUserRepository userRepository, IUserMapper mapper)
         : base(userRepository, mapper)
     {
         _passwordService = passwordService;
+        _jwtService = jwtService;
     }
 
-    public async Task<Result> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<JwtToken>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
         var query = await _userRepository.GetAsync(p => p.Login == request.LoginUser.Login, cancellationToken);
 
@@ -29,6 +33,9 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
         var passwordVerified = _passwordService.VerifyPassword(user, request.LoginUser.Password);
         if (!passwordVerified) return Result.Fail(new InvalidCredentialsError());
 
-        return Result.Ok();
+        var jwt = _jwtService.CreateToken(user);
+        if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create JWT token");
+
+        return Result.Ok(jwt);
     }
 }
