@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using Kris.Interface.Interfaces;
+using Kris.Interface.Controllers;
 using Kris.Interface.Requests;
 using Kris.Server.Core.Requests;
 using Kris.Server.Common.Errors;
@@ -11,13 +11,10 @@ namespace Kris.Server.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-public sealed class UserController : ControllerBase, IUserController
+public sealed class UserController : KrisController, IUserController
 {
-    private readonly IMediator _mediator;
-
-    public UserController(IMediator mediator)
+    public UserController(IMediator mediator) : base(mediator)
     {
-        _mediator = mediator;
     }
 
     [HttpPost("Register")]

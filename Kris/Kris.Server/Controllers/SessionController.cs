@@ -1,57 +1,43 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Kris.Interface;
+﻿using Kris.Interface.Controllers;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Kris.Server
+namespace Kris.Server.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+[Produces("application/json")]
+public sealed class SessionController : KrisController, ISessionController
 {
-    [Route("[controller]/[action]")]
-    public class SessionController : ControllerBase, ISessionController
+    public SessionController(IMediator mediator) : base(mediator)
     {
-        private readonly IUserService _userService;
+    }
 
-        public SessionController(IUserService userService)
-        {
-            _userService = userService;
-        }
+    [HttpPost("Create")]
+    [Authorize]
+    public Task<ActionResult> CreateSession(object request, CancellationToken ct)
+    {
+        throw new NotImplementedException();
+    }
 
-        [HttpPost]
-        public Task<CreateUserResponse> CreateUser([FromBody]CreateUserRequest request)
-        {
-            if (request == null) throw new BadHttpRequestException("Missing request body");
-            if (string.IsNullOrEmpty(request.Name)) throw new BadHttpRequestException("Missing request body");
+    public Task<ActionResult> EndSession(object request, CancellationToken ct)
+    {
+        throw new NotImplementedException();
+    }
 
-            var newUser = _userService.CreateUser(request.Name);
+    public Task<ActionResult> GetAvailableSessions(object request, CancellationToken ct)
+    {
+        throw new NotImplementedException();
+    }
 
-            if (newUser == null) throw new BadHttpRequestException(_userService.GetErrorMessage());
+    public Task<ActionResult> GetSession(object request, CancellationToken ct)
+    {
+        throw new NotImplementedException();
+    }
 
-            return Task.FromResult(new CreateUserResponse
-            {
-                Id = newUser.Id,
-                Name = newUser.Name,
-                CreatedDate = newUser.CreatedDate
-            });
-        }
-
-        [HttpPut]
-        public Task UpdateUserName([FromBody]UpdateUserNameRequest request)
-        {
-            if (request == null) throw new BadHttpRequestException("Missing request body");
-            if (string.IsNullOrEmpty(request.Name)) throw new BadHttpRequestException("Missing user name");
-
-            var result = _userService.UpdateUserName(request.Id, request.Name);
-
-            if (!result) throw new BadHttpRequestException(_userService.GetErrorMessage());
-
-            return Task.CompletedTask;
-        }
-
-        [HttpPost]
-        public Task<bool> UserExists([FromBody]UserExistsRequest request)
-        {
-            if (request == null) throw new BadHttpRequestException("Missing request body");
-
-            var result = _userService.UserExists(request.Id);
-
-            return Task.FromResult(result);
-        }
+    public Task<ActionResult> JoinSession(object request, CancellationToken ct)
+    {
+        throw new NotImplementedException();
     }
 }

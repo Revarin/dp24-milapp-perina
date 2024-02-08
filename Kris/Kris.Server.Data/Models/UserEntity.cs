@@ -1,6 +1,6 @@
 ﻿namespace Kris.Server.Data.Models;
 
-public sealed class UserEntity : EntityBase
+public class UserEntity : EntityBase
 {
     public required string Login { get; set; }
     public string? Password { get; set; }

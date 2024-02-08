@@ -4,6 +4,7 @@ using Kris.Server.Common.Options;
 using Kris.Server.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Kris.Server;
 
@@ -34,12 +35,16 @@ public class Program
             config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(config =>
         {
+            var jwtOptions = builder.Configuration.GetSection(JwtOptions.Section).Get<JwtOptions>();
+
             config.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateIssuer = false,
+                ValidateIssuer = true,
                 ValidateAudience = false,
+                ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-
+                ValidIssuer = jwtOptions.Issuer,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtOptions.Key))
             };
         });
 

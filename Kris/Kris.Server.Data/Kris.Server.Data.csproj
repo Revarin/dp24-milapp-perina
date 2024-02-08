@@ -14,4 +14,9 @@
     <Folder Include="ViewModels\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Kris.Common\Kris.Common.csproj" />
+    <ProjectReference Include="..\Kris.Server.Common\Kris.Server.Common.csproj" />
+  </ItemGroup>
+
 </Project>

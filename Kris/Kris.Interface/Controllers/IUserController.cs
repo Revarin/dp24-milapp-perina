@@ -1,7 +1,7 @@
 ﻿using Kris.Interface.Requests;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Kris.Interface.Interfaces;
+namespace Kris.Interface.Controllers;
 
 public interface IUserController
 {
