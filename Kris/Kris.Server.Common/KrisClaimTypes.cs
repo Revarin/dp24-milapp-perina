@@ -2,6 +2,6 @@
 
 public static class KrisClaimTypes
 {
-    public static readonly string SessionId = "Kris/SessionId";
-    public static readonly string SessionName = "Kris/SessionName";
+    public static readonly string SessionId = "kris_session_id";
+    public static readonly string SessionName = "kris_session_name";
 }

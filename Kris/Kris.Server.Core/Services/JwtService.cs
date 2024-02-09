@@ -34,6 +34,7 @@ public sealed class JwtService : IJwtService
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Login)
             }),
+            Issuer = _jwtOptions.Issuer,
             Expires = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpirationMinutes),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
