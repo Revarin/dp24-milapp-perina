@@ -2,5 +2,5 @@
 
 public static class Constants
 {
-    public static readonly string ApiKeyHeader = "API-KEY";
+    public static readonly string ApiKeyHeader = "x-api-key";
 }

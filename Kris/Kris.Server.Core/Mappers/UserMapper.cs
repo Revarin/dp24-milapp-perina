@@ -7,9 +7,9 @@ namespace Kris.Server.Core.Mappers;
 
 public sealed class UserMapper : IUserMapper
 {
-    private readonly IPasswordService<UserEntity> _passwordService;
+    private readonly IPasswordService _passwordService;
 
-    public UserMapper(IPasswordService<UserEntity> passwordService)
+    public UserMapper(IPasswordService passwordService)
     {
         _passwordService = passwordService;
     }
@@ -22,7 +22,7 @@ public sealed class UserMapper : IUserMapper
             Created = DateTime.UtcNow
         };
 
-        user.Password = _passwordService.HashPassword(user, command.RegisterUser.Password);
+        user.Password = _passwordService.HashPassword(command.RegisterUser.Password);
 
         return user;
     }

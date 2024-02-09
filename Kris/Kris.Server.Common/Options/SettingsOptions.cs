@@ -4,5 +4,5 @@ public sealed class SettingsOptions : IOptions
 {
     public static string Section => "AppSettings";
 
-    public required string ApiKey { get; set; }
+    public required string ApiKey { get; init; }
 }

@@ -4,7 +4,7 @@ public sealed class JwtOptions : IOptions
 {
     public static string Section => "Jwt";
 
-    public required string Key { get; set; }
-    public required int ExpirationMinutes { get; set; }
-    public string? Issuer { get; set; }
+    public required string Key { get; init; }
+    public required int ExpirationMinutes { get; init; }
+    public string? Issuer { get; init; }
 }

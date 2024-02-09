@@ -13,10 +13,10 @@ namespace Kris.Server.Core.Handlers.User;
 
 public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<LoginUserCommand, Result<JwtToken>>
 {
-    private readonly IPasswordService<UserEntity> _passwordService;
+    private readonly IPasswordService _passwordService;
     private readonly IJwtService _jwtService;
 
-    public LoginUserCommandHandler(IPasswordService<UserEntity> passwordService, IJwtService jwtService, IUserRepository userRepository, IUserMapper mapper)
+    public LoginUserCommandHandler(IPasswordService passwordService, IJwtService jwtService, IUserRepository userRepository, IUserMapper mapper)
         : base(userRepository, mapper)
     {
         _passwordService = passwordService;
@@ -29,8 +29,9 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
 
         var user = query.FirstOrDefault();
         if (user == null) return Result.Fail(new InvalidCredentialsError());
+        if (user.Password == null) throw new Exception("Password missig in db");
 
-        var passwordVerified = _passwordService.VerifyPassword(user, request.LoginUser.Password);
+        var passwordVerified = _passwordService.VerifyPassword(user.Password, request.LoginUser.Password);
         if (!passwordVerified) return Result.Fail(new InvalidCredentialsError());
 
         var jwt = _jwtService.CreateToken(user);

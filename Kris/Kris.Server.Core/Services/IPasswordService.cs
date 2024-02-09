@@ -2,8 +2,8 @@
 
 namespace Kris.Server.Core.Services;
 
-public interface IPasswordService<TEntity> where TEntity : EntityBase
+public interface IPasswordService
 {
-    string HashPassword(TEntity user, string password);
-    bool VerifyPassword(TEntity user, string password);
+    string HashPassword(string password);
+    bool VerifyPassword(string hash, string password);
 }

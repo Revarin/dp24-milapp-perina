@@ -17,7 +17,7 @@ public sealed class ApiKeyMiddleware
 
     public async Task Invoke(HttpContext context)
     {
-        var requestKey = context.Request.Headers[Constants.ApiKeyHeader];
+        var requestKey = context.Request.Headers[Constants.ApiKeyHeader].FirstOrDefault();
 
         if (requestKey != _settings.ApiKey)
         {

@@ -7,9 +7,9 @@ namespace Kris.Server.Core.Mappers;
 
 public sealed class SessionMapper : ISessionMapper
 {
-    private readonly IPasswordService<SessionEntity> _passwordService;
+    private readonly IPasswordService _passwordService;
 
-    public SessionMapper(IPasswordService<SessionEntity> passwordService)
+    public SessionMapper(IPasswordService passwordService)
     {
         _passwordService = passwordService;
     }
@@ -24,7 +24,7 @@ public sealed class SessionMapper : ISessionMapper
             Created = DateTime.UtcNow,
         };
 
-        session.Password = _passwordService.HashPassword(session, command.CreateSession.Password);
+        session.Password = _passwordService.HashPassword(command.CreateSession.Password);
         session.Users.Add(new SessionUserEntity
         {
             SessionId = session.Id,

@@ -51,6 +51,7 @@ public sealed class UserController : KrisController, IUserController
     }
 
     // TODO
+    [HttpPost("Settings")]
     public Task<ActionResult<object>> StoreUserSettings(StoreUserSettingsRequest request)
     {
         throw new NotImplementedException();

@@ -18,7 +18,7 @@ public sealed class SessionController : KrisController, ISessionController
     {
     }
 
-    [HttpPost("Create")]
+    [HttpPost]
     [Authorize]
     public async Task<ActionResult<JwtTokenResponse>> CreateSession(CreateSessionRequest request, CancellationToken ct)
     {
@@ -37,21 +37,25 @@ public sealed class SessionController : KrisController, ISessionController
         return Ok(new JwtTokenResponse { Token = result.Value.Token});
     }
 
+    [HttpDelete]
     public Task<ActionResult> EndSession(object request, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
+    [HttpGet]
     public Task<ActionResult> GetAvailableSessions(object request, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
+    [HttpGet("{sessionId:guid}")]
     public Task<ActionResult> GetSession(object request, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
+    [HttpPost("Join")]
     public Task<ActionResult> JoinSession(object request, CancellationToken ct)
     {
         throw new NotImplementedException();

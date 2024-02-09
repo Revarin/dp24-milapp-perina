@@ -5,6 +5,12 @@ using Kris.Server.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Kris.Server.Data.Repositories;
+using Kris.Server.Core.Services;
+using Kris.Server.Data.Models;
+using Kris.Server.Core.Mappers;
+using Kris.Server.Core.Handlers;
+using Microsoft.AspNetCore.Identity;
 
 namespace Kris.Server;
 
@@ -21,30 +27,50 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        builder.Services.AddOptions<SettingsOptions>(SettingsOptions.Section);
-        builder.Services.AddOptions<JwtOptions>(JwtOptions.Section);
+        builder.Services.AddOptions<SettingsOptions>()
+            .Bind(builder.Configuration.GetRequiredSection(SettingsOptions.Section))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+        builder.Services.AddOptions<JwtOptions>()
+            .Bind(builder.Configuration.GetRequiredSection(JwtOptions.Section))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
         builder.Services.AddDbContext<DataContext>(options =>
         {
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
         });
 
-        builder.Services.AddAuthentication(config =>
+        builder.Services.AddMediatR(options =>
         {
-            config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(config =>
+            options.RegisterServicesFromAssemblyContaining<BaseHandler>();
+        });
+
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddScoped<ISessionRepository, SessionRepository>();
+
+        builder.Services.AddSingleton<IJwtService, JwtService>();
+        builder.Services.AddSingleton<IPasswordService, PasswordService>();
+
+        builder.Services.AddSingleton<IUserMapper, UserMapper>();
+        builder.Services.AddSingleton<ISessionMapper, SessionMapper>();
+
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
         {
             var jwtOptions = builder.Configuration.GetSection(JwtOptions.Section).Get<JwtOptions>();
 
-            config.TokenValidationParameters = new TokenValidationParameters
+            options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
                 ValidateAudience = false,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtOptions.Issuer,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtOptions.Key))
+                ValidIssuer = jwtOptions?.Issuer,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtOptions?.Key))
             };
         });
 
