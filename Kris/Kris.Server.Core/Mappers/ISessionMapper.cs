@@ -6,6 +6,5 @@ namespace Kris.Server.Core.Mappers;
 
 public interface ISessionMapper
 {
-    SessionEntity Map(CreateSessionCommand command);
     SessionModel Map(SessionEntity entity);
 }

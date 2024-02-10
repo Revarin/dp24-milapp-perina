@@ -5,7 +5,6 @@ using Kris.Server.Common.Models;
 using Kris.Server.Core.Mappers;
 using Kris.Server.Core.Requests;
 using Kris.Server.Core.Services;
-using Kris.Server.Data.Models;
 using Kris.Server.Data.Repositories;
 using MediatR;
 
@@ -25,16 +24,23 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
 
     public async Task<Result<JwtToken>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
-        var query = await _userRepository.GetAsync(p => p.Login == request.LoginUser.Login, cancellationToken);
-
-        var user = query.FirstOrDefault();
+        var user = await _userRepository.GetByLoginAsync(request.LoginUser.Login, cancellationToken);
         if (user == null) return Result.Fail(new InvalidCredentialsError());
-        if (user.Password == null) throw new Exception("Password missig in db");
+        if (user.Password == null) throw new DatabaseException("Password missing in database");
 
         var passwordVerified = _passwordService.VerifyPassword(user.Password, request.LoginUser.Password);
         if (!passwordVerified) return Result.Fail(new InvalidCredentialsError());
 
-        var jwt = _jwtService.CreateToken(user);
+        JwtToken jwt;
+        if (user.Session?.Session != null)
+        {
+            jwt = _jwtService.CreateToken(user, user.Session.Session, user.Session.UserType);
+        }
+        else
+        {
+            jwt = _jwtService.CreateToken(user);
+        }
+
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");
 
         return Result.Ok(jwt);

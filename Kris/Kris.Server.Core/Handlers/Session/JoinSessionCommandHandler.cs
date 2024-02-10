@@ -1,4 +1,5 @@
 ﻿using FluentResults;
+using Kris.Common.Enums;
 using Kris.Server.Common.Errors;
 using Kris.Server.Common.Exceptions;
 using Kris.Server.Common.Models;
@@ -16,7 +17,8 @@ public sealed class JoinSessionCommandHandler : SessionHandler, IRequestHandler<
     private readonly IUserRepository _userRepository;
     private readonly IJwtService _jwtService;
 
-    public JoinSessionCommandHandler(IUserRepository userRepository, IJwtService jwtService, ISessionRepository sessionRepository, ISessionMapper sessionMapper, IAuthorizationService authorizationService)
+    public JoinSessionCommandHandler(IUserRepository userRepository, IJwtService jwtService,
+        ISessionRepository sessionRepository, ISessionMapper sessionMapper, IAuthorizationService authorizationService)
         : base(sessionRepository, sessionMapper, authorizationService)
     {
         _userRepository = userRepository;
@@ -25,7 +27,7 @@ public sealed class JoinSessionCommandHandler : SessionHandler, IRequestHandler<
 
     public async Task<Result<JwtToken>> Handle(JoinSessionCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetAsync(request.User.Id, cancellationToken);
+        var user = await _userRepository.GetByIdAsync(request.User.Id, cancellationToken);
         if (user == null) throw new DatabaseException("User not found");
 
         var session = await _sessionRepository.GetAsync(request.SessionId, cancellationToken);
@@ -36,12 +38,12 @@ public sealed class JoinSessionCommandHandler : SessionHandler, IRequestHandler<
             UserId = user.Id,
             SessionId = request.SessionId,
             Joined = DateTime.UtcNow,
-            UserType = Kris.Common.Enums.UserType.Basic
+            UserType = UserType.Basic
         };
         var updated = await _userRepository.UpdateAsync(user, cancellationToken);
         if (!updated) throw new DatabaseException("Failed to assign session to user");
 
-        var jwt = _jwtService.CreateToken(user, session);
+        var jwt = _jwtService.CreateToken(user, session, UserType.Basic);
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");
 
         return Result.Ok(jwt);

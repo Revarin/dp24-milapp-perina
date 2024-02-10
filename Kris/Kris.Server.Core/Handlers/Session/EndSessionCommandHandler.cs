@@ -16,7 +16,8 @@ public sealed class EndSessionCommandHandler : SessionHandler, IRequestHandler<E
     private readonly IJwtService _jwtService;
     private readonly IUserMapper _userMapper;
 
-    public EndSessionCommandHandler(IJwtService jwtService, IUserMapper userMapper, ISessionRepository sessionRepository, ISessionMapper sessionMapper, IAuthorizationService authorizationService)
+    public EndSessionCommandHandler(IJwtService jwtService, IUserMapper userMapper,
+        ISessionRepository sessionRepository, ISessionMapper sessionMapper, IAuthorizationService authorizationService)
         : base(sessionRepository, sessionMapper, authorizationService)
     {
         _jwtService = jwtService;

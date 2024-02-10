@@ -8,7 +8,6 @@ using Kris.Server.Data.Models;
 using Kris.Server.Common.Models;
 using Kris.Common.Enums;
 using Kris.Server.Common;
-using Kris.Server.Core.Models;
 
 namespace Kris.Server.Core.Services;
 
@@ -43,7 +42,7 @@ public sealed class JwtService : IJwtService
         return new JwtToken(tokenHandler.WriteToken(token));
     }
 
-    public JwtToken CreateToken(UserEntity user, SessionEntity session, UserType userType = UserType.Basic)
+    public JwtToken CreateToken(UserEntity user, SessionEntity session, UserType userType)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_jwtOptions.Key);

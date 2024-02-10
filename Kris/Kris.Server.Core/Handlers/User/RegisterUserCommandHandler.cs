@@ -4,25 +4,33 @@ using Kris.Server.Common.Errors;
 using Kris.Server.Core.Mappers;
 using Kris.Server.Core.Requests;
 using Kris.Server.Data.Repositories;
+using Kris.Server.Data.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using Kris.Server.Core.Services;
 
 namespace Kris.Server.Core.Handlers.User;
 
 public sealed class RegisterUserCommandHandler : UserHandler, IRequestHandler<RegisterUserCommand, Result>
 {
-    public RegisterUserCommandHandler(IUserRepository userRepository, IUserMapper mapper)
+    private readonly IPasswordService _passwordService;
+
+    public RegisterUserCommandHandler(IPasswordService passwordService, IUserRepository userRepository, IUserMapper mapper)
         : base(userRepository, mapper)
     {
+        _passwordService = passwordService;
     }
 
     public async Task<Result> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
-        var login = request.RegisterUser.Login;
+        var userExists = await _userRepository.UserExistsAsync(request.RegisterUser.Login, cancellationToken);
+        if (userExists) return Result.Fail(new EntityExistsError("User", request.RegisterUser.Login));
 
-        var userExists = await _userRepository.UserExistsAsync(login, cancellationToken);
-        if (userExists) return Result.Fail(new EntityExistsError("User", login));
-
-        var user = _userMapper.Map(request);
-
+        var user = new UserEntity
+        {
+            Login = request.RegisterUser.Login,
+            Password = _passwordService.HashPassword(request.RegisterUser.Password),
+            Created = DateTime.UtcNow
+        };
         await _userRepository.InsertAsync(user, cancellationToken);
 
         return Result.Ok();
