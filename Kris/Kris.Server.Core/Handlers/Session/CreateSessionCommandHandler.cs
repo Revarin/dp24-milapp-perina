@@ -15,8 +15,8 @@ public sealed class CreateSessionCommandHandler : SessionHandler, IRequestHandle
 {
     private readonly IJwtService _jwtService;
 
-    public CreateSessionCommandHandler(IJwtService jwtService, ISessionRepository sessionRepository, ISessionMapper sessionMapper)
-        : base(sessionRepository, sessionMapper)
+    public CreateSessionCommandHandler(IJwtService jwtService, ISessionRepository sessionRepository, ISessionMapper sessionMapper, IAuthorizationService authorizationService)
+        : base(sessionRepository, sessionMapper, authorizationService)
     {
         _jwtService = jwtService;
     }
@@ -30,10 +30,10 @@ public sealed class CreateSessionCommandHandler : SessionHandler, IRequestHandle
 
         var session = _sessionMapper.Map(request);
         var sessionEntity = await _sessionRepository.InsertAsync(session, cancellationToken);
-        if (sessionEntity == null) throw new Exception("Failed to insert entity");
+        if (sessionEntity == null) throw new DatabaseException("Failed to insert Session");
 
         var jwt = _jwtService.CreateToken(request.User, sessionEntity, UserType.SuperAdmin);
-        if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create JWT token");
+        if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");
 
         return Result.Ok(jwt);
     }

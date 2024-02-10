@@ -7,5 +7,6 @@ namespace Kris.Server.Core.Mappers;
 public interface IUserMapper
 {
     UserEntity Map(RegisterUserCommand command);
-    UserModel Map(UserEntity entity);
+    UserEntity Map(CurrentUserModel model);
+    CurrentUserModel Map(UserEntity entity);
 }

@@ -1,5 +1,6 @@
-﻿using Kris.Server.Core.Models;
-using Kris.Server.Core.Requests;
+﻿using Kris.Common.Enums;
+using Kris.Server.Common;
+using Kris.Server.Core.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -15,15 +16,23 @@ public abstract class KrisController : ControllerBase
         _mediator = mediator;
     }
 
-    protected async Task<UserModel?> GetUserAsync(CancellationToken ct)
+    protected CurrentUserModel? CurrentUser()
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userId)) return null;
+        var userName = User.Identity?.Name;
+        var sessionId = User.FindFirst(KrisClaimTypes.SessionId)?.Value;
+        var sessionName = User.FindFirst(KrisClaimTypes.SessionName)?.Value;
+        var role = User.FindFirst(ClaimTypes.Role)?.Value;
 
-        var query = new GetUserQuery { Id = Guid.Parse(userId) };
-        var result = await _mediator.Send(query, ct);
+        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(userName)) return null;
 
-        if (result.IsFailed) return null;
-        return result.Value;
+        return new CurrentUserModel
+        {
+            Id = Guid.Parse(userId),
+            Login = userName,
+            SessionId = string.IsNullOrEmpty(sessionId) ? null : Guid.Parse(sessionId),
+            SessionName = sessionName,
+            Role = string.IsNullOrEmpty(role) ? null : Enum.Parse<UserType>(role)
+        };
     }
 }

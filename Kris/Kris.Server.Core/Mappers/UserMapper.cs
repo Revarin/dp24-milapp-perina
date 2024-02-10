@@ -27,14 +27,24 @@ public sealed class UserMapper : IUserMapper
         return user;
     }
 
-    public UserModel Map(UserEntity entity)
+    public CurrentUserModel Map(UserEntity entity)
     {
-        var user = new UserModel
+        var user = new CurrentUserModel
         {
             Id = entity.Id,
             Login = entity.Login
         };
 
         return user;
+    }
+
+    public UserEntity Map(CurrentUserModel model)
+    {
+        return new UserEntity
+        {
+            Id = model.Id,
+            Login = model.Login,
+            Created = DateTime.MinValue
+        };
     }
 }

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Kris.Server.Core.Requests;
 
-public class GetUserQuery : IRequest<Result<UserModel>>
+public class GetUserQuery : IRequest<Result<CurrentUserModel>>
 {
     public required Guid Id { get; set; }
 }

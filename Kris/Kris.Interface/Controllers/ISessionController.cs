@@ -7,7 +7,7 @@ namespace Kris.Interface.Controllers;
 public interface ISessionController
 {
     Task<ActionResult<JwtTokenResponse>> CreateSession(CreateSessionRequest request, CancellationToken ct);
-    Task<ActionResult> EndSession(object request, CancellationToken ct);
+    Task<ActionResult<JwtTokenResponse>> EndSession(CancellationToken ct);
     Task<ActionResult> JoinSession(object request, CancellationToken ct);
     Task<ActionResult> GetSession(object request, CancellationToken ct);
     Task<ActionResult> GetAvailableSessions(object request, CancellationToken ct);
