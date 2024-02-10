@@ -87,8 +87,15 @@ public sealed class SessionController : KrisController, ISessionController
 
     [HttpGet]
     [Authorize]
-    public Task<ActionResult<IEnumerable<SessionModel>>> GetSessions([FromQuery]bool onlyActive, CancellationToken ct)
+    public async Task<ActionResult<IEnumerable<SessionModel>>> GetSessions([FromQuery]bool onlyActive, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var user = CurrentUser();
+        if (user == null) return Unauthorized();
+
+        var query = new GetSessionsQuery { OnlyActive = onlyActive };
+        var result = await _mediator.Send(query, ct);
+
+        if (result.IsFailed) return BadRequest();
+        return Ok(result.Value);
     }
 }
