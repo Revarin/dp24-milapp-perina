@@ -2,5 +2,6 @@
 
 public sealed class JoinSessionRequest : RequestBase
 {
-    public required Guid SessionId { get; set; }
+    public required Guid Id { get; set; }
+    public required string Password { get; set; }
 }

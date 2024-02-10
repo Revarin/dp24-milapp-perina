@@ -7,7 +7,7 @@ public class DataContext : DbContext
 {
     public DbSet<UserEntity> Users { get; set; }
     public DbSet<SessionEntity> Sessions { get; set; }
-    public DbSet<SessionUserEntity> SessioUsers { get; set; }
+    public DbSet<SessionUserEntity> SessionUsers { get; set; }
 
     public DataContext(DbContextOptions options) : base(options)
     {

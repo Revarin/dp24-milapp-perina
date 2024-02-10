@@ -11,7 +11,7 @@ public sealed class SessionUserRepository : RepositoryBase<SessionUserEntity>, I
 
     public async Task<bool> AuthorizeAsync(Guid userId, Guid sessionId, UserType minRole, CancellationToken ct)
     {
-        var result = await _context.SessioUsers.FindAsync(userId, sessionId, ct);
+        var result = await _context.SessionUsers.FindAsync(userId, sessionId, ct);
         return result?.UserType >= minRole;
     }
 }

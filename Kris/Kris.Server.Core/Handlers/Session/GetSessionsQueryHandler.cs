@@ -17,7 +17,7 @@ public sealed class GetSessionsQueryHandler : SessionHandler, IRequestHandler<Ge
 
     public async Task<Result<IEnumerable<SessionModel>>> Handle(GetSessionsQuery request, CancellationToken cancellationToken)
     {
-        var entities = await _sessionRepository.GetAsync(p => p.IsActive || !request.OnlyActive, cancellationToken);
+        var entities = await _sessionRepository.GetAllAsync(request.OnlyActive, cancellationToken);
         var sessions = entities.Select(_sessionMapper.Map);
         return Result.Ok(sessions);
     }

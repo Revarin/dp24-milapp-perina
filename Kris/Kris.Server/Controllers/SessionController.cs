@@ -67,12 +67,13 @@ public sealed class SessionController : KrisController, ISessionController
         var user = CurrentUser();
         if (user == null) return Unauthorized();
 
-        var command = new JoinSessionCommand() { User = user, SessionId = request.SessionId };
+        var command = new JoinSessionCommand() { User = user, JoinSession = request };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
             if (result.HasError<EntityNotFoundError>()) return NotFound(result.Errors.Select(e => e.Message));
+            else if (result.HasError<InvalidCredentialsError>()) return Unauthorized(result.Errors.Select(e => e.Message));
             else return BadRequest();
         }
 

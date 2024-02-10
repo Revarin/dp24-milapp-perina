@@ -15,13 +15,15 @@ namespace Kris.Server.Core.Handlers.Session;
 public sealed class JoinSessionCommandHandler : SessionHandler, IRequestHandler<JoinSessionCommand, Result<JwtToken>>
 {
     private readonly IUserRepository _userRepository;
+    private readonly IPasswordService _passwordService;
     private readonly IJwtService _jwtService;
 
-    public JoinSessionCommandHandler(IUserRepository userRepository, IJwtService jwtService,
+    public JoinSessionCommandHandler(IUserRepository userRepository, IPasswordService passwordService, IJwtService jwtService,
         ISessionRepository sessionRepository, ISessionMapper sessionMapper, IAuthorizationService authorizationService)
         : base(sessionRepository, sessionMapper, authorizationService)
     {
         _userRepository = userRepository;
+        _passwordService = passwordService;
         _jwtService = jwtService;
     }
 
@@ -30,13 +32,17 @@ public sealed class JoinSessionCommandHandler : SessionHandler, IRequestHandler<
         var user = await _userRepository.GetByIdAsync(request.User.Id, cancellationToken);
         if (user == null) throw new DatabaseException("User not found");
 
-        var session = await _sessionRepository.GetAsync(request.SessionId, cancellationToken);
-        if (session == null) return Result.Fail(new EntityNotFoundError("Session", request.SessionId));
+        var session = await _sessionRepository.GetAsync(request.JoinSession.Id, cancellationToken);
+        if (session == null) return Result.Fail(new EntityNotFoundError("Session", request.JoinSession.Id));
+        if (session.Password == null) throw new DatabaseException("Password missing in database");
+
+        var passwordVerified = _passwordService.VerifyPassword(session.Password, request.JoinSession.Password);
+        if (!passwordVerified) return Result.Fail(new InvalidCredentialsError());
 
         user.Session = new SessionUserEntity
         {
             UserId = user.Id,
-            SessionId = request.SessionId,
+            SessionId = session.Id,
             Joined = DateTime.UtcNow,
             UserType = UserType.Basic
         };
