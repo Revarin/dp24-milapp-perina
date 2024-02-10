@@ -21,6 +21,10 @@ public class DataContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<UserEntity>().HasKey(e => e.Id);
+        modelBuilder.Entity<UserEntity>()
+            .HasOne(e => e.Session)
+            .WithOne(e => e.User)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<SessionEntity>().HasKey(e => e.Id);
         modelBuilder.Entity<SessionEntity>()
@@ -36,7 +40,8 @@ public class DataContext : DbContext
             .HasForeignKey(e => e.SessionId);
         modelBuilder.Entity<SessionUserEntity>()
             .HasOne(e => e.User)
-            .WithOne();
+            .WithOne(e => e.Session)
+            .OnDelete(DeleteBehavior.NoAction);
 
         base.OnModelCreating(modelBuilder);
     }

@@ -13,26 +13,29 @@ namespace Kris.Server.Core.Handlers.Session;
 
 public sealed class CreateSessionCommandHandler : SessionHandler, IRequestHandler<CreateSessionCommand, Result<JwtToken>>
 {
+    private readonly IUserRepository _userRepository;
     private readonly IJwtService _jwtService;
 
-    public CreateSessionCommandHandler(IJwtService jwtService, ISessionRepository sessionRepository, ISessionMapper sessionMapper, IAuthorizationService authorizationService)
+    public CreateSessionCommandHandler(IUserRepository userRepository, IJwtService jwtService, ISessionRepository sessionRepository, ISessionMapper sessionMapper, IAuthorizationService authorizationService)
         : base(sessionRepository, sessionMapper, authorizationService)
     {
+        _userRepository = userRepository;
         _jwtService = jwtService;
     }
 
     public async Task<Result<JwtToken>> Handle(CreateSessionCommand request, CancellationToken cancellationToken)
     {
-        var name = request.CreateSession.Name;
+        var user = await _userRepository.GetAsync(request.User.Id, cancellationToken);
+        if (user == null) throw new DatabaseException("User not found");
 
-        var sessionExists = await _sessionRepository.SessionExistsAsync(name, cancellationToken);
-        if (sessionExists) return Result.Fail(new EntityExistsError("Session", name));
+        var sessionExists = await _sessionRepository.ExistsAsync(request.CreateSession.Name, cancellationToken);
+        if (sessionExists) return Result.Fail(new EntityExistsError("Session", request.CreateSession.Name));
 
         var session = _sessionMapper.Map(request);
         var sessionEntity = await _sessionRepository.InsertAsync(session, cancellationToken);
         if (sessionEntity == null) throw new DatabaseException("Failed to insert Session");
 
-        var jwt = _jwtService.CreateToken(request.User, sessionEntity, UserType.SuperAdmin);
+        var jwt = _jwtService.CreateToken(user, sessionEntity, UserType.SuperAdmin);
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");
 
         return Result.Ok(jwt);

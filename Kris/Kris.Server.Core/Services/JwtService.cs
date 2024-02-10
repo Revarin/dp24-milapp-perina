@@ -43,7 +43,7 @@ public sealed class JwtService : IJwtService
         return new JwtToken(tokenHandler.WriteToken(token));
     }
 
-    public JwtToken CreateToken(CurrentUserModel user, SessionEntity session, UserType userType = UserType.Basic)
+    public JwtToken CreateToken(UserEntity user, SessionEntity session, UserType userType = UserType.Basic)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_jwtOptions.Key);

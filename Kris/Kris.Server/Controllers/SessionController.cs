@@ -61,9 +61,22 @@ public sealed class SessionController : KrisController, ISessionController
     }
 
     [HttpPost("Join")]
-    public Task<ActionResult> JoinSession(object request, CancellationToken ct)
+    [Authorize]
+    public async Task<ActionResult<JwtTokenResponse>> JoinSession(JoinSessionRequest request, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var user = CurrentUser();
+        if (user == null) return Unauthorized();
+
+        var command = new JoinSessionCommand() { User = user, SessionId = request.SessionId };
+        var result = await _mediator.Send(command, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<EntityNotFoundError>()) return NotFound(result.Errors.Select(e => e.Message));
+            else return BadRequest();
+        }
+
+        return Ok(new JwtTokenResponse { Token = result.Value.Token });
     }
 
     [HttpGet("{sessionId:guid}")]

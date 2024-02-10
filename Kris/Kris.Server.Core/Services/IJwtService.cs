@@ -8,5 +8,5 @@ namespace Kris.Server.Core.Services;
 public interface IJwtService
 {
     JwtToken CreateToken(UserEntity user);
-    JwtToken CreateToken(CurrentUserModel user, SessionEntity session, UserType userType = UserType.Basic);
+    JwtToken CreateToken(UserEntity user, SessionEntity session, UserType userType = UserType.Basic);
 }

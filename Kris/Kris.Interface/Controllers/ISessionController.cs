@@ -9,7 +9,7 @@ public interface ISessionController
 {
     Task<ActionResult<JwtTokenResponse>> CreateSession(CreateSessionRequest request, CancellationToken ct);
     Task<ActionResult<JwtTokenResponse>> EndSession(CancellationToken ct);
-    Task<ActionResult> JoinSession(object request, CancellationToken ct);
+    Task<ActionResult<JwtTokenResponse>> JoinSession(JoinSessionRequest request, CancellationToken ct);
     Task<ActionResult<SessionModel>> GetSession(Guid sessionId, CancellationToken ct);
     Task<ActionResult<IEnumerable<SessionModel>>> GetSessions(bool onlyActive, CancellationToken ct);
 }

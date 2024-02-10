@@ -9,8 +9,14 @@ public sealed class SessionRepository : RepositoryBase<SessionEntity>, ISessionR
     {
     }
 
-    public async Task<bool> SessionExistsAsync(string name, CancellationToken ct)
+    public async Task<bool> ExistsAsync(string name, CancellationToken ct)
     {
         return await _context.Sessions.AnyAsync(session => session.Name == name, ct);
+    }
+
+    public async Task<bool> ExistsAsync(Guid id, CancellationToken ct)
+    {
+        var entity = await _context.Sessions.FindAsync(id);
+        return entity == null;
     }
 }
