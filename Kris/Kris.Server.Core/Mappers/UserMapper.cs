@@ -26,6 +26,7 @@ public sealed class UserMapper : IUserMapper
         {
             Id = model.Id,
             Login = model.Login,
+            Password = string.Empty,
             Created = DateTime.MinValue
         };
     }

@@ -22,8 +22,9 @@ public class DataContext : DbContext
     {
         modelBuilder.Entity<UserEntity>().HasKey(e => e.Id);
         modelBuilder.Entity<UserEntity>()
-            .HasOne(e => e.Session)
+            .HasMany(e => e.AllSessions)
             .WithOne(e => e.User)
+            .HasForeignKey(e => e.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<SessionEntity>().HasKey(e => e.Id);
@@ -37,11 +38,20 @@ public class DataContext : DbContext
         modelBuilder.Entity<SessionUserEntity>()
             .HasOne(e => e.Session)
             .WithMany(e => e.Users)
-            .HasForeignKey(e => e.SessionId);
+            .HasForeignKey(e => e.SessionId)
+            .OnDelete(DeleteBehavior.NoAction);
         modelBuilder.Entity<SessionUserEntity>()
             .HasOne(e => e.User)
-            .WithOne(e => e.Session)
+            .WithMany(e => e.AllSessions)
+            .HasForeignKey(e => e.UserId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<UserEntity>()
+            .HasOne(e => e.CurrentSession)
+            .WithOne()
+            .HasForeignKey(typeof(UserEntity), nameof(UserEntity.Id), nameof(UserEntity.CurrentSessionId))
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Restrict);
 
         base.OnModelCreating(modelBuilder);
     }

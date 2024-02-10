@@ -10,4 +10,5 @@ public interface IRepository<T> where T : EntityBase
     Task<T> InsertAsync(T entity, CancellationToken ct);
     Task<bool> UpdateAsync(T entity, CancellationToken ct);
     Task<bool> DeleteAsync(Guid id, CancellationToken ct);
+    Task ForceSaveAsync(CancellationToken ct);
 }

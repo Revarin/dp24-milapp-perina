@@ -3,7 +3,9 @@
 public class UserEntity : EntityBase
 {
     public required string Login { get; set; }
-    public string? Password { get; set; }
+    public required string Password { get; set; }
     public required DateTime Created { get; set; }
-    public SessionUserEntity? Session { get; set; }
+    public Guid? CurrentSessionId { get; set; }
+    public SessionUserEntity? CurrentSession { get; set; }
+    public List<SessionUserEntity> AllSessions { get; set; } = new List<SessionUserEntity>();
 }

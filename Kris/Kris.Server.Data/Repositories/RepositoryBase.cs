@@ -54,4 +54,9 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : EntityBase
         await _context.SaveChangesAsync(ct);
         return true;
     }
+
+    public async Task ForceSaveAsync(CancellationToken ct)
+    {
+        await _context.SaveChangesAsync(ct);
+    }
 }

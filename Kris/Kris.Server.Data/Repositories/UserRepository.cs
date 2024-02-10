@@ -11,13 +11,20 @@ public sealed class UserRepository : RepositoryBase<UserEntity>, IUserRepository
 
     public async Task<UserEntity?> GetByIdAsync(Guid id, CancellationToken ct)
     {
-        return await _context.Users.Include(user => user.Session)
+        return await _context.Users.Include(user => user.CurrentSession)
+            .FirstOrDefaultAsync(user => user.Id == id);
+    }
+
+    public async Task<UserEntity?> GetByIdWithAllSessionsAsync(Guid id, CancellationToken ct)
+    {
+        return await _context.Users.Include(user => user.AllSessions)
+            .Include(user => user.CurrentSession)
             .FirstOrDefaultAsync(user => user.Id == id);
     }
 
     public async Task<UserEntity?> GetByLoginAsync(string login, CancellationToken ct)
     {
-        return await _context.Users.Include(user => user.Session)
+        return await _context.Users.Include(user => user.CurrentSession)
             .ThenInclude(sessionUser => sessionUser == null ? null : sessionUser.Session)
             .FirstOrDefaultAsync(user => user.Login == login);
     }

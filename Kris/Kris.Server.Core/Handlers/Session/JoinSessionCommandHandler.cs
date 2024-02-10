@@ -29,25 +29,30 @@ public sealed class JoinSessionCommandHandler : SessionHandler, IRequestHandler<
 
     public async Task<Result<JwtToken>> Handle(JoinSessionCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByIdAsync(request.User.Id, cancellationToken);
+        var user = await _userRepository.GetByIdWithAllSessionsAsync(request.User.Id, cancellationToken);
         if (user == null) throw new DatabaseException("User not found");
 
         var session = await _sessionRepository.GetAsync(request.JoinSession.Id, cancellationToken);
         if (session == null) return Result.Fail(new EntityNotFoundError("Session", request.JoinSession.Id));
-        if (session.Password == null) throw new DatabaseException("Password missing in database");
 
         var passwordVerified = _passwordService.VerifyPassword(session.Password, request.JoinSession.Password);
         if (!passwordVerified) return Result.Fail(new InvalidCredentialsError());
 
-        user.Session = new SessionUserEntity
+        var sessionUser = user.AllSessions.Find(sessionUser => sessionUser.SessionId == session.Id);
+        if (sessionUser == null)
         {
-            UserId = user.Id,
-            SessionId = session.Id,
-            Joined = DateTime.UtcNow,
-            UserType = UserType.Basic
-        };
-        var updated = await _userRepository.UpdateAsync(user, cancellationToken);
-        if (!updated) throw new DatabaseException("Failed to assign session to user");
+            sessionUser = new SessionUserEntity
+            {
+                UserId = user.Id,
+                SessionId = session.Id,
+                Joined = DateTime.Now,
+                UserType = UserType.Basic
+            };
+            session.Users.Add(sessionUser);
+        }
+        user.CurrentSession = sessionUser;
+
+        await _sessionRepository.ForceSaveAsync(cancellationToken);
 
         var jwt = _jwtService.CreateToken(user, session, UserType.Basic);
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");

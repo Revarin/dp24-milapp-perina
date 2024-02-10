@@ -40,8 +40,7 @@ public sealed class CreateSessionCommandHandler : SessionHandler, IRequestHandle
             Id = Guid.NewGuid(),
             Name = request.CreateSession.Name,
             Password = _passwordService.HashPassword(request.CreateSession.Password),
-            Created = DateTime.UtcNow,
-            IsActive = true
+            Created = DateTime.UtcNow
         };
         session.Users.Add(new SessionUserEntity
         {

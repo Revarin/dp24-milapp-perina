@@ -18,7 +18,7 @@ public sealed class GetSessionQueryHandler : SessionHandler, IRequestHandler<Get
 
     public async Task<Result<SessionModel>> Handle(GetSessionQuery request, CancellationToken cancellationToken)
     {
-        var entity = await _sessionRepository.GetByIdAsync(request.SessionId, cancellationToken);
+        var entity = await _sessionRepository.GetWithUsersAsync(request.SessionId, cancellationToken);
         if (entity == null) return Result.Fail(new EntityNotFoundError("Session", request.SessionId));
 
         var session = _sessionMapper.Map(entity);

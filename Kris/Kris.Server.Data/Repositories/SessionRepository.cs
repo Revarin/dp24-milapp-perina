@@ -14,22 +14,15 @@ public sealed class SessionRepository : RepositoryBase<SessionEntity>, ISessionR
         return await _context.Sessions.AnyAsync(session => session.Name == name, ct);
     }
 
-    public async Task<bool> ExistsAsync(Guid id, CancellationToken ct)
-    {
-        var entity = await _context.Sessions.FindAsync(id);
-        return entity == null;
-    }
-
-    public async Task<IEnumerable<SessionEntity>> GetAllAsync(bool onlyActive, CancellationToken ct)
-    {
-        return await _context.Sessions.Include(session => session.Users)
-            .Where(session => session.IsActive || !onlyActive)
-            .ToListAsync(ct);
-    }
-
-    public async Task<SessionEntity?> GetByIdAsync(Guid id, CancellationToken ct)
+    public async Task<SessionEntity?> GetWithUsersAsync(Guid id, CancellationToken ct)
     {
         return await _context.Sessions.Include(session => session.Users)
             .FirstOrDefaultAsync(session => session.Id == id, ct);
+    }
+
+    public async Task<IEnumerable<SessionEntity>> GetWithUsersAsync(CancellationToken ct)
+    {
+        return await _context.Sessions.Include(session => session.Users)
+            .ToListAsync(ct);
     }
 }
