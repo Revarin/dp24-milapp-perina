@@ -1,5 +1,6 @@
 ﻿using Kris.Common.Enums;
 using Kris.Interface.Controllers;
+using Kris.Interface.Models;
 using Kris.Interface.Requests;
 using Kris.Interface.Responses;
 using Kris.Server.Attributes;
@@ -59,20 +60,34 @@ public sealed class SessionController : KrisController, ISessionController
         return Ok(new JwtTokenResponse { Token = result.Value.Token });
     }
 
-    [HttpGet]
-    public Task<ActionResult> GetAvailableSessions(object request, CancellationToken ct)
+    [HttpPost("Join")]
+    public Task<ActionResult> JoinSession(object request, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
     [HttpGet("{sessionId:guid}")]
-    public Task<ActionResult> GetSession(object request, CancellationToken ct)
+    [Authorize]
+    public async Task<ActionResult<SessionModel>> GetSession(Guid sessionId, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var user = CurrentUser();
+        if (user == null) return Unauthorized();
+
+        var query = new GetSessionQuery { SessionId = sessionId };
+        var result = await _mediator.Send(query, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<EntityNotFoundError>()) return NotFound(result.Errors.Select(e => e.Message));
+            else return BadRequest();
+        }
+
+        return Ok(result.Value);
     }
 
-    [HttpPost("Join")]
-    public Task<ActionResult> JoinSession(object request, CancellationToken ct)
+    [HttpGet]
+    [Authorize]
+    public Task<ActionResult<IEnumerable<SessionModel>>> GetSessions([FromQuery]bool onlyActive, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
