@@ -57,6 +57,7 @@ public class Program
 
         builder.Services.AddSingleton<IUserMapper, UserMapper>();
         builder.Services.AddSingleton<ISessionMapper, SessionMapper>();
+        builder.Services.AddSingleton<IPositionMapper, PositionMapper>();
 
         builder.Services.AddAuthentication(options =>
         {

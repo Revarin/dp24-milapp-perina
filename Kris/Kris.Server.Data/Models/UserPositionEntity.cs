@@ -10,6 +10,7 @@ public class UserPositionEntity : EntityBase
     public required Guid UserId { get; set; }
     public required Guid SessionId { get; set; }
     public SessionUserEntity? SessionUser { get; set; }
+    public required DateTime Updated { get; set; }
     public string? Position0Data
     {
         get => Positions[0]?.ToString() ?? null;

@@ -3,7 +3,7 @@ using Kris.Server.Data.Models;
 
 namespace Kris.Server.Core.Mappers;
 
-public interface ISessionMapper
+public interface IPositionMapper
 {
-    SessionModel Map(SessionEntity entity);
+    UserPositionModel Map(UserPositionEntity entity);
 }
