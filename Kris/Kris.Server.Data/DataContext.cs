@@ -8,6 +8,7 @@ public class DataContext : DbContext
     public DbSet<UserEntity> Users { get; set; }
     public DbSet<SessionEntity> Sessions { get; set; }
     public DbSet<SessionUserEntity> SessionUsers { get; set; }
+    public DbSet<UserPositionEntity> UserPositions { get; set; }
 
     public DataContext(DbContextOptions options) : base(options)
     {
@@ -45,13 +46,19 @@ public class DataContext : DbContext
             .WithMany(e => e.AllSessions)
             .HasForeignKey(e => e.UserId)
             .OnDelete(DeleteBehavior.NoAction);
-
         modelBuilder.Entity<UserEntity>()
             .HasOne(e => e.CurrentSession)
             .WithOne()
             .HasForeignKey(typeof(UserEntity), nameof(UserEntity.Id), nameof(UserEntity.CurrentSessionId))
             .IsRequired(false)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<UserPositionEntity>().HasKey(e => new { e.UserId, e.SessionId });
+        modelBuilder.Entity<UserPositionEntity>()
+            .HasOne(e => e.SessionUser)
+            .WithOne()
+            .HasForeignKey(typeof(UserPositionEntity), nameof(UserPositionEntity.UserId), nameof(UserPositionEntity.SessionId))
+            .OnDelete(DeleteBehavior.NoAction);
 
         base.OnModelCreating(modelBuilder);
     }

@@ -49,6 +49,7 @@ public class Program
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<ISessionRepository, SessionRepository>();
         builder.Services.AddScoped<ISessionUserRepository, SessionUserRepository>();
+        builder.Services.AddScoped<IUserPositionRepository, UserPositionRepository>();
 
         builder.Services.AddSingleton<IJwtService, JwtService>();
         builder.Services.AddSingleton<IPasswordService, PasswordService>();
