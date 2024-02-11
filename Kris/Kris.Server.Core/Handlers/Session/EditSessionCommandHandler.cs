@@ -30,10 +30,10 @@ public sealed class EditSessionCommandHandler : SessionHandler, IRequestHandler<
     {
         var user = request.User;
         if (!user.SessionId.HasValue) throw new JwtException("Token missing session");
-        if (!user.Type.HasValue) throw new JwtException("Token missing type");
+        if (!user.UserType.HasValue) throw new JwtException("Token missing type");
 
         var authorized = await _authorizationService.AuthorizeAsync(user, UserType.Admin, cancellationToken);
-        if (!authorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.Type.ToString()));
+        if (!authorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType.ToString()));
 
         var session = await _sessionRepository.GetWithUsersAsync(user.SessionId.Value, cancellationToken);
         if (session == null) throw new DatabaseException("Session not found");
@@ -44,7 +44,7 @@ public sealed class EditSessionCommandHandler : SessionHandler, IRequestHandler<
         var updated = await _sessionRepository.UpdateAsync(session, cancellationToken);
         if (!updated) throw new DatabaseException("Failed to update session");
 
-        var jwt = _jwtService.CreateToken(_userMapper.Map(user), session, user.Type.Value);
+        var jwt = _jwtService.CreateToken(_userMapper.Map(user), session, user.UserType.Value);
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");
 
         return Result.Ok(jwt);

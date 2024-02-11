@@ -17,12 +17,14 @@ public sealed class SessionRepository : RepositoryBase<SessionEntity>, ISessionR
     public async Task<SessionEntity?> GetWithUsersAsync(Guid id, CancellationToken ct)
     {
         return await _context.Sessions.Include(session => session.Users)
+            .ThenInclude(sessionUser => sessionUser.User)
             .FirstOrDefaultAsync(session => session.Id == id, ct);
     }
 
     public async Task<IEnumerable<SessionEntity>> GetWithUsersAsync(CancellationToken ct)
     {
         return await _context.Sessions.Include(session => session.Users)
+            .ThenInclude(sessionUser => sessionUser.User)
             .ToListAsync(ct);
     }
 }

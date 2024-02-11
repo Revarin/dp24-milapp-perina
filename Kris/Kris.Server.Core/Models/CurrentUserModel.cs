@@ -8,5 +8,5 @@ public sealed class CurrentUserModel
     public required string Login { get; init; }
     public Guid? SessionId { get; init; }
     public string? SessionName { get; init; }
-    public UserType? Type { get; init; }
+    public UserType? UserType { get; init; }
 }

@@ -87,7 +87,7 @@ public sealed class SessionController : KrisController, ISessionController
         var user = CurrentUser();
         if (user == null) return Unauthorized();
 
-        var command = new JoinSessionCommand() { User = user, JoinSession = request };
+        var command = new JoinSessionCommand { User = user, JoinSession = request };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
@@ -102,18 +102,45 @@ public sealed class SessionController : KrisController, ISessionController
 
     [HttpPut("Leave/{sessionId:guid}")]
     [Authorize]
-    public Task<ActionResult<JwtTokenResponse>> LeaveSession(Guid sessionId, CancellationToken ct)
+    public async Task<ActionResult<JwtTokenResponse>> LeaveSession(Guid sessionId, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        // For users, leave given session
+        var user = CurrentUser();
+        if (user == null) return Unauthorized();
+
+        var command = new LeaveSessionCommand { User = user, SessionId = sessionId };
+        var result = await _mediator.Send(command, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UserNotInSessionError>()) return BadRequest(result.Errors.Select(e => e.Message));
+            else return BadRequest();
+        }
+
+        return Ok(new JwtTokenResponse { Token = result.Value.Token });
     }
 
     [HttpPut("Kick/{userId:guid}")]
     [AuthorizeRoles(UserType.Admin, UserType.SuperAdmin)]
-    public Task<ActionResult> KickFromSession(Guid userId, CancellationToken ct)
+    public async Task<ActionResult> KickFromSession(Guid userId, CancellationToken ct)
     {
-        throw new NotImplementedException();
-    }
+        // For admins, kick user from CURRENT session
+        var user = CurrentUser();
+        if (user == null) return Unauthorized();
 
+        var command = new KickFromSessionCommand { User = user, UserId = userId };
+        var result = await _mediator.Send(command, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UnauthorizedError>()) return Unauthorized(result.Errors.Select(e => e.Message));
+            else if (result.HasError<UserNotInSessionError>()) return NotFound(result.Errors.Select(e => e.Message));
+            else if (result.HasError<InvalidOperationError>()) return BadRequest(result.Errors.Select(e => e.Message));
+            else return BadRequest();
+        }
+
+        return Ok();
+    }
 
     [HttpGet("{sessionId:guid}")]
     [Authorize]
