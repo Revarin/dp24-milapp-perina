@@ -8,4 +8,9 @@ public sealed class EntityExistsError : Error
         : base($"Entity {entity} with name {name} already exists")
     {
     }
+
+    public EntityExistsError(string message)
+        : base(message)
+    {
+    }
 }

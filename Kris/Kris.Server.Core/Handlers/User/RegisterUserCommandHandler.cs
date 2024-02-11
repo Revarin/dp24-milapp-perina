@@ -5,7 +5,6 @@ using Kris.Server.Core.Mappers;
 using Kris.Server.Core.Requests;
 using Kris.Server.Data.Repositories;
 using Kris.Server.Data.Models;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using Kris.Server.Core.Services;
 
 namespace Kris.Server.Core.Handlers.User;

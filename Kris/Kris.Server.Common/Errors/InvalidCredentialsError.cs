@@ -8,4 +8,9 @@ public sealed class InvalidCredentialsError : Error
         : base($"Invalid login credentials")
     {
     }
+
+    public InvalidCredentialsError(string message)
+        : base(message)
+    {
+    }
 }

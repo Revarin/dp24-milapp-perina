@@ -24,7 +24,7 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
 
     public async Task<Result<JwtToken>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByLoginAsync(request.LoginUser.Login, cancellationToken);
+        var user = await _userRepository.GetWithCurrentSessionAsync(request.LoginUser.Login, cancellationToken);
         if (user == null) return Result.Fail(new InvalidCredentialsError());
 
         var passwordVerified = _passwordService.VerifyPassword(user.Password, request.LoginUser.Password);
@@ -39,7 +39,6 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
         {
             jwt = _jwtService.CreateToken(user);
         }
-
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");
 
         return Result.Ok(jwt);

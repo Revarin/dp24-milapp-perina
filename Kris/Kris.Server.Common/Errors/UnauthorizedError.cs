@@ -8,4 +8,9 @@ public sealed class UnauthorizedError : Error
         : base($"User {user} is not {role} in session {session}")
     {
     }
+
+    public UnauthorizedError(string message)
+        : base(message)
+    {
+    }
 }

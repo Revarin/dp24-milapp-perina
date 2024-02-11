@@ -50,9 +50,51 @@ public sealed class UserController : KrisController, IUserController
         return Ok(new JwtTokenResponse { Token = result.Value.Token });
     }
 
+    [HttpPut]
+    [Authorize]
+    public async Task<ActionResult<JwtTokenResponse>> EditUser(EditUserRequest request, CancellationToken ct)
+    {
+        // Edit SELF ONLY
+        var user = CurrentUser();
+        if (user == null) return Unauthorized();
+
+        var command = new EditUserCommand { User = user, EditUser = request };
+        var result = await _mediator.Send(command, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UnauthorizedError>()) return Unauthorized(result.Errors.Select(e => e.Message));
+            else return BadRequest();
+        }
+
+        return Ok(new JwtTokenResponse { Token = result.Value.Token });
+    }
+
+    [HttpDelete()]
+    [Authorize]
+    public async Task<ActionResult> DeleteUser(CancellationToken ct)
+    {
+        // Delete SELF ONLY
+        var user = CurrentUser();
+        if (user == null) return Unauthorized();
+
+        var command = new DeleteUserCommand { User = user };
+        var result = await _mediator.Send(command, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UnauthorizedError>()) return Unauthorized(result.Errors.Select(e => e.Message));
+            else return BadRequest();
+        }
+
+        return Ok();
+        throw new NotImplementedException();
+    }
+
     // TODO
     [HttpPost("Settings")]
-    public Task<ActionResult<object>> StoreUserSettings(StoreUserSettingsRequest request)
+    [Authorize]
+    public Task<ActionResult<object>> StoreUserSettings(StoreUserSettingsRequest request, CancellationToken ct)
     {
         throw new NotImplementedException();
     }

@@ -13,4 +13,9 @@ public sealed class EntityNotFoundError : Error
         : base($"Entity {entity} ({name}) not found")
     {
     }
+
+    public EntityNotFoundError(string message)
+        : base(message)
+    {
+    }
 }

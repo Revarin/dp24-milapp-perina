@@ -29,7 +29,7 @@ public sealed class JoinSessionCommandHandler : SessionHandler, IRequestHandler<
 
     public async Task<Result<JwtToken>> Handle(JoinSessionCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByIdWithAllSessionsAsync(request.User.Id, cancellationToken);
+        var user = await _userRepository.GetWithAllSessionsAsync(request.User.Id, cancellationToken);
         if (user == null) throw new DatabaseException("User not found");
 
         var session = await _sessionRepository.GetAsync(request.JoinSession.Id, cancellationToken);
