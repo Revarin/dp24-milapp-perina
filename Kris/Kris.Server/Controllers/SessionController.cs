@@ -40,8 +40,28 @@ public sealed class SessionController : KrisController, ISessionController
         return Ok(new JwtTokenResponse { Token = result.Value.Token});
     }
 
-    [HttpDelete]
+    [HttpPut]
     [AuthorizeRoles(UserType.Admin, UserType.SuperAdmin)]
+    public async Task<ActionResult<JwtTokenResponse>> EditSession(EditSessionRequest request, CancellationToken ct)
+    {
+        // Edit CURRENT session only
+        var user = CurrentUser();
+        if (user == null) return Unauthorized();
+
+        var command = new EditSessionCommand { EditSession = request, User = user };
+        var result = await _mediator.Send(command, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UnauthorizedError>()) return Unauthorized(result.Errors.Select(e => e.Message));
+            else return BadRequest();
+        }
+
+        return Ok(new JwtTokenResponse { Token = result.Value.Token });
+    }
+
+    [HttpDelete]
+    [AuthorizeRoles(UserType.SuperAdmin)]
     public async Task<ActionResult<JwtTokenResponse>> EndSession(CancellationToken ct)
     {
         var user = CurrentUser();
@@ -60,7 +80,7 @@ public sealed class SessionController : KrisController, ISessionController
         return Ok(new JwtTokenResponse { Token = result.Value.Token });
     }
 
-    [HttpPost("Join")]
+    [HttpPut("Join")]
     [Authorize]
     public async Task<ActionResult<JwtTokenResponse>> JoinSession(JoinSessionRequest request, CancellationToken ct)
     {
@@ -79,6 +99,21 @@ public sealed class SessionController : KrisController, ISessionController
 
         return Ok(new JwtTokenResponse { Token = result.Value.Token });
     }
+
+    [HttpPut("Leave/{sessionId:guid}")]
+    [Authorize]
+    public Task<ActionResult<JwtTokenResponse>> LeaveSession(Guid sessionId, CancellationToken ct)
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpPut("Kick/{userId:guid}")]
+    [AuthorizeRoles(UserType.Admin, UserType.SuperAdmin)]
+    public Task<ActionResult> KickFromSession(Guid userId, CancellationToken ct)
+    {
+        throw new NotImplementedException();
+    }
+
 
     [HttpGet("{sessionId:guid}")]
     [Authorize]
@@ -101,12 +136,12 @@ public sealed class SessionController : KrisController, ISessionController
 
     [HttpGet]
     [Authorize]
-    public async Task<ActionResult<IEnumerable<SessionModel>>> GetSessions([FromQuery]bool onlyActive, CancellationToken ct)
+    public async Task<ActionResult<IEnumerable<SessionModel>>> GetSessions(CancellationToken ct)
     {
         var user = CurrentUser();
         if (user == null) return Unauthorized();
 
-        var query = new GetSessionsQuery { OnlyActive = onlyActive };
+        var query = new GetSessionsQuery();
         var result = await _mediator.Send(query, ct);
 
         if (result.IsFailed) return BadRequest();

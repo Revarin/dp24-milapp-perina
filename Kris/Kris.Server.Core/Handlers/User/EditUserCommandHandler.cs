@@ -28,7 +28,7 @@ public sealed class EditUserCommandHandler : UserHandler, IRequestHandler<EditUs
         var user = await _userRepository.GetWithCurrentSessionAsync(request.User.Id, cancellationToken);
         if (user == null) throw new DatabaseException("User not found");
         if (user.Login != request.User.Login || user.CurrentSessionId != request.User.SessionId)
-            return Result.Fail(new UnauthorizedError("Invalid user data in token"));
+            return Result.Fail(new UnauthorizedError("Invalid token"));
 
         user.Login = request.EditUser.Login;
         user.Password = _passwordService.HashPassword(request.EditUser.Password);

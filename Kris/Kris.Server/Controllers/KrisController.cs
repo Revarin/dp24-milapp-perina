@@ -32,7 +32,7 @@ public abstract class KrisController : ControllerBase
             Login = userName,
             SessionId = string.IsNullOrEmpty(sessionId) ? null : Guid.Parse(sessionId),
             SessionName = sessionName,
-            Role = string.IsNullOrEmpty(role) ? null : Enum.Parse<UserType>(role)
+            Type = string.IsNullOrEmpty(role) ? null : Enum.Parse<UserType>(role)
         };
     }
 }

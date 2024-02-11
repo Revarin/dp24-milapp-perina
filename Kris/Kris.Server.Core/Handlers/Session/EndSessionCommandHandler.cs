@@ -27,10 +27,10 @@ public sealed class EndSessionCommandHandler : SessionHandler, IRequestHandler<E
     public async Task<Result<JwtToken>> Handle(EndSessionCommand request, CancellationToken cancellationToken)
     {
         var user = request.User;
-        if (!user.SessionId.HasValue) throw new JwtException("Session missing in token");
+        if (!user.SessionId.HasValue) throw new JwtException("Token missing session");
 
-        var authorized = await _authorizationService.AuthorizeAsync(user, UserType.Admin, cancellationToken);
-        if (!authorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.Role.ToString()));
+        var authorized = await _authorizationService.AuthorizeAsync(user, UserType.SuperAdmin, cancellationToken);
+        if (!authorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.Type.ToString()));
 
         var deleted = await _sessionRepository.DeleteAsync(user.SessionId.Value, cancellationToken);
         if (!deleted) return Result.Fail(new EntityNotFoundError("Session", user.SessionId.Value));
