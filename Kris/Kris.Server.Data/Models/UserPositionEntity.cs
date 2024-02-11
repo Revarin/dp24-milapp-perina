@@ -10,14 +10,22 @@ public class UserPositionEntity : EntityBase
     public required Guid UserId { get; set; }
     public required Guid SessionId { get; set; }
     public SessionUserEntity? SessionUser { get; set; }
-    public required string PositionsData
+    public string? Position0Data
     {
-        get => string.Join('#', Positions ?? Array.Empty<GeoSpatialPosition>());
-        set => Positions = value == null ?
-            Array.Empty<GeoSpatialPosition>() :
-            Array.ConvertAll(value.Split('#', StringSplitOptions.RemoveEmptyEntries), GeoSpatialPosition.Parse);
+        get => Positions[0]?.ToString() ?? null;
+        set => Positions[0] = value == null ? null : GeoSpatialPosition.Parse(value);
+    }
+    public string? Position1Data
+    {
+        get => Positions[1]?.ToString() ?? null;
+        set => Positions[1] = value == null ? null : GeoSpatialPosition.Parse(value);
+    }
+    public string? Position2Data
+    {
+        get => Positions[2]?.ToString() ?? null;
+        set => Positions[2] = value == null ? null : GeoSpatialPosition.Parse(value);
     }
 
     [NotMapped]
-    public required GeoSpatialPosition[] Positions { get; set; } = new GeoSpatialPosition[3];
+    public required GeoSpatialPosition?[] Positions { get; set; } = new GeoSpatialPosition?[3];
 }
