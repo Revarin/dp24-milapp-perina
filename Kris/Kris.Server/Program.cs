@@ -95,6 +95,11 @@ public class Program
 
         app.MapControllers();
 
+        if (app.Environment.IsProduction())
+        {
+            app.Services.GetRequiredService<DataContext>().Database.Migrate();
+        }
+
         app.Run();
     }
 }
