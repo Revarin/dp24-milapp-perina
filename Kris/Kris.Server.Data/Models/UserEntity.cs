@@ -1,13 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿namespace Kris.Server.Data.Models;
 
-namespace Kris.Server.Data
+public class UserEntity : EntityBase
 {
-    [Table("USERS")]
-    public class UserEntity : EntityBase<int>
-    {
-        [Column("NAME")]
-        public string Name { get; set; }
-        [Column("CREATED_DATE", TypeName = "datetime")]
-        public DateTime CreatedDate { get; set; }
-    }
+    public required string Login { get; set; }
+    public required string Password { get; set; }
+    public required DateTime Created { get; set; }
+    public Guid? CurrentSessionId { get; set; }
+    public SessionUserEntity? CurrentSession { get; set; }
+    public List<SessionUserEntity> AllSessions { get; set; } = new List<SessionUserEntity>();
 }

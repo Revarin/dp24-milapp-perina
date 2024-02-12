@@ -1,10 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿namespace Kris.Server.Data.Models;
 
-namespace Kris.Server.Data
+public abstract class EntityBase
 {
-    public class EntityBase<T>
-    {
-        [Column("ID")]
-        public T Id { get; set; }
-    }
+    public Guid Id { get; set; }
 }

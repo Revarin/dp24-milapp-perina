@@ -1,6 +1,5 @@
-﻿namespace Kris.Interface
+﻿namespace Kris.Interface.Responses;
+
+public abstract class ResponseBase
 {
-    public abstract class ResponseBase
-    {
-    }
 }

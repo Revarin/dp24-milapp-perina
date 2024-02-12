@@ -1,57 +1,177 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Kris.Interface;
+﻿using Kris.Common.Enums;
+using Kris.Interface.Controllers;
+using Kris.Interface.Models;
+using Kris.Interface.Requests;
+using Kris.Interface.Responses;
+using Kris.Server.Attributes;
+using Kris.Server.Common.Errors;
+using Kris.Server.Core.Requests;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Kris.Server
+namespace Kris.Server.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+[Produces("application/json")]
+public sealed class SessionController : KrisController, ISessionController
 {
-    [Route("[controller]/[action]")]
-    public class SessionController : ControllerBase, ISessionController
+    public SessionController(IMediator mediator) : base(mediator)
     {
-        private readonly IUserService _userService;
+    }
 
-        public SessionController(IUserService userService)
+    [HttpPost]
+    [Authorize]
+    public async Task<ActionResult<JwtTokenResponse>> CreateSession(CreateSessionRequest request, CancellationToken ct)
+    {
+        var user = CurrentUser();
+        if (user == null) return Unauthorized();
+
+        var command = new CreateSessionCommand { CreateSession = request, User = user };
+        var result = await _mediator.Send(command, ct);
+
+        if (result.IsFailed)
         {
-            _userService = userService;
+            if (result.HasError<EntityExistsError>()) return BadRequest(result.Errors.Select(e => e.Message));
+            else return BadRequest();
         }
 
-        [HttpPost]
-        public Task<CreateUserResponse> CreateUser([FromBody]CreateUserRequest request)
+        return Ok(new JwtTokenResponse { Token = result.Value.Token});
+    }
+
+    [HttpPut]
+    [AuthorizeRoles(UserType.Admin, UserType.SuperAdmin)]
+    public async Task<ActionResult<JwtTokenResponse>> EditSession(EditSessionRequest request, CancellationToken ct)
+    {
+        // Edit CURRENT session only
+        var user = CurrentUser();
+        if (user == null) return Unauthorized();
+
+        var command = new EditSessionCommand { EditSession = request, User = user };
+        var result = await _mediator.Send(command, ct);
+
+        if (result.IsFailed)
         {
-            if (request == null) throw new BadHttpRequestException("Missing request body");
-            if (string.IsNullOrEmpty(request.Name)) throw new BadHttpRequestException("Missing request body");
-
-            var newUser = _userService.CreateUser(request.Name);
-
-            if (newUser == null) throw new BadHttpRequestException(_userService.GetErrorMessage());
-
-            return Task.FromResult(new CreateUserResponse
-            {
-                Id = newUser.Id,
-                Name = newUser.Name,
-                CreatedDate = newUser.CreatedDate
-            });
+            if (result.HasError<UnauthorizedError>()) return Unauthorized(result.Errors.Select(e => e.Message));
+            else return BadRequest();
         }
 
-        [HttpPut]
-        public Task UpdateUserName([FromBody]UpdateUserNameRequest request)
+        return Ok(new JwtTokenResponse { Token = result.Value.Token });
+    }
+
+    [HttpDelete]
+    [AuthorizeRoles(UserType.SuperAdmin)]
+    public async Task<ActionResult<JwtTokenResponse>> EndSession(CancellationToken ct)
+    {
+        var user = CurrentUser();
+        if (user == null) return Unauthorized();
+
+        var command = new EndSessionCommand() { User = user };
+        var result = await _mediator.Send(command, ct);
+
+        if (result.IsFailed)
         {
-            if (request == null) throw new BadHttpRequestException("Missing request body");
-            if (string.IsNullOrEmpty(request.Name)) throw new BadHttpRequestException("Missing user name");
-
-            var result = _userService.UpdateUserName(request.Id, request.Name);
-
-            if (!result) throw new BadHttpRequestException(_userService.GetErrorMessage());
-
-            return Task.CompletedTask;
+            if (result.HasError<UnauthorizedError>()) return Unauthorized(result.Errors.Select(e => e.Message));
+            else if (result.HasError<EntityNotFoundError>()) return NotFound(result.Errors.Select(e => e.Message));
+            else return BadRequest();
         }
 
-        [HttpPost]
-        public Task<bool> UserExists([FromBody]UserExistsRequest request)
+        return Ok(new JwtTokenResponse { Token = result.Value.Token });
+    }
+
+    [HttpPut("Join")]
+    [Authorize]
+    public async Task<ActionResult<JwtTokenResponse>> JoinSession(JoinSessionRequest request, CancellationToken ct)
+    {
+        var user = CurrentUser();
+        if (user == null) return Unauthorized();
+
+        var command = new JoinSessionCommand { User = user, JoinSession = request };
+        var result = await _mediator.Send(command, ct);
+
+        if (result.IsFailed)
         {
-            if (request == null) throw new BadHttpRequestException("Missing request body");
-
-            var result = _userService.UserExists(request.Id);
-
-            return Task.FromResult(result);
+            if (result.HasError<EntityNotFoundError>()) return NotFound(result.Errors.Select(e => e.Message));
+            else if (result.HasError<InvalidCredentialsError>()) return Unauthorized(result.Errors.Select(e => e.Message));
+            else return BadRequest();
         }
+
+        return Ok(new JwtTokenResponse { Token = result.Value.Token });
+    }
+
+    [HttpPut("Leave/{sessionId:guid}")]
+    [Authorize]
+    public async Task<ActionResult<JwtTokenResponse>> LeaveSession(Guid sessionId, CancellationToken ct)
+    {
+        // For users, leave given session
+        var user = CurrentUser();
+        if (user == null) return Unauthorized();
+
+        var command = new LeaveSessionCommand { User = user, SessionId = sessionId };
+        var result = await _mediator.Send(command, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UserNotInSessionError>()) return BadRequest(result.Errors.Select(e => e.Message));
+            else return BadRequest();
+        }
+
+        return Ok(new JwtTokenResponse { Token = result.Value.Token });
+    }
+
+    [HttpPut("Kick/{userId:guid}")]
+    [AuthorizeRoles(UserType.Admin, UserType.SuperAdmin)]
+    public async Task<ActionResult> KickFromSession(Guid userId, CancellationToken ct)
+    {
+        // For admins, kick user from CURRENT session
+        var user = CurrentUser();
+        if (user == null) return Unauthorized();
+
+        var command = new KickFromSessionCommand { User = user, UserId = userId };
+        var result = await _mediator.Send(command, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UnauthorizedError>()) return Unauthorized(result.Errors.Select(e => e.Message));
+            else if (result.HasError<UserNotInSessionError>()) return NotFound(result.Errors.Select(e => e.Message));
+            else if (result.HasError<InvalidOperationError>()) return BadRequest(result.Errors.Select(e => e.Message));
+            else return BadRequest();
+        }
+
+        return Ok();
+    }
+
+    [HttpGet("{sessionId:guid}")]
+    [Authorize]
+    public async Task<ActionResult<SessionModel>> GetSession(Guid sessionId, CancellationToken ct)
+    {
+        var user = CurrentUser();
+        if (user == null) return Unauthorized();
+
+        var query = new GetSessionQuery { SessionId = sessionId };
+        var result = await _mediator.Send(query, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<EntityNotFoundError>()) return NotFound(result.Errors.Select(e => e.Message));
+            else return BadRequest();
+        }
+
+        return Ok(result.Value);
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<ActionResult<IEnumerable<SessionModel>>> GetSessions(CancellationToken ct)
+    {
+        var user = CurrentUser();
+        if (user == null) return Unauthorized();
+
+        var query = new GetSessionsQuery();
+        var result = await _mediator.Send(query, ct);
+
+        if (result.IsFailed) return BadRequest();
+        return Ok(result.Value);
     }
 }
