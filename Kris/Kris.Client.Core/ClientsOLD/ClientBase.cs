@@ -8,13 +8,13 @@ namespace Kris.Client.Core
     public abstract class ClientBase
     {
         protected readonly HttpClient _httpClient;
-        protected readonly AppSettings _settings;
+        protected readonly SettingsOptions _settings;
 
         private readonly string _controller;
 
         public ClientBase(IConfiguration config, string controller)
         {
-            _settings = config.GetRequiredSection("Settings").Get<AppSettings>();
+            _settings = config.GetRequiredSection("Settings").Get<SettingsOptions>();
             _controller = controller;
 
             // TODO: Insecure

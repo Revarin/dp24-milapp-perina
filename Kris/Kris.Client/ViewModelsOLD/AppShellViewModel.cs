@@ -7,7 +7,7 @@ namespace Kris.Client.ViewModels
 {
     public class AppShellViewModel : ViewModelBase
     {
-        private readonly AppSettings _settings;
+        private readonly SettingsOptions _settings;
         private readonly IMessageService _messageService;
         private readonly INavigationService _navigationService;
         private readonly IPermissionsService _permissionsService;
@@ -35,7 +35,7 @@ namespace Kris.Client.ViewModels
             _alertService = alertService;
             _preferencesStore = preferencesStore;
             _sessionFacade = sessionFacade;
-            _settings = config.GetRequiredSection("Settings").Get<AppSettings>();
+            _settings = config.GetRequiredSection("Settings").Get<SettingsOptions>();
 
             AppearingCommand = new Command(OnAppearing);
             _sessionFacade = sessionFacade;

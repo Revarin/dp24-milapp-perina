@@ -10,7 +10,7 @@ namespace Kris.Client.ViewModels
 {
     public class ConnectionSettingsViewModel : ViewModelBase
     {
-        private readonly AppSettings _settings;
+        private readonly SettingsOptions _settings;
         private readonly IMessageService _messageService;
         private readonly IPreferencesStore _preferencesStore;
         private readonly ISessionFacade _sessionFacade;
@@ -59,7 +59,7 @@ namespace Kris.Client.ViewModels
             _messageService = messageService;
             _preferencesStore = preferencesStore;
             _sessionFacade = sessionFacade;
-            _settings = config.GetRequiredSection("Settings").Get<AppSettings>();
+            _settings = config.GetRequiredSection("Settings").Get<SettingsOptions>();
 
             UserNameCompletedCommand = new Command(OnUserNameCompletedAsync);
             GpsIntervalSelectedIndexChangedCommand = new Command(OnGpsIntervalSelectedIndexChanged);

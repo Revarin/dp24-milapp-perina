@@ -11,7 +11,7 @@ namespace Kris.Client.ViewModels
 {
     public class MapViewModel : ViewModelBase
     {
-        private readonly AppSettings _settings;
+        private readonly SettingsOptions _settings;
         private readonly IAlertService _alertService;
         private readonly IMessageService _messageService;
         private readonly IPermissionsService _permissionsService;
@@ -42,7 +42,7 @@ namespace Kris.Client.ViewModels
             _preferencesStore = preferencesStore;
             _gpsService = gpsService;
             _locationFacade = locationFacade;
-            _settings = config.GetRequiredSection("Settings").Get<AppSettings>();
+            _settings = config.GetRequiredSection("Settings").Get<SettingsOptions>();
 
             CurrentRegion = new MapSpan(new Location(), 10, 10);
             LoadedCommand = new Command(OnLoaded);
