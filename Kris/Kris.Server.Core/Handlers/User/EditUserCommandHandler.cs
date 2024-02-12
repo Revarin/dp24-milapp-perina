@@ -26,7 +26,7 @@ public sealed class EditUserCommandHandler : UserHandler, IRequestHandler<EditUs
     public async Task<Result<JwtToken>> Handle(EditUserCommand request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetWithCurrentSessionAsync(request.User.Id, cancellationToken);
-        if (user == null) throw new DatabaseException("User not found");
+        if (user == null) throw new NullableException();
         if (user.Login != request.User.Login || user.CurrentSessionId != request.User.SessionId)
             return Result.Fail(new UnauthorizedError("Invalid token"));
 

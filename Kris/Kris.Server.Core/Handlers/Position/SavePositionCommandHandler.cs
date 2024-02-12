@@ -21,10 +21,10 @@ public sealed class SavePositionCommandHandler : PositionHandler, IRequestHandle
     public async Task<Result> Handle(SavePositionCommand request, CancellationToken cancellationToken)
     {
         var user = request.User;
-        if (!user.SessionId.HasValue) throw new JwtException("Token missing session");
+        if (!user.SessionId.HasValue) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
 
         var authorized = await _authorizationService.AuthorizeAsync(user, cancellationToken);
-        if (!authorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType.ToString()));
+        if (!authorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
 
         var position = await _positionRepository.GetAsync(user.Id, user.SessionId.Value, cancellationToken);
         if (position == null)

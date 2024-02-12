@@ -30,7 +30,7 @@ public sealed class LeaveSessionCommandHandler : SessionHandler, IRequestHandler
         var sessionUser = session.Users.Find(sessionUser => sessionUser.UserId == request.User.Id);
         if (sessionUser == null) return Result.Fail(new UserNotInSessionError());
         if (sessionUser.UserType == UserType.SuperAdmin) return Result.Fail(new InvalidOperationError("Session owner cannot leave session"));
-        if (sessionUser.User == null) throw new DatabaseException("Session user not found");
+        if (sessionUser.User == null) throw new NullableException();
 
         var user = sessionUser.User;
 

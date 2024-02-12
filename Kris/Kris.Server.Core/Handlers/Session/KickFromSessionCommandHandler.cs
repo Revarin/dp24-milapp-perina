@@ -20,17 +20,18 @@ public sealed class KickFromSessionCommandHandler : SessionHandler, IRequestHand
     public async Task<Result> Handle(KickFromSessionCommand request, CancellationToken cancellationToken)
     {
         var user = request.User;
-        if (!user.SessionId.HasValue) throw new JwtException("Token missing session");
+        if (!user.SessionId.HasValue) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
+
         var authorized = await _authorizationService.AuthorizeAsync(user, UserType.Admin, cancellationToken);
-        if (!authorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType.ToString()));
+        if (!authorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
 
         var session = await _sessionRepository.GetWithUsersAsync(user.SessionId.Value, cancellationToken);
-        if (session == null) throw new DatabaseException("Session not found");
+        if (session == null) throw new NullableException();
 
         var sessionUser = session.Users.Find(sessionUser => sessionUser.UserId == request.UserId);
         if (sessionUser == null) return Result.Fail(new UserNotInSessionError());
         if (sessionUser.UserType == UserType.SuperAdmin) return Result.Fail(new InvalidOperationError("Cannot kick session owner"));
-        if (sessionUser.User == null) throw new DatabaseException("Session user not found");
+        if (sessionUser.User == null) throw new NullableException();
 
         sessionUser.User.CurrentSession = sessionUser.User.CurrentSessionId == session.Id ? null : sessionUser.User.CurrentSession;
         sessionUser.User.CurrentSessionId = sessionUser.User.CurrentSessionId == session.Id ? null : sessionUser.User.CurrentSessionId;

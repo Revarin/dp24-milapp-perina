@@ -29,14 +29,14 @@ public sealed class EditSessionCommandHandler : SessionHandler, IRequestHandler<
     public async Task<Result<JwtToken>> Handle(EditSessionCommand request, CancellationToken cancellationToken)
     {
         var user = request.User;
-        if (!user.SessionId.HasValue) throw new JwtException("Token missing session");
-        if (!user.UserType.HasValue) throw new JwtException("Token missing type");
+        if (!user.SessionId.HasValue || !user.UserType.HasValue)
+            return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
 
         var authorized = await _authorizationService.AuthorizeAsync(user, UserType.Admin, cancellationToken);
-        if (!authorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType.ToString()));
+        if (!authorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
 
         var session = await _sessionRepository.GetWithUsersAsync(user.SessionId.Value, cancellationToken);
-        if (session == null) throw new DatabaseException("Session not found");
+        if (session == null) throw new NullableException();
         if (session.Name != user.SessionName) return Result.Fail(new UnauthorizedError("Invalid token"));
 
         session.Name = request.EditSession.Name;
