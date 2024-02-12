@@ -11,6 +11,7 @@ public sealed class PositionMapper : IPositionMapper
         {
             UserId = entity.UserId,
             UserName = entity.SessionUser?.User?.Login,
+            Updated = entity.Updated,
             Positions = entity.Positions.ToList(),
         };
     }

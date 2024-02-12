@@ -26,4 +26,14 @@ public sealed class UserPositionRepository : RepositoryBase<UserPositionEntity>,
             .Where(position => position.SessionId == sessionId && position.Updated > from)
             .ToListAsync(ct);
     }
+
+    public new async Task<bool> UpdateAsync(UserPositionEntity entity, CancellationToken ct)
+    {
+        var entityExists = await _context.UserPositions.FindAsync(entity.UserId, entity.SessionId, ct);
+        if (entityExists == null) return false;
+
+        _context.UserPositions.Update(entity);
+        await _context.SaveChangesAsync(ct);
+        return true;
+    }
 }

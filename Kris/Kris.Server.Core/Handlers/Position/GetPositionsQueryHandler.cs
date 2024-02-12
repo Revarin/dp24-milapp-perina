@@ -31,7 +31,7 @@ public sealed class GetPositionsQueryHandler : PositionHandler, IRequestHandler<
 
         var response = new GetPositionsResponse
         {
-            Updated = DateTime.UtcNow,
+            Resolved = DateTime.UtcNow,
             UserPositions = positions.Select(_positionMapper.Map).ToList()
         };
         return Result.Ok(response);
