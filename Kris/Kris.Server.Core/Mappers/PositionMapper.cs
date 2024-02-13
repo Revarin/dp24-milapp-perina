@@ -12,7 +12,12 @@ public sealed class PositionMapper : IPositionMapper
             UserId = entity.UserId,
             UserName = entity.SessionUser?.User?.Login,
             Updated = entity.Updated,
-            Positions = entity.Positions.ToList(),
+            Positions = new List<Kris.Common.Models.GeoSpatialPosition?>
+            {
+                entity.Position_0,
+                entity.Position_1,
+                entity.Position_2
+            }
         };
     }
 }

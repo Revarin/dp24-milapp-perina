@@ -9,6 +9,7 @@ public class DataContext : DbContext
     public DbSet<SessionEntity> Sessions { get; set; }
     public DbSet<SessionUserEntity> SessionUsers { get; set; }
     public DbSet<UserPositionEntity> UserPositions { get; set; }
+    public DbSet<MapPointEntity> MapPoints { get; set; }
 
     public DataContext(DbContextOptions options) : base(options)
     {
@@ -46,6 +47,12 @@ public class DataContext : DbContext
             .WithMany(e => e.AllSessions)
             .HasForeignKey(e => e.UserId)
             .OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<SessionUserEntity>()
+            .HasMany(e => e.MapPoints)
+            .WithOne(e => e.SessionUser)
+            .HasForeignKey(e => new { e.UserId, e.SessionId })
+            .OnDelete(DeleteBehavior.Cascade);
+
         modelBuilder.Entity<UserEntity>()
             .HasOne(e => e.CurrentSession)
             .WithOne()
@@ -59,6 +66,18 @@ public class DataContext : DbContext
             .WithOne()
             .HasForeignKey(typeof(UserPositionEntity), nameof(UserPositionEntity.UserId), nameof(UserPositionEntity.SessionId))
             .OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<UserPositionEntity>().OwnsOne(e => e.Position_0);
+        modelBuilder.Entity<UserPositionEntity>().OwnsOne(e => e.Position_1);
+        modelBuilder.Entity<UserPositionEntity>().OwnsOne(e => e.Position_2);
+
+        modelBuilder.Entity<MapPointEntity>().HasKey(e => e.Id);
+        modelBuilder.Entity<MapPointEntity>()
+            .HasOne(e => e.SessionUser)
+            .WithMany(e => e.MapPoints)
+            .HasForeignKey(e => new { e.UserId, e.SessionId })
+            .OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<MapPointEntity>().OwnsOne(e => e.Position);
+        modelBuilder.Entity<MapPointEntity>().OwnsOne(e => e.Symbol);
 
         base.OnModelCreating(modelBuilder);
     }

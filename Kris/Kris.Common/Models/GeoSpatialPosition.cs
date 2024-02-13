@@ -1,11 +1,8 @@
 ﻿namespace Kris.Common.Models;
 
-public struct GeoSpatialPosition
+public record GeoSpatialPosition : GeoPosition
 {
     public DateTime Timestamp { get; set; }
-    public double Latitude { get; set; }
-    public double Longitude { get; set; }
-    public double Altitude { get; set; }
 
     public override string ToString()
     {
