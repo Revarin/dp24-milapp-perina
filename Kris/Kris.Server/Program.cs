@@ -50,6 +50,7 @@ public class Program
         builder.Services.AddScoped<ISessionRepository, SessionRepository>();
         builder.Services.AddScoped<ISessionUserRepository, SessionUserRepository>();
         builder.Services.AddScoped<IUserPositionRepository, UserPositionRepository>();
+        builder.Services.AddScoped<IMapPointRepository, MapPointRepository>();
 
         builder.Services.AddSingleton<IJwtService, JwtService>();
         builder.Services.AddSingleton<IPasswordService, PasswordService>();
@@ -66,6 +67,7 @@ public class Program
         }).AddJwtBearer(options =>
         {
             var jwtOptions = builder.Configuration.GetSection(JwtOptions.Section).Get<JwtOptions>();
+            if (jwtOptions == null) throw new Exception(nameof(jwtOptions));
 
             options.TokenValidationParameters = new TokenValidationParameters
             {
@@ -73,8 +75,8 @@ public class Program
                 ValidateAudience = false,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtOptions?.Issuer,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtOptions?.Key))
+                ValidIssuer = jwtOptions.Issuer,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtOptions.Key))
             };
         });
 
