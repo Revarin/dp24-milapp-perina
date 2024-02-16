@@ -13,7 +13,8 @@ public sealed class DeleteMapPointCommandHandler : MapObjectHandler, IRequestHan
 {
     private readonly IMapPointRepository _mapPointRepository;
 
-    public DeleteMapPointCommandHandler(IMapPointRepository mapPointRepository, IAuthorizationService authorizationService) : base(authorizationService)
+    public DeleteMapPointCommandHandler(IMapPointRepository mapPointRepository, IAuthorizationService authorizationService)
+        : base(authorizationService)
     {
         _mapPointRepository = mapPointRepository;
     }

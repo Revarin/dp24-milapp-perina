@@ -20,9 +20,21 @@ public sealed class MapObjectController : KrisController, IMapObjectController
 
     [HttpGet]
     [Authorize]
-    public Task<ActionResult<GetMapObjectsResponse>> GetMapObjects(DateTime? from, CancellationToken ct)
+    public async Task<ActionResult<GetMapObjectsResponse>> GetMapObjects(DateTime? from, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var user = CurrentUser();
+        if (user == null) return Unauthorized();
+
+        var query = new GetMapObjectsQuery { User = user, From = from };
+        var result = await _mediator.Send(query, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UnauthorizedError>()) return Unauthorized(result.Errors.Select(e => e.Message));
+            else return BadRequest();
+        }
+
+        return Ok(result.Value);
     }
 
     [HttpPost("Point")]

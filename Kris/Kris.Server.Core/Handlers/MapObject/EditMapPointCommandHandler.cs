@@ -13,7 +13,8 @@ public sealed class EditMapPointCommandHandler : MapObjectHandler, IRequestHandl
 {
     private readonly IMapPointRepository _mapPointRepository;
 
-    public EditMapPointCommandHandler(IMapPointRepository mapPointRepository, IAuthorizationService authorizationService) : base(authorizationService)
+    public EditMapPointCommandHandler(IMapPointRepository mapPointRepository, IAuthorizationService authorizationService)
+        : base(authorizationService)
     {
         _mapPointRepository = mapPointRepository;
     }
