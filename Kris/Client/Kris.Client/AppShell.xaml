@@ -1,23 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-       xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-       xmlns:viewModels="clr-namespace:Kris.Client.ViewModels"
-       xmlns:local="clr-namespace:Kris.Client"
-       x:Class="Kris.Client.AppShell"
-       x:DataType="viewModels:AppShellViewModel"
-       Shell.FlyoutBehavior="Disabled">
-    <Shell.Behaviors>
-        <toolkit:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}" />
-    </Shell.Behaviors>
-    <TabBar>
-        <ShellContent Title="Map"
-                      ContentTemplate="{DataTemplate local:MapView}" />
-        <ShellContent Title="Menu"
-                      ContentTemplate="{DataTemplate local:MenuView}" />
-        <ShellContent Title="Test"
-                      ContentTemplate="{DataTemplate local:TestView}" />
-    </TabBar>
-    <ShellContent Title="Connection settings"
-                  ContentTemplate="{DataTemplate local:ConnectionSettingsView}" />
+<Shell
+    x:Class="Kris.Client.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Kris.Client"
+    Shell.FlyoutBehavior="Disabled">
+
+    <ShellContent
+        Title="Home"
+        ContentTemplate="{DataTemplate local:MainPage}"
+        Route="MainPage" />
+
 </Shell>

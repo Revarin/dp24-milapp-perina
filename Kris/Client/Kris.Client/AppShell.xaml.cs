@@ -1,12 +1,9 @@
-﻿using Kris.Client.ViewModels;
-
-namespace Kris.Client
+﻿namespace Kris.Client
 {
     public partial class AppShell : Shell
     {
-        public AppShell(AppShellViewModel viewModel)
+        public AppShell()
         {
-            BindingContext = viewModel;
             InitializeComponent();
         }
     }
