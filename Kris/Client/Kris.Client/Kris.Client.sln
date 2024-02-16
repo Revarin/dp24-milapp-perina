@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kris.Client.Data", "..\Kris
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kris.Client.Core", "..\Kris.Client.Core\Kris.Client.Core.csproj", "{722151BE-A7A8-403D-87E0-A5C3851D9FED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kris.Interface", "..\Kris.Interface\Kris.Interface.csproj", "{D65AF15F-64CC-483D-B5BD-EC3E16A51CA9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kris.Interface", "..\..\Common\Kris.Interface\Kris.Interface.csproj", "{D65AF15F-64CC-483D-B5BD-EC3E16A51CA9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kris.Common", "..\Kris.Common\Kris.Common.csproj", "{B9A21BAF-3571-46E9-8D36-BB5FE604B4DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kris.Common", "..\..\Common\Kris.Common\Kris.Common.csproj", "{B9A21BAF-3571-46E9-8D36-BB5FE604B4DB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kris.Client.Client", "..\Kris.Client.Client\Kris.Client.Client.csproj", "{03C5E56C-7539-459E-92CD-AB3BAB0584BD}"
 EndProject

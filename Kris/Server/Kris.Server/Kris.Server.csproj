@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Kris.Common\Kris.Common.csproj" />
-    <ProjectReference Include="..\Kris.Interface\Kris.Interface.csproj" />
+    <ProjectReference Include="..\..\Common\Kris.Common\Kris.Common.csproj" />
+    <ProjectReference Include="..\..\Common\Kris.Interface\Kris.Interface.csproj" />
     <ProjectReference Include="..\Kris.Server.Common\Kris.Server.Common.csproj" />
     <ProjectReference Include="..\Kris.Server.Core\Kris.Server.Core.csproj" />
     <ProjectReference Include="..\Kris.Server.Data\Kris.Server.Data.csproj" />

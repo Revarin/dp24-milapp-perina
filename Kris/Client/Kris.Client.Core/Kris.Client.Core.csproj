@@ -19,20 +19,18 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="CommunityToolkit.Maui" />
-	  <PackageReference Include="CommunityToolkit.Mvvm" />
-	  <PackageReference Include="FluentResults" />
-	  <PackageReference Include="MediatR" />
-	  <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
-	  <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
-	  <PackageReference Include="Microsoft.Maui.Maps" />
-	  <PackageReference Include="Newtonsoft.Json" />
+	  <PackageReference Include="CommunityToolkit.Maui" Version="6.0.0" />
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+	  <PackageReference Include="Microsoft.Maui.Maps" Version="7.0.92" />
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Kris.Client.Common\Kris.Client.Common.csproj" />
 	  <ProjectReference Include="..\Kris.Client.Data\Kris.Client.Data.csproj" />
-	  <ProjectReference Include="..\Kris.Interface\Kris.Interface.csproj" />
+	  <ProjectReference Include="..\..\Common\Kris.Interface\Kris.Interface.csproj" />
 	</ItemGroup>
 
 </Project>

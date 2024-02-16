@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Kris.Interface\Kris.Interface.csproj" />
+    <ProjectReference Include="..\..\Common\Kris.Interface\Kris.Interface.csproj" />
     <ProjectReference Include="..\Kris.Server.Common\Kris.Server.Common.csproj" />
     <ProjectReference Include="..\Kris.Server.Data\Kris.Server.Data.csproj" />
   </ItemGroup>
