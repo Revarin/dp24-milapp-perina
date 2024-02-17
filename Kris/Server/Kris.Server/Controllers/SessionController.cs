@@ -6,6 +6,7 @@ using Kris.Interface.Responses;
 using Kris.Server.Attributes;
 using Kris.Server.Common.Errors;
 using Kris.Server.Core.Requests;
+using Kris.Server.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,155 +24,155 @@ public sealed class SessionController : KrisController, ISessionController
 
     [HttpPost]
     [Authorize]
-    public async Task<ActionResult<JwtTokenResponse>> CreateSession(CreateSessionRequest request, CancellationToken ct)
+    public async Task<Response<JwtTokenResponse>> CreateSession(CreateSessionRequest request, CancellationToken ct)
     {
         var user = CurrentUser();
-        if (user == null) return Unauthorized();
+        if (user == null) return Response.Unauthorized<JwtTokenResponse>();
 
         var command = new CreateSessionCommand { CreateSession = request, User = user };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<EntityExistsError>()) return BadRequest(result.Errors.Select(e => e.Message));
-            else return BadRequest();
+            if (result.HasError<EntityExistsError>()) return Response.BadRequest<JwtTokenResponse>(result.Errors.Select(e => e.Message));
+            else return Response.BadRequest<JwtTokenResponse>();
         }
 
-        return Ok(new JwtTokenResponse { Token = result.Value.Token});
+        return Response.Ok(new JwtTokenResponse { Token = result.Value.Token});
     }
 
     [HttpPut]
     [AuthorizeRoles(UserType.Admin, UserType.SuperAdmin)]
-    public async Task<ActionResult<JwtTokenResponse>> EditSession(EditSessionRequest request, CancellationToken ct)
+    public async Task<Response<JwtTokenResponse>> EditSession(EditSessionRequest request, CancellationToken ct)
     {
         // Edit CURRENT session only
         var user = CurrentUser();
-        if (user == null) return Unauthorized();
+        if (user == null) return Response.Unauthorized<JwtTokenResponse>();
 
         var command = new EditSessionCommand { EditSession = request, User = user };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Unauthorized(result.Errors.Select(e => e.Message));
-            else return BadRequest();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<JwtTokenResponse>(result.Errors.Select(e => e.Message));
+            else return Response.BadRequest<JwtTokenResponse>();
         }
 
-        return Ok(new JwtTokenResponse { Token = result.Value.Token });
+        return Response.Ok(new JwtTokenResponse { Token = result.Value.Token });
     }
 
     [HttpDelete]
     [AuthorizeRoles(UserType.SuperAdmin)]
-    public async Task<ActionResult<JwtTokenResponse>> EndSession(CancellationToken ct)
+    public async Task<Response<JwtTokenResponse>> EndSession(CancellationToken ct)
     {
         var user = CurrentUser();
-        if (user == null) return Unauthorized();
+        if (user == null) return Response.Unauthorized<JwtTokenResponse>();
 
         var command = new EndSessionCommand() { User = user };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Unauthorized(result.Errors.Select(e => e.Message));
-            else if (result.HasError<EntityNotFoundError>()) return NotFound(result.Errors.Select(e => e.Message));
-            else return BadRequest();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<JwtTokenResponse>(result.Errors.Select(e => e.Message));
+            else if (result.HasError<EntityNotFoundError>()) return Response.NotFound<JwtTokenResponse>(result.Errors.Select(e => e.Message));
+            else return Response.BadRequest<JwtTokenResponse>();
         }
 
-        return Ok(new JwtTokenResponse { Token = result.Value.Token });
+        return Response.Ok(new JwtTokenResponse { Token = result.Value.Token });
     }
 
     [HttpPut("Join")]
     [Authorize]
-    public async Task<ActionResult<JwtTokenResponse>> JoinSession(JoinSessionRequest request, CancellationToken ct)
+    public async Task<Response<JwtTokenResponse>> JoinSession(JoinSessionRequest request, CancellationToken ct)
     {
         var user = CurrentUser();
-        if (user == null) return Unauthorized();
+        if (user == null) return Response.Unauthorized<JwtTokenResponse>();
 
         var command = new JoinSessionCommand { User = user, JoinSession = request };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<EntityNotFoundError>()) return NotFound(result.Errors.Select(e => e.Message));
-            else if (result.HasError<InvalidCredentialsError>()) return Unauthorized(result.Errors.Select(e => e.Message));
-            else return BadRequest();
+            if (result.HasError<EntityNotFoundError>()) return Response.NotFound<JwtTokenResponse>(result.Errors.Select(e => e.Message));
+            else if (result.HasError<InvalidCredentialsError>()) return Response.Unauthorized<JwtTokenResponse>(result.Errors.Select(e => e.Message));
+            else return Response.BadRequest<JwtTokenResponse>();
         }
 
-        return Ok(new JwtTokenResponse { Token = result.Value.Token });
+        return Response.Ok(new JwtTokenResponse { Token = result.Value.Token });
     }
 
     [HttpPut("Leave/{sessionId:guid}")]
     [Authorize]
-    public async Task<ActionResult<JwtTokenResponse>> LeaveSession(Guid sessionId, CancellationToken ct)
+    public async Task<Response<JwtTokenResponse>> LeaveSession(Guid sessionId, CancellationToken ct)
     {
         // For users, leave given session
         var user = CurrentUser();
-        if (user == null) return Unauthorized();
+        if (user == null) return Response.Unauthorized<JwtTokenResponse>();
 
         var command = new LeaveSessionCommand { User = user, SessionId = sessionId };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UserNotInSessionError>()) return BadRequest(result.Errors.Select(e => e.Message));
-            else return BadRequest();
+            if (result.HasError<UserNotInSessionError>()) return Response.BadRequest<JwtTokenResponse>(result.Errors.Select(e => e.Message));
+            else return Response.BadRequest<JwtTokenResponse>();
         }
 
-        return Ok(new JwtTokenResponse { Token = result.Value.Token });
+        return Response.Ok(new JwtTokenResponse { Token = result.Value.Token });
     }
 
     [HttpPut("Kick/{userId:guid}")]
     [AuthorizeRoles(UserType.Admin, UserType.SuperAdmin)]
-    public async Task<ActionResult> KickFromSession(Guid userId, CancellationToken ct)
+    public async Task<Response<EmptyResponse>> KickFromSession(Guid userId, CancellationToken ct)
     {
         // For admins, kick user from CURRENT session
         var user = CurrentUser();
-        if (user == null) return Unauthorized();
+        if (user == null) return Response.Unauthorized<EmptyResponse>();
 
         var command = new KickFromSessionCommand { User = user, UserId = userId };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Unauthorized(result.Errors.Select(e => e.Message));
-            else if (result.HasError<UserNotInSessionError>()) return NotFound(result.Errors.Select(e => e.Message));
-            else if (result.HasError<InvalidOperationError>()) return BadRequest(result.Errors.Select(e => e.Message));
-            else return BadRequest();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<EmptyResponse>(result.Errors.Select(e => e.Message));
+            else if (result.HasError<UserNotInSessionError>()) return Response.NotFound<EmptyResponse>(result.Errors.Select(e => e.Message));
+            else if (result.HasError<InvalidOperationError>()) return Response.BadRequest<EmptyResponse>(result.Errors.Select(e => e.Message));
+            else return Response.BadRequest<EmptyResponse>();
         }
 
-        return Ok();
+        return Response.Ok<EmptyResponse>();
     }
 
     [HttpGet("{sessionId:guid}")]
     [Authorize]
-    public async Task<ActionResult<SessionModel>> GetSession(Guid sessionId, CancellationToken ct)
+    public async Task<Response<GetOneResponse<SessionModel>>> GetSession(Guid sessionId, CancellationToken ct)
     {
         var user = CurrentUser();
-        if (user == null) return Unauthorized();
+        if (user == null) return Response.Unauthorized<GetOneResponse<SessionModel>>();
 
         var query = new GetSessionQuery { SessionId = sessionId };
         var result = await _mediator.Send(query, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<EntityNotFoundError>()) return NotFound(result.Errors.Select(e => e.Message));
-            else return BadRequest();
+            if (result.HasError<EntityNotFoundError>()) return Response.NotFound<GetOneResponse<SessionModel>>(result.Errors.Select(e => e.Message));
+            else return Response.BadRequest<GetOneResponse<SessionModel>>();
         }
 
-        return Ok(result.Value);
+        return Response.Ok(new GetOneResponse<SessionModel> { Value = result.Value });
     }
 
     [HttpGet]
     [Authorize]
-    public async Task<ActionResult<IEnumerable<SessionModel>>> GetSessions(CancellationToken ct)
+    public async Task<Response<GetManyResponse<SessionModel>>> GetSessions(CancellationToken ct)
     {
         var user = CurrentUser();
-        if (user == null) return Unauthorized();
+        if (user == null) return Response.Unauthorized<GetManyResponse<SessionModel>>();
 
         var query = new GetSessionsQuery();
         var result = await _mediator.Send(query, ct);
 
-        if (result.IsFailed) return BadRequest();
-        return Ok(result.Value);
+        if (result.IsFailed) return Response.BadRequest<GetManyResponse<SessionModel>>();
+        return Response.Ok(new GetManyResponse<SessionModel> { Values = result.Value });
     }
 }

@@ -1,5 +1,5 @@
 ﻿namespace Kris.Interface.Responses;
 
-public abstract class ResponseBase
+public abstract class EmptyResponse
 {
 }

@@ -6,6 +6,7 @@ using Kris.Server.Core.Requests;
 using Kris.Server.Common.Errors;
 using Microsoft.AspNetCore.Authorization;
 using Kris.Interface.Responses;
+using Kris.Server.Extensions;
 
 namespace Kris.Server.Controllers;
 
@@ -20,81 +21,80 @@ public sealed class UserController : KrisController, IUserController
 
     [HttpPost("Register")]
     [AllowAnonymous]
-    public async Task<ActionResult> RegisterUser(RegisterUserRequest request, CancellationToken ct)
+    public async Task<Response<EmptyResponse>> RegisterUser(RegisterUserRequest request, CancellationToken ct)
     {
         var commmand = new RegisterUserCommand { RegisterUser = request };
         var result = await _mediator.Send(commmand, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<EntityExistsError>()) return BadRequest(result.Errors.Select(e => e.Message));
-            else return BadRequest();
+            if (result.HasError<EntityExistsError>()) return Response.BadRequest<EmptyResponse>(result.Errors.Select(e => e.Message));
+            else return Response.BadRequest<EmptyResponse>();
         }
 
-        return Ok();
+        return Response.Ok<EmptyResponse>();
     }
 
     [HttpPost("Login")]
     [AllowAnonymous]
-    public async Task<ActionResult<JwtTokenResponse>> LoginUser(LoginUserRequest request, CancellationToken ct)
+    public async Task<Response<JwtTokenResponse>> LoginUser(LoginUserRequest request, CancellationToken ct)
     {
         var command = new LoginUserCommand { LoginUser = request };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<InvalidCredentialsError>()) return Unauthorized(result.Errors.Select(e => e.Message));
-            else return BadRequest();
+            if (result.HasError<InvalidCredentialsError>()) return Response.Unauthorized<JwtTokenResponse>(result.Errors.Select(e => e.Message));
+            else return Response.BadRequest<JwtTokenResponse>();
         }
 
-        return Ok(new JwtTokenResponse { Token = result.Value.Token });
+        return Response.Ok(new JwtTokenResponse { Token = result.Value.Token });
     }
 
     [HttpPut]
     [Authorize]
-    public async Task<ActionResult<JwtTokenResponse>> EditUser(EditUserRequest request, CancellationToken ct)
+    public async Task<Response<JwtTokenResponse>> EditUser(EditUserRequest request, CancellationToken ct)
     {
         // Edit SELF ONLY
         var user = CurrentUser();
-        if (user == null) return Unauthorized();
+        if (user == null) return Response.Unauthorized<JwtTokenResponse>();
 
         var command = new EditUserCommand { User = user, EditUser = request };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Unauthorized(result.Errors.Select(e => e.Message));
-            else return BadRequest();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<JwtTokenResponse>(result.Errors.Select(e => e.Message));
+            else return Response.BadRequest<JwtTokenResponse>();
         }
 
-        return Ok(new JwtTokenResponse { Token = result.Value.Token });
+        return Response.Ok(new JwtTokenResponse { Token = result.Value.Token });
     }
 
     [HttpDelete()]
     [Authorize]
-    public async Task<ActionResult> DeleteUser(CancellationToken ct)
+    public async Task<Response<EmptyResponse>> DeleteUser(CancellationToken ct)
     {
         // Delete SELF ONLY
         var user = CurrentUser();
-        if (user == null) return Unauthorized();
+        if (user == null) return Response.Unauthorized<EmptyResponse>();
 
         var command = new DeleteUserCommand { User = user };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Unauthorized(result.Errors.Select(e => e.Message));
-            else return BadRequest();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<EmptyResponse>(result.Errors.Select(e => e.Message));
+            else return Response.BadRequest<EmptyResponse>();
         }
 
-        return Ok();
-        throw new NotImplementedException();
+        return Response.Ok<EmptyResponse>();
     }
 
     // TODO
     [HttpPost("Settings")]
     [Authorize]
-    public Task<ActionResult<object>> StoreUserSettings(StoreUserSettingsRequest request, CancellationToken ct)
+    public Task<Response<object>> StoreUserSettings(StoreUserSettingsRequest request, CancellationToken ct)
     {
         throw new NotImplementedException();
     }

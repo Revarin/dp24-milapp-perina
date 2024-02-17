@@ -3,6 +3,7 @@ using Kris.Interface.Requests;
 using Kris.Interface.Responses;
 using Kris.Server.Common.Errors;
 using Kris.Server.Core.Requests;
+using Kris.Server.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,40 +21,39 @@ public sealed class PositionController : KrisController, IPositionController
 
     [HttpGet]
     [Authorize]
-    public async Task<ActionResult<GetPositionsResponse>> GetPositions(DateTime? from, CancellationToken ct)
+    public async Task<Response<GetPositionsResponse>> GetPositions(DateTime? from, CancellationToken ct)
     {
         var user = CurrentUser();
-        if (user == null) return Unauthorized();
+        if (user == null) return Response.Unauthorized<GetPositionsResponse>();
 
         var query = new GetPositionsQuery { User = user, From = from };
         var result = await _mediator.Send(query, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Unauthorized(result.Errors.Select(e => e.Message));
-            else return BadRequest();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<GetPositionsResponse>(result.Errors.Select(e => e.Message));
+            else return Response.BadRequest<GetPositionsResponse>();
         }
 
-        return Ok(result.Value);
-        throw new NotImplementedException();
+        return Response.Ok(result.Value);
     }
 
     [HttpPost]
     [Authorize]
-    public async Task<ActionResult> SavePosition(SavePositionRequest request, CancellationToken ct)
+    public async Task<Response<EmptyResponse>> SavePosition(SavePositionRequest request, CancellationToken ct)
     {
         var user = CurrentUser();
-        if (user == null) return Unauthorized();
+        if (user == null) return Response.Unauthorized<EmptyResponse>();
 
         var command = new SavePositionCommand { User = user, SavePosition = request };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Unauthorized(result.Errors.Select(e => e.Message));
-            else return BadRequest();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<EmptyResponse>(result.Errors.Select(e => e.Message));
+            else return Response.BadRequest<EmptyResponse>();
         }
 
-        return Ok();
+        return Response.Ok<EmptyResponse>();
     }
 }
