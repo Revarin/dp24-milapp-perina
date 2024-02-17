@@ -3,12 +3,13 @@
     x:Class="Kris.Client.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:v="clr-namespace:Kris.Client.Views"
+    xmlns:vm="clr-namespace:Kris.Client.ViewModels"
     xmlns:local="clr-namespace:Kris.Client"
     Shell.FlyoutBehavior="Disabled">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
-
+    <ShellContent Title="Login" Route="LoginView"
+                  ContentTemplate="{DataTemplate v:LoginView}" />
+    <ShellContent Title="Register" Route="RegisterView"
+                  ContentTemplate="{DataTemplate v:RegisterView}" />
 </Shell>

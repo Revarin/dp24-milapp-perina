@@ -2,8 +2,10 @@
   <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Packages.props, $(MSBuildThisFileDirectory)..))" />
   <PropertyGroup>
     <!-- Enable central package management -->
-    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="CommunityToolkit.Maui" Version="6.1.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
   </ItemGroup>
 </Project>
