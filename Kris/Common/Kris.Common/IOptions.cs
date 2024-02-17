@@ -1,4 +1,4 @@
-﻿namespace Kris.Server.Common.Options;
+﻿namespace Kris.Common;
 
 public interface IOptions
 {

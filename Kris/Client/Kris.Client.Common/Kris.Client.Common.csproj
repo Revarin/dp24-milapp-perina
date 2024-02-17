@@ -19,4 +19,12 @@
 	  <Folder Include="Platforms\Windows\" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <PackageReference Include="FluentResults" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Common\Kris.Common\Kris.Common.csproj" />
+	</ItemGroup>
+
 </Project>

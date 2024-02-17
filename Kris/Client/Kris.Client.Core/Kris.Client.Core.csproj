@@ -21,6 +21,8 @@
 
 	<ItemGroup>
 	  <PackageReference Include="CommunityToolkit.Maui" />
+	  <PackageReference Include="FluentResults" />
+	  <PackageReference Include="MediatR" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -20,18 +20,18 @@ public static class HttpResponseExtensions
         return new Response<T>
         {
             Status = response.StatusCode,
-            Messages = new List<string> { "Bad request" },
+            Message = "Bad request",
             Body = null
         };
     }
 
-    public static Response<T> BadRequest<T>(this HttpResponse response, IEnumerable<string> messages) where T : EmptyResponse
+    public static Response<T> BadRequest<T>(this HttpResponse response, string? message) where T : EmptyResponse
     {
         response.StatusCode = StatusCodes.Status400BadRequest;
         return new Response<T>
         {
             Status = response.StatusCode,
-            Messages = messages,
+            Message = message,
             Body = null
         };
     }
@@ -46,13 +46,13 @@ public static class HttpResponseExtensions
         };
     }
 
-    public static Response<T> Unauthorized<T>(this HttpResponse response, IEnumerable<string> messages) where T : EmptyResponse
+    public static Response<T> Unauthorized<T>(this HttpResponse response, string? message) where T : EmptyResponse
     {
         response.StatusCode = StatusCodes.Status401Unauthorized;
         return new Response<T>
         {
             Status = response.StatusCode,
-            Messages = messages,
+            Message = message,
             Body = null
         };
     }
@@ -67,13 +67,23 @@ public static class HttpResponseExtensions
         };
     }
 
-    public static Response<T> NotFound<T>(this HttpResponse response, IEnumerable<string> messages) where T : EmptyResponse
+    public static Response<T> NotFound<T>(this HttpResponse response, string? message) where T : EmptyResponse
     {
         response.StatusCode = StatusCodes.Status404NotFound;
         return new Response<T>
         {
             Status = response.StatusCode,
-            Messages = messages,
+            Message = message,
+            Body = null
+        };
+    }
+
+    public static Response<T> InternalError<T>(this HttpResponse response) where T : EmptyResponse
+    {
+        response.StatusCode = StatusCodes.Status500InternalServerError;
+        return new Response<T>
+        {
+            Status = response.StatusCode,
             Body = null
         };
     }

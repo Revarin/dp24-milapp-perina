@@ -1,10 +1,11 @@
 ﻿using Kris.Common;
 
-namespace Kris.Server.Common.Options;
+namespace Kris.Client.Common.Options;
 
 public sealed class SettingsOptions : IOptions
 {
     public static string Section => "AppSettings";
 
-    public required string ApiKey { get; init; }
+    public string ApiUrl { get; set; }
+    public string ApiKey { get; set; }
 }

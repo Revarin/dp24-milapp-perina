@@ -4,25 +4,31 @@
              xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:vm="clr-namespace:Kris.Client.ViewModels"
              x:Class="Kris.Client.Views.RegisterView"
+             x:DataType="vm:RegisterViewModel"
              Title="RegisterView">
     <StackLayout Orientation="Vertical">
         <StackLayout Orientation="Vertical">
             <Label Text="Login" />
-            <Entry>
+            <Entry Placeholder="Login"
+                   Text="{Binding Login}">
             </Entry>
         </StackLayout>
         <StackLayout Orientation="Vertical">
             <Label Text="Password" />
-            <Entry IsPassword="True">
+            <Entry IsPassword="True"
+                   Text="{Binding Password}">
             </Entry>
         </StackLayout>
         <StackLayout Orientation="Vertical">
             <Label Text="Confirm password" />
-            <Entry IsPassword="True">
+            <Entry IsPassword="True"
+                   Text="{Binding PasswordVerification}">
             </Entry>
         </StackLayout>
         <Button Text="Register">
-
+            <Button.Behaviors>
+                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding RegisterClickedCommand}" />
+            </Button.Behaviors>
         </Button>
         <Button Text="Back">
             <Button.Behaviors>

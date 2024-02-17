@@ -1,4 +1,6 @@
-﻿namespace Kris.Server.Common.Options;
+﻿using Kris.Common;
+
+namespace Kris.Server.Common.Options;
 
 public sealed class JwtOptions : IOptions
 {

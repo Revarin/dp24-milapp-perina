@@ -31,8 +31,8 @@ public sealed class PositionController : KrisController, IPositionController
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<GetPositionsResponse>(result.Errors.Select(e => e.Message));
-            else return Response.BadRequest<GetPositionsResponse>();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<GetPositionsResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<GetPositionsResponse>();
         }
 
         return Response.Ok(result.Value);
@@ -50,8 +50,8 @@ public sealed class PositionController : KrisController, IPositionController
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<EmptyResponse>(result.Errors.Select(e => e.Message));
-            else return Response.BadRequest<EmptyResponse>();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<EmptyResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<EmptyResponse>();
         }
 
         return Response.Ok<EmptyResponse>();

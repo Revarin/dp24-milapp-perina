@@ -34,8 +34,8 @@ public sealed class SessionController : KrisController, ISessionController
 
         if (result.IsFailed)
         {
-            if (result.HasError<EntityExistsError>()) return Response.BadRequest<JwtTokenResponse>(result.Errors.Select(e => e.Message));
-            else return Response.BadRequest<JwtTokenResponse>();
+            if (result.HasError<EntityExistsError>()) return Response.BadRequest<JwtTokenResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<JwtTokenResponse>();
         }
 
         return Response.Ok(new JwtTokenResponse { Token = result.Value.Token});
@@ -54,8 +54,8 @@ public sealed class SessionController : KrisController, ISessionController
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<JwtTokenResponse>(result.Errors.Select(e => e.Message));
-            else return Response.BadRequest<JwtTokenResponse>();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<JwtTokenResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<JwtTokenResponse>();
         }
 
         return Response.Ok(new JwtTokenResponse { Token = result.Value.Token });
@@ -73,9 +73,9 @@ public sealed class SessionController : KrisController, ISessionController
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<JwtTokenResponse>(result.Errors.Select(e => e.Message));
-            else if (result.HasError<EntityNotFoundError>()) return Response.NotFound<JwtTokenResponse>(result.Errors.Select(e => e.Message));
-            else return Response.BadRequest<JwtTokenResponse>();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<JwtTokenResponse>(result.Errors.FirstMessage());
+            else if (result.HasError<EntityNotFoundError>()) return Response.NotFound<JwtTokenResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<JwtTokenResponse>();
         }
 
         return Response.Ok(new JwtTokenResponse { Token = result.Value.Token });
@@ -93,9 +93,9 @@ public sealed class SessionController : KrisController, ISessionController
 
         if (result.IsFailed)
         {
-            if (result.HasError<EntityNotFoundError>()) return Response.NotFound<JwtTokenResponse>(result.Errors.Select(e => e.Message));
-            else if (result.HasError<InvalidCredentialsError>()) return Response.Unauthorized<JwtTokenResponse>(result.Errors.Select(e => e.Message));
-            else return Response.BadRequest<JwtTokenResponse>();
+            if (result.HasError<EntityNotFoundError>()) return Response.NotFound<JwtTokenResponse>(result.Errors.FirstMessage());
+            else if (result.HasError<InvalidCredentialsError>()) return Response.Unauthorized<JwtTokenResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<JwtTokenResponse>();
         }
 
         return Response.Ok(new JwtTokenResponse { Token = result.Value.Token });
@@ -114,8 +114,8 @@ public sealed class SessionController : KrisController, ISessionController
 
         if (result.IsFailed)
         {
-            if (result.HasError<UserNotInSessionError>()) return Response.BadRequest<JwtTokenResponse>(result.Errors.Select(e => e.Message));
-            else return Response.BadRequest<JwtTokenResponse>();
+            if (result.HasError<UserNotInSessionError>()) return Response.BadRequest<JwtTokenResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<JwtTokenResponse>();
         }
 
         return Response.Ok(new JwtTokenResponse { Token = result.Value.Token });
@@ -134,10 +134,10 @@ public sealed class SessionController : KrisController, ISessionController
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<EmptyResponse>(result.Errors.Select(e => e.Message));
-            else if (result.HasError<UserNotInSessionError>()) return Response.NotFound<EmptyResponse>(result.Errors.Select(e => e.Message));
-            else if (result.HasError<InvalidOperationError>()) return Response.BadRequest<EmptyResponse>(result.Errors.Select(e => e.Message));
-            else return Response.BadRequest<EmptyResponse>();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<EmptyResponse>(result.Errors.FirstMessage());
+            else if (result.HasError<UserNotInSessionError>()) return Response.NotFound<EmptyResponse>(result.Errors.FirstMessage());
+            else if (result.HasError<InvalidOperationError>()) return Response.BadRequest<EmptyResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<EmptyResponse>();
         }
 
         return Response.Ok<EmptyResponse>();
@@ -155,8 +155,8 @@ public sealed class SessionController : KrisController, ISessionController
 
         if (result.IsFailed)
         {
-            if (result.HasError<EntityNotFoundError>()) return Response.NotFound<GetOneResponse<SessionModel>>(result.Errors.Select(e => e.Message));
-            else return Response.BadRequest<GetOneResponse<SessionModel>>();
+            if (result.HasError<EntityNotFoundError>()) return Response.NotFound<GetOneResponse<SessionModel>>(result.Errors.FirstMessage());
+            else return Response.InternalError<GetOneResponse<SessionModel>>();
         }
 
         return Response.Ok(new GetOneResponse<SessionModel> { Value = result.Value });
@@ -172,7 +172,8 @@ public sealed class SessionController : KrisController, ISessionController
         var query = new GetSessionsQuery();
         var result = await _mediator.Send(query, ct);
 
-        if (result.IsFailed) return Response.BadRequest<GetManyResponse<SessionModel>>();
+        if (result.IsFailed) return Response.InternalError<GetManyResponse<SessionModel>>();
+
         return Response.Ok(new GetManyResponse<SessionModel> { Values = result.Value });
     }
 }

@@ -28,8 +28,8 @@ public sealed class UserController : KrisController, IUserController
 
         if (result.IsFailed)
         {
-            if (result.HasError<EntityExistsError>()) return Response.BadRequest<EmptyResponse>(result.Errors.Select(e => e.Message));
-            else return Response.BadRequest<EmptyResponse>();
+            if (result.HasError<EntityExistsError>()) return Response.BadRequest<EmptyResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<EmptyResponse>();
         }
 
         return Response.Ok<EmptyResponse>();
@@ -44,8 +44,8 @@ public sealed class UserController : KrisController, IUserController
 
         if (result.IsFailed)
         {
-            if (result.HasError<InvalidCredentialsError>()) return Response.Unauthorized<JwtTokenResponse>(result.Errors.Select(e => e.Message));
-            else return Response.BadRequest<JwtTokenResponse>();
+            if (result.HasError<InvalidCredentialsError>()) return Response.Unauthorized<JwtTokenResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<JwtTokenResponse>();
         }
 
         return Response.Ok(new JwtTokenResponse { Token = result.Value.Token });
@@ -64,8 +64,8 @@ public sealed class UserController : KrisController, IUserController
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<JwtTokenResponse>(result.Errors.Select(e => e.Message));
-            else return Response.BadRequest<JwtTokenResponse>();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<JwtTokenResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<JwtTokenResponse>();
         }
 
         return Response.Ok(new JwtTokenResponse { Token = result.Value.Token });
@@ -84,8 +84,8 @@ public sealed class UserController : KrisController, IUserController
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<EmptyResponse>(result.Errors.Select(e => e.Message));
-            else return Response.BadRequest<EmptyResponse>();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<EmptyResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<EmptyResponse>();
         }
 
         return Response.Ok<EmptyResponse>();
