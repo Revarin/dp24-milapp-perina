@@ -1,4 +1,4 @@
-﻿namespace Kris.Server.Common.Models;
+﻿namespace Kris.Common.Models;
 
 public struct JwtToken
 {

@@ -1,8 +1,8 @@
 ﻿using FluentResults;
+using Kris.Common.Models;
 using Kris.Interface.Responses;
 using Kris.Server.Common.Errors;
 using Kris.Server.Common.Exceptions;
-using Kris.Server.Common.Models;
 using Kris.Server.Core.Mappers;
 using Kris.Server.Core.Requests;
 using Kris.Server.Core.Services;

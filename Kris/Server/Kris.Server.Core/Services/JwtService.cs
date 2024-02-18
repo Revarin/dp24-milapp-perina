@@ -5,9 +5,9 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Kris.Server.Common.Options;
 using Kris.Server.Data.Models;
-using Kris.Server.Common.Models;
 using Kris.Common.Enums;
 using Kris.Server.Common;
+using Kris.Common.Models;
 
 namespace Kris.Server.Core.Services;
 

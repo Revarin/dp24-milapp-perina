@@ -4,6 +4,7 @@ using Kris.Client.Connection;
 using Kris.Client.Connection.Clients;
 using Kris.Client.Core.Handlers;
 using Kris.Client.Core.Services;
+using Kris.Client.Data.Cache;
 using Kris.Client.ViewModels;
 using Kris.Client.Views;
 using Kris.Interface.Controllers;
@@ -49,6 +50,8 @@ namespace Kris.Client
 
             builder.Services.AddSingleton<IRouterService, RouterService>();
             builder.Services.AddSingleton<IAlertService, AlertService>();
+
+            builder.Services.AddSingleton<IIdentityStore, IdentityStore>();
 
             builder.Services.AddSingleton<IHttpClientFactory, HttpClientFactory>();
             builder.Services.AddTransient<IUserController, UserClient>();

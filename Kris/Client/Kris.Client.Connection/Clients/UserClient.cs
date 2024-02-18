@@ -16,9 +16,10 @@ public sealed class UserClient : ClientBase, IUserController
         return await PostAsync<RegisterUserRequest, Response<EmptyResponse>>(client, "Register", request, ct);
     }
 
-    public Task<Response<LoginResponse>> LoginUser(LoginUserRequest request, CancellationToken ct)
+    public async Task<Response<LoginResponse>> LoginUser(LoginUserRequest request, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        using var client = _httpClientFactory.CreateHttpClient(_controller);
+        return await PostAsync<LoginUserRequest, Response<LoginResponse>>(client, "Login", request, ct);
     }
 
     public Task<Response<EmptyResponse>> DeleteUser(CancellationToken ct)

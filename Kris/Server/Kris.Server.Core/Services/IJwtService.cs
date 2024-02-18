@@ -1,5 +1,5 @@
 ﻿using Kris.Common.Enums;
-using Kris.Server.Common.Models;
+using Kris.Common.Models;
 using Kris.Server.Data.Models;
 
 namespace Kris.Server.Core.Services;
