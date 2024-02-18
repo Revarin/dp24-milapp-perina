@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using Kris.Client.Common.Options;
+using Kris.Client.Connection;
 using Kris.Client.Connection.Clients;
 using Kris.Client.Core.Handlers;
 using Kris.Client.Core.Services;
@@ -49,6 +50,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<IRouterService, RouterService>();
             builder.Services.AddSingleton<IAlertService, AlertService>();
 
+            builder.Services.AddSingleton<IHttpClientFactory, HttpClientFactory>();
             builder.Services.AddTransient<IUserController, UserClient>();
 
 #if DEBUG
