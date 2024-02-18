@@ -38,7 +38,7 @@ public sealed partial class RegisterViewModel : ViewModelBase
     [RelayCommand]
     private async Task OnRegisterClicked()
     {
-        if (ValidateAll()) return;
+        if (ValidateAllProperties()) return;
 
         var ct = new CancellationToken();
         var command = new RegisterUserCommand { Login = Login, Password = Password };

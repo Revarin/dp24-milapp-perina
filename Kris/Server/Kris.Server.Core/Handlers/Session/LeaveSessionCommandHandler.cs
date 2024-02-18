@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using Kris.Common.Enums;
+using Kris.Interface.Responses;
 using Kris.Server.Common.Errors;
 using Kris.Server.Common.Exceptions;
 using Kris.Server.Common.Models;
@@ -11,7 +12,7 @@ using MediatR;
 
 namespace Kris.Server.Core.Handlers.Session;
 
-public sealed class LeaveSessionCommandHandler : SessionHandler, IRequestHandler<LeaveSessionCommand, Result<JwtToken>>
+public sealed class LeaveSessionCommandHandler : SessionHandler, IRequestHandler<LeaveSessionCommand, Result<LoginResponse>>
 {
     private readonly IJwtService _jwtService;
 
@@ -22,7 +23,7 @@ public sealed class LeaveSessionCommandHandler : SessionHandler, IRequestHandler
         _jwtService = jwtService;
     }
 
-    public async Task<Result<JwtToken>> Handle(LeaveSessionCommand request, CancellationToken cancellationToken)
+    public async Task<Result<LoginResponse>> Handle(LeaveSessionCommand request, CancellationToken cancellationToken)
     {
         var session = await _sessionRepository.GetWithUsersAsync(request.SessionId, cancellationToken);
         if (session == null) return Result.Fail(new EntityNotFoundError("Session", request.SessionId));
@@ -51,6 +52,14 @@ public sealed class LeaveSessionCommandHandler : SessionHandler, IRequestHandler
         }
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");
 
-        return Result.Ok(jwt);
+        return Result.Ok(new LoginResponse
+        {
+            UserId = user.Id,
+            Login = user.Login,
+            SessionId = user.CurrentSession?.SessionId,
+            SessionName = user.CurrentSession?.Session?.Name,
+            UserType = user.CurrentSession?.UserType,
+            Token = jwt.Token
+        });
     }
 }

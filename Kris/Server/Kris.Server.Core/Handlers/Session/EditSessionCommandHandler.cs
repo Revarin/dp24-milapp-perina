@@ -1,8 +1,8 @@
 ﻿using FluentResults;
 using Kris.Common.Enums;
+using Kris.Interface.Responses;
 using Kris.Server.Common.Errors;
 using Kris.Server.Common.Exceptions;
-using Kris.Server.Common.Models;
 using Kris.Server.Core.Mappers;
 using Kris.Server.Core.Requests;
 using Kris.Server.Core.Services;
@@ -11,7 +11,7 @@ using MediatR;
 
 namespace Kris.Server.Core.Handlers.Session;
 
-public sealed class EditSessionCommandHandler : SessionHandler, IRequestHandler<EditSessionCommand, Result<JwtToken>>
+public sealed class EditSessionCommandHandler : SessionHandler, IRequestHandler<EditSessionCommand, Result<LoginResponse>>
 {
     private readonly IPasswordService _passwordService;
     private readonly IJwtService _jwtService;
@@ -26,7 +26,7 @@ public sealed class EditSessionCommandHandler : SessionHandler, IRequestHandler<
         _userMapper = userMapper;
     }
 
-    public async Task<Result<JwtToken>> Handle(EditSessionCommand request, CancellationToken cancellationToken)
+    public async Task<Result<LoginResponse>> Handle(EditSessionCommand request, CancellationToken cancellationToken)
     {
         var user = request.User;
         if (!user.SessionId.HasValue || !user.UserType.HasValue)
@@ -47,6 +47,14 @@ public sealed class EditSessionCommandHandler : SessionHandler, IRequestHandler<
         var jwt = _jwtService.CreateToken(_userMapper.Map(user), session, user.UserType.Value);
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");
 
-        return Result.Ok(jwt);
+        return Result.Ok(new LoginResponse
+        {
+            UserId = user.Id,
+            Login = user.Login,
+            SessionId = user.SessionId,
+            SessionName = user.SessionName,
+            UserType = user.UserType,
+            Token = jwt.Token
+        });
     }
 }

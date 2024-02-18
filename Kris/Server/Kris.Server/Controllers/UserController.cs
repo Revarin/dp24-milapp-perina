@@ -37,38 +37,38 @@ public sealed class UserController : KrisController, IUserController
 
     [HttpPost("Login")]
     [AllowAnonymous]
-    public async Task<Response<JwtTokenResponse>> LoginUser(LoginUserRequest request, CancellationToken ct)
+    public async Task<Response<LoginResponse>> LoginUser(LoginUserRequest request, CancellationToken ct)
     {
         var command = new LoginUserCommand { LoginUser = request };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<InvalidCredentialsError>()) return Response.Unauthorized<JwtTokenResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<JwtTokenResponse>();
+            if (result.HasError<InvalidCredentialsError>()) return Response.Unauthorized<LoginResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<LoginResponse>();
         }
 
-        return Response.Ok(new JwtTokenResponse { Token = result.Value.Token });
+        return Response.Ok(result.Value);
     }
 
     [HttpPut]
     [Authorize]
-    public async Task<Response<JwtTokenResponse>> EditUser(EditUserRequest request, CancellationToken ct)
+    public async Task<Response<LoginResponse>> EditUser(EditUserRequest request, CancellationToken ct)
     {
         // Edit SELF ONLY
         var user = CurrentUser();
-        if (user == null) return Response.Unauthorized<JwtTokenResponse>();
+        if (user == null) return Response.Unauthorized<LoginResponse>();
 
         var command = new EditUserCommand { User = user, EditUser = request };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<JwtTokenResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<JwtTokenResponse>();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<LoginResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<LoginResponse>();
         }
 
-        return Response.Ok(new JwtTokenResponse { Token = result.Value.Token });
+        return Response.Ok(result.Value);
     }
 
     [HttpDelete()]
@@ -94,7 +94,7 @@ public sealed class UserController : KrisController, IUserController
     // TODO
     [HttpPost("Settings")]
     [Authorize]
-    public Task<Response<object>> StoreUserSettings(StoreUserSettingsRequest request, CancellationToken ct)
+    public Task<Response<EmptyResponse>> StoreUserSettings(StoreUserSettingsRequest request, CancellationToken ct)
     {
         throw new NotImplementedException();
     }

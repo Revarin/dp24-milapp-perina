@@ -24,101 +24,101 @@ public sealed class SessionController : KrisController, ISessionController
 
     [HttpPost]
     [Authorize]
-    public async Task<Response<JwtTokenResponse>> CreateSession(CreateSessionRequest request, CancellationToken ct)
+    public async Task<Response<LoginResponse>> CreateSession(CreateSessionRequest request, CancellationToken ct)
     {
         var user = CurrentUser();
-        if (user == null) return Response.Unauthorized<JwtTokenResponse>();
+        if (user == null) return Response.Unauthorized<LoginResponse>();
 
         var command = new CreateSessionCommand { CreateSession = request, User = user };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<EntityExistsError>()) return Response.BadRequest<JwtTokenResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<JwtTokenResponse>();
+            if (result.HasError<EntityExistsError>()) return Response.BadRequest<LoginResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<LoginResponse>();
         }
 
-        return Response.Ok(new JwtTokenResponse { Token = result.Value.Token});
+        return Response.Ok(result.Value);
     }
 
     [HttpPut]
     [AuthorizeRoles(UserType.Admin, UserType.SuperAdmin)]
-    public async Task<Response<JwtTokenResponse>> EditSession(EditSessionRequest request, CancellationToken ct)
+    public async Task<Response<LoginResponse>> EditSession(EditSessionRequest request, CancellationToken ct)
     {
         // Edit CURRENT session only
         var user = CurrentUser();
-        if (user == null) return Response.Unauthorized<JwtTokenResponse>();
+        if (user == null) return Response.Unauthorized<LoginResponse>();
 
         var command = new EditSessionCommand { EditSession = request, User = user };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<JwtTokenResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<JwtTokenResponse>();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<LoginResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<LoginResponse>();
         }
 
-        return Response.Ok(new JwtTokenResponse { Token = result.Value.Token });
+        return Response.Ok(result.Value);
     }
 
     [HttpDelete]
     [AuthorizeRoles(UserType.SuperAdmin)]
-    public async Task<Response<JwtTokenResponse>> EndSession(CancellationToken ct)
+    public async Task<Response<LoginResponse>> EndSession(CancellationToken ct)
     {
         var user = CurrentUser();
-        if (user == null) return Response.Unauthorized<JwtTokenResponse>();
+        if (user == null) return Response.Unauthorized<LoginResponse>();
 
         var command = new EndSessionCommand() { User = user };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<JwtTokenResponse>(result.Errors.FirstMessage());
-            else if (result.HasError<EntityNotFoundError>()) return Response.NotFound<JwtTokenResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<JwtTokenResponse>();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<LoginResponse>(result.Errors.FirstMessage());
+            else if (result.HasError<EntityNotFoundError>()) return Response.NotFound<LoginResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<LoginResponse>();
         }
 
-        return Response.Ok(new JwtTokenResponse { Token = result.Value.Token });
+        return Response.Ok(result.Value);
     }
 
     [HttpPut("Join")]
     [Authorize]
-    public async Task<Response<JwtTokenResponse>> JoinSession(JoinSessionRequest request, CancellationToken ct)
+    public async Task<Response<LoginResponse>> JoinSession(JoinSessionRequest request, CancellationToken ct)
     {
         var user = CurrentUser();
-        if (user == null) return Response.Unauthorized<JwtTokenResponse>();
+        if (user == null) return Response.Unauthorized<LoginResponse>();
 
         var command = new JoinSessionCommand { User = user, JoinSession = request };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<EntityNotFoundError>()) return Response.NotFound<JwtTokenResponse>(result.Errors.FirstMessage());
-            else if (result.HasError<InvalidCredentialsError>()) return Response.Unauthorized<JwtTokenResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<JwtTokenResponse>();
+            if (result.HasError<EntityNotFoundError>()) return Response.NotFound<LoginResponse>(result.Errors.FirstMessage());
+            else if (result.HasError<InvalidCredentialsError>()) return Response.Unauthorized<LoginResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<LoginResponse>();
         }
 
-        return Response.Ok(new JwtTokenResponse { Token = result.Value.Token });
+        return Response.Ok(result.Value);
     }
 
     [HttpPut("Leave/{sessionId:guid}")]
     [Authorize]
-    public async Task<Response<JwtTokenResponse>> LeaveSession(Guid sessionId, CancellationToken ct)
+    public async Task<Response<LoginResponse>> LeaveSession(Guid sessionId, CancellationToken ct)
     {
         // For users, leave given session
         var user = CurrentUser();
-        if (user == null) return Response.Unauthorized<JwtTokenResponse>();
+        if (user == null) return Response.Unauthorized<LoginResponse>();
 
         var command = new LeaveSessionCommand { User = user, SessionId = sessionId };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UserNotInSessionError>()) return Response.BadRequest<JwtTokenResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<JwtTokenResponse>();
+            if (result.HasError<UserNotInSessionError>()) return Response.BadRequest<LoginResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<LoginResponse>();
         }
 
-        return Response.Ok(new JwtTokenResponse { Token = result.Value.Token });
+        return Response.Ok(result.Value);
     }
 
     [HttpPut("Kick/{userId:guid}")]

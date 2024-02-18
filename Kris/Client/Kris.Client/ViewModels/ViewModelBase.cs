@@ -20,10 +20,10 @@ public abstract partial class ViewModelBase : ObservableValidator
         _alertService = alertService;
     }
 
-    protected bool ValidateAll()
+    protected new bool ValidateAllProperties()
     {
         ErrorMessages.Clear();
-        ValidateAllProperties();
+        base.ValidateAllProperties();
 
         if (HasErrors)
         {

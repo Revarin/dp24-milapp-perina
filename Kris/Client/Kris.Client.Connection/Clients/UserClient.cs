@@ -16,7 +16,7 @@ public sealed class UserClient : ClientBase, IUserController
         return await PostAsync<RegisterUserRequest, Response<EmptyResponse>>(client, "Register", request, ct);
     }
 
-    public Task<Response<JwtTokenResponse>> LoginUser(LoginUserRequest request, CancellationToken ct)
+    public Task<Response<LoginResponse>> LoginUser(LoginUserRequest request, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
@@ -26,13 +26,13 @@ public sealed class UserClient : ClientBase, IUserController
         throw new NotImplementedException();
     }
 
-    public Task<Response<JwtTokenResponse>> EditUser(EditUserRequest request, CancellationToken ct)
+    public Task<Response<LoginResponse>> EditUser(EditUserRequest request, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
 
-    public Task<Response<object>> StoreUserSettings(StoreUserSettingsRequest request, CancellationToken ct)
+    public Task<Response<EmptyResponse>> StoreUserSettings(StoreUserSettingsRequest request, CancellationToken ct)
     {
         throw new NotImplementedException();
     }

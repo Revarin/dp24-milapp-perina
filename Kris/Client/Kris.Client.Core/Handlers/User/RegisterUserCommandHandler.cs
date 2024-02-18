@@ -23,9 +23,9 @@ public sealed class RegisterUserCommandHandler : UserHandler, IRequestHandler<Re
         };
         var response = await _userClient.RegisterUser(registerRequest, cancellationToken);
 
-        if (!response.IsSuccess)
+        if (!response.IsSuccess())
         {
-            if (response.IsBadRequest) return Result.Fail(new UserExistsError());
+            if (response.IsBadRequest()) return Result.Fail(new UserExistsError());
             else return Result.Fail(new ServerError());
         }
 
