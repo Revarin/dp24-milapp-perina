@@ -40,12 +40,12 @@ namespace Kris.Client
                 options.RegisterServicesFromAssemblyContaining(typeof(BaseHandler));
             });
 
-            builder.Services.AddSingleton<LoginView>();
-            builder.Services.AddSingleton<RegisterView>();
+            builder.Services.AddTransient<LoginView>();
+            builder.Services.AddTransient<RegisterView>();
 
             builder.Services.AddSingleton<AppShellViewModel>();
-            builder.Services.AddSingleton<LoginViewModel>();
-            builder.Services.AddSingleton<RegisterViewModel>();
+            builder.Services.AddTransient<LoginViewModel>();
+            builder.Services.AddTransient<RegisterViewModel>();
 
             builder.Services.AddSingleton<IRouterService, RouterService>();
             builder.Services.AddSingleton<IAlertService, AlertService>();

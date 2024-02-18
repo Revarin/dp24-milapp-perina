@@ -12,19 +12,31 @@
             <Entry Placeholder="Login"
                    Text="{Binding Login}">
             </Entry>
+            <Label Text="{Binding ErrorMessages[Login]}"
+                   IsVisible="{Binding ErrorMessages[Login]}"
+                   Style="{StaticResource errorMessageStyle}" />
         </StackLayout>
+        
         <StackLayout Orientation="Vertical">
             <Label Text="Password" />
             <Entry IsPassword="True"
                    Text="{Binding Password}">
             </Entry>
+            <Label Text="{Binding ErrorMessages[Password]}"
+                   IsVisible="{Binding ErrorMessages[Password]}"
+                   Style="{StaticResource errorMessageStyle}" />
         </StackLayout>
+        
         <StackLayout Orientation="Vertical">
             <Label Text="Confirm password" />
             <Entry IsPassword="True"
                    Text="{Binding PasswordVerification}">
             </Entry>
+            <Label Text="{Binding ErrorMessages[PasswordVerification]}"
+                   IsVisible="{Binding ErrorMessages[PasswordVerification]}"
+                   Style="{StaticResource errorMessageStyle}" />
         </StackLayout>
+        
         <Button Text="Register">
             <Button.Behaviors>
                 <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding RegisterClickedCommand}" />

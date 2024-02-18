@@ -1,17 +1,17 @@
-﻿using Kris.Client.Core.Services;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Kris.Client.Core.Services;
 using MediatR;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace Kris.Client.ViewModels;
 
-public abstract class ViewModelBase : INotifyPropertyChanged
+public abstract partial class ViewModelBase : ObservableValidator
 {
-    public event PropertyChangedEventHandler PropertyChanged;
-
     protected readonly IMediator _mediator;
     protected readonly IRouterService _navigationService;
     protected readonly IAlertService _alertService;
+
+    [ObservableProperty]
+    protected Dictionary<string, string> errorMessages = new Dictionary<string, string>();
 
     public ViewModelBase(IMediator mediator, IRouterService navigationService, IAlertService alertService)
     {
@@ -20,17 +20,45 @@ public abstract class ViewModelBase : INotifyPropertyChanged
         _alertService = alertService;
     }
 
-    // Source: https://stackoverflow.com/a/32800248
-    protected bool SetPropertyValue<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+    protected bool ValidateAll()
     {
-        if (value == null ? field != null : !value.Equals(field))
-        {
-            field = value;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        ErrorMessages.Clear();
+        ValidateAllProperties();
 
-            return true;
+        if (HasErrors)
+        {
+            foreach (var error in GetErrors())
+            {
+                var property = error.MemberNames.First();
+                var message = error.ErrorMessage;
+
+                var added = ErrorMessages.TryAdd(property, message);
+                if (!added)
+                {
+                    var oldMessage = ErrorMessages[property];
+                    ErrorMessages[property] = $"{oldMessage}\n{message}";
+                }
+            }
         }
 
-        return false;
+        OnPropertyChanged(nameof(ErrorMessages));
+        return HasErrors;
+    }
+
+    protected void AddCustomError(string name, string message)
+    {
+        var added = ErrorMessages.TryAdd(name, message);
+        if (!added)
+        {
+            var oldMessage = ErrorMessages[name];
+            ErrorMessages[name] = $"{oldMessage}\n{message}";
+        }
+        OnPropertyChanged(nameof(ErrorMessages));
+    }
+
+    protected virtual void Cleanup()
+    {
+        ErrorMessages.Clear();
+        OnPropertyChanged(nameof(ErrorMessages));
     }
 }

@@ -1,51 +1,44 @@
-﻿using Kris.Client.Common.Enums;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Kris.Client.Common.Enums;
+using Kris.Client.Common.Errors;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
+using Kris.Client.Validations;
 using Kris.Client.Views;
 using MediatR;
-using System.Windows.Input;
+using System.ComponentModel.DataAnnotations;
 
 namespace Kris.Client.ViewModels;
 
-public sealed class RegisterViewModel : ViewModelBase
+public sealed partial class RegisterViewModel : ViewModelBase
 {
+    [Required]
+    [ObservableProperty]
     private string _login;
-    public string Login
-    {
-        get { return _login; }
-        set { SetPropertyValue(ref _login, value); }
-    }
+    [Required]
+    [ObservableProperty]
     private string _password;
-    public string Password
-    {
-        get { return _password; }
-        set { SetPropertyValue(ref _password, value); }
-    }
+    [Required]
+    [Match("Password", "Passwords do not match")]
+    [ObservableProperty]
     private string _passwordVerification;
-    public string PasswordVerification
-    {
-        get { return _passwordVerification; }
-        set { SetPropertyValue(ref _passwordVerification, value); }
-    }
-
-    public required ICommand BackClickedCommand { get; init; }
-    public required ICommand RegisterClickedCommand { get; init; }
 
     public RegisterViewModel(IMediator mediator, IRouterService navigationService, IAlertService alertService)
         : base(mediator, navigationService, alertService)
     {
-        BackClickedCommand = new Command(async _ => await OnBackClickedCommand());
-        RegisterClickedCommand = new Command(async _ => await OnRegisterClickedCommand());
     }
 
-    private async Task OnBackClickedCommand()
+    [RelayCommand]
+    private async Task OnBackClicked()
     {
         await _navigationService.GoToAsync(nameof(LoginView), RouterNavigationType.ReplaceUpward);
     }
 
-    private async Task OnRegisterClickedCommand()
+    [RelayCommand]
+    private async Task OnRegisterClicked()
     {
-        if (Password != PasswordVerification) return;
+        if (ValidateAll()) return;
 
         var ct = new CancellationToken();
         var command = new RegisterUserCommand { Login = Login, Password = Password };
@@ -53,11 +46,29 @@ public sealed class RegisterViewModel : ViewModelBase
 
         if (result.IsFailed)
         {
-            _alertService.ShowToast("Registration failed");
+            if (result.HasError<UserExistsError>())
+            {
+                AddCustomError(nameof(Login), "User already exists");
+            }
+            else
+            {
+                await _alertService.ShowToastAsync("Server error");
+            }
         }
         else
         {
-            _alertService.ShowToast("Registration succeeded");
+            Cleanup();
+            await _alertService.ShowToastAsync("User registered");
+            await _navigationService.GoToAsync(nameof(LoginView), RouterNavigationType.ReplaceUpward);
         }
+    }
+
+    protected override void Cleanup()
+    {
+        Login = string.Empty;
+        Password = string.Empty;
+        PasswordVerification = string.Empty;
+
+        base.Cleanup();
     }
 }

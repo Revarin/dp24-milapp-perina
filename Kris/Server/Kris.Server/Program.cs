@@ -66,15 +66,15 @@ public class Program
         }).AddJwtBearer(options =>
         {
             var jwtOptions = builder.Configuration.GetSection(JwtOptions.Section).Get<JwtOptions>();
-
+            if (jwtOptions == null) throw new Exception(nameof(jwtOptions));
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
                 ValidateAudience = false,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtOptions?.Issuer,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtOptions?.Key))
+                ValidIssuer = jwtOptions.Issuer,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtOptions.Key))
             };
         });
 
