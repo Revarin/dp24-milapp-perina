@@ -9,14 +9,25 @@
     <StackLayout Orientation="Vertical">
         <StackLayout Orientation="Vertical">
             <Label Text="Login" />
-            <Entry>
+            <Entry Placeholder="Login"
+                   Text="{Binding Login}">
             </Entry>
+            <Label Text="{Binding ErrorMessages[Login]}"
+                   IsVisible="{Binding ErrorMessages[Login]}"
+                   Style="{StaticResource errorMessageStyle}" />
         </StackLayout>
+        
         <StackLayout Orientation="Vertical">
             <Label Text="Password" />
-            <Entry IsPassword="True">
+            <Entry IsPassword="True"
+                   Placeholder="Password"
+                   Text="{Binding Password}">
             </Entry>
+            <Label Text="{Binding ErrorMessages[Password]}"
+                   IsVisible="{Binding ErrorMessages[Password]}"
+                   Style="{StaticResource errorMessageStyle}" />
         </StackLayout>
+        
         <Button Text="Login">
             <Button.Behaviors>
                 <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding LoginClickedCommand}" />

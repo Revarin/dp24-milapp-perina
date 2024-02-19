@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Enums;
+using Kris.Client.Common.Errors;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.Views;
@@ -32,8 +33,6 @@ public sealed partial class LoginViewModel : ViewModelBase
     [RelayCommand]
     private async Task OnLoginClicked()
     {
-        await _navigationService.GoToAsync(nameof(MapView), RouterNavigationType.ReplaceDownward);
-        return;
         if (ValidateAllProperties()) return;
 
         var ct = new CancellationToken();
@@ -42,8 +41,14 @@ public sealed partial class LoginViewModel : ViewModelBase
 
         if (result.IsFailed)
         {
-            // TODO
-            _alertService.ShowToast("Login failed");
+            if (result.HasError<UnauthorizedError>())
+            {
+                AddCustomError(nameof(Password), "Invalid credentials");
+            }
+            else
+            {
+                await _alertService.ShowToastAsync("Server error");
+            }
         }
         else
         {
