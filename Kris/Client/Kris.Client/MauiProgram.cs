@@ -43,10 +43,14 @@ namespace Kris.Client
 
             builder.Services.AddTransient<LoginView>();
             builder.Services.AddTransient<RegisterView>();
+            builder.Services.AddSingleton<MapView>();
+            builder.Services.AddSingleton<MenuView>();
 
             builder.Services.AddSingleton<AppShellViewModel>();
             builder.Services.AddTransient<LoginViewModel>();
             builder.Services.AddTransient<RegisterViewModel>();
+            builder.Services.AddSingleton<MapViewModel>();
+            builder.Services.AddSingleton<MenuViewModel>();
 
             builder.Services.AddSingleton<IRouterService, RouterService>();
             builder.Services.AddSingleton<IAlertService, AlertService>();

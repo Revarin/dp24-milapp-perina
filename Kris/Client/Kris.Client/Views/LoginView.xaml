@@ -4,6 +4,7 @@
              xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:vm="clr-namespace:Kris.Client.ViewModels"
              x:Class="Kris.Client.Views.LoginView"
+             x:DataType="vm:LoginViewModel"
              Title="LoginView">
     <StackLayout Orientation="Vertical">
         <StackLayout Orientation="Vertical">
@@ -17,7 +18,9 @@
             </Entry>
         </StackLayout>
         <Button Text="Login">
-            
+            <Button.Behaviors>
+                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding LoginClickedCommand}" />
+            </Button.Behaviors>
         </Button>
         <Button Text="Register">
             <Button.Behaviors>

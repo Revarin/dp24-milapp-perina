@@ -6,10 +6,17 @@
     xmlns:v="clr-namespace:Kris.Client.Views"
     xmlns:vm="clr-namespace:Kris.Client.ViewModels"
     xmlns:local="clr-namespace:Kris.Client"
+    x:DataType="vm:AppShellViewModel"
     Shell.FlyoutBehavior="Disabled">
 
     <ShellContent Title="Login" Route="LoginView"
                   ContentTemplate="{DataTemplate v:LoginView}" />
     <ShellContent Title="Register" Route="RegisterView"
                   ContentTemplate="{DataTemplate v:RegisterView}" />
+    <TabBar>
+        <ShellContent Title="Map" Route="MapView"
+                      ContentTemplate="{DataTemplate v:MapView}" />
+        <ShellContent Title="Menu" Route="MenuView"
+                      ContentTemplate="{DataTemplate v:MenuView}" />
+    </TabBar>
 </Shell>

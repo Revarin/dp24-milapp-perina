@@ -32,6 +32,8 @@ public sealed partial class LoginViewModel : ViewModelBase
     [RelayCommand]
     private async Task OnLoginClicked()
     {
+        await _navigationService.GoToAsync(nameof(MapView), RouterNavigationType.ReplaceDownward);
+        return;
         if (ValidateAllProperties()) return;
 
         var ct = new CancellationToken();
@@ -46,8 +48,8 @@ public sealed partial class LoginViewModel : ViewModelBase
         else
         {
             Cleanup();
-            // TODO
-            _alertService.ShowToast("Login ok");
+            await _alertService.ShowToastAsync("Logged in");
+            await _navigationService.GoToAsync(nameof(MapView), RouterNavigationType.ReplaceUpward);
         }
     }
 
