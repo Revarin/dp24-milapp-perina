@@ -34,6 +34,7 @@ namespace Kris.Client
 
             builder.Configuration.AddConfiguration(config);
             builder.Services.AddOptions();
+            builder.Services.Configure<ConnectionOptions>(builder.Configuration.GetRequiredSection(ConnectionOptions.Section));
             builder.Services.Configure<SettingsOptions>(builder.Configuration.GetRequiredSection(SettingsOptions.Section));
 
             builder.Services.AddMediatR(options =>

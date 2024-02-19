@@ -24,6 +24,26 @@ public sealed partial class LoginViewModel : ViewModelBase
     {
     }
 
+    protected override async Task InitAsync()
+    {
+        var ct = new CancellationToken();
+        var query = new GetCurrentUserQuery();
+        var result = await _mediator.Send(query, ct);
+
+        if (result == null) return;
+
+        if (result.LoginExpiration > DateTime.UtcNow)
+        {
+            // TODO: Refresh token
+            await _alertService.ShowToastAsync("Logged in");
+            await _navigationService.GoToAsync(nameof(MapView), RouterNavigationType.ReplaceUpward);
+        }
+        else
+        {
+            Login = result.Login;
+        }
+    }
+
     [RelayCommand]
     private async Task OnRegisterClicked()
     {

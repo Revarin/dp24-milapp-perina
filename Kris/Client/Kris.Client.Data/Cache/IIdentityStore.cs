@@ -7,6 +7,7 @@ public interface IIdentityStore
 {
     void StoreIdentity(UserIdentityTokenEntity identity);
     UserIdentityEntity GetIdentity();
+    DateTime GetLoginExpiration();
     JwtToken GetJwtToken();
     void ClearIdentity();
 }

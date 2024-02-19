@@ -10,6 +10,10 @@ public abstract partial class ViewModelBase : ObservableValidator
     protected readonly IRouterService _navigationService;
     protected readonly IAlertService _alertService;
 
+    public Task InitializationWork { get; private set; }
+
+    [ObservableProperty]
+    protected bool _isLoading;
     [ObservableProperty]
     protected Dictionary<string, string> errorMessages = new Dictionary<string, string>();
 
@@ -18,6 +22,36 @@ public abstract partial class ViewModelBase : ObservableValidator
         _mediator = mediator;
         _navigationService = navigationService;
         _alertService = alertService;
+    }
+
+    // Source: https://www.reddit.com/r/dotnetMAUI/comments/16b2uy7/async_data_loading_on_page_load/
+    public async void Init()
+    {
+        try
+        {
+            IsLoading = true;
+            InitializationWork = InitAsync();
+            await InitializationWork;
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    protected virtual Task InitAsync()
+    {
+        return Task.CompletedTask;
+    }
+
+    protected virtual void Cleanup()
+    {
+        ErrorMessages.Clear();
+        OnPropertyChanged(nameof(ErrorMessages));
     }
 
     protected new bool ValidateAllProperties()
@@ -53,12 +87,6 @@ public abstract partial class ViewModelBase : ObservableValidator
             var oldMessage = ErrorMessages[name];
             ErrorMessages[name] = $"{oldMessage}\n{message}";
         }
-        OnPropertyChanged(nameof(ErrorMessages));
-    }
-
-    protected virtual void Cleanup()
-    {
-        ErrorMessages.Clear();
         OnPropertyChanged(nameof(ErrorMessages));
     }
 }

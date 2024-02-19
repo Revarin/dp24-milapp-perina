@@ -6,9 +6,9 @@ namespace Kris.Client.Connection;
 
 public sealed class HttpClientFactory : IHttpClientFactory
 {
-    private readonly SettingsOptions _settings;
+    private readonly ConnectionOptions _settings;
 
-    public HttpClientFactory(IOptions<SettingsOptions> settings)
+    public HttpClientFactory(IOptions<ConnectionOptions> settings)
     {
         _settings = settings.Value;
     }

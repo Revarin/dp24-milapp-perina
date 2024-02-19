@@ -8,5 +8,6 @@ public partial class MapView : ContentPage
 	{
 		BindingContext = vm;
 		InitializeComponent();
+		(BindingContext as MapViewModel).Init();
 	}
 }
