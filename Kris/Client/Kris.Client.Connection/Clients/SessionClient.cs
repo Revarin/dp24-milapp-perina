@@ -13,9 +13,11 @@ public sealed class SessionClient : ClientBase, ISessionController
     {
     }
 
-    public Task<LoginResponse> CreateSession(CreateSessionRequest request, CancellationToken ct)
+    public async Task<LoginResponse> CreateSession(CreateSessionRequest request, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var jwt = _identityStore.GetJwtToken();
+        using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await PostAsync<CreateSessionRequest, LoginResponse>(httpClient, "", request, ct);
     }
 
     public Task<LoginResponse> EditSession(EditSessionRequest request, CancellationToken ct)

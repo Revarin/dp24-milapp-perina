@@ -1,4 +1,5 @@
 ﻿using FluentResults;
+using Kris.Client.Common.Errors;
 using Kris.Client.Core.Mappers;
 using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
@@ -11,8 +12,8 @@ public sealed class GetSessionsQueryHandler : SessionHandler, IRequestHandler<Ge
 {
     private readonly ISessionMapper _sessionMapper;
 
-    public GetSessionsQueryHandler(ISessionMapper sessionMapper, ISessionController sessionClient)
-        : base(sessionClient)
+    public GetSessionsQueryHandler(ISessionMapper sessionMapper, ISessionController sessionClient, IUserMapper userMapper)
+        : base(sessionClient, userMapper)
     {
         _sessionMapper = sessionMapper;
     }
@@ -23,8 +24,8 @@ public sealed class GetSessionsQueryHandler : SessionHandler, IRequestHandler<Ge
 
         if (!response.IsSuccess())
         {
-            // TODO
-            throw new Exception();
+            if (response.IsUnauthorized()) return Result.Fail(new UnauthorizedError());
+            else return Result.Fail(new ServerError(response.Message));
         }
 
         return Result.Ok(response.Values.Select(_sessionMapper.Map));

@@ -60,7 +60,8 @@ namespace Kris.Client
 
             builder.Services.AddTransientPopup<EditSessionPopup, EditSessionPopupViewModel>();
 
-            builder.Services.AddTransient<ISessionMapper, SessionMapper>();
+            builder.Services.AddSingleton<IUserMapper, UserMapper>();
+            builder.Services.AddSingleton<ISessionMapper, SessionMapper>();
 
             builder.Services.AddSingleton<IRouterService, RouterService>();
             builder.Services.AddSingleton<IAlertService, AlertService>();

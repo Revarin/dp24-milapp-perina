@@ -9,6 +9,9 @@ public partial class EditSessionPopup : Popup
 	{
 		BindingContext = vm;
 		InitializeComponent();
-		(BindingContext as EditSessionPopupViewModel).Init();
+        (BindingContext as EditSessionPopupViewModel).RaiseClosePopupEvent += OnClose;
+        (BindingContext as EditSessionPopupViewModel).Init();
 	}
+
+    private void OnClose(object sender, EventArgs e) => Close();
 }

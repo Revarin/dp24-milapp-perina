@@ -1,4 +1,5 @@
 ﻿using FluentResults;
+using Kris.Client.Core.Mappers;
 using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Client.Data.Cache;
@@ -11,8 +12,8 @@ public sealed class GetCurrentUserQueryHandler : UserHandler, IRequestHandler<Ge
 {
     private readonly IIdentityStore _identityStore;
 
-    public GetCurrentUserQueryHandler(IIdentityStore identityStore, IUserController userClient)
-        : base(userClient)
+    public GetCurrentUserQueryHandler(IIdentityStore identityStore, IUserController userClient, IUserMapper userMapper)
+        : base(userClient, userMapper)
     {
         _identityStore = identityStore;
     }

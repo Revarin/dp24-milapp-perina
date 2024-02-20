@@ -4,6 +4,7 @@ using Kris.Client.Common.Errors;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.Validations;
+using Kris.Common.Extensions;
 using MediatR;
 using System.ComponentModel.DataAnnotations;
 
@@ -38,13 +39,13 @@ public sealed partial class RegisterViewModel : ViewModelBase
 
         if (result.IsFailed)
         {
-            if (result.HasError<UserExistsError>())
+            if (result.HasError<EntityExistsError>())
             {
                 AddCustomError(nameof(Login), "User already exists");
             }
             else
             {
-                await _alertService.ShowToastAsync("Server error");
+                await _alertService.ShowToastAsync(result.Errors.FirstMessage());
             }
         }
         else
