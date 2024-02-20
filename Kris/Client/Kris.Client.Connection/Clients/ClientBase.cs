@@ -53,7 +53,7 @@ public abstract class ClientBase
         {
             responseData = new TResult()
             {
-                Status = (int)response.StatusCode,
+                Status = 500,
                 Message = await response.Content.ReadAsStringAsync()
             };
         }

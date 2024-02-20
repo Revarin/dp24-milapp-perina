@@ -36,7 +36,7 @@ public abstract partial class ViewModelBase : ObservableValidator
             InitializationWork = InitAsync();
             await InitializationWork;
         }
-        catch (Exception ex)
+        catch
         {
             throw;
         }

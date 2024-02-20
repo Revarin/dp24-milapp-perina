@@ -10,6 +10,7 @@ public sealed class IdentityStore : StoreBase, IIdentityStore
     private const string IdentityKey = "kris-user-identity";
     private const string TokenKey = "kris-user-jwttoken";
     private const string LoginExpirationKey = "kris-user-expiration";
+    private const string JoinedSessionsKey = "kris-user-sessions";
 
     private readonly SettingsOptions _settings;
 
@@ -23,6 +24,7 @@ public sealed class IdentityStore : StoreBase, IIdentityStore
         UserIdentityEntity user = identity;
         Set(IdentityKey, user);
         Set(TokenKey, identity.Token);
+        Set(JoinedSessionsKey, identity.JoinedSessions);
         Set(LoginExpirationKey, DateTime.UtcNow.AddMinutes(_settings.LoginExpirationMinutes));
     }
 
@@ -41,10 +43,16 @@ public sealed class IdentityStore : StoreBase, IIdentityStore
         return new JwtToken(Get<string>(TokenKey));
     }
 
+    public IEnumerable<Guid> GetJoinedSessions()
+    {
+        return Get<IEnumerable<Guid>>(JoinedSessionsKey);
+    }
+
     public void ClearIdentity()
     {
         Remove(IdentityKey);
         Remove(TokenKey);
+        Remove(JoinedSessionsKey);
         Remove(LoginExpirationKey);
     }
 }

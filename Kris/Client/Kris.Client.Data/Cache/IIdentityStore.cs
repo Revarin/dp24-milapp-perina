@@ -9,5 +9,6 @@ public interface IIdentityStore
     UserIdentityEntity GetIdentity();
     DateTime GetLoginExpiration();
     JwtToken GetJwtToken();
+    IEnumerable<Guid> GetJoinedSessions();
     void ClearIdentity();
 }

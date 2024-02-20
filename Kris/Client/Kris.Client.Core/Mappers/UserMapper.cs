@@ -11,10 +11,11 @@ public sealed class UserMapper : IUserMapper
         {
             UserId = response.UserId,
             Login = response.Login,
-            SessionId = response.SessionId,
-            SessioName = response.SessionName,
-            UserType = response.UserType,
-            Token = response.Token
+            Token = response.Token,
+            SessionId = response.CurrentSession?.Id,
+            SessioName = response.CurrentSession?.Name,
+            UserType = response.CurrentSession?.UserType,
+            JoinedSessions = response.JoinedSessions
         };
     }
 }

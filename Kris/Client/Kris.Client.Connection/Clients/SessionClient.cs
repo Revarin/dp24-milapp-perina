@@ -20,12 +20,12 @@ public sealed class SessionClient : ClientBase, ISessionController
         return await PostAsync<CreateSessionRequest, LoginResponse>(httpClient, "", request, ct);
     }
 
-    public Task<LoginResponse> EditSession(EditSessionRequest request, CancellationToken ct)
+    public Task<Response> EditSession(EditSessionRequest request, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
-    public Task<LoginResponse> EndSession(CancellationToken ct)
+    public Task<Response> EndSession(CancellationToken ct)
     {
         throw new NotImplementedException();
     }
