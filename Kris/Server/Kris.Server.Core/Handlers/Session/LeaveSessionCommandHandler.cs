@@ -14,12 +14,14 @@ namespace Kris.Server.Core.Handlers.Session;
 
 public sealed class LeaveSessionCommandHandler : SessionHandler, IRequestHandler<LeaveSessionCommand, Result<LoginResponse>>
 {
+    private readonly IUserMapper _userMapper;
     private readonly IJwtService _jwtService;
 
-    public LeaveSessionCommandHandler(IJwtService jwtService,
+    public LeaveSessionCommandHandler(IUserMapper userMapper, IJwtService jwtService,
         ISessionRepository sessionRepository, ISessionMapper sessionMapper, IAuthorizationService authorizationService)
         : base(sessionRepository, sessionMapper, authorizationService)
     {
+        _userMapper = userMapper;
         _jwtService = jwtService;
     }
 
@@ -52,14 +54,6 @@ public sealed class LeaveSessionCommandHandler : SessionHandler, IRequestHandler
         }
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");
 
-        return Result.Ok(new LoginResponse
-        {
-            UserId = user.Id,
-            Login = user.Login,
-            SessionId = user.CurrentSession?.SessionId,
-            SessionName = user.CurrentSession?.Session?.Name,
-            UserType = user.CurrentSession?.UserType,
-            Token = jwt.Token
-        });
+        return Result.Ok(_userMapper.MapToLoginResponse(user, jwt));
     }
 }

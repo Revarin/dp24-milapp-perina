@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Kris.Server.Core.Requests;
 
-public sealed class EditSessionCommand : AuthentizedRequest, IRequest<Result<LoginResponse>>
+public sealed class EditSessionCommand : AuthentizedRequest, IRequest<Result>
 {
     public required EditSessionRequest EditSession { get; set; }
 }

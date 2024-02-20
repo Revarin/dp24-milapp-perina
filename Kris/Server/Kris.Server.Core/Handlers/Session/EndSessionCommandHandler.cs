@@ -11,7 +11,7 @@ using MediatR;
 
 namespace Kris.Server.Core.Handlers.Session;
 
-public sealed class EndSessionCommandHandler : SessionHandler, IRequestHandler<EndSessionCommand, Result<LoginResponse>>
+public sealed class EndSessionCommandHandler : SessionHandler, IRequestHandler<EndSessionCommand, Result>
 {
     private readonly IJwtService _jwtService;
     private readonly IUserMapper _userMapper;
@@ -24,7 +24,7 @@ public sealed class EndSessionCommandHandler : SessionHandler, IRequestHandler<E
         _userMapper = userMapper;
     }
 
-    public async Task<Result<LoginResponse>> Handle(EndSessionCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(EndSessionCommand request, CancellationToken cancellationToken)
     {
         var user = request.User;
         if (!user.SessionId.HasValue) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
@@ -38,14 +38,6 @@ public sealed class EndSessionCommandHandler : SessionHandler, IRequestHandler<E
         var jwt = _jwtService.CreateToken(_userMapper.Map(user));
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");
 
-        return Result.Ok(new LoginResponse
-        {
-            UserId = user.Id,
-            Login = user.Login,
-            SessionId = user.SessionId,
-            SessionName = user.SessionName,
-            UserType = user.UserType,
-            Token = jwt.Token
-        });
+        return Result.Ok();
     }
 }

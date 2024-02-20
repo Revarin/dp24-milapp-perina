@@ -47,14 +47,6 @@ public sealed class EditUserCommandHandler : UserHandler, IRequestHandler<EditUs
         }
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");
 
-        return Result.Ok(new LoginResponse
-        {
-            UserId = user.Id,
-            Login = user.Login,
-            SessionId = user.CurrentSession?.SessionId,
-            SessionName = user.CurrentSession?.Session?.Name,
-            UserType = user.CurrentSession?.UserType,
-            Token = jwt.Token
-        });
+        return Result.Ok(_userMapper.MapToLoginResponse(user, jwt));
     }
 }

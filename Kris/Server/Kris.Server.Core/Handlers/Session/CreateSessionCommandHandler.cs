@@ -15,14 +15,16 @@ namespace Kris.Server.Core.Handlers.Session;
 public sealed class CreateSessionCommandHandler : SessionHandler, IRequestHandler<CreateSessionCommand, Result<LoginResponse>>
 {
     private readonly IUserRepository _userRepository;
+    private readonly IUserMapper _userMapper;
     private readonly IPasswordService _passwordService;
     private readonly IJwtService _jwtService;
 
-    public CreateSessionCommandHandler(IUserRepository userRepository, IPasswordService passwordService, IJwtService jwtService,
+    public CreateSessionCommandHandler(IUserRepository userRepository, IUserMapper userMapper, IPasswordService passwordService, IJwtService jwtService,
         ISessionRepository sessionRepository, ISessionMapper sessionMapper, IAuthorizationService authorizationService)
         : base(sessionRepository, sessionMapper, authorizationService)
     {
         _userRepository = userRepository;
+        _userMapper = userMapper;
         _passwordService = passwordService;
         _jwtService = jwtService;
     }
@@ -49,20 +51,13 @@ public sealed class CreateSessionCommandHandler : SessionHandler, IRequestHandle
             UserType = UserType.SuperAdmin,
             Joined = DateTime.UtcNow
         });
+        user.CurrentSessionId = session.Id;
         var sessionEntity = await _sessionRepository.InsertAsync(session, cancellationToken);
         if (sessionEntity == null) throw new DatabaseException("Failed to insert Session");
 
         var jwt = _jwtService.CreateToken(user, sessionEntity, UserType.SuperAdmin);
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");
 
-        return Result.Ok(new LoginResponse
-        {
-            UserId = user.Id,
-            Login = user.Login,
-            SessionId = user.CurrentSession?.SessionId,
-            SessionName = user.CurrentSession?.Session?.Name,
-            UserType = user.CurrentSession?.UserType,
-            Token = jwt.Token
-        });
+        return Result.Ok(_userMapper.MapToLoginResponse(user, jwt));
     }
 }

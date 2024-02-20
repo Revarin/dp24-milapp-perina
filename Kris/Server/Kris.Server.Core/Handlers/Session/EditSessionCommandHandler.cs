@@ -11,7 +11,7 @@ using MediatR;
 
 namespace Kris.Server.Core.Handlers.Session;
 
-public sealed class EditSessionCommandHandler : SessionHandler, IRequestHandler<EditSessionCommand, Result<LoginResponse>>
+public sealed class EditSessionCommandHandler : SessionHandler, IRequestHandler<EditSessionCommand, Result>
 {
     private readonly IPasswordService _passwordService;
     private readonly IJwtService _jwtService;
@@ -26,35 +26,27 @@ public sealed class EditSessionCommandHandler : SessionHandler, IRequestHandler<
         _userMapper = userMapper;
     }
 
-    public async Task<Result<LoginResponse>> Handle(EditSessionCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(EditSessionCommand request, CancellationToken cancellationToken)
     {
-        var user = request.User;
-        if (!user.SessionId.HasValue || !user.UserType.HasValue)
-            return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
+        var currentUser = request.User;
+        if (!currentUser.SessionId.HasValue || !currentUser.UserType.HasValue)
+            return Result.Fail(new UnauthorizedError(currentUser.Login, currentUser.SessionName, currentUser.UserType));
 
-        var authorized = await _authorizationService.AuthorizeAsync(user, UserType.Admin, cancellationToken);
-        if (!authorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
+        var authorized = await _authorizationService.AuthorizeAsync(currentUser, UserType.Admin, cancellationToken);
+        if (!authorized) return Result.Fail(new UnauthorizedError(currentUser.Login, currentUser.SessionName, currentUser.UserType));
 
-        var session = await _sessionRepository.GetWithUsersAsync(user.SessionId.Value, cancellationToken);
+        var session = await _sessionRepository.GetWithUsersAsync(currentUser.SessionId.Value, cancellationToken);
         if (session == null) throw new NullableException();
-        if (session.Name != user.SessionName) return Result.Fail(new UnauthorizedError("Invalid token"));
+        if (session.Name != currentUser.SessionName) return Result.Fail(new UnauthorizedError("Invalid token"));
 
         session.Name = request.EditSession.Name;
         session.Password = _passwordService.HashPassword(request.EditSession.Password);
         var updated = await _sessionRepository.UpdateAsync(session, cancellationToken);
         if (!updated) throw new DatabaseException("Failed to update session");
 
-        var jwt = _jwtService.CreateToken(_userMapper.Map(user), session, user.UserType.Value);
+        var jwt = _jwtService.CreateToken(_userMapper.Map(currentUser), session, currentUser.UserType.Value);
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");
 
-        return Result.Ok(new LoginResponse
-        {
-            UserId = user.Id,
-            Login = user.Login,
-            SessionId = user.SessionId,
-            SessionName = user.SessionName,
-            UserType = user.UserType,
-            Token = jwt.Token
-        });
+        return Result.Ok();
     }
 }

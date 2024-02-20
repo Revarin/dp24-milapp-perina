@@ -15,14 +15,16 @@ namespace Kris.Server.Core.Handlers.Session;
 public sealed class JoinSessionCommandHandler : SessionHandler, IRequestHandler<JoinSessionCommand, Result<LoginResponse>>
 {
     private readonly IUserRepository _userRepository;
+    private readonly IUserMapper _userMapper;
     private readonly IPasswordService _passwordService;
     private readonly IJwtService _jwtService;
 
-    public JoinSessionCommandHandler(IUserRepository userRepository, IPasswordService passwordService, IJwtService jwtService,
+    public JoinSessionCommandHandler(IUserRepository userRepository, IUserMapper userMapper, IPasswordService passwordService, IJwtService jwtService,
         ISessionRepository sessionRepository, ISessionMapper sessionMapper, IAuthorizationService authorizationService)
         : base(sessionRepository, sessionMapper, authorizationService)
     {
         _userRepository = userRepository;
+        _userMapper = userMapper;
         _passwordService = passwordService;
         _jwtService = jwtService;
     }
@@ -57,14 +59,6 @@ public sealed class JoinSessionCommandHandler : SessionHandler, IRequestHandler<
         var jwt = _jwtService.CreateToken(user, session, UserType.Basic);
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");
 
-        return Result.Ok(new LoginResponse
-        {
-            UserId = user.Id,
-            Login = user.Login,
-            SessionId = user.CurrentSession?.SessionId,
-            SessionName = user.CurrentSession?.Session?.Name,
-            UserType = user.CurrentSession?.UserType,
-            Token = jwt.Token
-        });
+        return Result.Ok(_userMapper.MapToLoginResponse(user, jwt));
     }
 }

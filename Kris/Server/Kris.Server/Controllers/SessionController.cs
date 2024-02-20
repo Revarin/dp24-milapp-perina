@@ -51,7 +51,7 @@ public sealed class SessionController : KrisController, ISessionController
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<LoginResponse?> EditSession(EditSessionRequest request, CancellationToken ct)
+    public async Task<Response?> EditSession(EditSessionRequest request, CancellationToken ct)
     {
         // Edit CURRENT session only
         var user = CurrentUser();
@@ -66,7 +66,7 @@ public sealed class SessionController : KrisController, ISessionController
             else return Response.InternalError<LoginResponse>();
         }
 
-        return Response.Ok(result.Value);
+        return Response.Ok();
     }
 
     [HttpDelete]
@@ -76,7 +76,7 @@ public sealed class SessionController : KrisController, ISessionController
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<LoginResponse?> EndSession(CancellationToken ct)
+    public async Task<Response?> EndSession(CancellationToken ct)
     {
         var user = CurrentUser();
         if (user == null) return Response.Unauthorized<LoginResponse>();
@@ -91,7 +91,7 @@ public sealed class SessionController : KrisController, ISessionController
             else return Response.InternalError<LoginResponse>();
         }
 
-        return Response.Ok(result.Value);
+        return Response.Ok();
     }
 
     [HttpPut("Join")]

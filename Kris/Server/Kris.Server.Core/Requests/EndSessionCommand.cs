@@ -4,6 +4,6 @@ using MediatR;
 
 namespace Kris.Server.Core.Requests;
 
-public sealed class EndSessionCommand : AuthentizedRequest, IRequest<Result<LoginResponse>>
+public sealed class EndSessionCommand : AuthentizedRequest, IRequest<Result>
 {
 }
