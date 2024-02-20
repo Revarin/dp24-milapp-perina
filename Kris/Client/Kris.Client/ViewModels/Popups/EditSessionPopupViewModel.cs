@@ -53,6 +53,7 @@ public sealed partial class EditSessionPopupViewModel : ViewModelBase
             else if (result.HasError<UnauthorizedError>())
             {
                 await _alertService.ShowToastAsync("Login expired");
+                await _mediator.Send(new LogoutUserCommand(), ct);
                 await _navigationService.GoToAsync(nameof(LoginView), RouterNavigationType.ReplaceUpward);
                 RaiseClosePopupEvent.Invoke(this, null);
             }

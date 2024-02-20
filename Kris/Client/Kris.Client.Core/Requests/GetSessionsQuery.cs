@@ -4,6 +4,6 @@ using MediatR;
 
 namespace Kris.Client.Core.Requests;
 
-public sealed class GetSessionsQuery : IRequest<Result<IEnumerable<SessionListModel>>>
+public sealed class GetSessionsQuery : IRequest<Result<AvailableSessionsModel>>
 {
 }
