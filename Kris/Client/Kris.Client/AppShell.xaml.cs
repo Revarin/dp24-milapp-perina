@@ -1,4 +1,5 @@
 ﻿using Kris.Client.ViewModels.Views;
+using Kris.Client.Views;
 
 namespace Kris.Client
 {

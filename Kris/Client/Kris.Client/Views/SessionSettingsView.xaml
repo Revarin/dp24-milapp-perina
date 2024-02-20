@@ -6,12 +6,30 @@
              x:Class="Kris.Client.Views.SessionSettingsView"
              x:DataType="vm:SessionSettingsViewModel"
              Title="SessionSettingsView">
-    <StackLayout Orientation="Vertical">
+    <StackLayout Orientation="Vertical"
+                 VerticalOptions="FillAndExpand">
 
         <Button Text="Create session">
             <Button.Behaviors>
                 <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CreateSessionClickedCommand}" />
             </Button.Behaviors>
         </Button>
+        
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand"
+                     VerticalOptions="EndAndExpand">
+            <Button Text="Map"
+                    HorizontalOptions="FillAndExpand">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding GoToMapCommand}" />
+                </Button.Behaviors>
+            </Button>
+            <Button Text="Menu"
+                    HorizontalOptions="FillAndExpand">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding GoToMenuCommand}" />
+                </Button.Behaviors>
+            </Button>
+        </StackLayout>
     </StackLayout>
 </ContentPage>

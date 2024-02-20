@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using Kris.Client.Common.Enums;
+using Kris.Client.Common.Utility;
 using Kris.Client.Core.Services;
 using Kris.Client.Views;
 using MediatR;

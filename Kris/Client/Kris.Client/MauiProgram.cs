@@ -1,11 +1,13 @@
 ﻿using CommunityToolkit.Maui;
 using Kris.Client.Common.Options;
+using Kris.Client.Components.Popups;
 using Kris.Client.Connection;
 using Kris.Client.Connection.Clients;
 using Kris.Client.Core.Handlers;
 using Kris.Client.Core.Mappers;
 using Kris.Client.Core.Services;
 using Kris.Client.Data.Cache;
+using Kris.Client.ViewModels.Popups;
 using Kris.Client.ViewModels.Views;
 using Kris.Client.Views;
 using Kris.Interface.Controllers;
@@ -43,16 +45,20 @@ namespace Kris.Client
                 options.RegisterServicesFromAssemblyContaining(typeof(BaseHandler));
             });
 
-            builder.Services.AddTransient<LoginView>();
-            builder.Services.AddTransient<RegisterView>();
-            builder.Services.AddSingleton<MapView>();
-            builder.Services.AddSingleton<MenuView>();
-
             builder.Services.AddSingleton<AppShellViewModel>();
+
+            builder.Services.AddTransient<LoginView>();
             builder.Services.AddTransient<LoginViewModel>();
+            builder.Services.AddTransient<RegisterView>();
             builder.Services.AddTransient<RegisterViewModel>();
+            builder.Services.AddSingleton<MapView>();
             builder.Services.AddSingleton<MapViewModel>();
+            builder.Services.AddSingleton<MenuView>();
             builder.Services.AddSingleton<MenuViewModel>();
+            builder.Services.AddTransient<SessionSettingsView>();
+            builder.Services.AddTransient<SessionSettingsViewModel>();
+
+            builder.Services.AddTransientPopup<EditSessionPopup, EditSessionPopupViewModel>();
 
             builder.Services.AddTransient<ISessionMapper, SessionMapper>();
 

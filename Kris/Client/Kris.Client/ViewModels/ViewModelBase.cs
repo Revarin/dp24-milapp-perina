@@ -1,5 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Kris.Client.Common.Utility;
 using Kris.Client.Core.Services;
+using Kris.Client.Views;
 using MediatR;
 
 namespace Kris.Client.ViewModels;
@@ -47,6 +50,12 @@ public abstract partial class ViewModelBase : ObservableValidator
     {
         return Task.CompletedTask;
     }
+
+    [RelayCommand]
+    protected async Task GoToMap() => await _navigationService.GoToAsync(nameof(MapView), RouterNavigationType.ReplaceUpward);
+
+    [RelayCommand]
+    protected async Task GoToMenu() => await _navigationService.GoToAsync(nameof(MenuView), RouterNavigationType.ReplaceUpward);
 
     protected virtual void Cleanup()
     {

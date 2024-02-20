@@ -9,14 +9,7 @@
     x:DataType="vm:AppShellViewModel"
     Shell.FlyoutBehavior="Disabled">
 
-    <ShellContent Title="Login" Route="LoginView"
-                  ContentTemplate="{DataTemplate v:LoginView}" />
-    <ShellContent Title="Register" Route="RegisterView"
-                  ContentTemplate="{DataTemplate v:RegisterView}" />
-    <TabBar>
-        <ShellContent Title="Map" Route="MapView"
-                      ContentTemplate="{DataTemplate v:MapView}" />
-        <ShellContent Title="Menu" Route="MenuView"
-                      ContentTemplate="{DataTemplate v:MenuView}" />
-    </TabBar>
+    <ShellContent Title="Login" Route="LoginView" ContentTemplate="{DataTemplate v:LoginView}" />
+    <ShellContent Title="Map" Route="MapView" ContentTemplate="{DataTemplate v:MapView}" />
+    <ShellContent Title="Menu" Route="MenuView" ContentTemplate="{DataTemplate v:MenuView}" />
 </Shell>

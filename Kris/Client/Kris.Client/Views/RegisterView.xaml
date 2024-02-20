@@ -42,10 +42,5 @@
                 <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding RegisterClickedCommand}" />
             </Button.Behaviors>
         </Button>
-        <Button Text="Back">
-            <Button.Behaviors>
-                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding BackClickedCommand}" />
-            </Button.Behaviors>
-        </Button>
     </StackLayout>
 </ContentPage>

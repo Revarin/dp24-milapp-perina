@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Kris.Client.Common.Enums;
+using Kris.Client.Common.Utility;
 using Kris.Client.Common.Errors;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
@@ -47,7 +47,7 @@ public sealed partial class LoginViewModel : ViewModelBase
     [RelayCommand]
     private async Task OnRegisterClicked()
     {
-        await _navigationService.GoToAsync(nameof(RegisterView), RouterNavigationType.ReplaceUpward);
+        await _navigationService.GoToAsync(nameof(RegisterView), RouterNavigationType.PushUpward);
     }
 
     [RelayCommand]

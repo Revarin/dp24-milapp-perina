@@ -1,11 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Kris.Client.Common.Enums;
 using Kris.Client.Common.Errors;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.Validations;
-using Kris.Client.Views;
 using MediatR;
 using System.ComponentModel.DataAnnotations;
 
@@ -27,12 +25,6 @@ public sealed partial class RegisterViewModel : ViewModelBase
     public RegisterViewModel(IMediator mediator, IRouterService navigationService, IAlertService alertService)
         : base(mediator, navigationService, alertService)
     {
-    }
-
-    [RelayCommand]
-    private async Task OnBackClicked()
-    {
-        await _navigationService.GoToAsync(nameof(LoginView), RouterNavigationType.ReplaceUpward);
     }
 
     [RelayCommand]
@@ -59,7 +51,7 @@ public sealed partial class RegisterViewModel : ViewModelBase
         {
             Cleanup();
             await _alertService.ShowToastAsync("User registered");
-            await _navigationService.GoToAsync(nameof(LoginView), RouterNavigationType.ReplaceUpward);
+            await _navigationService.GoToAsync("..");
         }
     }
 
