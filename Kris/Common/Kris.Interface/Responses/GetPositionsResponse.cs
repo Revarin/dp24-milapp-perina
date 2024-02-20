@@ -4,6 +4,6 @@ namespace Kris.Interface.Responses;
 
 public sealed class GetPositionsResponse : Response
 {
-    public required List<UserPositionModel> UserPositions { get; set; }
-    public required DateTime Resolved { get; set; }
+    public List<UserPositionModel> UserPositions { get; set; }
+    public DateTime Resolved { get; set; }
 }

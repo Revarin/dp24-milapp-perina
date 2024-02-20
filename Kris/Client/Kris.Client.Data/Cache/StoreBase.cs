@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using Kris.Common.Utility;
+using System.Text.Json;
 
 namespace Kris.Client.Data.Cache;
 
@@ -8,10 +9,7 @@ public abstract class StoreBase : IPreferences
 
     protected StoreBase()
     {
-        _serializerOptions = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        };
+        _serializerOptions = JsonSerializerOptionsFactory.CreateStorageJsonSerializerOptions();
     }
 
     public T Get<T>(string key, T defaultValue = default, string sharedName = null)

@@ -2,5 +2,5 @@
 
 public sealed class GetOneResponse<T> : Response
 {
-    public required T Value { get; set; }
+    public T Value { get; set; }
 }

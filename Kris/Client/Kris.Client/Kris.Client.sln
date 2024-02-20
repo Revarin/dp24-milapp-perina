@@ -9,13 +9,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kris.Common", "..\..\Common
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kris.Interface", "..\..\Common\Kris.Interface\Kris.Interface.csproj", "{A5B10D7D-3A2C-4F33-BEF6-C1DCDBDC2A2A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kris.Client.Core", "..\Kris.Client.Core\Kris.Client.Core.csproj", "{B47F4F07-13CE-4433-BFB6-2BD35AA80F16}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kris.Client.Core", "..\Kris.Client.Core\Kris.Client.Core.csproj", "{B47F4F07-13CE-4433-BFB6-2BD35AA80F16}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kris.Client.Data", "..\Kris.Client.Data\Kris.Client.Data.csproj", "{752D795F-9BBB-4953-8CCA-52A87C2E88DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kris.Client.Data", "..\Kris.Client.Data\Kris.Client.Data.csproj", "{752D795F-9BBB-4953-8CCA-52A87C2E88DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kris.Client.Common", "..\Kris.Client.Common\Kris.Client.Common.csproj", "{8CB2BA7F-BE31-40AB-8F1E-F39274718AD4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kris.Client.Common", "..\Kris.Client.Common\Kris.Client.Common.csproj", "{8CB2BA7F-BE31-40AB-8F1E-F39274718AD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kris.Client.Connection", "..\Kris.Client.Connection\Kris.Client.Connection.csproj", "{A94E3A00-C2FF-45CA-8D1C-51DEC4CE4059}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kris.Client.Connection", "..\Kris.Client.Connection\Kris.Client.Connection.csproj", "{A94E3A00-C2FF-45CA-8D1C-51DEC4CE4059}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2CA5AD3B-1F88-4055-9C9B-A4A949749111}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

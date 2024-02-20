@@ -36,12 +36,12 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
 
         var userIdentity = new UserIdentityTokenEntity
         {
-            UserId = response.Body.UserId,
-            Login = response.Body.Login,
-            SessionId = response.Body.SessionId,
-            SessioName = response.Body.SessionName,
-            UserType = response.Body.UserType,
-            Token = response.Body.Token
+            UserId = response.UserId,
+            Login = response.Login,
+            SessionId = response.SessionId,
+            SessioName = response.SessionName,
+            UserType = response.UserType,
+            Token = response.Token
         };
         _identityStore.StoreIdentity(userIdentity);
 
