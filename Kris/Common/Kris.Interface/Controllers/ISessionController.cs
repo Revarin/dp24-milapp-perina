@@ -6,12 +6,12 @@ namespace Kris.Interface.Controllers;
 
 public interface ISessionController
 {
-    Task<Response<LoginResponse>> CreateSession(CreateSessionRequest request, CancellationToken ct);
-    Task<Response<LoginResponse>> EditSession(EditSessionRequest request, CancellationToken ct);
-    Task<Response<LoginResponse>> EndSession(CancellationToken ct);
-    Task<Response<LoginResponse>> JoinSession(JoinSessionRequest request, CancellationToken ct);
-    Task<Response<LoginResponse>> LeaveSession(Guid sessionId, CancellationToken ct);
-    Task<Response<EmptyResponse>> KickFromSession(Guid userId, CancellationToken ct);
-    Task<Response<GetOneResponse<SessionModel>>> GetSession(Guid sessionId, CancellationToken ct);
-    Task<Response<GetManyResponse<SessionModel>>> GetSessions(CancellationToken ct);
+    Task<LoginResponse?> CreateSession(CreateSessionRequest request, CancellationToken ct);
+    Task<LoginResponse?> EditSession(EditSessionRequest request, CancellationToken ct);
+    Task<LoginResponse?> EndSession(CancellationToken ct);
+    Task<LoginResponse?> JoinSession(JoinSessionRequest request, CancellationToken ct);
+    Task<LoginResponse?> LeaveSession(Guid sessionId, CancellationToken ct);
+    Task<Response?> KickFromSession(Guid userId, CancellationToken ct);
+    Task<GetOneResponse<SessionModel>?> GetSession(Guid sessionId, CancellationToken ct);
+    Task<GetManyResponse<SessionModel>?> GetSessions(CancellationToken ct);
 }

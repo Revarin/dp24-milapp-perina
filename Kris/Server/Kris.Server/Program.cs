@@ -11,6 +11,8 @@ using Kris.Server.Data.Models;
 using Kris.Server.Core.Mappers;
 using Kris.Server.Core.Handlers;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Kris.Server;
 
@@ -45,6 +47,8 @@ public class Program
         {
             options.RegisterServicesFromAssemblyContaining<BaseHandler>();
         });
+
+        //builder.Services.AddSingleton<IActionResultExecutor<ObjectResult>, ResponseWrapperResultor>();
 
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<ISessionRepository, SessionRepository>();
@@ -85,10 +89,11 @@ public class Program
         app.UseSwaggerUI();
 
         app.UseHttpsRedirection();
+        app.UseMiddleware<ResponseWrapperMiddleware>();
         app.UseAuthentication();
+        app.UseMiddleware<ApiKeyMiddleware>();
         app.UseRouting();
         app.UseAuthorization();
-        app.UseMiddleware<ApiKeyMiddleware>();
 
         app.MapControllers();
 

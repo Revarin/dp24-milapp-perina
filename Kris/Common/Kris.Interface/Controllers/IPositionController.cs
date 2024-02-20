@@ -5,6 +5,6 @@ namespace Kris.Interface.Controllers;
 
 public interface IPositionController
 {
-    Task<Response<EmptyResponse>> SavePosition(SavePositionRequest request, CancellationToken ct);
-    Task<Response<GetPositionsResponse>> GetPositions(DateTime? from,  CancellationToken ct);
+    Task<Response?> SavePosition(SavePositionRequest request, CancellationToken ct);
+    Task<GetPositionsResponse?> GetPositions(DateTime? from,  CancellationToken ct);
 }

@@ -15,13 +15,14 @@ public sealed class ApiKeyMiddleware
         _settings = settings.Value;
     }
 
-    public async Task Invoke(HttpContext context)
+    public async Task InvokeAsync(HttpContext context)
     {
         var requestKey = context.Request.Headers[Constants.ApiKeyHeader].FirstOrDefault();
 
         if (requestKey != _settings.ApiKey)
         {
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await context.Response.WriteAsync("Unauthorized");
             return;
         }
 

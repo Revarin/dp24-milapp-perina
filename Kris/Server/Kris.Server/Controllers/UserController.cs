@@ -21,23 +21,23 @@ public sealed class UserController : KrisController, IUserController
 
     [HttpPost("Register")]
     [AllowAnonymous]
-    public async Task<Response<EmptyResponse>> RegisterUser(RegisterUserRequest request, CancellationToken ct)
+    public async Task<Response?> RegisterUser(RegisterUserRequest request, CancellationToken ct)
     {
         var commmand = new RegisterUserCommand { RegisterUser = request };
         var result = await _mediator.Send(commmand, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<EntityExistsError>()) return Response.BadRequest<EmptyResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<EmptyResponse>();
+            if (result.HasError<EntityExistsError>()) return Response.BadRequest<Response>(result.Errors.FirstMessage());
+            else return Response.InternalError<Response>();
         }
 
-        return Response.Ok<EmptyResponse>();
+        return Response.Ok<Response>();
     }
 
     [HttpPost("Login")]
     [AllowAnonymous]
-    public async Task<Response<LoginResponse>> LoginUser(LoginUserRequest request, CancellationToken ct)
+    public async Task<LoginResponse?> LoginUser(LoginUserRequest request, CancellationToken ct)
     {
         var command = new LoginUserCommand { LoginUser = request };
         var result = await _mediator.Send(command, ct);
@@ -53,7 +53,7 @@ public sealed class UserController : KrisController, IUserController
 
     [HttpPut]
     [Authorize]
-    public async Task<Response<LoginResponse>> EditUser(EditUserRequest request, CancellationToken ct)
+    public async Task<LoginResponse?> EditUser(EditUserRequest request, CancellationToken ct)
     {
         // Edit SELF ONLY
         var user = CurrentUser();
@@ -73,28 +73,28 @@ public sealed class UserController : KrisController, IUserController
 
     [HttpDelete()]
     [Authorize]
-    public async Task<Response<EmptyResponse>> DeleteUser(CancellationToken ct)
+    public async Task<Response?> DeleteUser(CancellationToken ct)
     {
         // Delete SELF ONLY
         var user = CurrentUser();
-        if (user == null) return Response.Unauthorized<EmptyResponse>();
+        if (user == null) return Response.Unauthorized<Response>();
 
         var command = new DeleteUserCommand { User = user };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<EmptyResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<EmptyResponse>();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<Response>(result.Errors.FirstMessage());
+            else return Response.InternalError<Response>();
         }
 
-        return Response.Ok<EmptyResponse>();
+        return Response.Ok<Response>();
     }
 
     // TODO
     [HttpPost("Settings")]
     [Authorize]
-    public Task<Response<EmptyResponse>> StoreUserSettings(StoreUserSettingsRequest request, CancellationToken ct)
+    public Task<Response?> StoreUserSettings(StoreUserSettingsRequest request, CancellationToken ct)
     {
         throw new NotImplementedException();
     }

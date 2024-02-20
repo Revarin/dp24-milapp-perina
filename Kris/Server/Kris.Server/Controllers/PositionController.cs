@@ -21,7 +21,7 @@ public sealed class PositionController : KrisController, IPositionController
 
     [HttpGet]
     [Authorize]
-    public async Task<Response<GetPositionsResponse>> GetPositions(DateTime? from, CancellationToken ct)
+    public async Task<GetPositionsResponse?> GetPositions(DateTime? from, CancellationToken ct)
     {
         var user = CurrentUser();
         if (user == null) return Response.Unauthorized<GetPositionsResponse>();
@@ -40,20 +40,20 @@ public sealed class PositionController : KrisController, IPositionController
 
     [HttpPost]
     [Authorize]
-    public async Task<Response<EmptyResponse>> SavePosition(SavePositionRequest request, CancellationToken ct)
+    public async Task<Response?> SavePosition(SavePositionRequest request, CancellationToken ct)
     {
         var user = CurrentUser();
-        if (user == null) return Response.Unauthorized<EmptyResponse>();
+        if (user == null) return Response.Unauthorized<Response>();
 
         var command = new SavePositionCommand { User = user, SavePosition = request };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<EmptyResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<EmptyResponse>();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<Response>(result.Errors.FirstMessage());
+            else return Response.InternalError<Response>();
         }
 
-        return Response.Ok<EmptyResponse>();
+        return Response.Ok<Response>();
     }
 }

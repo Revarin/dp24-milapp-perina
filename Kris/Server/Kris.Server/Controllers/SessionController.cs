@@ -24,7 +24,7 @@ public sealed class SessionController : KrisController, ISessionController
 
     [HttpPost]
     [Authorize]
-    public async Task<Response<LoginResponse>> CreateSession(CreateSessionRequest request, CancellationToken ct)
+    public async Task<LoginResponse?> CreateSession(CreateSessionRequest request, CancellationToken ct)
     {
         var user = CurrentUser();
         if (user == null) return Response.Unauthorized<LoginResponse>();
@@ -43,7 +43,7 @@ public sealed class SessionController : KrisController, ISessionController
 
     [HttpPut]
     [AuthorizeRoles(UserType.Admin, UserType.SuperAdmin)]
-    public async Task<Response<LoginResponse>> EditSession(EditSessionRequest request, CancellationToken ct)
+    public async Task<LoginResponse?> EditSession(EditSessionRequest request, CancellationToken ct)
     {
         // Edit CURRENT session only
         var user = CurrentUser();
@@ -63,7 +63,7 @@ public sealed class SessionController : KrisController, ISessionController
 
     [HttpDelete]
     [AuthorizeRoles(UserType.SuperAdmin)]
-    public async Task<Response<LoginResponse>> EndSession(CancellationToken ct)
+    public async Task<LoginResponse?> EndSession(CancellationToken ct)
     {
         var user = CurrentUser();
         if (user == null) return Response.Unauthorized<LoginResponse>();
@@ -83,7 +83,7 @@ public sealed class SessionController : KrisController, ISessionController
 
     [HttpPut("Join")]
     [Authorize]
-    public async Task<Response<LoginResponse>> JoinSession(JoinSessionRequest request, CancellationToken ct)
+    public async Task<LoginResponse?> JoinSession(JoinSessionRequest request, CancellationToken ct)
     {
         var user = CurrentUser();
         if (user == null) return Response.Unauthorized<LoginResponse>();
@@ -103,7 +103,7 @@ public sealed class SessionController : KrisController, ISessionController
 
     [HttpPut("Leave/{sessionId:guid}")]
     [Authorize]
-    public async Task<Response<LoginResponse>> LeaveSession(Guid sessionId, CancellationToken ct)
+    public async Task<LoginResponse?> LeaveSession(Guid sessionId, CancellationToken ct)
     {
         // For users, leave given session
         var user = CurrentUser();
@@ -123,29 +123,29 @@ public sealed class SessionController : KrisController, ISessionController
 
     [HttpPut("Kick/{userId:guid}")]
     [AuthorizeRoles(UserType.Admin, UserType.SuperAdmin)]
-    public async Task<Response<EmptyResponse>> KickFromSession(Guid userId, CancellationToken ct)
+    public async Task<Response?> KickFromSession(Guid userId, CancellationToken ct)
     {
         // For admins, kick user from CURRENT session
         var user = CurrentUser();
-        if (user == null) return Response.Unauthorized<EmptyResponse>();
+        if (user == null) return Response.Unauthorized<Response>();
 
         var command = new KickFromSessionCommand { User = user, UserId = userId };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<EmptyResponse>(result.Errors.FirstMessage());
-            else if (result.HasError<UserNotInSessionError>()) return Response.NotFound<EmptyResponse>(result.Errors.FirstMessage());
-            else if (result.HasError<InvalidOperationError>()) return Response.BadRequest<EmptyResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<EmptyResponse>();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<Response>(result.Errors.FirstMessage());
+            else if (result.HasError<UserNotInSessionError>()) return Response.NotFound<Response>(result.Errors.FirstMessage());
+            else if (result.HasError<InvalidOperationError>()) return Response.BadRequest<Response>(result.Errors.FirstMessage());
+            else return Response.InternalError<Response>();
         }
 
-        return Response.Ok<EmptyResponse>();
+        return Response.Ok<Response>();
     }
 
     [HttpGet("{sessionId:guid}")]
     [Authorize]
-    public async Task<Response<GetOneResponse<SessionModel>>> GetSession(Guid sessionId, CancellationToken ct)
+    public async Task<GetOneResponse<SessionModel>?> GetSession(Guid sessionId, CancellationToken ct)
     {
         var user = CurrentUser();
         if (user == null) return Response.Unauthorized<GetOneResponse<SessionModel>>();
@@ -164,7 +164,7 @@ public sealed class SessionController : KrisController, ISessionController
 
     [HttpGet]
     [Authorize]
-    public async Task<Response<GetManyResponse<SessionModel>>> GetSessions(CancellationToken ct)
+    public async Task<GetManyResponse<SessionModel>?> GetSessions(CancellationToken ct)
     {
         var user = CurrentUser();
         if (user == null) return Response.Unauthorized<GetManyResponse<SessionModel>>();
