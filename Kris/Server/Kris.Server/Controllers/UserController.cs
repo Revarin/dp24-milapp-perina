@@ -4,6 +4,7 @@ using Kris.Interface.Controllers;
 using Kris.Interface.Requests;
 using Kris.Server.Core.Requests;
 using Kris.Server.Common.Errors;
+using Kris.Common.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Kris.Interface.Responses;
 using Kris.Server.Extensions;
@@ -21,6 +22,9 @@ public sealed class UserController : KrisController, IUserController
 
     [HttpPost("Register")]
     [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<Response?> RegisterUser(RegisterUserRequest request, CancellationToken ct)
     {
         var commmand = new RegisterUserCommand { RegisterUser = request };
@@ -37,6 +41,9 @@ public sealed class UserController : KrisController, IUserController
 
     [HttpPost("Login")]
     [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<LoginResponse?> LoginUser(LoginUserRequest request, CancellationToken ct)
     {
         var command = new LoginUserCommand { LoginUser = request };
@@ -53,6 +60,9 @@ public sealed class UserController : KrisController, IUserController
 
     [HttpPut]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<LoginResponse?> EditUser(EditUserRequest request, CancellationToken ct)
     {
         // Edit SELF ONLY
@@ -73,6 +83,9 @@ public sealed class UserController : KrisController, IUserController
 
     [HttpDelete()]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<Response?> DeleteUser(CancellationToken ct)
     {
         // Delete SELF ONLY

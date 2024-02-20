@@ -1,4 +1,5 @@
 ﻿using Kris.Common.Enums;
+using Kris.Common.Extensions;
 using Kris.Interface.Controllers;
 using Kris.Interface.Models;
 using Kris.Interface.Requests;
@@ -24,6 +25,9 @@ public sealed class SessionController : KrisController, ISessionController
 
     [HttpPost]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<LoginResponse?> CreateSession(CreateSessionRequest request, CancellationToken ct)
     {
         var user = CurrentUser();
@@ -43,6 +47,10 @@ public sealed class SessionController : KrisController, ISessionController
 
     [HttpPut]
     [AuthorizeRoles(UserType.Admin, UserType.SuperAdmin)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<LoginResponse?> EditSession(EditSessionRequest request, CancellationToken ct)
     {
         // Edit CURRENT session only
@@ -54,7 +62,7 @@ public sealed class SessionController : KrisController, ISessionController
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<LoginResponse>(result.Errors.FirstMessage());
+            if (result.HasError<UnauthorizedError>()) return Response.Forbidden<LoginResponse>(result.Errors.FirstMessage());
             else return Response.InternalError<LoginResponse>();
         }
 
@@ -63,6 +71,11 @@ public sealed class SessionController : KrisController, ISessionController
 
     [HttpDelete]
     [AuthorizeRoles(UserType.SuperAdmin)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<LoginResponse?> EndSession(CancellationToken ct)
     {
         var user = CurrentUser();
@@ -73,7 +86,7 @@ public sealed class SessionController : KrisController, ISessionController
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<LoginResponse>(result.Errors.FirstMessage());
+            if (result.HasError<UnauthorizedError>()) return Response.Forbidden<LoginResponse>(result.Errors.FirstMessage());
             else if (result.HasError<EntityNotFoundError>()) return Response.NotFound<LoginResponse>(result.Errors.FirstMessage());
             else return Response.InternalError<LoginResponse>();
         }
@@ -83,6 +96,10 @@ public sealed class SessionController : KrisController, ISessionController
 
     [HttpPut("Join")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<LoginResponse?> JoinSession(JoinSessionRequest request, CancellationToken ct)
     {
         var user = CurrentUser();
@@ -103,6 +120,10 @@ public sealed class SessionController : KrisController, ISessionController
 
     [HttpPut("Leave/{sessionId:guid}")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<LoginResponse?> LeaveSession(Guid sessionId, CancellationToken ct)
     {
         // For users, leave given session
@@ -123,6 +144,12 @@ public sealed class SessionController : KrisController, ISessionController
 
     [HttpPut("Kick/{userId:guid}")]
     [AuthorizeRoles(UserType.Admin, UserType.SuperAdmin)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<Response?> KickFromSession(Guid userId, CancellationToken ct)
     {
         // For admins, kick user from CURRENT session
@@ -134,7 +161,7 @@ public sealed class SessionController : KrisController, ISessionController
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<Response>(result.Errors.FirstMessage());
+            if (result.HasError<UnauthorizedError>()) return Response.Forbidden<Response>(result.Errors.FirstMessage());
             else if (result.HasError<UserNotInSessionError>()) return Response.NotFound<Response>(result.Errors.FirstMessage());
             else if (result.HasError<InvalidOperationError>()) return Response.BadRequest<Response>(result.Errors.FirstMessage());
             else return Response.InternalError<Response>();
@@ -145,6 +172,10 @@ public sealed class SessionController : KrisController, ISessionController
 
     [HttpGet("{sessionId:guid}")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<GetOneResponse<SessionModel>?> GetSession(Guid sessionId, CancellationToken ct)
     {
         var user = CurrentUser();
@@ -164,6 +195,9 @@ public sealed class SessionController : KrisController, ISessionController
 
     [HttpGet]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<GetManyResponse<SessionModel>?> GetSessions(CancellationToken ct)
     {
         var user = CurrentUser();

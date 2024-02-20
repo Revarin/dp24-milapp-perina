@@ -1,6 +1,7 @@
 ﻿using Kris.Interface.Controllers;
 using Kris.Interface.Requests;
 using Kris.Interface.Responses;
+using Kris.Common.Extensions;
 using Kris.Server.Common.Errors;
 using Kris.Server.Core.Requests;
 using Kris.Server.Extensions;
@@ -21,6 +22,10 @@ public sealed class PositionController : KrisController, IPositionController
 
     [HttpGet]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<GetPositionsResponse?> GetPositions(DateTime? from, CancellationToken ct)
     {
         var user = CurrentUser();
@@ -31,7 +36,7 @@ public sealed class PositionController : KrisController, IPositionController
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<GetPositionsResponse>(result.Errors.FirstMessage());
+            if (result.HasError<UnauthorizedError>()) return Response.Forbidden<GetPositionsResponse>(result.Errors.FirstMessage());
             else return Response.InternalError<GetPositionsResponse>();
         }
 
@@ -40,6 +45,10 @@ public sealed class PositionController : KrisController, IPositionController
 
     [HttpPost]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<Response?> SavePosition(SavePositionRequest request, CancellationToken ct)
     {
         var user = CurrentUser();
@@ -50,7 +59,7 @@ public sealed class PositionController : KrisController, IPositionController
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<Response>(result.Errors.FirstMessage());
+            if (result.HasError<UnauthorizedError>()) return Response.Forbidden<Response>(result.Errors.FirstMessage());
             else return Response.InternalError<Response>();
         }
 

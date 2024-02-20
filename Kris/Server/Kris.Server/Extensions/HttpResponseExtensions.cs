@@ -47,4 +47,11 @@ public static class HttpResponseExtensions
         response.WriteAsync(message ?? "Internal error").Wait();
         return null;
     }
+
+    public static TResponse? Forbidden<TResponse>(this HttpResponse response, string? message = null) where TResponse : Response
+    {
+        response.StatusCode = StatusCodes.Status403Forbidden;
+        response.WriteAsync(message ?? "Forbidden").Wait();
+        return null;
+    }
 }

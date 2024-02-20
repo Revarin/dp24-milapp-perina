@@ -12,4 +12,5 @@ public class Response
     public bool IsNotFound() => Status == StatusCodes.Status404NotFound;
     public bool IsUnauthorized() => Status == StatusCodes.Status401Unauthorized;
     public bool IsInternalError() => Status == StatusCodes.Status500InternalServerError;
+    public bool IsForbidden() => Status == StatusCodes.Status403Forbidden;
 }
