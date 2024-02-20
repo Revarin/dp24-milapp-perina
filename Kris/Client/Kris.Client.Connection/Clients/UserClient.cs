@@ -1,4 +1,5 @@
-﻿using Kris.Interface.Controllers;
+﻿using Kris.Client.Data.Cache;
+using Kris.Interface.Controllers;
 using Kris.Interface.Requests;
 using Kris.Interface.Responses;
 
@@ -6,7 +7,8 @@ namespace Kris.Client.Connection.Clients;
 
 public sealed class UserClient : ClientBase, IUserController
 {
-    public UserClient(IHttpClientFactory httpClientFactory) : base(httpClientFactory, "User")
+    public UserClient(IIdentityStore identityStore, IHttpClientFactory httpClientFactory)
+        : base(identityStore, httpClientFactory, "User")
     {
     }
 

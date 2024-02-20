@@ -3,6 +3,7 @@ using Kris.Client.Common.Options;
 using Kris.Client.Connection;
 using Kris.Client.Connection.Clients;
 using Kris.Client.Core.Handlers;
+using Kris.Client.Core.Mappers;
 using Kris.Client.Core.Services;
 using Kris.Client.Data.Cache;
 using Kris.Client.ViewModels;
@@ -53,6 +54,8 @@ namespace Kris.Client
             builder.Services.AddSingleton<MapViewModel>();
             builder.Services.AddSingleton<MenuViewModel>();
 
+            builder.Services.AddTransient<ISessionMapper, SessionMapper>();
+
             builder.Services.AddSingleton<IRouterService, RouterService>();
             builder.Services.AddSingleton<IAlertService, AlertService>();
 
@@ -60,6 +63,7 @@ namespace Kris.Client
 
             builder.Services.AddSingleton<IHttpClientFactory, HttpClientFactory>();
             builder.Services.AddTransient<IUserController, UserClient>();
+            builder.Services.AddTransient<ISessionController, SessionClient>();
 
 #if DEBUG
     		builder.Logging.AddDebug();

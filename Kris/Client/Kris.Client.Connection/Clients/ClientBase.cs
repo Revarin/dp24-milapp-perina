@@ -1,4 +1,5 @@
-﻿using Kris.Common.Utility;
+﻿using Kris.Client.Data.Cache;
+using Kris.Common.Utility;
 using Kris.Interface.Responses;
 using System.Text;
 using System.Text.Json;
@@ -7,12 +8,14 @@ namespace Kris.Client.Connection.Clients;
 
 public abstract class ClientBase
 {
+    protected readonly IIdentityStore _identityStore;
     protected readonly IHttpClientFactory _httpClientFactory;
     protected readonly string _controller;
     protected readonly JsonSerializerOptions _serializerOptions;
 
-    public ClientBase(IHttpClientFactory httpClientFactory, string controller)
+    public ClientBase(IIdentityStore identityStore, IHttpClientFactory httpClientFactory, string controller)
     {
+        _identityStore = identityStore;
         _httpClientFactory = httpClientFactory;
 
         _controller = controller;
@@ -26,6 +29,20 @@ public abstract class ClientBase
         var content = new StringContent(requestJson, Encoding.UTF8, "application/json");
         var response = await httpClient.PostAsync(path, content, ct);
 
+        return await ParseResponse<TResult>(response, ct);
+    }
+
+    protected async Task<TResult> GetAsync<TResult>(HttpClient httpClient, string path, CancellationToken ct)
+        where TResult : Response, new()
+    {
+        var response = await httpClient.GetAsync(path);
+
+        return await ParseResponse<TResult>(response, ct);
+    }
+
+    private async Task<TResult> ParseResponse<TResult>(HttpResponseMessage response, CancellationToken ct)
+        where TResult : Response, new()
+    {
         TResult responseData;
 
         try

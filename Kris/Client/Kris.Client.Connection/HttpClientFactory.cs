@@ -1,6 +1,8 @@
 ﻿using Kris.Client.Common.Options;
 using Kris.Common;
+using Kris.Common.Models;
 using Microsoft.Extensions.Options;
+using System.Net.Http.Headers;
 
 namespace Kris.Client.Connection;
 
@@ -29,9 +31,21 @@ public sealed class HttpClientFactory : IHttpClientFactory
         return client;
     }
 
-    public HttpClient CreateAuthentizedHttpClient(string controller)
+    public HttpClient CreateAuthentizedHttpClient(string controller, JwtToken token)
     {
-        throw new NotImplementedException();
+        HttpClient client;
+
+#if DEBUG
+        client = new HttpClient(GetPlatformMessageHandler());
+#else
+        client = new HttpClient();
+#endif
+
+        client.BaseAddress = new Uri($"{_settings.ApiUrl}/api/{controller}/");
+        client.DefaultRequestHeaders.Add(Constants.ApiKeyHeader, _settings.ApiKey);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Token);
+
+        return client;
     }
 
     // Source: https://learn.microsoft.com/en-us/dotnet/maui/data-cloud/local-web-services?view=net-maui-7.0#local-web-services-running-over-https
