@@ -4,9 +4,19 @@ namespace Kris.Server.Extensions;
 
 public static class HttpResponseExtensions
 {
-    public static TResponse? Ok<TResponse>(this HttpResponse response, TResponse? data = null) where TResponse : Response
+    public static Response Ok(this HttpResponse response)
     {
         response.StatusCode = StatusCodes.Status200OK;
+        return new Response
+        {
+            Status = StatusCodes.Status200OK
+        };
+    }
+
+    public static TResponse? Ok<TResponse>(this HttpResponse response, TResponse data) where TResponse : Response
+    {
+        response.StatusCode = StatusCodes.Status200OK;
+        data.Status = StatusCodes.Status200OK;
         return data;
     }
 

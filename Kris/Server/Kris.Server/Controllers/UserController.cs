@@ -32,7 +32,7 @@ public sealed class UserController : KrisController, IUserController
             else return Response.InternalError<Response>();
         }
 
-        return Response.Ok<Response>();
+        return Response.Ok();
     }
 
     [HttpPost("Login")]
@@ -88,7 +88,7 @@ public sealed class UserController : KrisController, IUserController
             else return Response.InternalError<Response>();
         }
 
-        return Response.Ok<Response>();
+        return Response.Ok();
     }
 
     // TODO

@@ -54,6 +54,6 @@ public sealed class PositionController : KrisController, IPositionController
             else return Response.InternalError<Response>();
         }
 
-        return Response.Ok<Response>();
+        return Response.Ok();
     }
 }

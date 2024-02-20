@@ -140,7 +140,7 @@ public sealed class SessionController : KrisController, ISessionController
             else return Response.InternalError<Response>();
         }
 
-        return Response.Ok<Response>();
+        return Response.Ok();
     }
 
     [HttpGet("{sessionId:guid}")]
