@@ -73,6 +73,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Components\Popups\EditSessionPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\LoginView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -91,7 +94,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Components\Popups\" />
+	  <Folder Include="ViewModels\Popups\" />
 	</ItemGroup>
 
 </Project>

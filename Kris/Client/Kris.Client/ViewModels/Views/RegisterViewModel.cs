@@ -9,7 +9,7 @@ using Kris.Client.Views;
 using MediatR;
 using System.ComponentModel.DataAnnotations;
 
-namespace Kris.Client.ViewModels;
+namespace Kris.Client.ViewModels.Views;
 
 public sealed partial class RegisterViewModel : ViewModelBase
 {

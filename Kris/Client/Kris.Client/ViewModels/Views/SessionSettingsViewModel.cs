@@ -7,7 +7,7 @@ using Kris.Client.Core.Services;
 using MediatR;
 using System.Collections.ObjectModel;
 
-namespace Kris.Client.ViewModels;
+namespace Kris.Client.ViewModels.Views;
 
 public sealed partial class SessionSettingsViewModel : ViewModelBase
 {

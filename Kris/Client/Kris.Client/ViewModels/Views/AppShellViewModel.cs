@@ -1,7 +1,7 @@
 ﻿using Kris.Client.Core.Services;
 using MediatR;
 
-namespace Kris.Client.ViewModels;
+namespace Kris.Client.ViewModels.Views;
 
 public sealed class AppShellViewModel : ViewModelBase
 {

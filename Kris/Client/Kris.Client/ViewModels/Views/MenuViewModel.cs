@@ -4,7 +4,7 @@ using Kris.Client.Core.Services;
 using Kris.Client.Views;
 using MediatR;
 
-namespace Kris.Client.ViewModels;
+namespace Kris.Client.ViewModels.Views;
 
 public sealed partial class MenuViewModel : ViewModelBase
 {

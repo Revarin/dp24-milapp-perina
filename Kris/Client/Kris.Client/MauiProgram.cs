@@ -6,7 +6,7 @@ using Kris.Client.Core.Handlers;
 using Kris.Client.Core.Mappers;
 using Kris.Client.Core.Services;
 using Kris.Client.Data.Cache;
-using Kris.Client.ViewModels;
+using Kris.Client.ViewModels.Views;
 using Kris.Client.Views;
 using Kris.Interface.Controllers;
 using Microsoft.Extensions.Configuration;
