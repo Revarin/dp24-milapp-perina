@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Kris.Client.ViewModels.Views;
 
-public sealed partial class MenuViewModel : ViewModelBase
+public sealed partial class MenuViewModel : PageViewModelBase
 {
     public MenuViewModel(IMediator mediator, IRouterService navigationService, IAlertService alertService)
         : base(mediator, navigationService, alertService)

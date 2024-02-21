@@ -14,10 +14,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Folder Include="Enums\" />
 	  <Folder Include="Platforms\Android\" />
 	  <Folder Include="Platforms\iOS\" />
 	  <Folder Include="Platforms\Windows\" />
+	  <Folder Include="Utility\" />
 	</ItemGroup>
 
 	<ItemGroup>

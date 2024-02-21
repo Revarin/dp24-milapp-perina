@@ -36,9 +36,9 @@ public sealed class GetSessionsQueryHandler : SessionHandler, IRequestHandler<Ge
         var user = _identityStore.GetIdentity();
         var sessions = _identityStore.GetJoinedSessions();
 
-        var currentSession = allSession.FirstOrDefault(session => session.Id == user.SessionId);
-        var joinedSessions = allSession.IntersectBy(sessions, s => s.Id).Where(s => s.Id != user.SessionId);
-        var otherSessions = allSession.Except(joinedSessions).Where(s => s.Id != user.SessionId);
+        var currentSession = allSession.FirstOrDefault(s => user.SessionId.Equals(s.Id));
+        var joinedSessions = allSession.IntersectBy(sessions, s => s.Id).Where(s => !user.SessionId.Equals(s.Id));
+        var otherSessions = allSession.Except(joinedSessions).Where(s => !user.SessionId.Equals(s.Id));
 
         return Result.Ok(new AvailableSessionsModel
         {

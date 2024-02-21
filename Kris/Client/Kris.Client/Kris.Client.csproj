@@ -67,12 +67,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Components\Items\SessionItem.xaml.cs">
+	    <DependentUpon>SessionItem.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\MenuView.xaml.cs">
 	    <DependentUpon>MenuView.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Components\Items\SessionItem.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Components\Popups\EditSessionPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

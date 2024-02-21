@@ -12,7 +12,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Kris.Client.ViewModels.Popups;
 
-public sealed partial class EditSessionPopupViewModel : ViewModelBase
+public sealed partial class EditSessionPopupViewModel : PageViewModelBase
 {
     [Required]
     [ObservableProperty]

@@ -7,7 +7,7 @@ using MediatR;
 
 namespace Kris.Client.ViewModels;
 
-public abstract partial class ViewModelBase : ObservableValidator
+public abstract partial class PageViewModelBase : ObservableValidator
 {
     protected readonly IMediator _mediator;
     protected readonly IRouterService _navigationService;
@@ -20,7 +20,7 @@ public abstract partial class ViewModelBase : ObservableValidator
     [ObservableProperty]
     protected Dictionary<string, string> errorMessages = new Dictionary<string, string>();
 
-    public ViewModelBase(IMediator mediator, IRouterService navigationService, IAlertService alertService)
+    public PageViewModelBase(IMediator mediator, IRouterService navigationService, IAlertService alertService)
     {
         _mediator = mediator;
         _navigationService = navigationService;

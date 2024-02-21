@@ -8,6 +8,12 @@
              Title="MapView">
     <StackLayout Orientation="Vertical"
                  VerticalOptions="FillAndExpand">
+        <Button Text="Logout">
+            <Button.Behaviors>
+                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding LogoutClickedCommand}" />
+            </Button.Behaviors>
+        </Button>
+        
         <StackLayout Orientation="Horizontal"
                      HorizontalOptions="FillAndExpand"
                      VerticalOptions="EndAndExpand">

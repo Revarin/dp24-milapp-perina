@@ -10,7 +10,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Kris.Client.ViewModels.Views;
 
-public sealed partial class LoginViewModel : ViewModelBase
+public sealed partial class LoginViewModel : PageViewModelBase
 {
     [Required]
     [ObservableProperty]

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:vm="clr-namespace:Kris.Client.ViewModels.Items"
+             x:Class="Kris.Client.Components.Items.SessionItem"
+             x:DataType="vm:SessionItemViewModel"
+             BackgroundColor="DimGrey">
+    
+    <StackLayout Orientation="Horizontal"
+                 HorizontalOptions="FillAndExpand">
+        <StackLayout Orientation="Vertical"
+                     HorizontalOptions="StartAndExpand">
+            <Label Text="{Binding Name}"
+                   HorizontalOptions="StartAndExpand"/>
+            <Label Text="{Binding Created}"
+                   HorizontalOptions="StartAndExpand" />
+        </StackLayout>
+        <Label Text="{Binding UserCount}" />
+
+        <Button Text="Join"
+                IsVisible="{Binding IsJoined, Converter={tk:InvertedBoolConverter}}">
+            <Button.Behaviors>
+                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding JoinClickedCommand}" />
+            </Button.Behaviors>
+        </Button>
+        <Button Text="Leave"
+                IsVisible="{Binding IsJoined}">
+            <Button.Behaviors>
+                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding LeaveClickedCommand}" />
+            </Button.Behaviors>
+        </Button>
+    </StackLayout>
+</ContentView>
