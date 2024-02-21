@@ -44,7 +44,7 @@ public sealed class UserMapper : IUserMapper
             CurrentSession = entity.CurrentSession?.Session == null ? null :
                 new LoginResponse.Session
                 {
-                    Id = entity.CurrentSession.Id,
+                    Id = entity.CurrentSession.SessionId,
                     Name = entity.CurrentSession.Session.Name,
                     UserType = entity.CurrentSession.UserType
                 }
