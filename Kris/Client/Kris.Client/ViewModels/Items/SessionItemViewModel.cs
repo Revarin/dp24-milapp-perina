@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Enums;
 using Kris.Client.Core.Models;
-using Kris.Client.Utility;
+using Kris.Client.Events;
 namespace Kris.Client.ViewModels.Items;
 
 public sealed partial class SessionItemViewModel : ControllViewModelBase
@@ -39,8 +39,8 @@ public sealed partial class SessionItemViewModel : ControllViewModelBase
     }
 
     [RelayCommand]
-    public void JoinClicked() => SessionJoining?.Invoke(this, new EntityIdEventArgs(Id));
+    public void OnJoinClicked() => SessionJoining?.Invoke(this, new EntityIdEventArgs(Id));
 
     [RelayCommand]
-    public void LeaveClicked() => SessionLeaving?.Invoke(this, new EntityIdEventArgs(Id));
+    public void OnLeaveClicked() => SessionLeaving?.Invoke(this, new EntityIdEventArgs(Id));
 }
