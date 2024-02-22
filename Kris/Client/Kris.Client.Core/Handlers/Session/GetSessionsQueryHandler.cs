@@ -11,14 +11,12 @@ namespace Kris.Client.Core.Handlers.Session;
 
 public sealed class GetSessionsQueryHandler : SessionHandler, IRequestHandler<GetSessionsQuery, Result<AvailableSessionsModel>>
 {
-    private readonly IIdentityStore _identityStore;
     private readonly ISessionMapper _sessionMapper;
 
-    public GetSessionsQueryHandler(IIdentityStore identityStore, ISessionMapper sessionMapper,
-        ISessionController sessionClient, IUserMapper userMapper)
-        : base(sessionClient, userMapper)
+    public GetSessionsQueryHandler(ISessionMapper sessionMapper,
+        ISessionController sessionClient, IIdentityStore identityStore, IUserMapper userMapper)
+        : base(sessionClient, identityStore, userMapper)
     {
-        _identityStore = identityStore;
         _sessionMapper = sessionMapper;
     }
 
@@ -38,10 +36,11 @@ public sealed class GetSessionsQueryHandler : SessionHandler, IRequestHandler<Ge
 
         var currentSession = allSession.FirstOrDefault(s => user.SessionId.Equals(s.Id));
         var joinedSessions = allSession.IntersectBy(sessions, s => s.Id).Where(s => !user.SessionId.Equals(s.Id));
-        var otherSessions = allSession.Except(joinedSessions).Where(s => !user.SessionId.Equals(s.Id));
+        var otherSessions = allSession.ExceptBy(sessions, s => s.Id).Where(s => !user.SessionId.Equals(s.Id));
 
         return Result.Ok(new AvailableSessionsModel
         {
+            UserType = user.UserType,
             CurrentSession = currentSession,
             JoinedSessions = joinedSessions,
             OtherSessions = otherSessions

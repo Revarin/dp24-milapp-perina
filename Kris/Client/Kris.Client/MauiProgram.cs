@@ -58,6 +58,7 @@ namespace Kris.Client
             builder.Services.AddTransient<SessionSettingsView>();
             builder.Services.AddTransient<SessionSettingsViewModel>();
 
+            builder.Services.AddTransientPopup<PasswordPopup, PasswordPopupViewModel>();
             builder.Services.AddTransientPopup<EditSessionPopup, EditSessionPopupViewModel>();
 
             builder.Services.AddSingleton<IUserMapper, UserMapper>();
