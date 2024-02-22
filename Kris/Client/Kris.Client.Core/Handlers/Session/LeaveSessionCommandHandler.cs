@@ -15,6 +15,7 @@ public sealed class LeaveSessionCommandHandler : SessionHandler, IRequestHandler
     {
     }
 
+    // TODO: BAD IDENTITY STORE
     public async Task<Result> Handle(LeaveSessionCommand request, CancellationToken cancellationToken)
     {
         var response = await _sessionClient.LeaveSession(request.SessionId, cancellationToken);
