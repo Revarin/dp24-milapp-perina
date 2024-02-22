@@ -9,23 +9,18 @@ public sealed class UserRepository : RepositoryBase<UserEntity>, IUserRepository
     {
     }
 
-    public async Task<UserEntity?> GetWithCurrentSessionAsync(Guid id, CancellationToken ct)
+    public async Task<UserEntity?> GetWithSessionsAsync(Guid id, CancellationToken ct)
     {
-        return await _context.Users.Include(user => user.CurrentSession)
+        return await _context.Users.Include(user => user.AllSessions)
+            .Include(user => user.CurrentSession)
             .ThenInclude(sessionUser => sessionUser == null ? null : sessionUser.Session)
             .FirstOrDefaultAsync(user => user.Id == id);
     }
 
-    public async Task<UserEntity?> GetWithAllSessionsAsync(Guid id, CancellationToken ct)
+    public async Task<UserEntity?> GetWithSessionsAsync(string login, CancellationToken ct)
     {
         return await _context.Users.Include(user => user.AllSessions)
             .Include(user => user.CurrentSession)
-            .FirstOrDefaultAsync(user => user.Id == id);
-    }
-
-    public async Task<UserEntity?> GetWithCurrentSessionAsync(string login, CancellationToken ct)
-    {
-        return await _context.Users.Include(user => user.CurrentSession)
             .ThenInclude(sessionUser => sessionUser == null ? null : sessionUser.Session)
             .FirstOrDefaultAsync(user => user.Login == login);
     }

@@ -29,7 +29,7 @@ public sealed class LeaveSessionCommandHandler : SessionHandler, IRequestHandler
 
     public async Task<Result<LoginResponse>> Handle(LeaveSessionCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetWithAllSessionsAsync(request.User.Id, cancellationToken);
+        var user = await _userRepository.GetWithSessionsAsync(request.User.Id, cancellationToken);
         if (user == null) throw new NullableException();
 
         var session = await _sessionRepository.GetAsync(request.SessionId, cancellationToken);

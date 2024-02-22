@@ -137,6 +137,7 @@ public sealed class SessionController : KrisController, ISessionController
         if (result.IsFailed)
         {
             if (result.HasError<UserNotInSessionError>()) return Response.BadRequest<LoginResponse>(result.Errors.FirstMessage());
+            if (result.HasError<InvalidOperationError>()) return Response.BadRequest<LoginResponse>(result.Errors.FirstMessage());
             else return Response.InternalError<LoginResponse>();
         }
 

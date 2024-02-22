@@ -31,7 +31,7 @@ public sealed class CreateSessionCommandHandler : SessionHandler, IRequestHandle
 
     public async Task<Result<LoginResponse>> Handle(CreateSessionCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetWithCurrentSessionAsync(request.User.Id, cancellationToken);
+        var user = await _userRepository.GetWithSessionsAsync(request.User.Id, cancellationToken);
         if (user == null) throw new DatabaseException("User not found");
 
         var sessionExists = await _sessionRepository.ExistsAsync(request.CreateSession.Name, cancellationToken);

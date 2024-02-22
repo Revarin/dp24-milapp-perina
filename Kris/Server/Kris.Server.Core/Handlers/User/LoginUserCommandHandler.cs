@@ -25,7 +25,7 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
 
     public async Task<Result<LoginResponse>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetWithCurrentSessionAsync(request.LoginUser.Login, cancellationToken);
+        var user = await _userRepository.GetWithSessionsAsync(request.LoginUser.Login, cancellationToken);
         if (user == null) return Result.Fail(new InvalidCredentialsError());
 
         var passwordVerified = _passwordService.VerifyPassword(user.Password, request.LoginUser.Password);
