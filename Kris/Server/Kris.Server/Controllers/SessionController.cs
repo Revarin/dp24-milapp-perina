@@ -99,6 +99,7 @@ public sealed class SessionController : KrisController, ISessionController
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<LoginResponse?> JoinSession(JoinSessionRequest request, CancellationToken ct)
     {
@@ -111,7 +112,7 @@ public sealed class SessionController : KrisController, ISessionController
         if (result.IsFailed)
         {
             if (result.HasError<EntityNotFoundError>()) return Response.NotFound<LoginResponse>(result.Errors.FirstMessage());
-            else if (result.HasError<InvalidCredentialsError>()) return Response.Unauthorized<LoginResponse>(result.Errors.FirstMessage());
+            else if (result.HasError<InvalidCredentialsError>()) return Response.Forbidden<LoginResponse>(result.Errors.FirstMessage());
             else return Response.InternalError<LoginResponse>();
         }
 
