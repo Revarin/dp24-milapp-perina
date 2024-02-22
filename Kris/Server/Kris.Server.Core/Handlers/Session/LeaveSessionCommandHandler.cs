@@ -39,10 +39,9 @@ public sealed class LeaveSessionCommandHandler : SessionHandler, IRequestHandler
         if (leavingSessionUser == null) return Result.Fail(new UserNotInSessionError());
         if (leavingSessionUser.UserType == UserType.SuperAdmin) return Result.Fail(new InvalidOperationError("Session owner cannot leave session"));
 
-        if (user.CurrentSessionId == leavingSessionUser.SessionId)
+        if (user.CurrentSession?.SessionId == leavingSessionUser.SessionId)
         {
             user.CurrentSession = null;
-            user.CurrentSessionId = null;
         }
         user.AllSessions.Remove(leavingSessionUser);
         var updated = await _userRepository.UpdateAsync(user, cancellationToken);

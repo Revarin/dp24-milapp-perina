@@ -50,11 +50,10 @@ public sealed class JoinSessionCommandHandler : SessionHandler, IRequestHandler<
                 Joined = DateTime.Now,
                 UserType = UserType.Basic
             };
-            session.Users.Add(sessionUser);
+            user.AllSessions.Add(sessionUser);
         }
         user.CurrentSession = sessionUser;
-        var updated = await _userRepository.UpdateAsync(user, cancellationToken);
-        if (!updated) throw new DatabaseException("Failed to join session");
+        await _userRepository.ForceSaveAsync(cancellationToken);
 
         var jwt = _jwtService.CreateToken(user, session, UserType.Basic);
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");

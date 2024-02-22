@@ -31,8 +31,7 @@ public sealed class SavePositionCommandHandler : PositionHandler, IRequestHandle
         {
             position = new UserPositionEntity
             {
-                UserId = user.Id,
-                SessionId = user.SessionId.Value,
+                SessionUserId = Guid.Empty,
                 Updated = DateTime.UtcNow,
                 Positions = new GeoSpatialPosition?[3]
                 {

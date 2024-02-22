@@ -30,7 +30,7 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : EntityBase
 
     public async Task<T> InsertAsync(T entity, CancellationToken ct)
     {
-        var entry = await _dbSet.AddAsync(entity, ct);
+        var entry = _dbSet.Add(entity);
         await _context.SaveChangesAsync(ct);
         return entry.Entity;
     }
@@ -40,7 +40,7 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : EntityBase
         var entityExists = await _dbSet.AnyAsync(p => p.Id == entity.Id, ct);
         if (!entityExists) return false;
 
-        _dbSet.Update(entity);
+        //_dbSet.Update(entity);
         await _context.SaveChangesAsync(ct);
         return true;
     }

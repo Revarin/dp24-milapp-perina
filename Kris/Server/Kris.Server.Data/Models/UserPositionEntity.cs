@@ -5,11 +5,7 @@ namespace Kris.Server.Data.Models;
 
 public class UserPositionEntity : EntityBase
 {
-    [NotMapped]
-    [Obsolete(null, true)]
-    public new Guid Id { get; set; }
-    public required Guid UserId { get; set; }
-    public required Guid SessionId { get; set; }
+    public required Guid SessionUserId { get; set; }
     public SessionUserEntity? SessionUser { get; set; }
     public required DateTime Updated { get; set; }
     public string? Position0Data

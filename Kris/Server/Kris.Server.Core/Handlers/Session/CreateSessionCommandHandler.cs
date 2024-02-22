@@ -39,19 +39,19 @@ public sealed class CreateSessionCommandHandler : SessionHandler, IRequestHandle
 
         var session = new SessionEntity
         {
-            Id = Guid.NewGuid(),
             Name = request.CreateSession.Name,
             Password = _passwordService.HashPassword(request.CreateSession.Password),
             Created = DateTime.UtcNow
         };
-        session.Users.Add(new SessionUserEntity
+        var sessionUser = new SessionUserEntity
         {
             SessionId = session.Id,
             UserId = user.Id,
             UserType = UserType.SuperAdmin,
             Joined = DateTime.UtcNow
-        });
-        user.CurrentSessionId = session.Id;
+        };
+        session.Users.Add(sessionUser);
+        user.CurrentSession = sessionUser;
         var sessionEntity = await _sessionRepository.InsertAsync(session, cancellationToken);
         if (sessionEntity == null) throw new DatabaseException("Failed to insert Session");
 

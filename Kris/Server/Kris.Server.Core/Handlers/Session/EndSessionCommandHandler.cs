@@ -32,6 +32,17 @@ public sealed class EndSessionCommandHandler : SessionHandler, IRequestHandler<E
         var authorized = await _authorizationService.AuthorizeAsync(user, UserType.SuperAdmin, cancellationToken);
         if (!authorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
 
+        var session = await _sessionRepository.GetWithUsersAsync(user.SessionId.Value, cancellationToken);
+        if (session == null) throw new DatabaseException("Session not found");
+
+        foreach (var u in session.Users)
+        {
+            if (u.User?.CurrentSession?.SessionId == session.Id)
+            {
+                u.User.CurrentSession = null;
+            }
+        }
+
         var deleted = await _sessionRepository.DeleteAsync(user.SessionId.Value, cancellationToken);
         if (!deleted) return Result.Fail(new EntityNotFoundError("Session", user.SessionId.Value));
 

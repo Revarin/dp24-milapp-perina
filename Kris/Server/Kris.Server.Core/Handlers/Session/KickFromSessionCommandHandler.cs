@@ -28,14 +28,18 @@ public sealed class KickFromSessionCommandHandler : SessionHandler, IRequestHand
         var session = await _sessionRepository.GetWithUsersAsync(user.SessionId.Value, cancellationToken);
         if (session == null) throw new NullableException();
 
-        var sessionUser = session.Users.Find(sessionUser => sessionUser.UserId == request.UserId);
-        if (sessionUser == null) return Result.Fail(new UserNotInSessionError());
-        if (sessionUser.UserType == UserType.SuperAdmin) return Result.Fail(new InvalidOperationError("Cannot kick session owner"));
-        if (sessionUser.User == null) throw new NullableException();
+        var kickedUser = session.Users.Find(sessionUser => sessionUser.UserId == request.UserId);
+        if (kickedUser == null) return Result.Fail(new UserNotInSessionError());
+        if (kickedUser.UserType == UserType.SuperAdmin) return Result.Fail(new InvalidOperationError("Cannot kick session owner"));
+        if (kickedUser.User == null) throw new NullableException();
 
-        sessionUser.User.CurrentSession = sessionUser.User.CurrentSessionId == session.Id ? null : sessionUser.User.CurrentSession;
-        sessionUser.User.CurrentSessionId = sessionUser.User.CurrentSessionId == session.Id ? null : sessionUser.User.CurrentSessionId;
-        session.Users.Remove(sessionUser);
+        kickedUser.User.CurrentSession = kickedUser.User.CurrentSession?.SessionId == session.Id ? null : kickedUser.User.CurrentSession;
+        session.Users.Remove(kickedUser);
+        if (kickedUser.User.CurrentSession?.SessionId == session.Id)
+        {
+            kickedUser.User.CurrentSession = null;
+        }
+        session.Users.Remove(kickedUser);
         var updated = await _sessionRepository.UpdateAsync(session, cancellationToken);
         if (!updated) throw new DatabaseException("Failed to remove user from session");
 

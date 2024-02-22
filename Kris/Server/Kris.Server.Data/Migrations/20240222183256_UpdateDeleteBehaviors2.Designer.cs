@@ -4,6 +4,7 @@ using Kris.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kris.Server.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240222183256_UpdateDeleteBehaviors2")]
+    partial class UpdateDeleteBehaviors2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,7 +96,9 @@ namespace Kris.Server.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CurrentSessionId");
+                    b.HasIndex("CurrentSessionId")
+                        .IsUnique()
+                        .HasFilter("[CurrentSessionId] IS NOT NULL");
 
                     b.ToTable("Users");
                 });
@@ -113,11 +118,17 @@ namespace Kris.Server.Data.Migrations
                     b.Property<string>("Position2Data")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("SessionUserId")
+                    b.Property<Guid>("SessionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SessionUserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Updated")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -148,9 +159,9 @@ namespace Kris.Server.Data.Migrations
             modelBuilder.Entity("Kris.Server.Data.Models.UserEntity", b =>
                 {
                     b.HasOne("Kris.Server.Data.Models.SessionUserEntity", "CurrentSession")
-                        .WithMany()
-                        .HasForeignKey("CurrentSessionId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .WithOne()
+                        .HasForeignKey("Kris.Server.Data.Models.UserEntity", "CurrentSessionId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("CurrentSession");
                 });
@@ -159,9 +170,7 @@ namespace Kris.Server.Data.Migrations
                 {
                     b.HasOne("Kris.Server.Data.Models.SessionUserEntity", "SessionUser")
                         .WithMany()
-                        .HasForeignKey("SessionUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SessionUserId");
 
                     b.Navigation("SessionUser");
                 });

@@ -9,4 +9,5 @@ public sealed class CurrentUserModel
     public Guid? SessionId { get; init; }
     public string? SessionName { get; init; }
     public UserType? UserType { get; init; }
+    public Guid? UserSessionId { get; init; }
 }

@@ -23,13 +23,13 @@ public sealed class UserPositionRepository : RepositoryBase<UserPositionEntity>,
     {
         return await _context.UserPositions.Include(position => position.SessionUser)
             .ThenInclude(sessionUser => sessionUser == null ? null : sessionUser.User)
-            .Where(position => position.SessionId == sessionId && position.Updated > from)
+            .Where(position => position.SessionUserId == sessionId && position.Updated > from)
             .ToListAsync(ct);
     }
 
     public new async Task<bool> UpdateAsync(UserPositionEntity entity, CancellationToken ct)
     {
-        var entityExists = await _context.UserPositions.FindAsync(entity.UserId, entity.SessionId, ct);
+        var entityExists = await _context.UserPositions.FindAsync(entity.Id, ct);
         if (entityExists == null) return false;
 
         _context.UserPositions.Update(entity);

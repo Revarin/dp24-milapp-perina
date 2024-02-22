@@ -22,43 +22,33 @@ public class DataContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<UserEntity>().HasKey(e => e.Id);
-        modelBuilder.Entity<UserEntity>()
-            .HasMany(e => e.AllSessions)
-            .WithOne(e => e.User)
-            .HasForeignKey(e => e.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
-
         modelBuilder.Entity<SessionEntity>().HasKey(e => e.Id);
-        modelBuilder.Entity<SessionEntity>()
-            .HasMany(e => e.Users)
-            .WithOne(e => e.Session)
-            .HasForeignKey(e => e.SessionId)
-            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<SessionUserEntity>().HasKey(e => e.Id);
+        modelBuilder.Entity<UserPositionEntity>().HasKey(e => e.Id);
 
-        modelBuilder.Entity<SessionUserEntity>().HasKey(e => new { e.UserId, e.SessionId });
-        modelBuilder.Entity<SessionUserEntity>()
-            .HasOne(e => e.Session)
-            .WithMany(e => e.Users)
-            .HasForeignKey(e => e.SessionId)
-            .OnDelete(DeleteBehavior.NoAction);
         modelBuilder.Entity<SessionUserEntity>()
             .HasOne(e => e.User)
             .WithMany(e => e.AllSessions)
             .HasForeignKey(e => e.UserId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<SessionUserEntity>()
+            .HasOne(e => e.Session)
+            .WithMany(e => e.Users)
+            .HasForeignKey(e => e.SessionId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         modelBuilder.Entity<UserEntity>()
             .HasOne(e => e.CurrentSession)
-            .WithOne()
-            .HasForeignKey(typeof(UserEntity), nameof(UserEntity.Id), nameof(UserEntity.CurrentSessionId))
-            .IsRequired(false)
-            .OnDelete(DeleteBehavior.Restrict);
+            .WithMany()
+            .HasForeignKey(e => e.CurrentSessionId)
+            .OnDelete(DeleteBehavior.NoAction);
 
-        modelBuilder.Entity<UserPositionEntity>().HasKey(e => new { e.UserId, e.SessionId });
         modelBuilder.Entity<UserPositionEntity>()
             .HasOne(e => e.SessionUser)
-            .WithOne()
-            .HasForeignKey(typeof(UserPositionEntity), nameof(UserPositionEntity.UserId), nameof(UserPositionEntity.SessionId))
-            .OnDelete(DeleteBehavior.NoAction);
+            .WithMany()
+            .HasForeignKey(e => e.SessionUserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         base.OnModelCreating(modelBuilder);
     }
