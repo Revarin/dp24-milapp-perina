@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Utility;
 using Kris.Client.Core.Requests;
-using Kris.Client.Core.Services;
+using Kris.Client.Events;
 using Kris.Client.Validations;
 using Kris.Client.Views;
 using Kris.Common.Extensions;
@@ -12,7 +12,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Kris.Client.ViewModels.Popups;
 
-public sealed partial class EditSessionPopupViewModel : PageViewModelBase
+public sealed partial class EditSessionPopupViewModel : PopupViewModel
 {
     [Required]
     [ObservableProperty]
@@ -25,15 +25,12 @@ public sealed partial class EditSessionPopupViewModel : PageViewModelBase
     [ObservableProperty]
     private string _passwordVerification;
 
-    public event EventHandler RaiseClosePopupEvent;
+    public event EventHandler<ResultEventArgs> CreatedClosing;
 
-    public EditSessionPopupViewModel(IMediator mediator, IRouterService navigationService, IAlertService alertService)
-        : base(mediator, navigationService, alertService)
+    public EditSessionPopupViewModel(IMediator mediator)
+        : base(mediator)
     {
     }
-
-    [RelayCommand]
-    private void OnCancelClicked() => RaiseClosePopupEvent.Invoke(this, null);
 
     [RelayCommand]
     private async Task OnCreateClicked()
@@ -44,28 +41,12 @@ public sealed partial class EditSessionPopupViewModel : PageViewModelBase
         var command = new CreateSessionCommand { Name = Name, Password = Password };
         var result = await _mediator.Send(command, ct);
 
-        if (result.IsFailed)
+        if (result.IsFailed && result.HasError<EntityExistsError>())
         {
-            if (result.HasError<EntityExistsError>())
-            {
-                AddCustomError(nameof(Name), "Session already exists");
-            }
-            else if (result.HasError<UnauthorizedError>())
-            {
-                await _alertService.ShowToastAsync("Login expired");
-                await _mediator.Send(new LogoutUserCommand(), ct);
-                await _navigationService.GoToAsync(nameof(LoginView), RouterNavigationType.ReplaceUpward);
-                RaiseClosePopupEvent.Invoke(this, null);
-            }
-            else
-            {
-                await _alertService.ShowToastAsync(result.Errors.FirstMessage());
-            }
+            AddCustomError(nameof(Name), "Session already exists");
+            return;
         }
-        else
-        {
-            await _alertService.ShowToastAsync("Session created");
-            RaiseClosePopupEvent.Invoke(this, null);
-        }
+
+        CreatedClosing?.Invoke(this, new ResultEventArgs(result));
     }
 }

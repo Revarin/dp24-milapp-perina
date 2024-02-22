@@ -7,7 +7,7 @@ using Kris.Client.Common.Errors;
 using Kris.Client.Common.Utility;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
-using Kris.Client.Utility;
+using Kris.Client.Events;
 using Kris.Client.ViewModels.Items;
 using Kris.Client.ViewModels.Popups;
 using Kris.Client.Views;
@@ -83,7 +83,29 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
     [RelayCommand]
     private async Task OnCreateSessionClicked()
     {
-        await _popupService.ShowPopupAsync<EditSessionPopupViewModel>();
+        var resultEventArgs = await _popupService.ShowPopupAsync<EditSessionPopupViewModel>() as ResultEventArgs;
+        if (resultEventArgs == null) return;
+
+        var result = resultEventArgs.Result;
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UnauthorizedError>())
+            {
+                await _alertService.ShowToastAsync("Login expired");
+                await _mediator.Send(new LogoutUserCommand(), CancellationToken.None);
+                await _navigationService.GoToAsync(nameof(LoginView), RouterNavigationType.ReplaceUpward);
+            }
+            else
+            {
+                await _alertService.ShowToastAsync(result.Errors.FirstMessage());
+            }
+        }
+        else
+        {
+            // TODO: Refresh session
+            await _alertService.ShowToastAsync("Session created");
+        }
     }
 
     private void OnSessionJoining(object sender, EntityIdEventArgs e)
