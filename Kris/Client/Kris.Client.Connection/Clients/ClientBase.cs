@@ -8,6 +8,8 @@ namespace Kris.Client.Connection.Clients;
 
 public abstract class ClientBase
 {
+    private const string ContentTypeJson = "application/json";
+
     protected readonly IIdentityStore _identityStore;
     protected readonly IHttpClientFactory _httpClientFactory;
     protected readonly string _controller;
@@ -26,8 +28,26 @@ public abstract class ClientBase
         where TResult : Response, new()
     {
         var requestJson = JsonSerializer.Serialize(data, _serializerOptions);
-        var content = new StringContent(requestJson, Encoding.UTF8, "application/json");
+        var content = new StringContent(requestJson, Encoding.UTF8, ContentTypeJson);
         var response = await httpClient.PostAsync(path, content, ct);
+
+        return await ParseResponse<TResult>(response, ct);
+    }
+
+    protected async Task<TResult> PutAsync<TResult>(HttpClient httpClient, string path, CancellationToken ct)
+        where TResult : Response, new()
+    {
+        var response = await httpClient.PutAsync(path, null);
+
+        return await ParseResponse<TResult>(response, ct);
+    }
+
+    protected async Task<TResult> PutAsync<TData, TResult>(HttpClient httpClient, string path, TData data, CancellationToken ct)
+        where TResult : Response, new()
+    {
+        var requestJson = JsonSerializer.Serialize(data, _serializerOptions);
+        var content = new StringContent(requestJson, Encoding.UTF8, ContentTypeJson);
+        var response = await httpClient.PutAsync(path, content, ct);
 
         return await ParseResponse<TResult>(response, ct);
     }

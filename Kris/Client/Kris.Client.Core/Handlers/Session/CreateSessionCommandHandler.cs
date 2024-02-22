@@ -11,12 +11,9 @@ namespace Kris.Client.Core.Handlers.Session;
 
 public sealed class CreateSessionCommandHandler : SessionHandler, IRequestHandler<CreateSessionCommand, Result>
 {
-    private readonly IIdentityStore _identityStore;
-
-    public CreateSessionCommandHandler(IIdentityStore identityStore, ISessionController sessionClient, IUserMapper userMapper)
-        : base(sessionClient, userMapper)
+    public CreateSessionCommandHandler(ISessionController sessionClient, IIdentityStore identityStore, IUserMapper userMapper)
+        : base(sessionClient, identityStore, userMapper)
     {
-        _identityStore = identityStore;
     }
 
     public async Task<Result> Handle(CreateSessionCommand request, CancellationToken cancellationToken)

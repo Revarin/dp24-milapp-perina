@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Enums;
 using Kris.Client.Core.Models;
 using Kris.Client.Events;
+using Kris.Common.Enums;
 namespace Kris.Client.ViewModels.Items;
 
 public sealed partial class SessionItemViewModel : ControllViewModelBase
@@ -19,23 +20,18 @@ public sealed partial class SessionItemViewModel : ControllViewModelBase
     [ObservableProperty]
     private int _userCount;
     [ObservableProperty]
-    private bool _isJoined;
+    private SessionItemType _itemType;
+    [ObservableProperty]
+    private bool _canEdit;
 
-    public SessionItemViewModel(SessionListModel model, SessionItemType type)
+    public SessionItemViewModel(SessionListModel model, SessionItemType type, UserType? userType)
     {
         Id = model.Id;
         Name = model.Name;
         Created = model.Created;
         UserCount = model.UserCount;
-
-        if (type == SessionItemType.Current || type == SessionItemType.Joined)
-        {
-            IsJoined = true;
-        }
-        else
-        {
-            IsJoined = false;
-        }
+        ItemType = type;
+        CanEdit = type == SessionItemType.Current && userType >= UserType.Admin;
     }
 
     [RelayCommand]
@@ -43,4 +39,10 @@ public sealed partial class SessionItemViewModel : ControllViewModelBase
 
     [RelayCommand]
     public void OnLeaveClicked() => SessionLeaving?.Invoke(this, new EntityIdEventArgs(Id));
+
+    [RelayCommand]
+    public void OnEditClicked()
+    {
+        throw new NotImplementedException();
+    }
 }

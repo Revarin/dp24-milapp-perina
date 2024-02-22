@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Utility;
+using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.Views;
 using MediatR;
@@ -56,6 +57,13 @@ public abstract partial class PageViewModelBase : ObservableValidator
 
     [RelayCommand]
     protected async Task GoToMenu() => await _navigationService.GoToAsync(nameof(MenuView), RouterNavigationType.ReplaceUpward);
+
+    protected async Task LoginExpired()
+    {
+        await _alertService.ShowToastAsync("Login expired");
+        await _mediator.Send(new LogoutUserCommand(), CancellationToken.None);
+        await _navigationService.GoToAsync(nameof(LoginView), RouterNavigationType.ReplaceUpward);
+    }
 
     protected virtual void Cleanup()
     {

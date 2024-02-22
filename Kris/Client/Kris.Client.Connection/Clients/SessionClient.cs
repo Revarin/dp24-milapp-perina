@@ -42,9 +42,11 @@ public sealed class SessionClient : ClientBase, ISessionController
         return await GetAsync<GetManyResponse<SessionModel>>(client, "", ct);
     }
 
-    public Task<LoginResponse> JoinSession(JoinSessionRequest request, CancellationToken ct)
+    public async Task<LoginResponse> JoinSession(JoinSessionRequest request, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var jwt = _identityStore.GetJwtToken();
+        using var client = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await PutAsync<JoinSessionRequest, LoginResponse>(client, "Join", request, ct);
     }
 
     public Task<Response> KickFromSession(Guid userId, CancellationToken ct)
@@ -52,8 +54,10 @@ public sealed class SessionClient : ClientBase, ISessionController
         throw new NotImplementedException();
     }
 
-    public Task<LoginResponse> LeaveSession(Guid sessionId, CancellationToken ct)
+    public async Task<LoginResponse> LeaveSession(Guid sessionId, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var jwt = _identityStore.GetJwtToken();
+        using var client = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await PutAsync<LoginResponse>(client, $"Leave/{sessionId}", ct);
     }
 }
