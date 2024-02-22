@@ -9,6 +9,11 @@ public sealed class SessionUserRepository : RepositoryBase<SessionUserEntity>, I
     {
     }
 
+    public async Task<SessionUserEntity?> GetAsync(Guid userId, Guid sessionId, CancellationToken ct)
+    {
+        return await _context.SessionUsers.FindAsync(userId, sessionId, ct);
+    }
+
     public async Task<bool> AuthorizeAsync(Guid userId, Guid sessionId, UserType minRole, CancellationToken ct)
     {
         var result = await _context.SessionUsers.FindAsync(userId, sessionId, ct);
