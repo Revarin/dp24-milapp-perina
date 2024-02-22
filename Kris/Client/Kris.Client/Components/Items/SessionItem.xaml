@@ -35,10 +35,10 @@
         </StackLayout>
         <Label Text="{Binding UserCount}" />
 
-        <Button Text="Edit"
+        <Button Text="Edit (DEL)"
                 IsVisible="{Binding CanEdit}">
             <Button.Behaviors>
-                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding JoinClickedCommand}" />
+                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding EditClickedCommand}" />
             </Button.Behaviors>
         </Button>
         <Button Text="Join"

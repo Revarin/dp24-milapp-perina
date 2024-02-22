@@ -10,6 +10,7 @@ public sealed partial class SessionItemViewModel : ControllViewModelBase
 {
     public event EventHandler<EntityIdEventArgs> SessionJoining;
     public event EventHandler<EntityIdEventArgs> SessionLeaving;
+    public event EventHandler<EntityIdEventArgs> SessionEditing;
 
     [ObservableProperty]
     private Guid _id;
@@ -41,8 +42,5 @@ public sealed partial class SessionItemViewModel : ControllViewModelBase
     public void OnLeaveClicked() => SessionLeaving?.Invoke(this, new EntityIdEventArgs(Id));
 
     [RelayCommand]
-    public void OnEditClicked()
-    {
-        throw new NotImplementedException();
-    }
+    public void OnEditClicked() => SessionEditing?.Invoke(this, new EntityIdEventArgs(Id));
 }

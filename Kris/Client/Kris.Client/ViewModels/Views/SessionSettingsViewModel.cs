@@ -62,6 +62,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
                 CurrentSession = new SessionItemViewModel(result.Value.CurrentSession, SessionItemType.Current, result.Value.UserType);
                 CurrentSession.SessionJoining += OnSessionJoining;
                 CurrentSession.SessionLeaving += OnSessionLeaving;
+                CurrentSession.SessionEditing += OnSessionEditing;
             }
 
             JoinedSessions = result.Value.JoinedSessions.Select(s => new SessionItemViewModel(s, SessionItemType.Joined, result.Value.UserType))
@@ -70,6 +71,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
             {
                 session.SessionJoining += OnSessionJoining;
                 session.SessionLeaving += OnSessionLeaving;
+                session.SessionEditing += OnSessionEditing;
             }
 
             OtherSessions = result.Value.OtherSessions.Select(s => new SessionItemViewModel(s, SessionItemType.Other, result.Value.UserType))
@@ -78,6 +80,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
             {
                 session.SessionJoining += OnSessionJoining;
                 session.SessionLeaving += OnSessionLeaving;
+                session.SessionEditing += OnSessionEditing;
             }
         }
     }
@@ -156,9 +159,9 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
             {
                 await LoginExpired();
             }
-            else if (result.HasError<EntityNotFoundError>())
+            else if (result.HasError<BadOperationError>())
             {
-                await _alertService.ShowToastAsync("User not in this session, refreshing session list...");
+                await _alertService.ShowToastAsync(result.Errors.FirstMessage());
                 await OnAppearing();
             }
             else
@@ -169,6 +172,35 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
         else
         {
             await _alertService.ShowToastAsync("Left session");
+            await OnAppearing();
+        }
+    }
+
+    private async void OnSessionEditing(object sender, EntityIdEventArgs e)
+    {
+        var ct = new CancellationToken();
+        var command = new EndSessionCommand();
+        var result = await _mediator.Send(command, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UnauthorizedError>() || result.HasError<ForbiddenError>())
+            {
+                await LoginExpired();
+            }
+            else if (result.HasError<EntityNotFoundError>())
+            {
+                await _alertService.ShowToastAsync("Session not found, refreshing session list...");
+                await OnAppearing();
+            }
+            else
+            {
+                await _alertService.ShowToastAsync(result.Errors.FirstMessage());
+            }
+        }
+        else
+        {
+            await _alertService.ShowToastAsync("Deleted session");
             await OnAppearing();
         }
     }

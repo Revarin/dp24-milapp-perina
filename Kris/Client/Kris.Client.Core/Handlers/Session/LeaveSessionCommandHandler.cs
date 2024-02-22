@@ -15,7 +15,6 @@ public sealed class LeaveSessionCommandHandler : SessionHandler, IRequestHandler
     {
     }
 
-    // TODO: BAD IDENTITY STORE
     public async Task<Result> Handle(LeaveSessionCommand request, CancellationToken cancellationToken)
     {
         var response = await _sessionClient.LeaveSession(request.SessionId, cancellationToken);
@@ -23,7 +22,7 @@ public sealed class LeaveSessionCommandHandler : SessionHandler, IRequestHandler
         if (!response.IsSuccess())
         {
             if (response.IsUnauthorized()) return Result.Fail(new UnauthorizedError());
-            else if (response.IsBadRequest()) return Result.Fail(new EntityNotFoundError());
+            else if (response.IsBadRequest()) return Result.Fail(new BadOperationError(response.Message));
             else return Result.Fail(new ServerError(response.Message));
         }
 

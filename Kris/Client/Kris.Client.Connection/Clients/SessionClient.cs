@@ -25,9 +25,11 @@ public sealed class SessionClient : ClientBase, ISessionController
         throw new NotImplementedException();
     }
 
-    public Task<Response> EndSession(CancellationToken ct)
+    public async Task<Response> EndSession(CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var jwt = _identityStore.GetJwtToken();
+        using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await DeleteAsync<Response>(httpClient, "", ct);
     }
 
     public Task<GetOneResponse<SessionModel>> GetSession(Guid sessionId, CancellationToken ct)

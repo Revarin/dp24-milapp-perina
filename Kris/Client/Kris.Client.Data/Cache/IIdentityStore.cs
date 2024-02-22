@@ -11,4 +11,5 @@ public interface IIdentityStore
     JwtToken GetJwtToken();
     IEnumerable<Guid> GetJoinedSessions();
     void ClearIdentity();
+    void ClearCurrentSession();
 }

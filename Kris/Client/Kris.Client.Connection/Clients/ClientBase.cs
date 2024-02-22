@@ -52,6 +52,14 @@ public abstract class ClientBase
         return await ParseResponse<TResult>(response, ct);
     }
 
+    protected async Task<TResult> DeleteAsync<TResult>(HttpClient httpClient, string path, CancellationToken ct)
+        where TResult : Response, new()
+    {
+        var response = await httpClient.DeleteAsync(path);
+
+        return await ParseResponse<TResult>(response, ct);
+    }
+
     protected async Task<TResult> GetAsync<TResult>(HttpClient httpClient, string path, CancellationToken ct)
         where TResult : Response, new()
     {

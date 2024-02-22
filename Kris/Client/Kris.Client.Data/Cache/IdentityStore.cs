@@ -55,4 +55,18 @@ public sealed class IdentityStore : StoreBase, IIdentityStore
         Remove(JoinedSessionsKey);
         Remove(LoginExpirationKey);
     }
+
+    public void ClearCurrentSession()
+    {
+        var user = GetIdentity();
+        var joinedSession = GetJoinedSessions().ToList();
+
+        joinedSession.Remove(user.SessionId.Value);
+        user.SessionId = null;
+        user.SessioName = null;
+        user.UserType = null;
+
+        Set(IdentityKey, user);
+        Set(JoinedSessionsKey, joinedSession);
+    }
 }
