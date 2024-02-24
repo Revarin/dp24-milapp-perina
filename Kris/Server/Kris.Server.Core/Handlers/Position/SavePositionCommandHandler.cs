@@ -23,10 +23,10 @@ public sealed class SavePositionCommandHandler : PositionHandler, IRequestHandle
         var user = request.User;
         if (!user.SessionId.HasValue) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
 
-        var authorized = await _authorizationService.AuthorizeAsync(user, cancellationToken);
-        if (!authorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
+        var authResult = await _authorizationService.AuthorizeAsync(user, cancellationToken);
+        if (!authResult.IsAuthorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
 
-        var position = await _positionRepository.GetAsync(user.Id, user.SessionId.Value, cancellationToken);
+        var position = await _positionRepository.GetAsync(user.UserId, user.SessionId.Value, cancellationToken);
         if (position == null)
         {
             position = new UserPositionEntity
@@ -49,8 +49,7 @@ public sealed class SavePositionCommandHandler : PositionHandler, IRequestHandle
             position.Positions[1] = position.Positions[0];
             position.Positions[0] = request.SavePosition.Position;
             position.Updated = DateTime.UtcNow;
-            var updated = await _positionRepository.UpdateAsync(position, cancellationToken);
-            if (!updated) throw new DatabaseException("Failed to update position");
+            await _positionRepository.UpdateAsync(cancellationToken);
         }
 
         return Result.Ok();

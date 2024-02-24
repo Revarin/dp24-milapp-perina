@@ -7,30 +7,18 @@ namespace Kris.Server.Core.Mappers;
 
 public sealed class UserMapper : IUserMapper
 {
-    public UserMapper()
-    {
-    }
-
     public CurrentUserModel Map(UserEntity entity)
     {
         var user = new CurrentUserModel
         {
-            Id = entity.Id,
-            Login = entity.Login
+            UserId = entity.Id,
+            Login = entity.Login,
+            SessionId = entity.CurrentSession?.SessionId,
+            UserType = entity.CurrentSession?.UserType,
+            SessionName = entity.CurrentSession?.Session?.Name
         };
 
         return user;
-    }
-
-    public UserEntity Map(CurrentUserModel model)
-    {
-        return new UserEntity
-        {
-            Id = model.Id,
-            Login = model.Login,
-            Password = string.Empty,
-            Created = DateTime.MinValue
-        };
     }
 
     public LoginResponse MapToLoginResponse(UserEntity entity, JwtToken jwt)
@@ -41,8 +29,9 @@ public sealed class UserMapper : IUserMapper
             Login = entity.Login,
             Token = jwt.Token,
             JoinedSessions = entity.AllSessions.Select(session => session.SessionId),
-            CurrentSession = entity.CurrentSession?.Session == null ? null :
-                new LoginResponse.Session
+            CurrentSession = entity.CurrentSession?.Session == null
+                ? null
+                : new LoginResponse.Session
                 {
                     Id = entity.CurrentSession.SessionId,
                     Name = entity.CurrentSession.Session.Name,

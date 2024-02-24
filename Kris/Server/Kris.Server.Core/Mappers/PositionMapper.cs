@@ -9,7 +9,7 @@ public sealed class PositionMapper : IPositionMapper
     {
         return new UserPositionModel
         {
-            UserId = entity.SessionUser!.UserId,
+            UserId = entity.SessionUser!.User!.Id,
             UserName = entity.SessionUser!.User!.Login,
             Updated = entity.Updated,
             Positions = entity.Positions.ToList(),

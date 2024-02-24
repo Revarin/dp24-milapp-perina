@@ -13,14 +13,19 @@ public class AuthorizationService : IAuthorizationService
         _sessionUserRepository = sessionUserRepository;
     }
 
-    public Task<bool> AuthorizeAsync(CurrentUserModel user, CancellationToken ct)
+    public Task<AuthorizationResult> AuthorizeAsync(CurrentUserModel user, CancellationToken ct)
     {
         return AuthorizeAsync(user, UserType.Basic, ct);
     }
 
-    public async Task<bool> AuthorizeAsync(CurrentUserModel user, UserType minRole, CancellationToken ct)
+    public async Task<AuthorizationResult> AuthorizeAsync(CurrentUserModel user, UserType minRole, CancellationToken ct)
     {
-        if (!user.SessionId.HasValue) return false;
-        return await _sessionUserRepository.AuthorizeAsync(user.Id, user.SessionId.Value, minRole, ct);
+        if (!user.SessionId.HasValue) return new AuthorizationResult { IsAuthorized = false };
+
+        var sessionUser = await _sessionUserRepository.GetAsync(user.UserId, user.SessionId.Value, ct);
+        if (sessionUser == null) return new AuthorizationResult { IsAuthorized = false };
+        if (sessionUser.UserType < minRole) return new AuthorizationResult { IsAuthorized = false };
+
+        return new AuthorizationResult { IsAuthorized = true, UserSessionId = sessionUser.Id, UserType = sessionUser.UserType };
     }
 }

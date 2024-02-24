@@ -5,6 +5,6 @@ namespace Kris.Server.Core.Services;
 
 public interface IAuthorizationService
 {
-    public Task<bool> AuthorizeAsync(CurrentUserModel user, UserType minRole, CancellationToken ct);
-    public Task<bool> AuthorizeAsync(CurrentUserModel user, CancellationToken ct);
+    public Task<AuthorizationResult> AuthorizeAsync(CurrentUserModel user, UserType minRole, CancellationToken ct);
+    public Task<AuthorizationResult> AuthorizeAsync(CurrentUserModel user, CancellationToken ct);
 }

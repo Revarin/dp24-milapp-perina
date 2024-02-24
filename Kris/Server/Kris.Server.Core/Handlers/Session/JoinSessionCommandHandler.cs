@@ -31,7 +31,7 @@ public sealed class JoinSessionCommandHandler : SessionHandler, IRequestHandler<
 
     public async Task<Result<LoginResponse>> Handle(JoinSessionCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetWithSessionsAsync(request.User.Id, cancellationToken);
+        var user = await _userRepository.GetWithSessionsAsync(request.User.UserId, cancellationToken);
         if (user == null) throw new NullableException();
 
         var session = await _sessionRepository.GetAsync(request.JoinSession.Id, cancellationToken);
@@ -53,9 +53,9 @@ public sealed class JoinSessionCommandHandler : SessionHandler, IRequestHandler<
             user.AllSessions.Add(sessionUser);
         }
         user.CurrentSession = sessionUser;
-        await _userRepository.ForceSaveAsync(cancellationToken);
+        await _userRepository.UpdateAsync(cancellationToken);
 
-        var jwt = _jwtService.CreateToken(user, session, UserType.Basic);
+        var jwt = _jwtService.CreateToken(_userMapper.Map(user));
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");
 
         return Result.Ok(_userMapper.MapToLoginResponse(user, jwt));

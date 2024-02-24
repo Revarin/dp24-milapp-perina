@@ -26,25 +26,16 @@ public sealed class EditUserCommandHandler : UserHandler, IRequestHandler<EditUs
 
     public async Task<Result<LoginResponse>> Handle(EditUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetWithSessionsAsync(request.User.Id, cancellationToken);
+        var user = await _userRepository.GetWithSessionsAsync(request.User.UserId, cancellationToken);
         if (user == null) throw new NullableException();
         if (user.Login != request.User.Login || user.CurrentSessionId != request.User.SessionId)
             return Result.Fail(new UnauthorizedError("Invalid token"));
 
         user.Login = request.EditUser.Login;
         user.Password = _passwordService.HashPassword(request.EditUser.Password);
-        var updated = await _userRepository.UpdateAsync(user, cancellationToken);
-        if (!updated) throw new DatabaseException("Failed to update user");
+        await _userRepository.UpdateAsync(cancellationToken);
 
-        JwtToken jwt;
-        if (user.CurrentSession?.Session != null)
-        {
-            jwt = _jwtService.CreateToken(user, user.CurrentSession.Session, user.CurrentSession.UserType);
-        }
-        else
-        {
-            jwt = _jwtService.CreateToken(user);
-        }
+        var jwt = _jwtService.CreateToken(_userMapper.Map(user));
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");
 
         return Result.Ok(_userMapper.MapToLoginResponse(user, jwt));

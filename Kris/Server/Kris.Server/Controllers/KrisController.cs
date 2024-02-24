@@ -28,11 +28,11 @@ public abstract class KrisController : ControllerBase
 
         return new CurrentUserModel
         {
-            Id = Guid.Parse(userId),
+            UserId = Guid.Parse(userId),
             Login = userName,
             SessionId = string.IsNullOrEmpty(sessionId) ? null : Guid.Parse(sessionId),
-            SessionName = sessionName,
-            UserType = string.IsNullOrEmpty(role) ? null : Enum.Parse<UserType>(role)
+            UserType = string.IsNullOrEmpty(role) ? null : Enum.Parse<UserType>(role),
+            SessionName = sessionName
         };
     }
 }

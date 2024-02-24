@@ -31,7 +31,7 @@ public sealed class CreateSessionCommandHandler : SessionHandler, IRequestHandle
 
     public async Task<Result<LoginResponse>> Handle(CreateSessionCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetWithSessionsAsync(request.User.Id, cancellationToken);
+        var user = await _userRepository.GetWithSessionsAsync(request.User.UserId, cancellationToken);
         if (user == null) throw new DatabaseException("User not found");
 
         var sessionExists = await _sessionRepository.ExistsAsync(request.CreateSession.Name, cancellationToken);
@@ -55,7 +55,7 @@ public sealed class CreateSessionCommandHandler : SessionHandler, IRequestHandle
         var sessionEntity = await _sessionRepository.InsertAsync(session, cancellationToken);
         if (sessionEntity == null) throw new DatabaseException("Failed to insert Session");
 
-        var jwt = _jwtService.CreateToken(user, sessionEntity, UserType.SuperAdmin);
+        var jwt = _jwtService.CreateToken(_userMapper.Map(user));
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");
 
         return Result.Ok(_userMapper.MapToLoginResponse(user, jwt));

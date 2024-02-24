@@ -78,6 +78,7 @@ public sealed class SessionController : KrisController, ISessionController
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<Response?> EndSession(CancellationToken ct)
     {
+        // End CURRENT session only
         var user = CurrentUser();
         if (user == null) return Response.Unauthorized<LoginResponse>();
 

@@ -7,7 +7,6 @@ namespace Kris.Server.Core.Mappers;
 
 public interface IUserMapper
 {
-    UserEntity Map(CurrentUserModel model);
     CurrentUserModel Map(UserEntity entity);
     LoginResponse MapToLoginResponse(UserEntity entity, JwtToken jwt);
 }

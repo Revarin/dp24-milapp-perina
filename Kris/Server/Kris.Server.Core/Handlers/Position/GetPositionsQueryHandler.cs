@@ -22,8 +22,8 @@ public sealed class GetPositionsQueryHandler : PositionHandler, IRequestHandler<
         var user = request.User;
         if (!user.SessionId.HasValue) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
 
-        var authorized = await _authorizationService.AuthorizeAsync(user, cancellationToken);
-        if (!authorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
+        var authResult = await _authorizationService.AuthorizeAsync(user, cancellationToken);
+        if (!authResult.IsAuthorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
 
         var positions = request.From == null
             ? await _positionRepository.GetWithUsersAsync(user.SessionId.Value, cancellationToken)

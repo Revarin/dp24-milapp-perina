@@ -35,24 +35,15 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : EntityBase
         return entry.Entity;
     }
 
-    public async Task<bool> UpdateAsync(T entity, CancellationToken ct)
+    public async Task UpdateAsync(CancellationToken ct)
     {
-        var entityExists = await _dbSet.AnyAsync(p => p.Id == entity.Id, ct);
-        if (!entityExists) return false;
-
-        //_dbSet.Update(entity);
         await _context.SaveChangesAsync(ct);
-        return true;
     }
 
-    public async Task<bool> DeleteAsync(Guid id, CancellationToken ct)
+    public async Task DeleteAsync(T entity, CancellationToken ct)
     {
-        var entity = await _dbSet.FindAsync(id, ct);
-        if (entity == null) return false;
-
         _dbSet.Remove(entity);
         await _context.SaveChangesAsync(ct);
-        return true;
     }
 
     public async Task ForceSaveAsync(CancellationToken ct)

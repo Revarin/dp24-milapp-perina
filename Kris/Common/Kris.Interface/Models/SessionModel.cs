@@ -1,6 +1,6 @@
 ﻿namespace Kris.Interface.Models;
 
-public struct SessionModel
+public class SessionModel
 {
     public required Guid Id { get; set; }
     public required string Name { get; set; }

@@ -31,15 +31,7 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
         var passwordVerified = _passwordService.VerifyPassword(user.Password, request.LoginUser.Password);
         if (!passwordVerified) return Result.Fail(new InvalidCredentialsError());
 
-        JwtToken jwt;
-        if (user.CurrentSession?.Session != null)
-        {
-            jwt = _jwtService.CreateToken(user, user.CurrentSession.Session, user.CurrentSession.UserType);
-        }
-        else
-        {
-            jwt = _jwtService.CreateToken(user);
-        }
+        var jwt = _jwtService.CreateToken(_userMapper.Map(user));
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");
 
         return Result.Ok(_userMapper.MapToLoginResponse(user, jwt));

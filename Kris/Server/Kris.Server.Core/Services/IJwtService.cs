@@ -1,11 +1,9 @@
-﻿using Kris.Common.Enums;
-using Kris.Common.Models;
-using Kris.Server.Data.Models;
+﻿using Kris.Common.Models;
+using Kris.Server.Core.Models;
 
 namespace Kris.Server.Core.Services;
 
 public interface IJwtService
 {
-    JwtToken CreateToken(UserEntity user);
-    JwtToken CreateToken(UserEntity user, SessionEntity session, UserType userType);
+    JwtToken CreateToken(CurrentUserModel user);
 }
