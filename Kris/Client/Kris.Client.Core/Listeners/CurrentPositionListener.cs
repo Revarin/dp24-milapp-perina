@@ -1,8 +1,10 @@
 ﻿using FluentResults;
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
+using Kris.Client.Core.Mappers;
 using Kris.Client.Core.Services;
 using Kris.Interface.Controllers;
+using Kris.Interface.Requests;
 
 namespace Kris.Client.Core.Listeners;
 
@@ -11,16 +13,19 @@ public sealed class CurrentPositionListener : ICurrentPositionListener
     private readonly IPermissionService _permissionService;
     private readonly IGpsService _gpsService;
     private readonly IPositionController _positionClient;
+    private readonly IPositionMapper _positionMapper;
 
     public event EventHandler<LocationEventArgs> PositionChanged;
     public event EventHandler<ResultEventArgs> ErrorOccured;
     public bool IsListening { get; private set; }
 
-    public CurrentPositionListener(IPermissionService permissionService, IGpsService gpsService, IPositionController positionClient)
+    public CurrentPositionListener(IPermissionService permissionService, IGpsService gpsService,
+        IPositionController positionClient, IPositionMapper positionMapper)
     {
         _permissionService = permissionService;
         _gpsService = gpsService;
         _positionClient = positionClient;
+        _positionMapper = positionMapper;
     }
 
     public void StartListening(CancellationToken ct)
@@ -47,18 +52,31 @@ public sealed class CurrentPositionListener : ICurrentPositionListener
                     }
                     catch (Exception ex)
                     {
-                        if (ex is FeatureNotEnabledException) OnErrorOccured(new ResultEventArgs(Result.Fail(new ServiceDisabledError())));
-                        else if (ex is PermissionException) OnErrorOccured(new ResultEventArgs(Result.Fail(new ServicePermissionError())));
+                        if (ex is FeatureNotEnabledException) OnErrorOccured(Result.Fail(new ServiceDisabledError()));
+                        else if (ex is PermissionException) OnErrorOccured(Result.Fail(new ServicePermissionError()));
                         else throw;
                     }
 
+                    var delayTask = Task.Delay(delay);
+
                     if (location != null)
                     {
-                        OnPositionRead(new LocationEventArgs(location, timeout));
-                        // TODO: SEND TO SERVER
+                        OnPositionRead(location, timeout);
+
+                        var httpRequest = new SavePositionRequest
+                        {
+                            Position = _positionMapper.Map(location)
+                        };
+                        var response = await _positionClient.SavePosition(httpRequest, ct);
+
+                        if (!response.IsSuccess())
+                        {
+                            if (response.IsUnauthorized() || response.IsForbidden()) OnErrorOccured(Result.Fail(new UnauthorizedError()));
+                            else OnErrorOccured(Result.Fail(new ServerError(response.Message)));
+                        }
                     }
 
-                    await Task.Delay(delay, ct);
+                    await delayTask;
                 }
             }
             catch (TaskCanceledException)
@@ -71,13 +89,13 @@ public sealed class CurrentPositionListener : ICurrentPositionListener
         });
     }
 
-    private void OnPositionRead(LocationEventArgs e)
+    private void OnPositionRead(Location location, TimeSpan difference)
     {
-        Application.Current.Dispatcher.Dispatch(() => PositionChanged?.Invoke(this, e));
+        Application.Current.Dispatcher.Dispatch(() => PositionChanged?.Invoke(this, new LocationEventArgs(location, difference)));
     }
 
-    private void OnErrorOccured(ResultEventArgs e)
+    private void OnErrorOccured(Result result)
     {
-        Application.Current.Dispatcher.Dispatch(() => ErrorOccured?.Invoke(this, e));
+        Application.Current.Dispatcher.Dispatch(() => ErrorOccured?.Invoke(this, new ResultEventArgs(result)));
     }
 }

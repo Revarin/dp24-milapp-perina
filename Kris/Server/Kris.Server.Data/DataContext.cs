@@ -24,7 +24,7 @@ public class DataContext : DbContext
         modelBuilder.Entity<UserEntity>().HasKey(e => e.Id);
         modelBuilder.Entity<SessionEntity>().HasKey(e => e.Id);
         modelBuilder.Entity<SessionUserEntity>().HasKey(e => e.Id);
-        modelBuilder.Entity<UserPositionEntity>().HasKey(e => e.Id);
+        modelBuilder.Entity<UserPositionEntity>().HasKey(e => e.SessionUserId);
 
         modelBuilder.Entity<SessionUserEntity>()
             .HasOne(e => e.User)

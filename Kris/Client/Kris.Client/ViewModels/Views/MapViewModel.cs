@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Maui.Core;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
@@ -9,6 +8,7 @@ using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.Utility;
 using Kris.Client.Views;
+using Kris.Common.Extensions;
 using MediatR;
 using Microsoft.Maui.Maps;
 
@@ -30,20 +30,18 @@ public sealed partial class MapViewModel : PageViewModelBase
         : base(mediator, navigationService, alertService)
     {
         _currentPositionListener = currentPositionListener;
-
-        _currentPositionCTS = new CancellationTokenSource();
     }
 
-    protected override Task InitAsync()
+    [RelayCommand]
+    private void OnAppearing()
     {
-        _currentPositionListener.PositionChanged += OnPositionChanged;
-        _currentPositionListener.ErrorOccured += OnPositionListenerErrorOccured;
         if (!_currentPositionListener.IsListening)
         {
+            _currentPositionCTS = new CancellationTokenSource();
+            _currentPositionListener.PositionChanged += OnPositionListenerPositionChanged;
+            _currentPositionListener.ErrorOccured += OnPositionListenerErrorOccured;
             _currentPositionListener.StartListening(_currentPositionCTS.Token);
         }
-
-        return base.InitAsync();
     }
 
     [RelayCommand]
@@ -84,8 +82,9 @@ public sealed partial class MapViewModel : PageViewModelBase
         await _navigationService.GoToAsync(nameof(LoginView), RouterNavigationType.ReplaceUpward);
     }
 
-    private async void OnPositionChanged(object sender, LocationEventArgs e)
+    private async void OnPositionListenerPositionChanged(object sender, LocationEventArgs e)
     {
+        // TODO: Update user point (GUI only)
         await _alertService.ShowToastAsync(e.Location.ToString());
     }
 
@@ -93,15 +92,27 @@ public sealed partial class MapViewModel : PageViewModelBase
     {
         if (e.Result.HasError<ServiceDisabledError>())
         {
-            await _alertService.ShowToastAsync("GPS service is disabled", ToastDuration.Long);
+            await _alertService.ShowToastAsync("GPS service is disabled");
         }
         else if (e.Result.HasError<ServicePermissionError>())
         {
-            await _alertService.ShowToastAsync("GPS service is not permitted", ToastDuration.Long);
+            await _alertService.ShowToastAsync("GPS service is not permitted");
+        }
+        else if (e.Result.HasError<UnauthorizedError>())
+        {
+            _currentPositionCTS.Cancel();
+            _currentPositionListener.PositionChanged -= OnPositionListenerPositionChanged;
+            _currentPositionListener.ErrorOccured -= OnPositionListenerErrorOccured;
+
+            await LoginExpired();
         }
         else
         {
-            await _alertService.ShowToastAsync("Unknown error when listening to position", ToastDuration.Long);
+            _currentPositionCTS.Cancel();
+            _currentPositionListener.PositionChanged -= OnPositionListenerPositionChanged;
+            _currentPositionListener.ErrorOccured -= OnPositionListenerErrorOccured;
+
+            await _alertService.ShowToastAsync(e.Result.Errors.FirstMessage());
         }
     }
 }

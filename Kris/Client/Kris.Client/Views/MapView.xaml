@@ -8,6 +8,10 @@
              x:Class="Kris.Client.Views.MapView"
              x:DataType="vm:MapViewModel"
              Title="MapView">
+    <ContentPage.Behaviors>
+        <tk:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}" />
+    </ContentPage.Behaviors>
+    
     <StackLayout Orientation="Vertical"
                  VerticalOptions="FillAndExpand">
         <StackLayout Orientation="Horizontal"

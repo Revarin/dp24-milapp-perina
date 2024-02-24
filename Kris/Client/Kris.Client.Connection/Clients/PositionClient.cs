@@ -17,8 +17,10 @@ public sealed class PositionClient : ClientBase, IPositionController
         throw new NotImplementedException();
     }
 
-    public Task<Response> SavePosition(SavePositionRequest request, CancellationToken ct)
+    public async Task<Response> SavePosition(SavePositionRequest request, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var jwt = _identityStore.GetJwtToken();
+        var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await PostAsync<SavePositionRequest, Response>(httpClient, "", request, ct);
     }
 }

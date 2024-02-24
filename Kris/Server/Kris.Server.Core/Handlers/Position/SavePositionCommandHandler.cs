@@ -26,12 +26,12 @@ public sealed class SavePositionCommandHandler : PositionHandler, IRequestHandle
         var authResult = await _authorizationService.AuthorizeAsync(user, cancellationToken);
         if (!authResult.IsAuthorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
 
-        var position = await _positionRepository.GetAsync(user.UserId, user.SessionId.Value, cancellationToken);
+        var position = await _positionRepository.GetAsync(authResult.UserSessionId, cancellationToken);
         if (position == null)
         {
             position = new UserPositionEntity
             {
-                SessionUserId = Guid.Empty,
+                SessionUserId = authResult.UserSessionId,
                 Updated = DateTime.UtcNow,
                 Positions = new GeoSpatialPosition?[3]
                 {
