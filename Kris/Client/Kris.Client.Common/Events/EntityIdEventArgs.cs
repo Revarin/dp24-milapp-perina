@@ -1,4 +1,4 @@
-﻿namespace Kris.Client.Events;
+﻿namespace Kris.Client.Common.Events;
 
 public class EntityIdEventArgs : EventArgs
 {

@@ -4,6 +4,7 @@ using Kris.Client.Components.Popups;
 using Kris.Client.Connection;
 using Kris.Client.Connection.Clients;
 using Kris.Client.Core.Handlers;
+using Kris.Client.Core.Listeners;
 using Kris.Client.Core.Mappers;
 using Kris.Client.Core.Services;
 using Kris.Client.Data.Cache;
@@ -65,8 +66,12 @@ namespace Kris.Client
             builder.Services.AddSingleton<IUserMapper, UserMapper>();
             builder.Services.AddSingleton<ISessionMapper, SessionMapper>();
 
+            builder.Services.AddSingleton<ICurrentPositionListener, CurrentPositionListener>();
+
             builder.Services.AddSingleton<IRouterService, RouterService>();
             builder.Services.AddSingleton<IAlertService, AlertService>();
+            builder.Services.AddSingleton<IGpsService, GpsService>();
+            builder.Services.AddSingleton<IPermissionService, PermissionService>();
 
             builder.Services.AddSingleton<IIdentityStore, IdentityStore>();
             builder.Services.AddSingleton<ILocationStore, LocationStore>();
@@ -74,6 +79,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<IHttpClientFactory, HttpClientFactory>();
             builder.Services.AddTransient<IUserController, UserClient>();
             builder.Services.AddTransient<ISessionController, SessionClient>();
+            builder.Services.AddTransient<IPositionController, PositionClient>();
 
 #if DEBUG
     		builder.Logging.AddDebug();

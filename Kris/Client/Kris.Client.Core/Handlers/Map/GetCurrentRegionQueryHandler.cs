@@ -7,9 +7,11 @@ namespace Kris.Client.Core.Handlers.Map;
 
 public sealed class GetCurrentRegionQueryHandler : MapHandler, IRequestHandler<GetCurrentRegionQuery, MapSpan>
 {
+    private readonly ILocationStore _locationStore;
+
     public GetCurrentRegionQueryHandler(ILocationStore locationStore)
-        : base(locationStore)
     {
+        _locationStore = locationStore;
     }
 
     public Task<MapSpan> Handle(GetCurrentRegionQuery request, CancellationToken cancellationToken)

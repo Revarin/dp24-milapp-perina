@@ -1,12 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Errors;
-using Kris.Client.Common.Utility;
+using Kris.Client.Common.Events;
 using Kris.Client.Core.Requests;
-using Kris.Client.Events;
 using Kris.Client.Validations;
-using Kris.Client.Views;
-using Kris.Common.Extensions;
 using MediatR;
 using System.ComponentModel.DataAnnotations;
 

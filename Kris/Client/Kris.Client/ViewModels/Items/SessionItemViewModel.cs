@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Enums;
+using Kris.Client.Common.Events;
 using Kris.Client.Core.Models;
-using Kris.Client.Events;
 using Kris.Common.Enums;
 namespace Kris.Client.ViewModels.Items;
 

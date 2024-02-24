@@ -1,6 +1,6 @@
 ﻿using Microsoft.Maui.Maps;
 
-namespace Kris.Client.Events;
+namespace Kris.Client.Common.Events;
 
 public sealed class MoveToRegionEventArgs : EventArgs
 {

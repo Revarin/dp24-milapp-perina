@@ -1,5 +1,5 @@
 using CommunityToolkit.Maui.Views;
-using Kris.Client.Events;
+using Kris.Client.Common.Events;
 using Kris.Client.ViewModels.Popups;
 
 namespace Kris.Client.Components.Popups;
