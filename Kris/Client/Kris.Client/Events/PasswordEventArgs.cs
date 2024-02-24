@@ -2,7 +2,7 @@
 
 public sealed class PasswordEventArgs : EventArgs
 {
-    public string Password { get; private set; }
+    public string Password { get; init; }
 
     public PasswordEventArgs(string password)
     {

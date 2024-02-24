@@ -2,21 +2,40 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
              xmlns:vm="clr-namespace:Kris.Client.ViewModels.Views"
+             xmlns:mb="clr-namespace:Kris.Client.Behaviors.Map"
              x:Class="Kris.Client.Views.MapView"
              x:DataType="vm:MapViewModel"
              Title="MapView">
     <StackLayout Orientation="Vertical"
                  VerticalOptions="FillAndExpand">
-        <Button Text="Logout">
-            <Button.Behaviors>
-                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding LogoutClickedCommand}" />
-            </Button.Behaviors>
-        </Button>
+        <StackLayout Orientation="Horizontal"
+                     VerticalOptions="Start">
+            <Button Text="Logout"
+                    HorizontalOptions="FillAndExpand">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding LogoutClickedCommand}" />
+                </Button.Behaviors>
+            </Button>
+            <Button Text="Current position"
+                    HorizontalOptions="FillAndExpand">
+                
+            </Button>
+        </StackLayout>
+
+        <maps:Map VerticalOptions="FillAndExpand"
+                  MapType="Street" IsZoomEnabled="True">
+            <maps:Map.Behaviors>
+                <mb:CurrentRegionBehavior Value="{Binding CurrentRegion}" />
+                <mb:MoveToRegionBehavior Request="{Binding MoveToRegion}" />
+                <tk:EventToCommandBehavior EventName="Loaded" Command="{Binding MapLoadedCommand}" />
+            </maps:Map.Behaviors>
+        </maps:Map>
         
         <StackLayout Orientation="Horizontal"
                      HorizontalOptions="FillAndExpand"
-                     VerticalOptions="EndAndExpand">
+                     VerticalOptions="End">
             <Button Text="Map"
                     HorizontalOptions="FillAndExpand">
                 <Button.Behaviors>

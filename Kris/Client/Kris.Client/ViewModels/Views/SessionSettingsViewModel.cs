@@ -178,6 +178,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
 
     private async void OnSessionEditing(object sender, EntityIdEventArgs e)
     {
+        // TODO: TEMP DELETE
         var ct = new CancellationToken();
         var command = new EndSessionCommand();
         var result = await _mediator.Send(command, ct);

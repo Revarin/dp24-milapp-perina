@@ -20,6 +20,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="Microsoft.Maui.Controls.Maps" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\..\Common\Kris.Common\Kris.Common.csproj" />
 	  <ProjectReference Include="..\Kris.Client.Common\Kris.Client.Common.csproj" />
 	</ItemGroup>

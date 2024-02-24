@@ -24,6 +24,7 @@ namespace Kris.Client
             var builder = MauiApp.CreateBuilder();
 
             builder.UseMauiApp<App>()
+                .UseMauiMaps()
                 .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
@@ -68,6 +69,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<IAlertService, AlertService>();
 
             builder.Services.AddSingleton<IIdentityStore, IdentityStore>();
+            builder.Services.AddSingleton<ILocationStore, LocationStore>();
 
             builder.Services.AddSingleton<IHttpClientFactory, HttpClientFactory>();
             builder.Services.AddTransient<IUserController, UserClient>();
