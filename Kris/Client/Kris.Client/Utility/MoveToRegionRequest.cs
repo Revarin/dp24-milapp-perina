@@ -1,4 +1,4 @@
-﻿using Kris.Client.Common.Events;
+﻿using Kris.Client.Behaviors.Events;
 using Microsoft.Maui.Maps;
 
 namespace Kris.Client.Utility;

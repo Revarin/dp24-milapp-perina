@@ -1,4 +1,4 @@
-﻿namespace Kris.Client.Common.Events;
+﻿namespace Kris.Client.Components.Events;
 
 public sealed class PasswordEventArgs : EventArgs
 {

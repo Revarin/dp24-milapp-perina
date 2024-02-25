@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 using Kris.Client.Common.Errors;
-using Kris.Client.Common.Events;
+using Kris.Client.Core.Listeners.Events;
 using Kris.Client.Core.Mappers;
 using Kris.Client.Core.Services;
 using Kris.Client.Data.Cache;

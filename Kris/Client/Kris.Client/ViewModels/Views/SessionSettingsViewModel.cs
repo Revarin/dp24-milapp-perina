@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Enums;
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
+using Kris.Client.Components.Events;
 using Kris.Client.Core.Messages;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;

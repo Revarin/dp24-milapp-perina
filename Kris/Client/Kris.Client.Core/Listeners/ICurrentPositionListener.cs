@@ -1,4 +1,4 @@
-﻿using Kris.Client.Common.Events;
+﻿using Kris.Client.Core.Listeners.Events;
 
 namespace Kris.Client.Core.Listeners;
 

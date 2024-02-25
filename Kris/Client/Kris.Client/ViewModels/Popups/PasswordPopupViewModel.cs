@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Kris.Client.Common.Events;
+using Kris.Client.Components.Events;
 using MediatR;
 using System.ComponentModel.DataAnnotations;
 
