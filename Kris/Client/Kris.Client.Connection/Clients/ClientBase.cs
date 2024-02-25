@@ -37,7 +37,7 @@ public abstract class ClientBase
     protected async Task<TResult> PutAsync<TResult>(HttpClient httpClient, string path, CancellationToken ct)
         where TResult : Response, new()
     {
-        var response = await httpClient.PutAsync(path, null);
+        var response = await httpClient.PutAsync(path, null, ct);
 
         return await ParseResponse<TResult>(response, ct);
     }
@@ -55,7 +55,7 @@ public abstract class ClientBase
     protected async Task<TResult> DeleteAsync<TResult>(HttpClient httpClient, string path, CancellationToken ct)
         where TResult : Response, new()
     {
-        var response = await httpClient.DeleteAsync(path);
+        var response = await httpClient.DeleteAsync(path, ct);
 
         return await ParseResponse<TResult>(response, ct);
     }
@@ -63,7 +63,15 @@ public abstract class ClientBase
     protected async Task<TResult> GetAsync<TResult>(HttpClient httpClient, string path, CancellationToken ct)
         where TResult : Response, new()
     {
-        var response = await httpClient.GetAsync(path);
+        var response = await httpClient.GetAsync(path, ct);
+
+        return await ParseResponse<TResult>(response, ct);
+    }
+
+    protected async Task<TResult> GetAsync<TResult>(HttpClient httpClient, string path, string query, CancellationToken ct)
+        where TResult : Response, new()
+    {
+        var response = await httpClient.GetAsync($"{path}?{query}", ct);
 
         return await ParseResponse<TResult>(response, ct);
     }

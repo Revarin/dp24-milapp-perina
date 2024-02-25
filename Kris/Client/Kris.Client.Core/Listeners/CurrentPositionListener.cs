@@ -9,7 +9,7 @@ using Kris.Interface.Requests;
 
 namespace Kris.Client.Core.Listeners;
 
-public sealed class CurrentPositionListener : ICurrentPositionListener
+public sealed class CurrentPositionListener : BackgroundListener, ICurrentPositionListener
 {
     private readonly IPermissionService _permissionService;
     private readonly IGpsService _gpsService;
@@ -18,8 +18,6 @@ public sealed class CurrentPositionListener : ICurrentPositionListener
     private readonly IIdentityStore _identityStore;
 
     public event EventHandler<LocationEventArgs> PositionChanged;
-    public event EventHandler<ResultEventArgs> ErrorOccured;
-    public bool IsListening { get; private set; }
 
     public CurrentPositionListener(IPermissionService permissionService, IGpsService gpsService,
         IPositionController positionClient, IPositionMapper positionMapper, IIdentityStore identityStore)
@@ -31,7 +29,7 @@ public sealed class CurrentPositionListener : ICurrentPositionListener
         _identityStore = identityStore;
     }
 
-    public Task StartListening(CancellationToken ct)
+    public override Task StartListening(CancellationToken ct)
     {
         return Task.Run(async () =>
         {
@@ -39,7 +37,7 @@ public sealed class CurrentPositionListener : ICurrentPositionListener
             {
                 // TODO: Settings
                 var timeout = TimeSpan.FromSeconds(10);
-                var delay = TimeSpan.FromSeconds(5);
+                var delay = TimeSpan.FromSeconds(10);
                 var storage = 3;
                 var identity = _identityStore.GetIdentity();
 
@@ -64,8 +62,6 @@ public sealed class CurrentPositionListener : ICurrentPositionListener
                         else throw;
                     }
 
-                    var delayTask = Task.Delay(delay, ct);
-
                     if (location != null)
                     {
                         OnPositionRead(location, timeout);
@@ -77,7 +73,7 @@ public sealed class CurrentPositionListener : ICurrentPositionListener
                     }
 
                     iter++;
-                    await delayTask;
+                    await Task.Delay(delay, ct);
                 }
             }
             finally
@@ -105,10 +101,5 @@ public sealed class CurrentPositionListener : ICurrentPositionListener
     private void OnPositionRead(Location location, TimeSpan difference)
     {
         Application.Current.Dispatcher.Dispatch(() => PositionChanged?.Invoke(this, new LocationEventArgs(location, difference)));
-    }
-
-    private void OnErrorOccured(Result result)
-    {
-        Application.Current.Dispatcher.Dispatch(() => ErrorOccured?.Invoke(this, new ResultEventArgs(result)));
     }
 }

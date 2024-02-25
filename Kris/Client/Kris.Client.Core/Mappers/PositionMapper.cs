@@ -19,4 +19,15 @@ public sealed class PositionMapper : IPositionMapper
     {
         return new Location(position.Latitude, position.Longitude, position.Altitude);
     }
+
+    public Models.UserPositionModel Map(Interface.Models.UserPositionModel position)
+    {
+        return new Models.UserPositionModel
+        {
+            UserId = position.UserId,
+            UserName = position.UserName,
+            Positions = position.Positions,
+            Updated = position.Updated
+        };
+    }
 }

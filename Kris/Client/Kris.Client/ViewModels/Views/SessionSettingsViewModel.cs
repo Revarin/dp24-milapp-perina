@@ -143,7 +143,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
         else
         {
             await _alertService.ShowToastAsync("Joined session");
-            _messageService.Send(new RestartPositionListenerMessage());
+            _messageService.Send(new RestartPositionListenersMessage());
             await OnAppearing();
         }
     }
@@ -174,7 +174,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
         else
         {
             await _alertService.ShowToastAsync("Left session");
-            _messageService.Send(new RestartPositionListenerMessage());
+            _messageService.Send(new RestartPositionListenersMessage());
             await OnAppearing();
         }
     }
@@ -206,7 +206,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
         else
         {
             await _alertService.ShowToastAsync("Deleted session");
-            _messageService.Send(new RestartPositionListenerMessage());
+            _messageService.Send(new RestartPositionListenersMessage());
             await OnAppearing();
         }
     }
