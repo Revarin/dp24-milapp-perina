@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:vm="clr-namespace:Kris.Client.ViewModels.Views"
+             x:Class="Kris.Client.Views.UserSettingsView"
+             x:DataType="vm:UserSettingsViewModel"
+             Title="UserSettingsView">
+    
+    <StackLayout Orientation="Vertical"
+                 VerticalOptions="FillAndExpand">
+
+        <Label Text="User settings" FontSize="Header"/>
+        <StackLayout Orientation="Vertical">
+
+        </StackLayout>
+
+        <Line HorizontalOptions="FillAndExpand"/>
+
+        <Label Text="Connection settings" FontSize="Header"/>
+        <StackLayout Orientation="Vertical">
+            <Label Text="GPS request interval" />
+            <Picker Title="GPS interval">
+                
+            </Picker>
+        </StackLayout>
+        <StackLayout Orientation="Vertical">
+            <Label Text="Position upload frequency"/>
+            <Picker Title="Position upload">
+                
+            </Picker>
+        </StackLayout>
+        <StackLayout Orientation="Vertical">
+            <Label Text="Position download frequency" />
+            <Picker Title="Position download">
+                
+            </Picker>
+        </StackLayout>
+
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand"
+                     VerticalOptions="EndAndExpand">
+            <Button Text="Map"
+                    HorizontalOptions="FillAndExpand">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding GoToMapCommand}" />
+                </Button.Behaviors>
+            </Button>
+            <Button Text="Menu"
+                    HorizontalOptions="FillAndExpand">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding GoToMenuCommand}" />
+                </Button.Behaviors>
+            </Button>
+        </StackLayout>
+    </StackLayout>
+</ContentPage>

@@ -69,6 +69,8 @@ namespace Kris.Client
             builder.Services.AddSingleton<MenuViewModel>();
             builder.Services.AddTransient<SessionSettingsView>();
             builder.Services.AddTransient<SessionSettingsViewModel>();
+            builder.Services.AddTransient<UserSettingsView>();
+            builder.Services.AddTransient<UserSettingsViewModel>();
 
             builder.Services.AddTransientPopup<PasswordPopup, PasswordPopupViewModel>();
             builder.Services.AddTransientPopup<EditSessionPopup, EditSessionPopupViewModel>();
@@ -88,6 +90,7 @@ namespace Kris.Client
 
             builder.Services.AddSingleton<IIdentityStore, IdentityStore>();
             builder.Services.AddSingleton<ILocationStore, LocationStore>();
+            builder.Services.AddSingleton<ISettingsStore, SettingsStore>();
 
             builder.Services.AddSingleton<IHttpClientFactory, HttpClientFactory>();
             builder.Services.AddTransient<IUserController, UserClient>();
