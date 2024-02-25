@@ -32,7 +32,7 @@ public sealed class UserPositionsListener : BackgroundListener, IUserPositionsLi
             try
             {
                 // TODO: Settings
-                var delay = TimeSpan.FromSeconds(20);
+                var delay = TimeSpan.FromSeconds(30);
                 var identity = _identityStore.GetIdentity();
 
                 IsListening = true;

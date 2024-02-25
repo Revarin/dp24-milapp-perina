@@ -2,12 +2,7 @@
 
 public sealed class LocationEventArgs : EventArgs
 {
+    public Guid UserId { get; init; }
+    public string UserName { get; init; }
     public Location Location { get; init; }
-    public TimeSpan Difference { get; init; }
-
-    public LocationEventArgs(Location location, TimeSpan difference)
-    {
-        Location = location;
-        Difference = difference;
-    }
 }

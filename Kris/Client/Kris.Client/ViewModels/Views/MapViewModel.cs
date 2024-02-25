@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Kris.Client.Common.Enums;
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
+using Kris.Client.Components.Map;
 using Kris.Client.Core.Listeners;
 using Kris.Client.Core.Listeners.Events;
 using Kris.Client.Core.Messages;
@@ -26,6 +28,9 @@ public sealed partial class MapViewModel : PageViewModelBase
     private MapSpan _currentRegion;
     [ObservableProperty]
     private MoveToRegionRequest _moveToRegion = new MoveToRegionRequest();
+    [ObservableProperty]
+    private ObservableCollection<MapPin> _allMapPins = new ObservableCollection<MapPin>();
+
     [ObservableProperty]
     private ObservableCollection<UserPositionModel> _userPositions = new ObservableCollection<UserPositionModel>();
 
@@ -99,10 +104,22 @@ public sealed partial class MapViewModel : PageViewModelBase
         await LogoutUser();
     }
 
-    private async void OnSelfPositionPositionChanged(object sender, LocationEventArgs e)
+    private void OnSelfPositionPositionChanged(object sender, LocationEventArgs e)
     {
-        // TODO: Update user point (GUI only)
-        await _alertService.ShowToastAsync(e.Location.ToString());
+        var userPin = new MapPin
+        {
+            Id = e.UserId,
+            Name = e.UserName,
+            Updated = DateTime.Now,
+            Location = e.Location,
+            PinType = KrisPinType.Self,
+            ImageSource = ImageSource.FromFile("point_green.png")
+        };
+
+        var oldUserPin = AllMapPins.FirstOrDefault(p => p.Id == e.UserId);
+        if (oldUserPin != null) AllMapPins.Remove(oldUserPin);
+        AllMapPins.Add(userPin);
+        OnPropertyChanged(nameof(AllMapPins));
     }
 
     private async void OnSelfPositionErrorOccured(object sender, ResultEventArgs e)
@@ -127,11 +144,11 @@ public sealed partial class MapViewModel : PageViewModelBase
         }
     }
 
-    private async void OnOthersPositionPositionChanged(object sender, UserPositionsEventArgs e)
+    private void OnOthersPositionPositionChanged(object sender, UserPositionsEventArgs e)
     {
-        // TODO: Update user point (GUI only)
-        await _alertService.ShowToastAsync("XXX");
         UserPositions = e.Positions.UnionBy(UserPositions, position => position.UserId).ToObservableCollection();
+        var userPins = UserPositions.Select(position => new MapPin(position));
+        AllMapPins = userPins.UnionBy(AllMapPins, pin => pin.Id).ToObservableCollection();
     }
 
     private async void OnOthersPositionErrorOccured(object sender, ResultEventArgs e)

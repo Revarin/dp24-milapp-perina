@@ -1,6 +1,6 @@
 ﻿namespace Kris.Common.Models;
 
-public struct GeoSpatialPosition
+public class GeoSpatialPosition
 {
     public DateTime Timestamp { get; set; }
     public double Latitude { get; set; }

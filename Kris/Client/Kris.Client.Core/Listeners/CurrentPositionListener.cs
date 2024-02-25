@@ -64,7 +64,12 @@ public sealed class CurrentPositionListener : BackgroundListener, ICurrentPositi
 
                     if (location != null)
                     {
-                        OnPositionRead(location, timeout);
+                        OnPositionRead(new LocationEventArgs
+                        {
+                            UserId = identity.UserId,
+                            UserName = identity.Login,
+                            Location = location
+                        });
 
                         if (identity.SessionId.HasValue && iter % storage == 0)
                         {
@@ -98,8 +103,8 @@ public sealed class CurrentPositionListener : BackgroundListener, ICurrentPositi
         }
     }
 
-    private void OnPositionRead(Location location, TimeSpan difference)
+    private void OnPositionRead(LocationEventArgs e)
     {
-        Application.Current.Dispatcher.Dispatch(() => PositionChanged?.Invoke(this, new LocationEventArgs(location, difference)));
+        Application.Current.Dispatcher.Dispatch(() => PositionChanged?.Invoke(this, e));
     }
 }

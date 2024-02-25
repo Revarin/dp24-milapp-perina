@@ -5,6 +5,7 @@
              xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
              xmlns:vm="clr-namespace:Kris.Client.ViewModels.Views"
              xmlns:mb="clr-namespace:Kris.Client.Behaviors.Map"
+             xmlns:kmap="clr-namespace:Kris.Client.Components.Map"
              x:Class="Kris.Client.Views.MapView"
              x:DataType="vm:MapViewModel"
              Title="MapView">
@@ -31,12 +32,22 @@
         </StackLayout>
 
         <maps:Map VerticalOptions="FillAndExpand"
-                  MapType="Street" IsZoomEnabled="True">
+                  MapType="Street" IsZoomEnabled="True"
+                  ItemsSource="{Binding AllMapPins}">
             <maps:Map.Behaviors>
                 <mb:CurrentRegionBehavior Value="{Binding CurrentRegion}" />
                 <mb:MoveToRegionBehavior Request="{Binding MoveToRegion}" />
                 <tk:EventToCommandBehavior EventName="Loaded" Command="{Binding MapLoadedCommand}" />
             </maps:Map.Behaviors>
+            <maps:Map.ItemTemplate>
+                <DataTemplate x:DataType="{x:Type kmap:MapPin}">
+                    <mb:KrisPinBehavior Location="{Binding Location}"
+                                        Address="{Binding Address}"
+                                        Label="{Binding Name}"
+                                        ImageSource="{Binding ImageSource}"
+                                        Type="Generic" />
+                </DataTemplate>
+            </maps:Map.ItemTemplate>
         </maps:Map>
         
         <StackLayout Orientation="Horizontal"

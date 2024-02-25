@@ -15,6 +15,9 @@ using Kris.Interface.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
+using Kris.Client.Platforms.Map;
+
+using MauiMap = Microsoft.Maui.Controls.Maps.Map;
 
 namespace Kris.Client
 {
@@ -32,6 +35,13 @@ namespace Kris.Client
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+
+            builder.ConfigureMauiHandlers(options =>
+            {
+#if ANDROID || IOS
+                options.AddHandler<MauiMap, CustomMapHandler>();
+#endif
+            });
 
             var assembly = Assembly.GetExecutingAssembly();
             using var stream = assembly.GetManifestResourceStream("Kris.Client.appsettings.json");
