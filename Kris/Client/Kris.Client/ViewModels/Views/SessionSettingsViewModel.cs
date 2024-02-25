@@ -5,12 +5,11 @@ using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Enums;
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
-using Kris.Client.Common.Utility;
+using Kris.Client.Core.Messages;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.ViewModels.Items;
 using Kris.Client.ViewModels.Popups;
-using Kris.Client.Views;
 using Kris.Common.Extensions;
 using MediatR;
 using System.Collections.ObjectModel;
@@ -29,8 +28,8 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
     private ObservableCollection<SessionItemViewModel> _otherSessions;
 
     public SessionSettingsViewModel(IPopupService popupService,
-        IMediator mediator, IRouterService navigationService, IAlertService alertService)
-        : base(mediator, navigationService, alertService)
+        IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
+        : base(mediator, navigationService, messageService, alertService)
     {
         _popupService = popupService;
     }
@@ -47,8 +46,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
             if (result.HasError<UnauthorizedError>())
             {
                 await _alertService.ShowToastAsync("Login expired");
-                await _mediator.Send(new LogoutUserCommand(), ct);
-                await _navigationService.GoToAsync(nameof(LoginView), RouterNavigationType.ReplaceUpward);
+                await LogoutUser();
             }
             else
             {
@@ -97,7 +95,8 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
         {
             if (result.HasError<UnauthorizedError>())
             {
-                await LoginExpired();
+                await _alertService.ShowToastAsync("Login expired");
+                await LogoutUser();
             }
             else
             {
@@ -128,7 +127,8 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
             }
             else if (result.HasError<UnauthorizedError>())
             {
-                await LoginExpired();
+                await _alertService.ShowToastAsync("Login expired");
+                await LogoutUser();
             }
             else if (result.HasError<EntityNotFoundError>())
             {
@@ -143,6 +143,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
         else
         {
             await _alertService.ShowToastAsync("Joined session");
+            _messageService.Send(new RestartPositionListenerMessage());
             await OnAppearing();
         }
     }
@@ -157,7 +158,8 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
         {
             if (result.HasError<UnauthorizedError>())
             {
-                await LoginExpired();
+                await _alertService.ShowToastAsync("Login expired");
+                await LogoutUser();
             }
             else if (result.HasError<BadOperationError>())
             {
@@ -172,6 +174,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
         else
         {
             await _alertService.ShowToastAsync("Left session");
+            _messageService.Send(new RestartPositionListenerMessage());
             await OnAppearing();
         }
     }
@@ -187,7 +190,8 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
         {
             if (result.HasError<UnauthorizedError>() || result.HasError<ForbiddenError>())
             {
-                await LoginExpired();
+                await _alertService.ShowToastAsync("Login expired");
+                await LogoutUser();
             }
             else if (result.HasError<EntityNotFoundError>())
             {
@@ -202,6 +206,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
         else
         {
             await _alertService.ShowToastAsync("Deleted session");
+            _messageService.Send(new RestartPositionListenerMessage());
             await OnAppearing();
         }
     }

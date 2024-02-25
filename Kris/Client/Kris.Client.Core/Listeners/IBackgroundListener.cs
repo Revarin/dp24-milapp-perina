@@ -6,5 +6,5 @@ public interface IBackgroundListener
 {
     event EventHandler<ResultEventArgs> ErrorOccured;
     bool IsListening { get; }
-    void StartListening(CancellationToken ct);
+    Task StartListening(CancellationToken ct);
 }

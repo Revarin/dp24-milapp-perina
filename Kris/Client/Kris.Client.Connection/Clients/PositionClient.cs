@@ -21,6 +21,9 @@ public sealed class PositionClient : ClientBase, IPositionController
     {
         var jwt = _identityStore.GetJwtToken();
         var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
-        return await PostAsync<SavePositionRequest, Response>(httpClient, "", request, ct);
+        var result = await PostAsync<SavePositionRequest, Response>(httpClient, "", request, ct);
+
+        if (ct.IsCancellationRequested) ct.ThrowIfCancellationRequested();
+        return result;
     }
 }

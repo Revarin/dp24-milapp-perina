@@ -9,7 +9,6 @@ namespace Kris.Client
         {
             BindingContext = vm;
             InitializeComponent();
-            (BindingContext as AppShellViewModel).Init();
         }
     }
 }

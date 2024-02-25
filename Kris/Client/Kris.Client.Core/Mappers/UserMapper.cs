@@ -13,7 +13,7 @@ public sealed class UserMapper : IUserMapper
             Login = response.Login,
             Token = response.Token,
             SessionId = response.CurrentSession?.Id,
-            SessioName = response.CurrentSession?.Name,
+            SessionName = response.CurrentSession?.Name,
             UserType = response.CurrentSession?.UserType,
             JoinedSessions = response.JoinedSessions
         };

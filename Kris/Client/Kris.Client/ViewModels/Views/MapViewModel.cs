@@ -2,12 +2,11 @@
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
-using Kris.Client.Common.Utility;
 using Kris.Client.Core.Listeners;
+using Kris.Client.Core.Messages;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.Utility;
-using Kris.Client.Views;
 using Kris.Common.Extensions;
 using MediatR;
 using Microsoft.Maui.Maps;
@@ -24,12 +23,16 @@ public sealed partial class MapViewModel : PageViewModelBase
     private MoveToRegionRequest _moveToRegion = new MoveToRegionRequest();
 
     private CancellationTokenSource _currentPositionCTS;
+    private Task _currentPositionListenerTask;
 
     public MapViewModel(ICurrentPositionListener currentPositionListener,
-        IMediator mediator, IRouterService navigationService, IAlertService alertService)
-        : base(mediator, navigationService, alertService)
+        IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
+        : base(mediator, navigationService, messageService, alertService)
     {
         _currentPositionListener = currentPositionListener;
+
+        _messageService.Register<LogoutMessage>(this, OnLogout);
+        _messageService.Register<RestartPositionListenerMessage>(this, OnRestartPositionListener);
     }
 
     [RelayCommand]
@@ -40,7 +43,7 @@ public sealed partial class MapViewModel : PageViewModelBase
             _currentPositionCTS = new CancellationTokenSource();
             _currentPositionListener.PositionChanged += OnPositionListenerPositionChanged;
             _currentPositionListener.ErrorOccured += OnPositionListenerErrorOccured;
-            _currentPositionListener.StartListening(_currentPositionCTS.Token);
+            _currentPositionListenerTask = _currentPositionListener.StartListening(_currentPositionCTS.Token);
         }
     }
 
@@ -76,10 +79,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     [RelayCommand]
     private async Task OnLogoutClicked()
     {
-        var ct = new CancellationToken();
-        var command = new LogoutUserCommand();
-        await _mediator.Send(command, ct);
-        await _navigationService.GoToAsync(nameof(LoginView), RouterNavigationType.ReplaceUpward);
+        await LogoutUser();
     }
 
     private async void OnPositionListenerPositionChanged(object sender, LocationEventArgs e)
@@ -100,19 +100,67 @@ public sealed partial class MapViewModel : PageViewModelBase
         }
         else if (e.Result.HasError<UnauthorizedError>())
         {
-            _currentPositionCTS.Cancel();
-            _currentPositionListener.PositionChanged -= OnPositionListenerPositionChanged;
-            _currentPositionListener.ErrorOccured -= OnPositionListenerErrorOccured;
-
-            await LoginExpired();
+            await _alertService.ShowToastAsync("Login expired");
+            await LogoutUser();
         }
         else
         {
-            _currentPositionCTS.Cancel();
-            _currentPositionListener.PositionChanged -= OnPositionListenerPositionChanged;
-            _currentPositionListener.ErrorOccured -= OnPositionListenerErrorOccured;
-
             await _alertService.ShowToastAsync(e.Result.Errors.FirstMessage());
+
+            _currentPositionCTS.Cancel(true);
+
+            try
+            {
+                await _currentPositionListenerTask;
+                _currentPositionListener.PositionChanged -= OnPositionListenerPositionChanged;
+                _currentPositionListener.ErrorOccured -= OnPositionListenerErrorOccured;
+            }
+            catch (TaskCanceledException) { }
+            finally
+            {
+                _currentPositionCTS.Dispose();
+            }
         }
+    }
+
+    private async void OnLogout(object sender, LogoutMessage message)
+    {
+        if (_currentPositionListener.IsListening)
+        {
+            _currentPositionCTS.Cancel(true);
+
+            try
+            {
+                await _currentPositionListenerTask;
+                _currentPositionListener.PositionChanged -= OnPositionListenerPositionChanged;
+                _currentPositionListener.ErrorOccured -= OnPositionListenerErrorOccured;
+            }
+            catch (TaskCanceledException) { }
+            finally
+            {
+                _currentPositionCTS.Dispose();
+            }
+        }
+    }
+
+    private async void OnRestartPositionListener(object sender, RestartPositionListenerMessage message)
+    {
+        if (_currentPositionListener.IsListening)
+        {
+            _currentPositionCTS.Cancel();
+
+            try
+            {
+                await _currentPositionListenerTask;
+            }
+            catch (TaskCanceledException) { }
+            finally
+            {
+                _currentPositionCTS.Dispose();
+            }
+        }
+
+        _currentPositionCTS = new CancellationTokenSource();
+        _currentPositionListenerTask = _currentPositionListener.StartListening(_currentPositionCTS.Token);
     }
 }

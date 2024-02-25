@@ -19,8 +19,8 @@ public sealed partial class LoginViewModel : PageViewModelBase
     [ObservableProperty]
     private string _password;
 
-    public LoginViewModel(IMediator mediator, IRouterService navigationService, IAlertService alertService)
-        : base(mediator, navigationService, alertService)
+    public LoginViewModel(IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
+        : base(mediator, navigationService, messageService, alertService)
     {
     }
 

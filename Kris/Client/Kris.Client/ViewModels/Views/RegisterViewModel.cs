@@ -23,8 +23,8 @@ public sealed partial class RegisterViewModel : PageViewModelBase
     [ObservableProperty]
     private string _passwordVerification;
 
-    public RegisterViewModel(IMediator mediator, IRouterService navigationService, IAlertService alertService)
-        : base(mediator, navigationService, alertService)
+    public RegisterViewModel(IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
+        : base(mediator, navigationService, messageService, alertService)
     {
     }
 

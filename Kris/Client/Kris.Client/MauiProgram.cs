@@ -73,6 +73,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<IAlertService, AlertService>();
             builder.Services.AddSingleton<IGpsService, GpsService>();
             builder.Services.AddSingleton<IPermissionService, PermissionService>();
+            builder.Services.AddSingleton<IMessageService, MessageService>();
 
             builder.Services.AddSingleton<IIdentityStore, IdentityStore>();
             builder.Services.AddSingleton<ILocationStore, LocationStore>();

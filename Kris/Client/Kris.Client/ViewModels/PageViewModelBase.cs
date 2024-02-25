@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Utility;
+using Kris.Client.Core.Messages;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.Views;
@@ -12,6 +13,7 @@ public abstract partial class PageViewModelBase : ObservableValidator
 {
     protected readonly IMediator _mediator;
     protected readonly IRouterService _navigationService;
+    protected readonly IMessageService _messageService;
     protected readonly IAlertService _alertService;
 
     public Task InitializationWork { get; private set; }
@@ -21,10 +23,11 @@ public abstract partial class PageViewModelBase : ObservableValidator
     [ObservableProperty]
     protected Dictionary<string, string> errorMessages = new Dictionary<string, string>();
 
-    public PageViewModelBase(IMediator mediator, IRouterService navigationService, IAlertService alertService)
+    public PageViewModelBase(IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
     {
         _mediator = mediator;
         _navigationService = navigationService;
+        _messageService = messageService;
         _alertService = alertService;
     }
 
@@ -58,9 +61,9 @@ public abstract partial class PageViewModelBase : ObservableValidator
     [RelayCommand]
     protected async Task GoToMenu() => await _navigationService.GoToAsync(nameof(MenuView), RouterNavigationType.ReplaceUpward);
 
-    protected async Task LoginExpired()
+    protected async Task LogoutUser()
     {
-        await _alertService.ShowToastAsync("Login expired");
+        _messageService.Send(new LogoutMessage());
         await _mediator.Send(new LogoutUserCommand(), CancellationToken.None);
         await _navigationService.GoToAsync(nameof(LoginView), RouterNavigationType.ReplaceUpward);
     }

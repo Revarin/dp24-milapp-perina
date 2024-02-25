@@ -63,7 +63,7 @@ public sealed class IdentityStore : StoreBase, IIdentityStore
 
         joinedSession.Remove(user.SessionId.Value);
         user.SessionId = null;
-        user.SessioName = null;
+        user.SessionName = null;
         user.UserType = null;
 
         Set(IdentityKey, user);
