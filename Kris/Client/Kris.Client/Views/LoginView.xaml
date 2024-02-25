@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:vm="clr-namespace:Kris.Client.ViewModels.Views"
+             x:Class="Kris.Client.Views.LoginView"
+             x:DataType="vm:LoginViewModel"
+             Title="LoginView">
+    <StackLayout Orientation="Vertical">
+        <StackLayout Orientation="Vertical">
+            <Label Text="Login" />
+            <Entry Placeholder="Login"
+                   Text="{Binding Login}">
+            </Entry>
+            <Label Text="{Binding ErrorMessages[Login]}"
+                   IsVisible="{Binding ErrorMessages[Login]}"
+                   Style="{StaticResource errorMessageStyle}" />
+        </StackLayout>
+        
+        <StackLayout Orientation="Vertical">
+            <Label Text="Password" />
+            <Entry IsPassword="True"
+                   Placeholder="Password"
+                   Text="{Binding Password}">
+            </Entry>
+            <Label Text="{Binding ErrorMessages[Password]}"
+                   IsVisible="{Binding ErrorMessages[Password]}"
+                   Style="{StaticResource errorMessageStyle}" />
+        </StackLayout>
+        
+        <Button Text="Login">
+            <Button.Behaviors>
+                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding LoginClickedCommand}" />
+            </Button.Behaviors>
+        </Button>
+        <Button Text="Register">
+            <Button.Behaviors>
+                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding RegisterClickedCommand}" />
+            </Button.Behaviors>
+        </Button>
+    </StackLayout>
+</ContentPage>

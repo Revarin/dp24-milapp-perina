@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:vm="clr-namespace:Kris.Client.ViewModels.Items"
+             xmlns:enum="clr-namespace:Kris.Client.Common.Enums;assembly=Kris.Client.Common"
+             x:Class="Kris.Client.Components.Items.SessionItem"
+             x:DataType="vm:SessionItemViewModel"
+             BackgroundColor="DimGrey">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <tk:EnumToBoolConverter x:Key="JoinableSessionConverter">
+                <tk:EnumToBoolConverter.TrueValues>
+                    <enum:SessionItemType>Joined</enum:SessionItemType>
+                    <enum:SessionItemType>Other</enum:SessionItemType>
+                </tk:EnumToBoolConverter.TrueValues>
+            </tk:EnumToBoolConverter>
+            <tk:EnumToBoolConverter x:Key="LeavableSessionConverter">
+                <tk:EnumToBoolConverter.TrueValues>
+                    <enum:SessionItemType>Current</enum:SessionItemType>
+                    <enum:SessionItemType>Joined</enum:SessionItemType>
+                </tk:EnumToBoolConverter.TrueValues>
+            </tk:EnumToBoolConverter>
+        </ResourceDictionary>
+    </ContentView.Resources>
+    
+    <StackLayout Orientation="Horizontal"
+                 HorizontalOptions="FillAndExpand">
+        <StackLayout Orientation="Vertical"
+                     HorizontalOptions="StartAndExpand">
+            <Label Text="{Binding Name}"
+                   HorizontalOptions="StartAndExpand"/>
+            <Label Text="{Binding Created}"
+                   HorizontalOptions="StartAndExpand" />
+        </StackLayout>
+        <Label Text="{Binding UserCount}" />
+
+        <Button Text="Edit (DEL)"
+                IsVisible="{Binding CanEdit}">
+            <Button.Behaviors>
+                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding EditClickedCommand}" />
+            </Button.Behaviors>
+        </Button>
+        <Button Text="Join"
+                IsVisible="{Binding ItemType, Converter={StaticResource JoinableSessionConverter}}">
+            <Button.Behaviors>
+                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding JoinClickedCommand}" />
+            </Button.Behaviors>
+        </Button>
+        <Button Text="Leave"
+                IsVisible="{Binding ItemType, Converter={StaticResource LeavableSessionConverter}}">
+            <Button.Behaviors>
+                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding LeaveClickedCommand}" />
+            </Button.Behaviors>
+        </Button>
+    </StackLayout>
+</ContentView>

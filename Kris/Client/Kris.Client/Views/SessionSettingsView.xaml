@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:vm="clr-namespace:Kris.Client.ViewModels.Views"
+             xmlns:item="clr-namespace:Kris.Client.Components.Items"
+             x:Class="Kris.Client.Views.SessionSettingsView"
+             x:DataType="vm:SessionSettingsViewModel"
+             Title="SessionSettingsView">
+
+    <ContentPage.Behaviors>
+        <tk:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}" />
+    </ContentPage.Behaviors>
+    
+    <StackLayout Orientation="Vertical"
+                 VerticalOptions="FillAndExpand">
+
+        <StackLayout Orientation="Vertical"
+                     IsVisible="{Binding CurrentSession, Converter={tk:IsNotNullConverter}}">
+            <Label Text="Current session" />
+            <item:SessionItem BindingContext="{Binding CurrentSession}" />
+        </StackLayout>
+
+        <StackLayout Orientation="Vertical"
+                     IsVisible="{Binding JoinedSessions.Count}">
+            <Label Text="Joined sessions" />
+            <CollectionView ItemsSource="{Binding JoinedSessions}"
+                            SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <item:SessionItem BindingContext="{Binding .}" />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+
+        <StackLayout Orientation="Vertical"
+                     IsVisible="{Binding OtherSessions.Count}">
+            <Label Text="Other sessions" />
+            <CollectionView ItemsSource="{Binding OtherSessions}"
+                            SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <item:SessionItem BindingContext="{Binding .}" />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+
+        <Button Text="Create session">
+            <Button.Behaviors>
+                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CreateSessionClickedCommand}" />
+            </Button.Behaviors>
+        </Button>
+        
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand"
+                     VerticalOptions="EndAndExpand">
+            <Button Text="Map"
+                    HorizontalOptions="FillAndExpand">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding GoToMapCommand}" />
+                </Button.Behaviors>
+            </Button>
+            <Button Text="Menu"
+                    HorizontalOptions="FillAndExpand">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding GoToMenuCommand}" />
+                </Button.Behaviors>
+            </Button>
+        </StackLayout>
+    </StackLayout>
+</ContentPage>
