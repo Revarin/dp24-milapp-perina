@@ -18,6 +18,10 @@ using System.Reflection;
 using Kris.Client.Platforms.Map;
 
 using MauiMap = Microsoft.Maui.Controls.Maps.Map;
+using Kris.Client.Data.Static;
+using Kris.Client.Data.Models.Picker;
+using Kris.Client.Data.Static.Picker;
+using Kris.Client.Data.Providers;
 
 namespace Kris.Client
 {
@@ -51,6 +55,7 @@ namespace Kris.Client
             builder.Services.AddOptions();
             builder.Services.Configure<ConnectionOptions>(builder.Configuration.GetRequiredSection(ConnectionOptions.Section));
             builder.Services.Configure<SettingsOptions>(builder.Configuration.GetRequiredSection(SettingsOptions.Section));
+            builder.Services.Configure<DefaultPreferencesOptions>(builder.Configuration.GetRequiredSection(DefaultPreferencesOptions.Section));
 
             builder.Services.AddMediatR(options =>
             {
@@ -91,6 +96,12 @@ namespace Kris.Client
             builder.Services.AddSingleton<IIdentityStore, IdentityStore>();
             builder.Services.AddSingleton<ILocationStore, LocationStore>();
             builder.Services.AddSingleton<ISettingsStore, SettingsStore>();
+
+            builder.Services.AddTransient<IUserSettingsDataProvider, UserSettingsDataProvider>();
+
+            builder.Services.AddTransient<IStaticDataSource<GpsIntervalSettingsItem>, GpsIntervalSettingsDataSource>();
+            builder.Services.AddTransient<IStaticDataSource<PositionDownloadSettingsItem>, PositionDownloadSettingsDataSource>();
+            builder.Services.AddTransient<IStaticDataSource<PositionUploadSettingsItem>, PositionUploadSettingsDataSource>();
 
             builder.Services.AddSingleton<IHttpClientFactory, HttpClientFactory>();
             builder.Services.AddTransient<IUserController, UserClient>();

@@ -10,14 +10,14 @@
     <StackLayout Orientation="Vertical"
                  VerticalOptions="FillAndExpand">
 
-        <Label Text="User settings" FontSize="Header"/>
+        <Label Text="User settings" FontSize="Large"/>
         <StackLayout Orientation="Vertical">
 
         </StackLayout>
 
         <Line HorizontalOptions="FillAndExpand"/>
 
-        <Label Text="Connection settings" FontSize="Header"/>
+        <Label Text="Connection settings" FontSize="Large"/>
         <StackLayout Orientation="Vertical">
             <Label Text="GPS request interval" />
             <Picker Title="GPS interval">
