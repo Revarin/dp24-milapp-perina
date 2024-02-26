@@ -1,6 +1,7 @@
 ﻿using Kris.Client.Common.Options;
 using Kris.Client.Data.Models.Picker;
 using Kris.Client.Data.Static;
+using Kris.Client.Data.Static.Picker;
 using Microsoft.Extensions.Options;
 
 namespace Kris.Client.Data.Providers;
@@ -12,15 +13,12 @@ public sealed class UserSettingsDataProvider : IUserSettingsDataProvider
     private readonly IStaticDataSource<PositionDownloadSettingsItem> _positionDownloadSettingsItems;
     private readonly IStaticDataSource<PositionUploadSettingsItem> _positionUploadSettingsItems;
 
-    public UserSettingsDataProvider(IOptions<DefaultPreferencesOptions> options,
-        IStaticDataSource<GpsIntervalSettingsItem> gpsIntervalSettingsItems,
-        IStaticDataSource<PositionDownloadSettingsItem> positionDownloadSettingsItems,
-        IStaticDataSource<PositionUploadSettingsItem> positionUploadSettingsItems)
+    public UserSettingsDataProvider(IOptions<DefaultPreferencesOptions> options)
     {
         _defaultOptions = options.Value;
-        _gpsIntervalSettingsItems = gpsIntervalSettingsItems;
-        _positionDownloadSettingsItems = positionDownloadSettingsItems;
-        _positionUploadSettingsItems = positionUploadSettingsItems;
+        _gpsIntervalSettingsItems = new GpsIntervalSettingsDataSource();
+        _positionDownloadSettingsItems = new PositionDownloadSettingsDataSource();
+        _positionUploadSettingsItems = new PositionUploadSettingsDataSource();
     }
 
     public GpsIntervalSettingsItem GetDefaultGpsIntervalSettings()

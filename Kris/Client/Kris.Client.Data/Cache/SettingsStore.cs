@@ -6,12 +6,12 @@ public sealed class SettingsStore : StoreBase, ISettingsStore
 {
     private const string ConnectionSettingsKey = "kris-settings-connection";
 
-    public UserConnectionSettingsEntity GetConnectionSettings()
+    public ConnectionSettingsEntity GetConnectionSettings()
     {
-        return Get<UserConnectionSettingsEntity>(ConnectionSettingsKey);
+        return Get<ConnectionSettingsEntity>(ConnectionSettingsKey);
     }
 
-    public void StoreConnectionSettings(UserConnectionSettingsEntity settings)
+    public void StoreConnectionSettings(ConnectionSettingsEntity settings)
     {
         Set(ConnectionSettingsKey, settings);
     }

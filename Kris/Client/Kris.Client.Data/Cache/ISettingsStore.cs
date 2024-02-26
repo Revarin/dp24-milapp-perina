@@ -4,6 +4,6 @@ namespace Kris.Client.Data.Cache;
 
 public interface ISettingsStore
 {
-    void StoreConnectionSettings(UserConnectionSettingsEntity settings);
-    UserConnectionSettingsEntity GetConnectionSettings();
+    void StoreConnectionSettings(ConnectionSettingsEntity settings);
+    ConnectionSettingsEntity GetConnectionSettings();
 }
