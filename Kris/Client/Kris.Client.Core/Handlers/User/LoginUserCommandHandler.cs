@@ -35,6 +35,7 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
             else return Result.Fail(new ServerError(response.Message));
         }
 
+        // TODO: Use settings
         _identityStore.StoreIdentity(_userMapper.Map(response));
 
         return Result.Ok();

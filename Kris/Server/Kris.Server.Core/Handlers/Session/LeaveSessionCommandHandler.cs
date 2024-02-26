@@ -12,7 +12,7 @@ using MediatR;
 
 namespace Kris.Server.Core.Handlers.Session;
 
-public sealed class LeaveSessionCommandHandler : SessionHandler, IRequestHandler<LeaveSessionCommand, Result<LoginResponse>>
+public sealed class LeaveSessionCommandHandler : SessionHandler, IRequestHandler<LeaveSessionCommand, Result<IdentityResponse>>
 {
     private readonly IUserRepository _userRepository;
     private readonly IUserMapper _userMapper;
@@ -27,7 +27,7 @@ public sealed class LeaveSessionCommandHandler : SessionHandler, IRequestHandler
         _jwtService = jwtService;
     }
 
-    public async Task<Result<LoginResponse>> Handle(LeaveSessionCommand request, CancellationToken cancellationToken)
+    public async Task<Result<IdentityResponse>> Handle(LeaveSessionCommand request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetWithSessionsAsync(request.User.UserId, cancellationToken);
         if (user == null) throw new NullableException();

@@ -13,11 +13,11 @@ public sealed class SessionClient : ClientBase, ISessionController
     {
     }
 
-    public async Task<LoginResponse> CreateSession(CreateSessionRequest request, CancellationToken ct)
+    public async Task<IdentityResponse> CreateSession(CreateSessionRequest request, CancellationToken ct)
     {
         var jwt = _identityStore.GetJwtToken();
         using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
-        return await PostAsync<CreateSessionRequest, LoginResponse>(httpClient, "", request, ct);
+        return await PostAsync<CreateSessionRequest, IdentityResponse>(httpClient, "", request, ct);
     }
 
     public Task<Response> EditSession(EditSessionRequest request, CancellationToken ct)
@@ -44,11 +44,11 @@ public sealed class SessionClient : ClientBase, ISessionController
         return await GetAsync<GetManyResponse<SessionModel>>(client, "", ct);
     }
 
-    public async Task<LoginResponse> JoinSession(JoinSessionRequest request, CancellationToken ct)
+    public async Task<IdentityResponse> JoinSession(JoinSessionRequest request, CancellationToken ct)
     {
         var jwt = _identityStore.GetJwtToken();
         using var client = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
-        return await PutAsync<JoinSessionRequest, LoginResponse>(client, "Join", request, ct);
+        return await PutAsync<JoinSessionRequest, IdentityResponse>(client, "Join", request, ct);
     }
 
     public Task<Response> KickFromSession(Guid userId, CancellationToken ct)
@@ -56,10 +56,10 @@ public sealed class SessionClient : ClientBase, ISessionController
         throw new NotImplementedException();
     }
 
-    public async Task<LoginResponse> LeaveSession(Guid sessionId, CancellationToken ct)
+    public async Task<IdentityResponse> LeaveSession(Guid sessionId, CancellationToken ct)
     {
         var jwt = _identityStore.GetJwtToken();
         using var client = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
-        return await PutAsync<LoginResponse>(client, $"Leave/{sessionId}", ct);
+        return await PutAsync<IdentityResponse>(client, $"Leave/{sessionId}", ct);
     }
 }

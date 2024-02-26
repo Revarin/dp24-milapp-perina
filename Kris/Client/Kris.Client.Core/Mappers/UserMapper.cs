@@ -5,7 +5,7 @@ namespace Kris.Client.Core.Mappers;
 
 public sealed class UserMapper : IUserMapper
 {
-    public UserIdentityTokenEntity Map(LoginResponse response)
+    public UserIdentityTokenEntity Map(IdentityResponse response)
     {
         return new UserIdentityTokenEntity
         {

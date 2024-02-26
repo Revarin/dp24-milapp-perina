@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Kris.Server.Core.Requests;
 
-public class JoinSessionCommand : AuthentizedRequest, IRequest<Result<LoginResponse>>
+public class JoinSessionCommand : AuthentizedRequest, IRequest<Result<IdentityResponse>>
 {
     public required JoinSessionRequest JoinSession { get; set; }
 }

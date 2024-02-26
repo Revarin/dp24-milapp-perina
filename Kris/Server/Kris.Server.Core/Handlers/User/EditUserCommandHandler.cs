@@ -11,7 +11,7 @@ using MediatR;
 
 namespace Kris.Server.Core.Handlers.User;
 
-public sealed class EditUserCommandHandler : UserHandler, IRequestHandler<EditUserCommand, Result<LoginResponse>>
+public sealed class EditUserCommandHandler : UserHandler, IRequestHandler<EditUserCommand, Result<IdentityResponse>>
 {
     private readonly IPasswordService _passwordService;
     private readonly IJwtService _jwtService;
@@ -24,7 +24,7 @@ public sealed class EditUserCommandHandler : UserHandler, IRequestHandler<EditUs
         _jwtService = jwtService;
     }
 
-    public async Task<Result<LoginResponse>> Handle(EditUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<IdentityResponse>> Handle(EditUserCommand request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetWithSessionsAsync(request.User.UserId, cancellationToken);
         if (user == null) throw new NullableException();

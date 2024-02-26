@@ -29,7 +29,7 @@ public sealed class UserClient : ClientBase, IUserController
         throw new NotImplementedException();
     }
 
-    public Task<LoginResponse> EditUser(EditUserRequest request, CancellationToken ct)
+    public Task<IdentityResponse> EditUser(EditUserRequest request, CancellationToken ct)
     {
         throw new NotImplementedException();
     }

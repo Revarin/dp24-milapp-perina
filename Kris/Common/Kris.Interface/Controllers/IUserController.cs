@@ -6,8 +6,8 @@ namespace Kris.Interface.Controllers;
 public interface IUserController
 {
     Task<Response?> RegisterUser(RegisterUserRequest request, CancellationToken ct);
-    Task<LoginSettingsResponse?> LoginUser(LoginUserRequest request, CancellationToken ct);
-    Task<LoginResponse?> EditUser(EditUserRequest request, CancellationToken ct);
+    Task<LoginResponse?> LoginUser(LoginUserRequest request, CancellationToken ct);
+    Task<IdentityResponse?> EditUser(EditUserRequest request, CancellationToken ct);
     Task<Response?> DeleteUser(CancellationToken ct);
     Task<Response?> StoreUserSettings(StoreUserSettingsRequest request, CancellationToken ct);
 }

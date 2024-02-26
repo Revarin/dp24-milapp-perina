@@ -5,5 +5,5 @@ namespace Kris.Client.Core.Mappers;
 
 public interface IUserMapper
 {
-    UserIdentityTokenEntity Map(LoginResponse response);
+    UserIdentityTokenEntity Map(IdentityResponse response);
 }

@@ -44,15 +44,15 @@ public sealed class UserController : KrisController, IUserController
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<LoginSettingsResponse?> LoginUser(LoginUserRequest request, CancellationToken ct)
+    public async Task<LoginResponse?> LoginUser(LoginUserRequest request, CancellationToken ct)
     {
         var command = new LoginUserCommand { LoginUser = request };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<InvalidCredentialsError>()) return Response.Unauthorized<LoginSettingsResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<LoginSettingsResponse>();
+            if (result.HasError<InvalidCredentialsError>()) return Response.Unauthorized<LoginResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<LoginResponse>();
         }
 
         return Response.Ok(result.Value);
@@ -63,19 +63,19 @@ public sealed class UserController : KrisController, IUserController
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<LoginResponse?> EditUser(EditUserRequest request, CancellationToken ct)
+    public async Task<IdentityResponse?> EditUser(EditUserRequest request, CancellationToken ct)
     {
         // Edit SELF ONLY
         var user = CurrentUser();
-        if (user == null) return Response.Unauthorized<LoginResponse>();
+        if (user == null) return Response.Unauthorized<IdentityResponse>();
 
         var command = new EditUserCommand { User = user, EditUser = request };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<LoginResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<LoginResponse>();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<IdentityResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<IdentityResponse>();
         }
 
         return Response.Ok(result.Value);

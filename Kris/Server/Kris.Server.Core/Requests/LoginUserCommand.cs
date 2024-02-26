@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Kris.Server.Core.Requests;
 
-public class LoginUserCommand : IRequest<Result<LoginSettingsResponse>>
+public class LoginUserCommand : IRequest<Result<LoginResponse>>
 {
     public required LoginUserRequest LoginUser { get; set; }
 }

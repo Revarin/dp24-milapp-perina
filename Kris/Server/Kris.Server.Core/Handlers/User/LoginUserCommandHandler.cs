@@ -11,7 +11,7 @@ using MediatR;
 
 namespace Kris.Server.Core.Handlers.User;
 
-public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<LoginUserCommand, Result<LoginSettingsResponse>>
+public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<LoginUserCommand, Result<LoginResponse>>
 {
     private readonly IPasswordService _passwordService;
     private readonly IJwtService _jwtService;
@@ -23,7 +23,7 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
         _jwtService = jwtService;
     }
 
-    public async Task<Result<LoginSettingsResponse>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<LoginResponse>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetByLoginAsync(request.LoginUser.Login, cancellationToken);
         if (user == null) return Result.Fail(new InvalidCredentialsError());
@@ -34,19 +34,19 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
         var jwt = _jwtService.CreateToken(_userMapper.Map(user));
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");
 
-        var response = new LoginSettingsResponse
+        var response = new LoginResponse
         {
             UserId = user.Id,
             Login = user.Login,
             Token = jwt.Token,
             JoinedSessions = user.AllSessions.Select(s => s.Id),
-            CurrentSession = user.CurrentSession?.Session == null ? null : new LoginResponse.Session
+            CurrentSession = user.CurrentSession?.Session == null ? null : new IdentityResponse.Session
             {
                 Id = user.CurrentSession.SessionId,
                 Name = user.CurrentSession.Session.Name,
                 UserType = user.CurrentSession.UserType
             },
-            Settings = new LoginSettingsResponse.UserSettings
+            Settings = new LoginResponse.UserSettings
             {
                 ConnectionSettings = user.Settings.IsConnectionSettingsNull() ? null : new ConnectionSettingsModel
                 {
