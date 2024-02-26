@@ -1,7 +1,6 @@
 ﻿using FluentResults;
 using Kris.Interface.Responses;
 using Kris.Server.Common.Errors;
-using Kris.Server.Common.Exceptions;
 using Kris.Server.Core.Mappers;
 using Kris.Server.Core.Requests;
 using Kris.Server.Core.Services;
@@ -26,8 +25,8 @@ public sealed class GetPositionsQueryHandler : PositionHandler, IRequestHandler<
         if (!authResult.IsAuthorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
 
         var positions = request.From == null
-            ? await _positionRepository.GetWithUsersAsync(user.SessionId.Value, cancellationToken)
-            : await _positionRepository.GetWithUsersAsync(user.SessionId.Value, request.From.Value, cancellationToken);
+            ? await _positionRepository.GetWithUsersAsync(user.UserId, user.SessionId.Value, cancellationToken)
+            : await _positionRepository.GetWithUsersAsync(user.UserId, user.SessionId.Value, request.From.Value, cancellationToken);
 
         var response = new GetPositionsResponse
         {
