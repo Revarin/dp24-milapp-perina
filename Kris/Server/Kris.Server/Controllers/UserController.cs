@@ -44,15 +44,15 @@ public sealed class UserController : KrisController, IUserController
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<LoginResponse?> LoginUser(LoginUserRequest request, CancellationToken ct)
+    public async Task<LoginSettingsResponse?> LoginUser(LoginUserRequest request, CancellationToken ct)
     {
         var command = new LoginUserCommand { LoginUser = request };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<InvalidCredentialsError>()) return Response.Unauthorized<LoginResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<LoginResponse>();
+            if (result.HasError<InvalidCredentialsError>()) return Response.Unauthorized<LoginSettingsResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<LoginSettingsResponse>();
         }
 
         return Response.Ok(result.Value);
@@ -104,11 +104,26 @@ public sealed class UserController : KrisController, IUserController
         return Response.Ok();
     }
 
-    // TODO
     [HttpPost("Settings")]
     [Authorize]
-    public Task<Response?> StoreUserSettings(StoreUserSettingsRequest request, CancellationToken ct)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<Response?> StoreUserSettings(StoreUserSettingsRequest request, CancellationToken ct)
     {
+        var user = CurrentUser();
+        if (user == null) return Response.Unauthorized<Response>();
+
+        var command = new StoreUserSettingsCommand { User = user, StoreUserSettings = request };
+        var result = await _mediator.Send(command, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<Response>(result.Errors.FirstMessage());
+            else return Response.InternalError<Response>();
+        }
+
+        return Response.Ok();
         throw new NotImplementedException();
     }
 }

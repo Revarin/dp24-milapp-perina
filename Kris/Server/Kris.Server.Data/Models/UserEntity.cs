@@ -8,4 +8,5 @@ public class UserEntity : EntityBase
     public Guid? CurrentSessionId { get; set; }
     public SessionUserEntity? CurrentSession { get; set; }
     public List<SessionUserEntity> AllSessions { get; set; } = new List<SessionUserEntity>();
+    public required UserSettingsEntity Settings { get; set; }
 }

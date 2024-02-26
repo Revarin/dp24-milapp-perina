@@ -2,7 +2,7 @@
 
 namespace Kris.Interface.Responses;
 
-public sealed class LoginResponse : Response
+public class LoginResponse : Response
 {
     public Guid UserId { get; set; }
     public string Login { get; set; }

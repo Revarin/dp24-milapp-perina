@@ -7,12 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Kris.Server.Data.Repositories;
 using Kris.Server.Core.Services;
-using Kris.Server.Data.Models;
 using Kris.Server.Core.Mappers;
 using Kris.Server.Core.Handlers;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Kris.Server;
 
@@ -48,12 +44,11 @@ public class Program
             options.RegisterServicesFromAssemblyContaining<BaseHandler>();
         });
 
-        //builder.Services.AddSingleton<IActionResultExecutor<ObjectResult>, ResponseWrapperResultor>();
-
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<ISessionRepository, SessionRepository>();
         builder.Services.AddScoped<ISessionUserRepository, SessionUserRepository>();
         builder.Services.AddScoped<IUserPositionRepository, UserPositionRepository>();
+        builder.Services.AddScoped<IUserSettingsRepository, UserSettingsRepository>();
 
         builder.Services.AddSingleton<IJwtService, JwtService>();
         builder.Services.AddSingleton<IPasswordService, PasswordService>();

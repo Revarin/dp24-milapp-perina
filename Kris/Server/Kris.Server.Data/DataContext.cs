@@ -9,6 +9,7 @@ public class DataContext : DbContext
     public DbSet<SessionEntity> Sessions { get; set; }
     public DbSet<SessionUserEntity> SessionUsers { get; set; }
     public DbSet<UserPositionEntity> UserPositions { get; set; }
+    public DbSet<UserSettingsEntity> UserSettings { get; set; }
 
     public DataContext(DbContextOptions options) : base(options)
     {
@@ -25,6 +26,7 @@ public class DataContext : DbContext
         modelBuilder.Entity<SessionEntity>().HasKey(e => e.Id);
         modelBuilder.Entity<SessionUserEntity>().HasKey(e => e.Id);
         modelBuilder.Entity<UserPositionEntity>().HasKey(e => e.SessionUserId);
+        modelBuilder.Entity<UserSettingsEntity>().HasKey(e => e.Id);
 
         modelBuilder.Entity<SessionUserEntity>()
             .HasOne(e => e.User)
@@ -48,6 +50,13 @@ public class DataContext : DbContext
             .HasOne(e => e.SessionUser)
             .WithMany()
             .HasForeignKey(e => e.SessionUserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<UserSettingsEntity>()
+            .HasOne(e => e.User)
+            .WithOne(e => e.Settings)
+            .HasForeignKey(nameof(UserSettingsEntity), nameof(UserSettingsEntity.Id))
+            .IsRequired(true)
             .OnDelete(DeleteBehavior.Cascade);
 
         base.OnModelCreating(modelBuilder);
