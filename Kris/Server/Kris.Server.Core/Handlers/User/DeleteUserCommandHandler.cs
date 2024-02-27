@@ -19,8 +19,7 @@ public sealed class DeleteUserCommandHandler : UserHandler, IRequestHandler<Dele
     {
         var user = await _userRepository.GetWithSessionsAsync(request.User.UserId, cancellationToken);
         if (user == null) throw new NullableException();
-        if (user.Login != request.User.Login || user.CurrentSessionId != request.User.SessionId)
-            return Result.Fail(new UnauthorizedError("Invalid user data in token"));
+        if (user.Login != request.User.Login) return Result.Fail(new UnauthorizedError("Invalid token"));
 
         await _userRepository.DeleteAsync(user, cancellationToken);
 

@@ -28,8 +28,7 @@ public sealed class EditUserCommandHandler : UserHandler, IRequestHandler<EditUs
     {
         var user = await _userRepository.GetWithSessionsAsync(request.User.UserId, cancellationToken);
         if (user == null) throw new NullableException();
-        if (user.Login != request.User.Login || user.CurrentSessionId != request.User.SessionId)
-            return Result.Fail(new UnauthorizedError("Invalid token"));
+        if (user.Login != request.User.Login) return Result.Fail(new UnauthorizedError("Invalid token"));
 
         var passwordVerified = _passwordService.VerifyPassword(user.Password, request.EditUser.Password);
         if (!passwordVerified) return Result.Fail(new InvalidCredentialsError());
