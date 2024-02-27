@@ -2,10 +2,13 @@
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FluentResults;
 using Kris.Client.Common.Enums;
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
+using Kris.Client.Components.Events;
 using Kris.Client.Core.Messages;
+using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.ViewModels.Items;
@@ -62,6 +65,10 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
                 CurrentSession.SessionLeaving += OnSessionLeaving;
                 CurrentSession.SessionEditing += OnSessionEditing;
             }
+            else
+            {
+                CurrentSession = null;
+            }
 
             JoinedSessions = result.Value.JoinedSessions.Select(s => new SessionItemViewModel(s, SessionItemType.Joined, result.Value.UserType))
                 .ToObservableCollection();
@@ -86,7 +93,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
     [RelayCommand]
     private async Task OnCreateSessionClicked()
     {
-        var resultEventArgs = await _popupService.ShowPopupAsync<EditSessionPopupViewModel>() as ResultEventArgs;
+        var resultEventArgs = await _popupService.ShowPopupAsync<CreateSessionPopupViewModel>() as ResultEventArgs;
         if (resultEventArgs == null) return;
 
         var result = resultEventArgs.Result;
@@ -143,7 +150,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
         else
         {
             await _alertService.ShowToastAsync("Joined session");
-            _messageService.Send(new RestartPositionListenersMessage());
+            _messageService.Send(new CurrentSessionChangedMessage());
             await OnAppearing();
         }
     }
@@ -174,40 +181,93 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
         else
         {
             await _alertService.ShowToastAsync("Left session");
-            _messageService.Send(new RestartPositionListenersMessage());
+            _messageService.Send(new CurrentSessionChangedMessage());
             await OnAppearing();
         }
     }
 
     private async void OnSessionEditing(object sender, EntityIdEventArgs e)
     {
-        // TODO: TEMP DELETE
-        var ct = new CancellationToken();
-        var command = new EndSessionCommand();
-        var result = await _mediator.Send(command, ct);
-
-        if (result.IsFailed)
+        var query = new GetCurrentUserQuery();
+        var currentUser = await _mediator.Send(query, CancellationToken.None);
+        if (currentUser == null || !currentUser.SessionId.HasValue || !currentUser.UserType.HasValue)
         {
-            if (result.HasError<UnauthorizedError>() || result.HasError<ForbiddenError>())
+            await _alertService.ShowToastAsync("Invalid user data");
+            await LogoutUser();
+        }
+
+        var resultArgs = await _popupService.ShowPopupAsync<EditSessionPopupViewModel>(vm =>
+        {
+            vm.SessionId = e.Id;
+            vm.UserType = currentUser.UserType.Value;
+            vm.LoadSessionDetail();
+        });
+        if (resultArgs == null) return;
+
+
+        if (resultArgs is LoadResultEventArgs<SessionDetailModel>)
+        {
+            var result = (resultArgs as LoadResultEventArgs<SessionDetailModel>).Result;
+            if (result.IsFailed)
             {
-                await _alertService.ShowToastAsync("Login expired");
-                await LogoutUser();
+                if (result.HasError<UnauthorizedError>())
+                {
+                    await _alertService.ShowToastAsync("Login expired");
+                    await LogoutUser();
+                }
+                else
+                {
+                    await _alertService.ShowToastAsync(result.Errors.FirstMessage());
+                }
             }
-            else if (result.HasError<EntityNotFoundError>())
+        }
+        else if (resultArgs is DeleteResultEventArgs)
+        {
+            var result = (resultArgs as DeleteResultEventArgs).Result;
+            if (result.IsFailed)
             {
-                await _alertService.ShowToastAsync("Session not found, refreshing session list...");
-                await OnAppearing();
+                if (result.HasError<UnauthorizedError>())
+                {
+                    await _alertService.ShowToastAsync("Login expired");
+                    await LogoutUser();
+                }
+                else if (result.HasError<EntityNotFoundError>())
+                {
+                    await _alertService.ShowToastAsync("Session not found, refreshing session list...");
+                    await OnAppearing();
+                }
+                else
+                {
+                    await _alertService.ShowToastAsync(result.Errors.FirstMessage());
+                }
             }
             else
             {
-                await _alertService.ShowToastAsync(result.Errors.FirstMessage());
+                await _alertService.ShowToastAsync("Session deleted");
+                _messageService.Send(new CurrentSessionChangedMessage());
+                await OnAppearing();
             }
         }
-        else
+        else if (resultArgs is UpdateResultEventArgs)
         {
-            await _alertService.ShowToastAsync("Deleted session");
-            _messageService.Send(new RestartPositionListenersMessage());
-            await OnAppearing();
+            var result = (resultArgs as UpdateResultEventArgs).Result;
+            if (result.IsFailed)
+            {
+                if (result.HasError<UnauthorizedError>())
+                {
+                    await _alertService.ShowToastAsync("Login expired");
+                    await LogoutUser();
+                }
+                else
+                {
+                    await _alertService.ShowToastAsync(result.Errors.FirstMessage());
+                }
+            }
+            else
+            {
+                await _alertService.ShowToastAsync("Session updated");
+                await OnAppearing();
+            }
         }
     }
 }

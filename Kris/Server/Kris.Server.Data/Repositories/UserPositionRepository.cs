@@ -9,16 +9,18 @@ public sealed class UserPositionRepository : RepositoryBase<UserPositionEntity>,
     {
     }
 
-    public Task<IEnumerable<UserPositionEntity>> GetWithUsersAsync(Guid sessionId, CancellationToken ct)
+    public Task<IEnumerable<UserPositionEntity>> GetWithUsersAsync(Guid callerId, Guid sessionId, CancellationToken ct)
     {
-        return GetWithUsersAsync(sessionId, DateTime.MinValue, ct);
+        return GetWithUsersAsync(callerId, sessionId, DateTime.MinValue, ct);
     }
 
-    public async Task<IEnumerable<UserPositionEntity>> GetWithUsersAsync(Guid sessionId, DateTime from, CancellationToken ct)
+    public async Task<IEnumerable<UserPositionEntity>> GetWithUsersAsync(Guid callerId, Guid sessionId, DateTime from, CancellationToken ct)
     {
         return await _context.UserPositions.Include(position => position.SessionUser)
             .ThenInclude(sessionUser => sessionUser!.User)
-            .Where(position => position.SessionUser!.SessionId == sessionId && position.Updated > from)
+            .Where(position => position.SessionUser!.SessionId == sessionId
+                && position.SessionUser!.UserId != callerId
+                && position.Updated > from)
             .ToListAsync(ct);
     }
 }

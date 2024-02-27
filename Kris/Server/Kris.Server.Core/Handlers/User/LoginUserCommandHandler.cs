@@ -1,5 +1,5 @@
 ﻿using FluentResults;
-using Kris.Common.Models;
+using Kris.Interface.Models;
 using Kris.Interface.Responses;
 using Kris.Server.Common.Errors;
 using Kris.Server.Common.Exceptions;
@@ -25,7 +25,7 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
 
     public async Task<Result<LoginResponse>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetWithSessionsAsync(request.LoginUser.Login, cancellationToken);
+        var user = await _userRepository.GetByLoginAsync(request.LoginUser.Login, cancellationToken);
         if (user == null) return Result.Fail(new InvalidCredentialsError());
 
         var passwordVerified = _passwordService.VerifyPassword(user.Password, request.LoginUser.Password);
@@ -34,6 +34,29 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
         var jwt = _jwtService.CreateToken(_userMapper.Map(user));
         if (string.IsNullOrEmpty(jwt.Token)) throw new JwtException("Failed to create token");
 
-        return Result.Ok(_userMapper.MapToLoginResponse(user, jwt));
+        var response = new LoginResponse
+        {
+            UserId = user.Id,
+            Login = user.Login,
+            Token = jwt.Token,
+            JoinedSessions = user.AllSessions.Select(s => s.SessionId),
+            CurrentSession = user.CurrentSession?.Session == null ? null : new IdentityResponse.Session
+            {
+                Id = user.CurrentSession.SessionId,
+                Name = user.CurrentSession.Session.Name,
+                UserType = user.CurrentSession.UserType
+            },
+            Settings = new LoginResponse.UserSettings
+            {
+                ConnectionSettings = user.Settings.IsConnectionSettingsNull() ? null : new ConnectionSettingsModel
+                {
+                    GpsRequestInterval = user.Settings.GpsRequestInterval.GetValueOrDefault(),
+                    PositionUploadFrequency = user.Settings.PositionUploadFrequency.GetValueOrDefault(),
+                    PositionDownloadFrequency = user.Settings.PositionDownloadFrequency.GetValueOrDefault()
+                }
+            }
+        };
+
+        return Result.Ok(response);
     }
 }

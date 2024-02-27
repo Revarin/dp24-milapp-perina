@@ -6,7 +6,7 @@ public sealed class PositionMapper : IPositionMapper
 {
     public GeoSpatialPosition Map(Location location)
     {
-        if (location == null) throw new ArgumentNullException("location");
+        if (location == null) throw new ArgumentNullException(nameof(location));
         return new GeoSpatialPosition
         {
             Latitude = location.Latitude,
@@ -24,7 +24,7 @@ public sealed class PositionMapper : IPositionMapper
 
     public Models.UserPositionModel Map(Interface.Models.UserPositionModel position)
     {
-        if (position == null) throw new ArgumentNullException("position");
+        if (position == null) throw new ArgumentNullException(nameof(position));
         return new Models.UserPositionModel
         {
             UserId = position.UserId,

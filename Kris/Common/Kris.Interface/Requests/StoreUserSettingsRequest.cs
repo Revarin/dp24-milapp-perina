@@ -4,5 +4,5 @@ namespace Kris.Interface.Requests;
 
 public sealed class StoreUserSettingsRequest : RequestBase
 {
-    public required UserSettings UserSettings { get; set; }
+    public ConnectionSettingsModel? ConnectionSettings { get; set; }
 }

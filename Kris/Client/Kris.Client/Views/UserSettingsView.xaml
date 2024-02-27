@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:vm="clr-namespace:Kris.Client.ViewModels.Views"
+             x:Class="Kris.Client.Views.UserSettingsView"
+             x:DataType="vm:UserSettingsViewModel"
+             Title="UserSettingsView">
+
+    <StackLayout Orientation="Vertical"
+                 VerticalOptions="FillAndExpand">
+        <Label Text="Connection settings" FontSize="Subtitle"/>
+        <StackLayout Orientation="Vertical">
+            <Label Text="GPS request interval" />
+            <Picker Title="GPS interval"
+                    ItemsSource="{Binding GpsIntervalItems}"
+                    ItemDisplayBinding="{Binding Display}"
+                    SelectedItem="{Binding GpsIntervalSelectedItem}">
+                <Picker.Behaviors>
+                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ConnectionSettingsSelectedIndexChangedCommand}" />
+                </Picker.Behaviors>
+            </Picker>
+        </StackLayout>
+        <StackLayout Orientation="Vertical">
+            <Label Text="Position upload frequency"/>
+            <Picker Title="Position upload"
+                    ItemsSource="{Binding PositionUploadItems}"
+                    ItemDisplayBinding="{Binding Display}"
+                    SelectedItem="{Binding PositionUploadSelectedItem}">
+                <Picker.Behaviors>
+                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ConnectionSettingsSelectedIndexChangedCommand}" />
+                </Picker.Behaviors>
+            </Picker>
+        </StackLayout>
+        <StackLayout Orientation="Vertical">
+            <Label Text="Position download frequency" />
+            <Picker Title="Position download"
+                    ItemsSource="{Binding PositionDownloadItems}"
+                    ItemDisplayBinding="{Binding Display}"
+                    SelectedItem="{Binding PositionDownloadSelectedItem}">
+                <Picker.Behaviors>
+                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ConnectionSettingsSelectedIndexChangedCommand}" />
+                </Picker.Behaviors>
+            </Picker>
+        </StackLayout>
+
+        <Label Text="User settings" FontSize="Subtitle"/>
+        <StackLayout Orientation="Vertical">
+            <StackLayout Orientation="Vertical">
+                <Label Text="New login" />
+                <Entry Placeholder="Login"
+                       Text="{Binding Login}">
+                </Entry>
+                <Label Text="{Binding ErrorMessages[Login]}"
+                       IsVisible="{Binding ErrorMessages[Login]}"
+                       Style="{StaticResource errorMessageStyle}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Vertical">
+                <Label Text="New password" />
+                <Entry IsPassword="True"
+                       Text="{Binding Password}">
+                </Entry>
+                <Label Text="{Binding ErrorMessages[Password]}"
+                       IsVisible="{Binding ErrorMessages[Password]}"
+                       Style="{StaticResource errorMessageStyle}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Vertical">
+                <Label Text="Confirm new password" />
+                <Entry IsPassword="True"
+                       Text="{Binding PasswordVerification}">
+                </Entry>
+                <Label Text="{Binding ErrorMessages[PasswordVerification]}"
+                       IsVisible="{Binding ErrorMessages[PasswordVerification]}"
+                       Style="{StaticResource errorMessageStyle}" />
+            </StackLayout>
+
+            <Button Text="Save user changes">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding EditUserClickedCommand}" />
+                </Button.Behaviors>
+            </Button>
+        </StackLayout>
+
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand"
+                     VerticalOptions="EndAndExpand">
+            <Button Text="Map"
+                    HorizontalOptions="FillAndExpand">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding GoToMapCommand}" />
+                </Button.Behaviors>
+            </Button>
+            <Button Text="Menu"
+                    HorizontalOptions="FillAndExpand">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding GoToMenuCommand}" />
+                </Button.Behaviors>
+            </Button>
+        </StackLayout>
+    </StackLayout>
+</ContentPage>

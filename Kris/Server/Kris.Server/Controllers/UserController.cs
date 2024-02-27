@@ -62,20 +62,22 @@ public sealed class UserController : KrisController, IUserController
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<LoginResponse?> EditUser(EditUserRequest request, CancellationToken ct)
+    public async Task<IdentityResponse?> EditUser(EditUserRequest request, CancellationToken ct)
     {
         // Edit SELF ONLY
         var user = CurrentUser();
-        if (user == null) return Response.Unauthorized<LoginResponse>();
+        if (user == null) return Response.Unauthorized<IdentityResponse>();
 
         var command = new EditUserCommand { User = user, EditUser = request };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<LoginResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<LoginResponse>();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<IdentityResponse>(result.Errors.FirstMessage());
+            else if (result.HasError<InvalidCredentialsError>()) return Response.Forbidden<IdentityResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<IdentityResponse>();
         }
 
         return Response.Ok(result.Value);
@@ -85,14 +87,38 @@ public sealed class UserController : KrisController, IUserController
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<Response?> DeleteUser(CancellationToken ct)
+    public async Task<Response?> DeleteUser(PasswordRequest request, CancellationToken ct)
     {
         // Delete SELF ONLY
         var user = CurrentUser();
         if (user == null) return Response.Unauthorized<Response>();
 
-        var command = new DeleteUserCommand { User = user };
+        var command = new DeleteUserCommand { User = user, Password = request.Password };
+        var result = await _mediator.Send(command, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<Response>(result.Errors.FirstMessage());
+            else if (result.HasError<InvalidCredentialsError>()) return Response.Forbidden<Response>(result.Errors.FirstMessage());
+            else return Response.InternalError<Response>();
+        }
+
+        return Response.Ok();
+    }
+
+    [HttpPost("Settings")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<Response?> StoreUserSettings(StoreUserSettingsRequest request, CancellationToken ct)
+    {
+        var user = CurrentUser();
+        if (user == null) return Response.Unauthorized<Response>();
+
+        var command = new StoreUserSettingsCommand { User = user, StoreUserSettings = request };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
@@ -102,13 +128,6 @@ public sealed class UserController : KrisController, IUserController
         }
 
         return Response.Ok();
-    }
-
-    // TODO
-    [HttpPost("Settings")]
-    [Authorize]
-    public Task<Response?> StoreUserSettings(StoreUserSettingsRequest request, CancellationToken ct)
-    {
         throw new NotImplementedException();
     }
 }

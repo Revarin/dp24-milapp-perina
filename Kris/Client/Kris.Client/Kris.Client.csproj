@@ -10,15 +10,15 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 
 		<!-- Display name -->
-		<ApplicationTitle>Kris v2.2.0</ApplicationTitle>
+		<ApplicationTitle>Kris v2.2.1</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>fit.dp.perina.kris</ApplicationId>
 		<ApplicationIdGuid>b9336060-ad5c-4c34-b406-7a96ba2a9ca3</ApplicationIdGuid>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>2.2.0</ApplicationDisplayVersion>
-		<ApplicationVersion>220</ApplicationVersion>
+		<ApplicationDisplayVersion>2.2.1</ApplicationDisplayVersion>
+		<ApplicationVersion>221</ApplicationVersion>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
@@ -71,6 +71,12 @@
 	  <Compile Update="Components\Items\SessionItem.xaml.cs">
 	    <DependentUpon>SessionItem.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Components\Popups\CreateSessionPopup.xaml.cs">
+	    <DependentUpon>CreateSessionPopup.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Components\Popups\EditSessionPopup.xaml.cs">
+	    <DependentUpon>EditSessionPopup.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\MenuView.xaml.cs">
 	    <DependentUpon>MenuView.xaml</DependentUpon>
 	  </Compile>
@@ -78,6 +84,9 @@
 
 	<ItemGroup>
 	  <MauiXaml Update="Components\Items\SessionItem.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Components\Popups\CreateSessionPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Components\Popups\EditSessionPopup.xaml">
@@ -99,6 +108,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\SessionSettingsView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\UserSettingsView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

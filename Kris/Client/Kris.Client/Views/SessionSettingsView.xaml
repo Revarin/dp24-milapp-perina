@@ -15,15 +15,18 @@
     <StackLayout Orientation="Vertical"
                  VerticalOptions="FillAndExpand">
 
-        <StackLayout Orientation="Vertical"
-                     IsVisible="{Binding CurrentSession, Converter={tk:IsNotNullConverter}}">
-            <Label Text="Current session" />
-            <item:SessionItem BindingContext="{Binding CurrentSession}" />
+        <StackLayout Orientation="Vertical">
+            <Label Text="Current session" FontSize="Subtitle" />
+            <Border IsVisible="{Binding CurrentSession, Converter={tk:IsNotNullConverter}}">
+                <item:SessionItem BindingContext="{Binding CurrentSession}" />
+            </Border>
+            <Label Text="No current session"
+                   IsVisible="{Binding CurrentSession, Converter={tk:IsNullConverter}}" />
         </StackLayout>
 
         <StackLayout Orientation="Vertical"
                      IsVisible="{Binding JoinedSessions.Count}">
-            <Label Text="Joined sessions" />
+            <Label Text="Joined sessions" FontSize="Subtitle" />
             <CollectionView ItemsSource="{Binding JoinedSessions}"
                             SelectionMode="None">
                 <CollectionView.ItemTemplate>
@@ -36,7 +39,7 @@
 
         <StackLayout Orientation="Vertical"
                      IsVisible="{Binding OtherSessions.Count}">
-            <Label Text="Other sessions" />
+            <Label Text="Other sessions" FontSize="Subtitle" />
             <CollectionView ItemsSource="{Binding OtherSessions}"
                             SelectionMode="None">
                 <CollectionView.ItemTemplate>

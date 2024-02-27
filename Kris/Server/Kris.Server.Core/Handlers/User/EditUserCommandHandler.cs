@@ -11,7 +11,7 @@ using MediatR;
 
 namespace Kris.Server.Core.Handlers.User;
 
-public sealed class EditUserCommandHandler : UserHandler, IRequestHandler<EditUserCommand, Result<LoginResponse>>
+public sealed class EditUserCommandHandler : UserHandler, IRequestHandler<EditUserCommand, Result<IdentityResponse>>
 {
     private readonly IPasswordService _passwordService;
     private readonly IJwtService _jwtService;
@@ -24,15 +24,17 @@ public sealed class EditUserCommandHandler : UserHandler, IRequestHandler<EditUs
         _jwtService = jwtService;
     }
 
-    public async Task<Result<LoginResponse>> Handle(EditUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<IdentityResponse>> Handle(EditUserCommand request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetWithSessionsAsync(request.User.UserId, cancellationToken);
         if (user == null) throw new NullableException();
-        if (user.Login != request.User.Login || user.CurrentSessionId != request.User.SessionId)
-            return Result.Fail(new UnauthorizedError("Invalid token"));
+        if (user.Login != request.User.Login) return Result.Fail(new UnauthorizedError("Invalid token"));
 
-        user.Login = request.EditUser.Login;
-        user.Password = _passwordService.HashPassword(request.EditUser.Password);
+        var passwordVerified = _passwordService.VerifyPassword(user.Password, request.EditUser.Password);
+        if (!passwordVerified) return Result.Fail(new InvalidCredentialsError());
+
+        user.Login = request.EditUser.NewLogin;
+        user.Password = _passwordService.HashPassword(request.EditUser.NewPassword);
         await _userRepository.UpdateAsync(cancellationToken);
 
         var jwt = _jwtService.CreateToken(_userMapper.Map(user));

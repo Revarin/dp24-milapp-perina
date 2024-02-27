@@ -1,4 +1,4 @@
-﻿using Kris.Client.Common.Events;
+﻿using Kris.Client.Behaviors.Events;
 using Kris.Client.Utility;
 
 using MauiMap = Microsoft.Maui.Controls.Maps.Map;

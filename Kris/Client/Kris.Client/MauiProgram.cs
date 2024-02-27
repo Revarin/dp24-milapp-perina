@@ -15,6 +15,7 @@ using Kris.Interface.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
+using Kris.Client.Data.Providers;
 using Kris.Client.Platforms.Map;
 
 using MauiMap = Microsoft.Maui.Controls.Maps.Map;
@@ -51,6 +52,7 @@ namespace Kris.Client
             builder.Services.AddOptions();
             builder.Services.Configure<ConnectionOptions>(builder.Configuration.GetRequiredSection(ConnectionOptions.Section));
             builder.Services.Configure<SettingsOptions>(builder.Configuration.GetRequiredSection(SettingsOptions.Section));
+            builder.Services.Configure<DefaultPreferencesOptions>(builder.Configuration.GetRequiredSection(DefaultPreferencesOptions.Section));
 
             builder.Services.AddMediatR(options =>
             {
@@ -69,13 +71,17 @@ namespace Kris.Client
             builder.Services.AddSingleton<MenuViewModel>();
             builder.Services.AddTransient<SessionSettingsView>();
             builder.Services.AddTransient<SessionSettingsViewModel>();
+            builder.Services.AddTransient<UserSettingsView>();
+            builder.Services.AddTransient<UserSettingsViewModel>();
 
             builder.Services.AddTransientPopup<PasswordPopup, PasswordPopupViewModel>();
+            builder.Services.AddTransientPopup<CreateSessionPopup, CreateSessionPopupViewModel>();
             builder.Services.AddTransientPopup<EditSessionPopup, EditSessionPopupViewModel>();
 
             builder.Services.AddSingleton<IUserMapper, UserMapper>();
             builder.Services.AddSingleton<ISessionMapper, SessionMapper>();
             builder.Services.AddSingleton<IPositionMapper, PositionMapper>();
+            builder.Services.AddSingleton<ISettingsMapper, SettingsMapper>();
 
             builder.Services.AddSingleton<ICurrentPositionListener, CurrentPositionListener>();
             builder.Services.AddSingleton<IUserPositionsListener, UserPositionsListener>();
@@ -88,6 +94,9 @@ namespace Kris.Client
 
             builder.Services.AddSingleton<IIdentityStore, IdentityStore>();
             builder.Services.AddSingleton<ILocationStore, LocationStore>();
+            builder.Services.AddSingleton<ISettingsStore, SettingsStore>();
+
+            builder.Services.AddTransient<IConnectionSettingsDataProvider, ConnectionSettingsDataProvider>();
 
             builder.Services.AddSingleton<IHttpClientFactory, HttpClientFactory>();
             builder.Services.AddTransient<IUserController, UserClient>();

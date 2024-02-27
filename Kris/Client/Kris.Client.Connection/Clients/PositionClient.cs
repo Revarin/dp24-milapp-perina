@@ -3,7 +3,6 @@ using Kris.Common.Extensions;
 using Kris.Interface.Controllers;
 using Kris.Interface.Requests;
 using Kris.Interface.Responses;
-using System.Globalization;
 using System.Web;
 
 namespace Kris.Client.Connection.Clients;

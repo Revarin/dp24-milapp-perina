@@ -18,4 +18,10 @@ public sealed partial class MenuViewModel : PageViewModelBase
     {
         await _navigationService.GoToAsync(nameof(SessionSettingsView), RouterNavigationType.PushUpward);
     }
+
+    [RelayCommand]
+    private async Task OnUserSettingsClicked()
+    {
+        await _navigationService.GoToAsync(nameof(UserSettingsView), RouterNavigationType.PushUpward);
+    }
 }

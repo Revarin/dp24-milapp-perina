@@ -123,6 +123,25 @@ namespace Kris.Server.Data.Migrations
                     b.ToTable("UserPositions");
                 });
 
+            modelBuilder.Entity("Kris.Server.Data.Models.UserSettingsEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("GpsRequestInterval")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PositionDownloadFrequency")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PositionUploadFrequency")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserSettings");
+                });
+
             modelBuilder.Entity("Kris.Server.Data.Models.SessionUserEntity", b =>
                 {
                     b.HasOne("Kris.Server.Data.Models.SessionEntity", "Session")
@@ -163,6 +182,17 @@ namespace Kris.Server.Data.Migrations
                     b.Navigation("SessionUser");
                 });
 
+            modelBuilder.Entity("Kris.Server.Data.Models.UserSettingsEntity", b =>
+                {
+                    b.HasOne("Kris.Server.Data.Models.UserEntity", "User")
+                        .WithOne("Settings")
+                        .HasForeignKey("Kris.Server.Data.Models.UserSettingsEntity", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Kris.Server.Data.Models.SessionEntity", b =>
                 {
                     b.Navigation("Users");
@@ -171,6 +201,9 @@ namespace Kris.Server.Data.Migrations
             modelBuilder.Entity("Kris.Server.Data.Models.UserEntity", b =>
                 {
                     b.Navigation("AllSessions");
+
+                    b.Navigation("Settings")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

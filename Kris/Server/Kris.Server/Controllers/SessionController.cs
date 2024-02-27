@@ -28,18 +28,18 @@ public sealed class SessionController : KrisController, ISessionController
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<LoginResponse?> CreateSession(CreateSessionRequest request, CancellationToken ct)
+    public async Task<IdentityResponse?> CreateSession(CreateSessionRequest request, CancellationToken ct)
     {
         var user = CurrentUser();
-        if (user == null) return Response.Unauthorized<LoginResponse>();
+        if (user == null) return Response.Unauthorized<IdentityResponse>();
 
         var command = new CreateSessionCommand { CreateSession = request, User = user };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<EntityExistsError>()) return Response.BadRequest<LoginResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<LoginResponse>();
+            if (result.HasError<EntityExistsError>()) return Response.BadRequest<IdentityResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<IdentityResponse>();
         }
 
         return Response.Ok(result.Value);
@@ -55,15 +55,16 @@ public sealed class SessionController : KrisController, ISessionController
     {
         // Edit CURRENT session only
         var user = CurrentUser();
-        if (user == null) return Response.Unauthorized<LoginResponse>();
+        if (user == null) return Response.Unauthorized<Response>();
 
         var command = new EditSessionCommand { EditSession = request, User = user };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Forbidden<LoginResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<LoginResponse>();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<Response>(result.Errors.FirstMessage());
+            else if (result.HasError<InvalidCredentialsError>()) return Response.Forbidden<Response>(result.Errors.FirstMessage());
+            else return Response.InternalError<Response>();
         }
 
         return Response.Ok();
@@ -76,20 +77,21 @@ public sealed class SessionController : KrisController, ISessionController
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<Response?> EndSession(CancellationToken ct)
+    public async Task<Response?> EndSession(PasswordRequest request, CancellationToken ct)
     {
         // End CURRENT session only
         var user = CurrentUser();
-        if (user == null) return Response.Unauthorized<LoginResponse>();
+        if (user == null) return Response.Unauthorized<Response>();
 
-        var command = new EndSessionCommand() { User = user };
+        var command = new EndSessionCommand() { User = user, Password = request.Password };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Forbidden<LoginResponse>(result.Errors.FirstMessage());
-            else if (result.HasError<EntityNotFoundError>()) return Response.NotFound<LoginResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<LoginResponse>();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<Response>(result.Errors.FirstMessage());
+            else if (result.HasError<InvalidCredentialsError>()) return Response.Forbidden<Response>(result.Errors.FirstMessage());
+            else if (result.HasError<EntityNotFoundError>()) return Response.NotFound<Response>(result.Errors.FirstMessage());
+            else return Response.InternalError<Response>();
         }
 
         return Response.Ok();
@@ -102,19 +104,19 @@ public sealed class SessionController : KrisController, ISessionController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<LoginResponse?> JoinSession(JoinSessionRequest request, CancellationToken ct)
+    public async Task<IdentityResponse?> JoinSession(JoinSessionRequest request, CancellationToken ct)
     {
         var user = CurrentUser();
-        if (user == null) return Response.Unauthorized<LoginResponse>();
+        if (user == null) return Response.Unauthorized<IdentityResponse>();
 
         var command = new JoinSessionCommand { User = user, JoinSession = request };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<EntityNotFoundError>()) return Response.NotFound<LoginResponse>(result.Errors.FirstMessage());
-            else if (result.HasError<InvalidCredentialsError>()) return Response.Forbidden<LoginResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<LoginResponse>();
+            if (result.HasError<EntityNotFoundError>()) return Response.NotFound<IdentityResponse>(result.Errors.FirstMessage());
+            else if (result.HasError<InvalidCredentialsError>()) return Response.Forbidden<IdentityResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<IdentityResponse>();
         }
 
         return Response.Ok(result.Value);
@@ -126,20 +128,20 @@ public sealed class SessionController : KrisController, ISessionController
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<LoginResponse?> LeaveSession(Guid sessionId, CancellationToken ct)
+    public async Task<IdentityResponse?> LeaveSession(Guid sessionId, CancellationToken ct)
     {
         // For users, leave given session
         var user = CurrentUser();
-        if (user == null) return Response.Unauthorized<LoginResponse>();
+        if (user == null) return Response.Unauthorized<IdentityResponse>();
 
         var command = new LeaveSessionCommand { User = user, SessionId = sessionId };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UserNotInSessionError>()) return Response.BadRequest<LoginResponse>(result.Errors.FirstMessage());
-            if (result.HasError<InvalidOperationError>()) return Response.BadRequest<LoginResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<LoginResponse>();
+            if (result.HasError<UserNotInSessionError>()) return Response.BadRequest<IdentityResponse>(result.Errors.FirstMessage());
+            if (result.HasError<InvalidOperationError>()) return Response.BadRequest<IdentityResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<IdentityResponse>();
         }
 
         return Response.Ok(result.Value);

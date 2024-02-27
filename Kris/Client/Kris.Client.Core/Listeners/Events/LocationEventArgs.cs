@@ -1,4 +1,4 @@
-﻿namespace Kris.Client.Common.Events;
+﻿namespace Kris.Client.Core.Listeners.Events;
 
 public sealed class LocationEventArgs : EventArgs
 {

@@ -9,5 +9,6 @@ public sealed class AppShellViewModel : ObservableObject
     {
         Routing.RegisterRoute(nameof(RegisterView), typeof(RegisterView));
         Routing.RegisterRoute(nameof(SessionSettingsView), typeof(SessionSettingsView));
+        Routing.RegisterRoute(nameof(UserSettingsView), typeof(UserSettingsView));
     }
 }

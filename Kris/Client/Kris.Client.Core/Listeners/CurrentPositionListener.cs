@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 using Kris.Client.Common.Errors;
-using Kris.Client.Common.Events;
+using Kris.Client.Core.Listeners.Events;
 using Kris.Client.Core.Mappers;
 using Kris.Client.Core.Services;
 using Kris.Client.Data.Cache;
@@ -15,17 +15,19 @@ public sealed class CurrentPositionListener : BackgroundListener, ICurrentPositi
     private readonly IGpsService _gpsService;
     private readonly IPositionController _positionClient;
     private readonly IPositionMapper _positionMapper;
+    private readonly ISettingsStore _settingsStore;
     private readonly IIdentityStore _identityStore;
 
     public event EventHandler<LocationEventArgs> PositionChanged;
 
     public CurrentPositionListener(IPermissionService permissionService, IGpsService gpsService,
-        IPositionController positionClient, IPositionMapper positionMapper, IIdentityStore identityStore)
+        IPositionController positionClient, IPositionMapper positionMapper, ISettingsStore settingsStore, IIdentityStore identityStore)
     {
         _permissionService = permissionService;
         _gpsService = gpsService;
         _positionClient = positionClient;
         _positionMapper = positionMapper;
+        _settingsStore = settingsStore;
         _identityStore = identityStore;
     }
 
@@ -35,10 +37,7 @@ public sealed class CurrentPositionListener : BackgroundListener, ICurrentPositi
         {
             try
             {
-                // TODO: Settings
-                var timeout = TimeSpan.FromSeconds(10);
-                var delay = TimeSpan.FromSeconds(10);
-                var storage = 3;
+                var settings = _settingsStore.GetConnectionSettings();
                 var identity = _identityStore.GetIdentity();
 
                 var locationPermission = await _permissionService.CheckAndRequestPermissionAsync<Permissions.LocationWhenInUse>();
@@ -53,7 +52,7 @@ public sealed class CurrentPositionListener : BackgroundListener, ICurrentPositi
 
                     try
                     {
-                        location = await _gpsService.GetCurrentLocationAsync(timeout, ct);
+                        location = await _gpsService.GetCurrentLocationAsync(settings.GpsInterval.Multiply(2), ct);
                     }
                     catch (Exception ex)
                     {
@@ -71,14 +70,14 @@ public sealed class CurrentPositionListener : BackgroundListener, ICurrentPositi
                             Location = location
                         });
 
-                        if (identity.SessionId.HasValue && iter % storage == 0)
+                        if (identity.SessionId.HasValue && iter % settings.PositionUploadMultiplier == 0)
                         {
                             await SavePosition(location, ct);
                         }
                     }
 
                     iter++;
-                    await Task.Delay(delay, ct);
+                    await Task.Delay(settings.GpsInterval, ct);
                 }
             }
             finally

@@ -21,9 +21,9 @@ public sealed class UserMapper : IUserMapper
         return user;
     }
 
-    public LoginResponse MapToLoginResponse(UserEntity entity, JwtToken jwt)
+    public IdentityResponse MapToLoginResponse(UserEntity entity, JwtToken jwt)
     {
-        return new LoginResponse
+        return new IdentityResponse
         {
             UserId = entity.Id,
             Login = entity.Login,
@@ -31,7 +31,7 @@ public sealed class UserMapper : IUserMapper
             JoinedSessions = entity.AllSessions.Select(session => session.SessionId),
             CurrentSession = entity.CurrentSession?.Session == null
                 ? null
-                : new LoginResponse.Session
+                : new IdentityResponse.Session
                 {
                     Id = entity.CurrentSession.SessionId,
                     Name = entity.CurrentSession.Session.Name,

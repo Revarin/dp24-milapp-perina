@@ -28,9 +28,9 @@ public sealed partial class MapViewModel : PageViewModelBase
     private MapSpan _currentRegion;
     [ObservableProperty]
     private MoveToRegionRequest _moveToRegion = new MoveToRegionRequest();
+
     [ObservableProperty]
     private ObservableCollection<MapPin> _allMapPins = new ObservableCollection<MapPin>();
-
     [ObservableProperty]
     private ObservableCollection<UserPositionModel> _userPositions = new ObservableCollection<UserPositionModel>();
 
@@ -47,7 +47,8 @@ public sealed partial class MapViewModel : PageViewModelBase
         _othersPositionListener = userPositionsListener;
 
         _messageService.Register<LogoutMessage>(this, OnLogout);
-        _messageService.Register<RestartPositionListenersMessage>(this, OnRestartPositionListeners);
+        _messageService.Register<CurrentSessionChangedMessage>(this, RestartPositionListeners);
+        _messageService.Register<ConnectionSettingsChangedMessage>(this, RestartPositionListeners);
     }
 
     [RelayCommand]
@@ -119,7 +120,6 @@ public sealed partial class MapViewModel : PageViewModelBase
         var oldUserPin = AllMapPins.FirstOrDefault(p => p.Id == e.UserId);
         if (oldUserPin != null) AllMapPins.Remove(oldUserPin);
         AllMapPins.Add(userPin);
-        OnPropertyChanged(nameof(AllMapPins));
     }
 
     private async void OnSelfPositionErrorOccured(object sender, ResultEventArgs e)
@@ -199,9 +199,12 @@ public sealed partial class MapViewModel : PageViewModelBase
                 _othersPositionCTS.Dispose();
             }
         }
+
+        UserPositions.Clear();
+        AllMapPins.Clear();
     }
 
-    private async void OnRestartPositionListeners(object sender, RestartPositionListenersMessage message)
+    private async void RestartPositionListeners(object sender, MessageBase message)
     {
         if (_selfPositionListener.IsListening)
         {
@@ -236,5 +239,11 @@ public sealed partial class MapViewModel : PageViewModelBase
         }
         _othersPositionCTS = new CancellationTokenSource();
         _othersPositionTask = _othersPositionListener.StartListening(_othersPositionCTS.Token);
+
+        if (message is CurrentSessionChangedMessage)
+        {
+            UserPositions.Clear();
+            AllMapPins.Clear();
+        }
     }
 }

@@ -12,12 +12,14 @@ namespace Kris.Server.Core.Handlers.Session;
 
 public sealed class EndSessionCommandHandler : SessionHandler, IRequestHandler<EndSessionCommand, Result>
 {
+    private readonly IPasswordService _passwordService;
     private readonly IJwtService _jwtService;
 
-    public EndSessionCommandHandler(IJwtService jwtService,
+    public EndSessionCommandHandler(IPasswordService passwordService, IJwtService jwtService,
         ISessionRepository sessionRepository, ISessionMapper sessionMapper, IAuthorizationService authorizationService)
         : base(sessionRepository, sessionMapper, authorizationService)
     {
+        _passwordService = passwordService;
         _jwtService = jwtService;
     }
 
@@ -31,6 +33,9 @@ public sealed class EndSessionCommandHandler : SessionHandler, IRequestHandler<E
 
         var session = await _sessionRepository.GetWithUsersAsync(user.SessionId.Value, cancellationToken);
         if (session == null) throw new DatabaseException("Session not found");
+
+        var passwordVerified = _passwordService.VerifyPassword(session.Password, request.Password);
+        if (!passwordVerified) return Result.Fail(new InvalidCredentialsError());
 
         // Cascade delete, was too much for EF
         foreach (var u in session.Users)

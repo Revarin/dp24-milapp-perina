@@ -14,29 +14,33 @@ public sealed class UserClient : ClientBase, IUserController
 
     public async Task<Response> RegisterUser(RegisterUserRequest request, CancellationToken ct)
     {
-        using var client = _httpClientFactory.CreateHttpClient(_controller);
-        return await PostAsync<RegisterUserRequest, Response>(client, "Register", request, ct);
+        using var httpClient = _httpClientFactory.CreateHttpClient(_controller);
+        return await PostAsync<RegisterUserRequest, Response>(httpClient, "Register", request, ct);
     }
 
     public async Task<LoginResponse> LoginUser(LoginUserRequest request, CancellationToken ct)
     {
-        using var client = _httpClientFactory.CreateHttpClient(_controller);
-        return await PostAsync<LoginUserRequest, LoginResponse>(client, "Login", request, ct);
+        using var httpClient = _httpClientFactory.CreateHttpClient(_controller);
+        return await PostAsync<LoginUserRequest, LoginResponse>(httpClient, "Login", request, ct);
     }
 
-    public Task<Response> DeleteUser(CancellationToken ct)
+    public Task<Response> DeleteUser(PasswordRequest request, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
-    public Task<LoginResponse> EditUser(EditUserRequest request, CancellationToken ct)
+    public async Task<IdentityResponse> EditUser(EditUserRequest request, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var jwt = _identityStore.GetJwtToken();
+        using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await PutAsync<EditUserRequest, IdentityResponse>(httpClient, "", request, ct);
     }
 
 
-    public Task<Response> StoreUserSettings(StoreUserSettingsRequest request, CancellationToken ct)
+    public async Task<Response> StoreUserSettings(StoreUserSettingsRequest request, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var jwt = _identityStore.GetJwtToken();
+        using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await PostAsync<StoreUserSettingsRequest, Response>(httpClient, "Settings", request, ct);
     }
 }

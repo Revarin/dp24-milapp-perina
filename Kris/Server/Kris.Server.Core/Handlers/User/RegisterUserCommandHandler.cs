@@ -28,7 +28,8 @@ public sealed class RegisterUserCommandHandler : UserHandler, IRequestHandler<Re
         {
             Login = request.RegisterUser.Login,
             Password = _passwordService.HashPassword(request.RegisterUser.Password),
-            Created = DateTime.UtcNow
+            Created = DateTime.UtcNow,
+            Settings = new UserSettingsEntity { }
         };
         await _userRepository.InsertAsync(user, cancellationToken);
 
