@@ -95,7 +95,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<ILocationStore, LocationStore>();
             builder.Services.AddSingleton<ISettingsStore, SettingsStore>();
 
-            builder.Services.AddTransient<IUserSettingsDataProvider, UserSettingsDataProvider>();
+            builder.Services.AddTransient<IConnectionSettingsDataProvider, ConnectionSettingsDataProvider>();
 
             builder.Services.AddSingleton<IHttpClientFactory, HttpClientFactory>();
             builder.Services.AddTransient<IUserController, UserClient>();

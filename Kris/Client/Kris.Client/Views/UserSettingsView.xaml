@@ -6,34 +6,46 @@
              x:Class="Kris.Client.Views.UserSettingsView"
              x:DataType="vm:UserSettingsViewModel"
              Title="UserSettingsView">
-    
+
     <StackLayout Orientation="Vertical"
                  VerticalOptions="FillAndExpand">
-
         <Label Text="User settings" FontSize="Large"/>
         <StackLayout Orientation="Vertical">
 
         </StackLayout>
 
-        <Line HorizontalOptions="FillAndExpand"/>
-
         <Label Text="Connection settings" FontSize="Large"/>
         <StackLayout Orientation="Vertical">
             <Label Text="GPS request interval" />
-            <Picker Title="GPS interval">
-                
+            <Picker Title="GPS interval"
+                    ItemsSource="{Binding GpsIntervalItems}"
+                    ItemDisplayBinding="{Binding Display}"
+                    SelectedItem="{Binding GpsIntervalSelectedItem}">
+                <Picker.Behaviors>
+                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ConnectionSettingsSelectedIndexChangedCommand}" />
+                </Picker.Behaviors>
             </Picker>
         </StackLayout>
         <StackLayout Orientation="Vertical">
             <Label Text="Position upload frequency"/>
-            <Picker Title="Position upload">
-                
+            <Picker Title="Position upload"
+                    ItemsSource="{Binding PositionUploadItems}"
+                    ItemDisplayBinding="{Binding Display}"
+                    SelectedItem="{Binding PositionUploadSelectedItem}">
+                <Picker.Behaviors>
+                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ConnectionSettingsSelectedIndexChangedCommand}" />
+                </Picker.Behaviors>
             </Picker>
         </StackLayout>
         <StackLayout Orientation="Vertical">
             <Label Text="Position download frequency" />
-            <Picker Title="Position download">
-                
+            <Picker Title="Position download"
+                    ItemsSource="{Binding PositionDownloadItems}"
+                    ItemDisplayBinding="{Binding Display}"
+                    SelectedItem="{Binding PositionDownloadSelectedItem}">
+                <Picker.Behaviors>
+                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ConnectionSettingsSelectedIndexChangedCommand}" />
+                </Picker.Behaviors>
             </Picker>
         </StackLayout>
 

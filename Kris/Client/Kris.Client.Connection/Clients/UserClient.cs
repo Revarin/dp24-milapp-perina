@@ -14,14 +14,14 @@ public sealed class UserClient : ClientBase, IUserController
 
     public async Task<Response> RegisterUser(RegisterUserRequest request, CancellationToken ct)
     {
-        using var client = _httpClientFactory.CreateHttpClient(_controller);
-        return await PostAsync<RegisterUserRequest, Response>(client, "Register", request, ct);
+        using var httpClient = _httpClientFactory.CreateHttpClient(_controller);
+        return await PostAsync<RegisterUserRequest, Response>(httpClient, "Register", request, ct);
     }
 
     public async Task<LoginResponse> LoginUser(LoginUserRequest request, CancellationToken ct)
     {
-        using var client = _httpClientFactory.CreateHttpClient(_controller);
-        return await PostAsync<LoginUserRequest, LoginResponse>(client, "Login", request, ct);
+        using var httpClient = _httpClientFactory.CreateHttpClient(_controller);
+        return await PostAsync<LoginUserRequest, LoginResponse>(httpClient, "Login", request, ct);
     }
 
     public Task<Response> DeleteUser(CancellationToken ct)
@@ -35,8 +35,10 @@ public sealed class UserClient : ClientBase, IUserController
     }
 
 
-    public Task<Response> StoreUserSettings(StoreUserSettingsRequest request, CancellationToken ct)
+    public async Task<Response> StoreUserSettings(StoreUserSettingsRequest request, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var jwt = _identityStore.GetJwtToken();
+        using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await PostAsync<StoreUserSettingsRequest, Response>(httpClient, "Settings", request, ct);
     }
 }

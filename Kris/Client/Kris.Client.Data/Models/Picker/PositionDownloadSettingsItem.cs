@@ -1,7 +1,7 @@
 ﻿namespace Kris.Client.Data.Models.Picker;
 
-public sealed class PositionDownloadSettingsItem : IDisplayableItem<int>
+public sealed class PositionDownloadSettingsItem : IDisplayableItem<TimeSpan>
 {
     public string Display { get; init; }
-    public int Value { get; init; }
+    public TimeSpan Value { get; init; }
 }

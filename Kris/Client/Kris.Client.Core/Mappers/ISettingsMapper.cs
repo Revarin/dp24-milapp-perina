@@ -6,4 +6,5 @@ namespace Kris.Client.Core.Mappers;
 public interface ISettingsMapper
 {
     ConnectionSettingsEntity Map(ConnectionSettingsModel model);
+    ConnectionSettingsModel Map(ConnectionSettingsEntity entity);
 }

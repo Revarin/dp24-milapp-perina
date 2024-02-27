@@ -12,16 +12,19 @@ public sealed class UserPositionsListener : BackgroundListener, IUserPositionsLi
 {
     private readonly IPositionController _positionClient;
     private readonly IPositionMapper _positionMapper;
+    private readonly ISettingsStore _settingsStore;
     private readonly IIdentityStore _identityStore;
 
     public event EventHandler<UserPositionsEventArgs> PositionsChanged;
 
     private DateTime _lastUpdate = DateTime.MinValue;
 
-    public UserPositionsListener(IPositionController positionClient, IPositionMapper positionMapper, IIdentityStore identityStore)
+    public UserPositionsListener(IPositionController positionClient, IPositionMapper positionMapper,
+        ISettingsStore settingsStore, IIdentityStore identityStore)
     {
         _positionClient = positionClient;
         _positionMapper = positionMapper;
+        _settingsStore = settingsStore;
         _identityStore = identityStore;
     }
 
@@ -31,8 +34,7 @@ public sealed class UserPositionsListener : BackgroundListener, IUserPositionsLi
         {
             try
             {
-                // TODO: Settings
-                var delay = TimeSpan.FromSeconds(30);
+                var settings = _settingsStore.GetConnectionSettings();
                 var identity = _identityStore.GetIdentity();
 
                 IsListening = true;
@@ -52,7 +54,7 @@ public sealed class UserPositionsListener : BackgroundListener, IUserPositionsLi
                     _lastUpdate = response.Resolved;
 
                     iter++;
-                    await Task.Delay(delay, ct);
+                    await Task.Delay(settings.PositionDownloadInterval, ct);
                 }
             }
             finally

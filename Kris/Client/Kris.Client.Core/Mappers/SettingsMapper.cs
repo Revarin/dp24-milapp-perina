@@ -14,4 +14,14 @@ public sealed class SettingsMapper : ISettingsMapper
             PositionDownloadInterval = TimeSpan.FromSeconds(model.PositionDownloadFrequency)
         };
     }
+
+    public ConnectionSettingsModel Map(ConnectionSettingsEntity entity)
+    {
+        return new ConnectionSettingsModel
+        {
+            GpsRequestInterval = entity.GpsInterval.Seconds,
+            PositionUploadFrequency = entity.PositionUploadMultiplier,
+            PositionDownloadFrequency = entity.PositionDownloadInterval.Seconds
+        };
+    }
 }

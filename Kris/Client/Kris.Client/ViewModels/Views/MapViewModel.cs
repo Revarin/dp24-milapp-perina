@@ -47,7 +47,8 @@ public sealed partial class MapViewModel : PageViewModelBase
         _othersPositionListener = userPositionsListener;
 
         _messageService.Register<LogoutMessage>(this, OnLogout);
-        _messageService.Register<RestartPositionListenersMessage>(this, OnRestartPositionListeners);
+        _messageService.Register<CurrentSessionChangedMessage>(this, RestartPositionListeners);
+        _messageService.Register<ConnectionSettingsChangedMessage>(this, RestartPositionListeners);
     }
 
     [RelayCommand]
@@ -201,7 +202,7 @@ public sealed partial class MapViewModel : PageViewModelBase
         }
     }
 
-    private async void OnRestartPositionListeners(object sender, RestartPositionListenersMessage message)
+    private async void RestartPositionListeners(object sender, MessageBase message)
     {
         if (_selfPositionListener.IsListening)
         {
