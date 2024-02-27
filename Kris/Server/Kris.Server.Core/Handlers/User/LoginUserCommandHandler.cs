@@ -39,7 +39,7 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
             UserId = user.Id,
             Login = user.Login,
             Token = jwt.Token,
-            JoinedSessions = user.AllSessions.Select(s => s.Id),
+            JoinedSessions = user.AllSessions.Select(s => s.SessionId),
             CurrentSession = user.CurrentSession?.Session == null ? null : new IdentityResponse.Session
             {
                 Id = user.CurrentSession.SessionId,

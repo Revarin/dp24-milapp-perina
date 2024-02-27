@@ -41,7 +41,10 @@ public sealed class EditSessionCommandHandler : SessionHandler, IRequestHandler<
         if (!passwordVerified) return Result.Fail(new InvalidCredentialsError());
 
         session.Name = request.EditSession.NewName;
-        session.Password = _passwordService.HashPassword(request.EditSession.NewPassword);
+        if (!string.IsNullOrEmpty(request.EditSession.NewPassword))
+        {
+            session.Password = _passwordService.HashPassword(request.EditSession.NewPassword);
+        }
         await _sessionRepository.UpdateAsync(cancellationToken);
 
         user.SessionName = session.Name;
