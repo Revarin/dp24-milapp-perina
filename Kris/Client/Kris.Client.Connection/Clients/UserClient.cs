@@ -24,7 +24,7 @@ public sealed class UserClient : ClientBase, IUserController
         return await PostAsync<LoginUserRequest, LoginResponse>(httpClient, "Login", request, ct);
     }
 
-    public Task<Response> DeleteUser(CancellationToken ct)
+    public Task<Response> DeleteUser(PasswordRequest request, CancellationToken ct)
     {
         throw new NotImplementedException();
     }

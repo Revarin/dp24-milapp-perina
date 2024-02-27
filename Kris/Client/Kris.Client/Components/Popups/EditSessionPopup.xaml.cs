@@ -1,5 +1,4 @@
 using CommunityToolkit.Maui.Views;
-using Kris.Client.Common.Events;
 using Kris.Client.ViewModels.Popups;
 
 namespace Kris.Client.Components.Popups;
@@ -10,12 +9,14 @@ public partial class EditSessionPopup : Popup
 	{
 		BindingContext = vm;
 		InitializeComponent();
-        (BindingContext as EditSessionPopupViewModel).CancelClosing += OnCancelClosing;
-		(BindingContext as EditSessionPopupViewModel).CreatedClosing += OnCreatedClosing;
+        (BindingContext as EditSessionPopupViewModel).CancelClosing += CancelClosing;
+        (BindingContext as EditSessionPopupViewModel).LoadErrorClosing += ReturnClosing;
+        (BindingContext as EditSessionPopupViewModel).UpdatedClosing += ReturnClosing;
+        (BindingContext as EditSessionPopupViewModel).DeletedClosing += ReturnClosing;
         (BindingContext as EditSessionPopupViewModel).Init();
-	}
+    }
 
-    private async void OnCancelClosing(object sender, EventArgs e) => await CloseAsync();
+    private async void CancelClosing(object sender, EventArgs e) => await CloseAsync();
 
-	private async void OnCreatedClosing(object sender, ResultEventArgs e) => await CloseAsync(e); 
+    private async void ReturnClosing(object sender, EventArgs e) => await CloseAsync(e);
 }

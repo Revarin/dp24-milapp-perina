@@ -35,7 +35,7 @@
         </StackLayout>
         <Label Text="{Binding UserCount}" />
 
-        <Button Text="Edit (DEL)"
+        <Button Text="Edit"
                 IsVisible="{Binding CanEdit}">
             <Button.Behaviors>
                 <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding EditClickedCommand}" />

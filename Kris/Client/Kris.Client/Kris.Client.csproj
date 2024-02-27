@@ -71,6 +71,12 @@
 	  <Compile Update="Components\Items\SessionItem.xaml.cs">
 	    <DependentUpon>SessionItem.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Components\Popups\CreateSessionPopup.xaml.cs">
+	    <DependentUpon>CreateSessionPopup.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Components\Popups\EditSessionPopup.xaml.cs">
+	    <DependentUpon>EditSessionPopup.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\MenuView.xaml.cs">
 	    <DependentUpon>MenuView.xaml</DependentUpon>
 	  </Compile>
@@ -78,6 +84,9 @@
 
 	<ItemGroup>
 	  <MauiXaml Update="Components\Items\SessionItem.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Components\Popups\CreateSessionPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Components\Popups\EditSessionPopup.xaml">

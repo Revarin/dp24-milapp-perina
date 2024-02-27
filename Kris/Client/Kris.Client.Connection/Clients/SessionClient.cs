@@ -17,38 +17,42 @@ public sealed class SessionClient : ClientBase, ISessionController
     {
         var jwt = _identityStore.GetJwtToken();
         using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
-        return await PostAsync<CreateSessionRequest, IdentityResponse>(httpClient, "", request, ct);
+        return await PostAsync<CreateSessionRequest, IdentityResponse>(httpClient, string.Empty, request, ct);
     }
 
-    public Task<Response> EditSession(EditSessionRequest request, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<Response> EndSession(CancellationToken ct)
+    public async Task<Response> EditSession(EditSessionRequest request, CancellationToken ct)
     {
         var jwt = _identityStore.GetJwtToken();
         using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
-        return await DeleteAsync<Response>(httpClient, "", ct);
+        return await PutAsync<EditSessionRequest, Response>(httpClient, string.Empty, request, ct);
     }
 
-    public Task<GetOneResponse<SessionModel>> GetSession(Guid sessionId, CancellationToken ct)
+    public async Task<Response> EndSession(PasswordRequest request, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var jwt = _identityStore.GetJwtToken();
+        using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await DeleteAsync<PasswordRequest, Response>(httpClient, string.Empty, request, ct);
+    }
+
+    public async Task<GetOneResponse<SessionModel>> GetSession(Guid sessionId, CancellationToken ct)
+    {
+        var jwt = _identityStore.GetJwtToken();
+        using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await GetAsync<GetOneResponse<SessionModel>>(httpClient, sessionId.ToString(), ct);
     }
 
     public async Task<GetManyResponse<SessionModel>> GetSessions(CancellationToken ct)
     {
         var jwt = _identityStore.GetJwtToken();
-        using var client = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
-        return await GetAsync<GetManyResponse<SessionModel>>(client, "", ct);
+        using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await GetAsync<GetManyResponse<SessionModel>>(httpClient, string.Empty, ct);
     }
 
     public async Task<IdentityResponse> JoinSession(JoinSessionRequest request, CancellationToken ct)
     {
         var jwt = _identityStore.GetJwtToken();
-        using var client = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
-        return await PutAsync<JoinSessionRequest, IdentityResponse>(client, "Join", request, ct);
+        using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await PutAsync<JoinSessionRequest, IdentityResponse>(httpClient, "Join", request, ct);
     }
 
     public Task<Response> KickFromSession(Guid userId, CancellationToken ct)
@@ -59,7 +63,7 @@ public sealed class SessionClient : ClientBase, ISessionController
     public async Task<IdentityResponse> LeaveSession(Guid sessionId, CancellationToken ct)
     {
         var jwt = _identityStore.GetJwtToken();
-        using var client = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
-        return await PutAsync<IdentityResponse>(client, $"Leave/{sessionId}", ct);
+        using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await PutAsync<IdentityResponse>(httpClient, $"Leave/{sessionId}", ct);
     }
 }

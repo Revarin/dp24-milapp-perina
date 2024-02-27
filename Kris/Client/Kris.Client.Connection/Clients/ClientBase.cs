@@ -60,6 +60,22 @@ public abstract class ClientBase
         return await ParseResponse<TResult>(response, ct);
     }
 
+    protected async Task<TResult> DeleteAsync<TData, TResult>(HttpClient httpClient, string path, TData data, CancellationToken ct)
+        where TResult : Response, new()
+    {
+        var requestJson = JsonSerializer.Serialize(data, _serializerOptions);
+        var content = new StringContent(requestJson, Encoding.UTF8, ContentTypeJson);
+        var message = new HttpRequestMessage
+        {
+            Method = HttpMethod.Delete,
+            RequestUri = new Uri($"{httpClient.BaseAddress}{path}"),
+            Content = content
+        };
+        var response = await httpClient.SendAsync(message, ct);
+
+        return await ParseResponse<TResult>(response, ct);
+    }
+
     protected async Task<TResult> GetAsync<TResult>(HttpClient httpClient, string path, CancellationToken ct)
         where TResult : Response, new()
     {
