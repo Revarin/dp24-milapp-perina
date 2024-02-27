@@ -55,15 +55,16 @@ public sealed class SessionController : KrisController, ISessionController
     {
         // Edit CURRENT session only
         var user = CurrentUser();
-        if (user == null) return Response.Unauthorized<IdentityResponse>();
+        if (user == null) return Response.Unauthorized<Response>();
 
         var command = new EditSessionCommand { EditSession = request, User = user };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Forbidden<IdentityResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<IdentityResponse>();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<Response>(result.Errors.FirstMessage());
+            else if (result.HasError<InvalidCredentialsError>()) return Response.Forbidden<Response>(result.Errors.FirstMessage());
+            else return Response.InternalError<Response>();
         }
 
         return Response.Ok();
@@ -76,20 +77,21 @@ public sealed class SessionController : KrisController, ISessionController
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<Response?> EndSession(CancellationToken ct)
+    public async Task<Response?> EndSession(PasswordRequest request, CancellationToken ct)
     {
         // End CURRENT session only
         var user = CurrentUser();
-        if (user == null) return Response.Unauthorized<IdentityResponse>();
+        if (user == null) return Response.Unauthorized<Response>();
 
-        var command = new EndSessionCommand() { User = user };
+        var command = new EndSessionCommand() { User = user, Password = request.Password };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Forbidden<IdentityResponse>(result.Errors.FirstMessage());
-            else if (result.HasError<EntityNotFoundError>()) return Response.NotFound<IdentityResponse>(result.Errors.FirstMessage());
-            else return Response.InternalError<IdentityResponse>();
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<Response>(result.Errors.FirstMessage());
+            else if (result.HasError<InvalidCredentialsError>()) return Response.Forbidden<Response>(result.Errors.FirstMessage());
+            else if (result.HasError<EntityNotFoundError>()) return Response.NotFound<Response>(result.Errors.FirstMessage());
+            else return Response.InternalError<Response>();
         }
 
         return Response.Ok();

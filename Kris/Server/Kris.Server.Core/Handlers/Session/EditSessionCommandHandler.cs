@@ -15,15 +15,13 @@ public sealed class EditSessionCommandHandler : SessionHandler, IRequestHandler<
 {
     private readonly IPasswordService _passwordService;
     private readonly IJwtService _jwtService;
-    private readonly IUserMapper _userMapper;
 
-    public EditSessionCommandHandler(IPasswordService passwordService, IJwtService jwtService, IUserMapper userMapper,
+    public EditSessionCommandHandler(IPasswordService passwordService, IJwtService jwtService,
         ISessionRepository sessionRepository, ISessionMapper sessionMapper, IAuthorizationService authorizationService)
         : base(sessionRepository, sessionMapper, authorizationService)
     {
         _passwordService = passwordService;
         _jwtService = jwtService;
-        _userMapper = userMapper;
     }
 
     public async Task<Result> Handle(EditSessionCommand request, CancellationToken cancellationToken)
@@ -39,8 +37,11 @@ public sealed class EditSessionCommandHandler : SessionHandler, IRequestHandler<
         if (session == null) throw new NullableException();
         if (session.Name != user.SessionName) return Result.Fail(new UnauthorizedError("Invalid token"));
 
-        session.Name = request.EditSession.Name;
-        session.Password = _passwordService.HashPassword(request.EditSession.Password);
+        var passwordVerified = _passwordService.VerifyPassword(session.Password, request.EditSession.Password);
+        if (!passwordVerified) return Result.Fail(new InvalidCredentialsError());
+
+        session.Name = request.EditSession.NewName;
+        session.Password = _passwordService.HashPassword(request.EditSession.NewPassword);
         await _sessionRepository.UpdateAsync(cancellationToken);
 
         user.SessionName = session.Name;
