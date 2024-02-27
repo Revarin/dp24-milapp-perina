@@ -29,9 +29,11 @@ public sealed class UserClient : ClientBase, IUserController
         throw new NotImplementedException();
     }
 
-    public Task<IdentityResponse> EditUser(EditUserRequest request, CancellationToken ct)
+    public async Task<IdentityResponse> EditUser(EditUserRequest request, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var jwt = _identityStore.GetJwtToken();
+        using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await PutAsync<EditUserRequest, IdentityResponse>(httpClient, "", request, ct);
     }
 
 
