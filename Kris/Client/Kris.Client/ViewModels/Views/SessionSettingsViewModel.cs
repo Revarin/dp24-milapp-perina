@@ -63,6 +63,10 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
                 CurrentSession.SessionLeaving += OnSessionLeaving;
                 CurrentSession.SessionEditing += OnSessionEditing;
             }
+            else
+            {
+                CurrentSession = null;
+            }
 
             JoinedSessions = result.Value.JoinedSessions.Select(s => new SessionItemViewModel(s, SessionItemType.Joined, result.Value.UserType))
                 .ToObservableCollection();

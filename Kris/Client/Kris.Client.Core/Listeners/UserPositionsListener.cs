@@ -17,7 +17,7 @@ public sealed class UserPositionsListener : BackgroundListener, IUserPositionsLi
 
     public event EventHandler<UserPositionsEventArgs> PositionsChanged;
 
-    private DateTime _lastUpdate = DateTime.MinValue;
+    private DateTime _lastUpdate;
 
     public UserPositionsListener(IPositionController positionClient, IPositionMapper positionMapper,
         ISettingsStore settingsStore, IIdentityStore identityStore)
@@ -37,6 +37,7 @@ public sealed class UserPositionsListener : BackgroundListener, IUserPositionsLi
                 var settings = _settingsStore.GetConnectionSettings();
                 var identity = _identityStore.GetIdentity();
 
+                _lastUpdate = DateTime.MinValue;
                 IsListening = true;
 
                 var iter = 0;
