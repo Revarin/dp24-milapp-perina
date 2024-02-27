@@ -31,8 +31,11 @@ public sealed class EditUserCommandHandler : UserHandler, IRequestHandler<EditUs
         if (user.Login != request.User.Login || user.CurrentSessionId != request.User.SessionId)
             return Result.Fail(new UnauthorizedError("Invalid token"));
 
-        user.Login = request.EditUser.Login;
-        user.Password = _passwordService.HashPassword(request.EditUser.Password);
+        var passwordVerified = _passwordService.VerifyPassword(user.Password, request.EditUser.Password);
+        if (!passwordVerified) return Result.Fail(new InvalidCredentialsError());
+
+        user.Login = request.EditUser.NewLogin;
+        user.Password = _passwordService.HashPassword(request.EditUser.NewPassword);
         await _userRepository.UpdateAsync(cancellationToken);
 
         var jwt = _jwtService.CreateToken(_userMapper.Map(user));

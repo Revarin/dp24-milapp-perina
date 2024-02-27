@@ -62,6 +62,7 @@ public sealed class UserController : KrisController, IUserController
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IdentityResponse?> EditUser(EditUserRequest request, CancellationToken ct)
     {
@@ -75,6 +76,7 @@ public sealed class UserController : KrisController, IUserController
         if (result.IsFailed)
         {
             if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<IdentityResponse>(result.Errors.FirstMessage());
+            else if (result.HasError<InvalidCredentialsError>()) return Response.Forbidden<IdentityResponse>(result.Errors.FirstMessage());
             else return Response.InternalError<IdentityResponse>();
         }
 
