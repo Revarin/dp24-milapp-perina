@@ -49,6 +49,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="BaltoPro.Maui.TouchEffect" />
 		<PackageReference Include="CommunityToolkit.Maui" />
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<PackageReference Include="FluentResults" />
@@ -84,6 +85,9 @@
 
 	<ItemGroup>
 	  <MauiXaml Update="Components\Items\SessionItem.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Components\Popups\CreateMapPointPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Components\Popups\CreateSessionPopup.xaml">

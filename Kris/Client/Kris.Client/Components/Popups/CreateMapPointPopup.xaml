@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<tk:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+          xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+          xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+          xmlns:vm="clr-namespace:Kris.Client.ViewModels.Popups"
+          x:Class="Kris.Client.Components.Popups.CreateMapPointPopup"
+          x:DataType="vm:CreateMapPointPopupViewModel">
+    
+    <StackLayout Orientation="Vertical"
+                 VerticalOptions="FillAndExpand">
+        
+        <StackLayout Orientation="Vertical">
+            <Label Text="Name" />
+            <Entry Placeholder="Name"
+                   Text="{Binding PointName}" />
+            <Label Text="{Binding ErrorMessages[PointName]}"
+                   IsVisible="{Binding ErrorMessages[PointName]}"
+                   Style="{StaticResource errorMessageStyle}" />
+        </StackLayout>
+        <StackLayout Orientation="Vertical">
+            <Label Text="Description" />
+            <Editor Placeholder="Description..." Keyboard="Text"
+                    Text="{Binding Description}" />
+            <Label Text="{Binding ErrorMessages[Description]}"
+                   IsVisible="{Binding ErrorMessages[Description]}"
+                   Style="{StaticResource errorMessageStyle}" />
+        </StackLayout>
+
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand">
+
+            <StackLayout Orientation="Vertical"
+                         VerticalOptions="FillAndExpand">
+                <Label Text="Map symbol" />
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Shape" />
+                    <Picker Title="Symbol's shape">
+
+                    </Picker>
+                </StackLayout>
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Color" />
+                    <Picker Title="Symbol's color">
+
+                    </Picker>
+                </StackLayout>
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Sign" />
+                    <Picker Title="Symbol's sign">
+
+                    </Picker>
+                </StackLayout>
+            </StackLayout>
+            <Image>
+                
+            </Image>
+        </StackLayout>
+
+        <StackLayout Orientation="Horizontal">
+            <Button Text="Cancel">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CancelClickedCommand}" />
+                </Button.Behaviors>
+            </Button>
+            <Button Text="Create">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CreateClickedCommand}" />
+                </Button.Behaviors>
+            </Button>
+        </StackLayout>
+    </StackLayout>
+</tk:Popup>

@@ -19,6 +19,7 @@ using Kris.Client.Data.Providers;
 using Kris.Client.Platforms.Map;
 
 using MauiMap = Microsoft.Maui.Controls.Maps.Map;
+using Maui.TouchEffect.Hosting;
 
 namespace Kris.Client
 {
@@ -29,6 +30,7 @@ namespace Kris.Client
             var builder = MauiApp.CreateBuilder();
 
             builder.UseMauiApp<App>()
+                .UseMauiTouchEffect()
                 .UseMauiMaps()
                 .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
@@ -77,6 +79,7 @@ namespace Kris.Client
             builder.Services.AddTransientPopup<PasswordPopup, PasswordPopupViewModel>();
             builder.Services.AddTransientPopup<CreateSessionPopup, CreateSessionPopupViewModel>();
             builder.Services.AddTransientPopup<EditSessionPopup, EditSessionPopupViewModel>();
+            builder.Services.AddTransientPopup<CreateMapPointPopup, CreateMapPointPopupViewModel>();
 
             builder.Services.AddSingleton<IUserMapper, UserMapper>();
             builder.Services.AddSingleton<ISessionMapper, SessionMapper>();
@@ -102,6 +105,7 @@ namespace Kris.Client
             builder.Services.AddTransient<IUserController, UserClient>();
             builder.Services.AddTransient<ISessionController, SessionClient>();
             builder.Services.AddTransient<IPositionController, PositionClient>();
+            builder.Services.AddTransient<IMapObjectController, MapObjectClient>();
 
 #if DEBUG
     		builder.Logging.AddDebug();

@@ -100,6 +100,19 @@ public sealed partial class MapViewModel : PageViewModelBase
     }
 
     [RelayCommand]
+    private Task OnMapLongPressed()
+    {
+        // TODO: Map object creation
+        throw new NotImplementedException();
+    }
+
+    [RelayCommand]
+    private void OnMapClicked(EventArgs e)
+    {
+        throw new NotImplementedException();
+    }
+
+    [RelayCommand]
     private async Task OnLogoutClicked()
     {
         await LogoutUser();
