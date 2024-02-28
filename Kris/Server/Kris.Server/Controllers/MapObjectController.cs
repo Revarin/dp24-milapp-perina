@@ -22,6 +22,9 @@ public sealed class MapObjectController : KrisController, IMapObjectController
 
     [HttpGet]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<GetMapObjectsResponse?> GetMapObjects(DateTime? from, CancellationToken ct)
     {
         var user = CurrentUser();
@@ -33,7 +36,7 @@ public sealed class MapObjectController : KrisController, IMapObjectController
         if (result.IsFailed)
         {
             if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<GetMapObjectsResponse>(result.Errors.FirstMessage());
-            else return Response.BadRequest<GetMapObjectsResponse>();
+            else return Response.InternalError<GetMapObjectsResponse>();
         }
 
         return Response.Ok(result.Value);
@@ -41,6 +44,9 @@ public sealed class MapObjectController : KrisController, IMapObjectController
 
     [HttpPost("Point")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<GetOneResponse<Guid>?> AddMapPoint(AddMapPointRequest request, CancellationToken ct)
     {
         var user = CurrentUser();
@@ -52,7 +58,7 @@ public sealed class MapObjectController : KrisController, IMapObjectController
         if (result.IsFailed)
         {
             if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<GetOneResponse<Guid>>(result.Errors.FirstMessage());
-            else return Response.BadRequest<GetOneResponse<Guid>>();
+            else return Response.InternalError<GetOneResponse<Guid>>();
         }
 
         return Response.Ok(new GetOneResponse<Guid> { Value = result.Value });
@@ -60,6 +66,10 @@ public sealed class MapObjectController : KrisController, IMapObjectController
 
     [HttpPut("Point")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<Response?> EditMapPoint(EditMapPointRequest request, CancellationToken ct)
     {
         var user = CurrentUser();
@@ -72,7 +82,7 @@ public sealed class MapObjectController : KrisController, IMapObjectController
         {
             if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<Response>(result.Errors.FirstMessage());
             else if (result.HasError<EntityNotFoundError>()) return Response.NotFound<Response>(result.Errors.FirstMessage());
-            else return Response.BadRequest<Response>();
+            else return Response.InternalError<Response>();
         }
 
         return Response.Ok();
@@ -80,6 +90,10 @@ public sealed class MapObjectController : KrisController, IMapObjectController
 
     [HttpDelete("Point/{pointId:guid}")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<Response?> DeleteMapPoint(Guid pointId, CancellationToken ct)
     {
         var user = CurrentUser();
@@ -92,7 +106,7 @@ public sealed class MapObjectController : KrisController, IMapObjectController
         {
             if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<Response>(result.Errors.FirstMessage());
             else if (result.HasError<EntityNotFoundError>()) return Response.NotFound<Response>(result.Errors.FirstMessage());
-            else return Response.BadRequest<Response>();
+            else return Response.InternalError<Response>();
         }
 
         return Response.Ok();

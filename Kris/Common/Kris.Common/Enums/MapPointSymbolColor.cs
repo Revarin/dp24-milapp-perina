@@ -4,7 +4,7 @@
 public enum MapPointSymbolColor
 {
     None = 0,
-    Blue,
+    Red,
     Green,
-    Red
+    Blue
 }

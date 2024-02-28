@@ -4,6 +4,8 @@
 public enum MapPointSymbolSign
 {
     None = 0,
+    Plus,
+    Minus,
     Cross,
     Circle
 }
