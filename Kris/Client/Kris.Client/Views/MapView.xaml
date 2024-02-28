@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
+             xmlns:vm="clr-namespace:Kris.Client.ViewModels.Views"
+             xmlns:mb="clr-namespace:Kris.Client.Behaviors.Map"
+             xmlns:kmap="clr-namespace:Kris.Client.Components.Map"
+             x:Class="Kris.Client.Views.MapView"
+             x:DataType="vm:MapViewModel"
+             Title="MapView">
+    <ContentPage.Behaviors>
+        <tk:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}" />
+    </ContentPage.Behaviors>
+    
+    <StackLayout Orientation="Vertical"
+                 VerticalOptions="FillAndExpand">
+        <StackLayout Orientation="Horizontal"
+                     VerticalOptions="Start">
+            <Button Text="Logout"
+                    HorizontalOptions="FillAndExpand">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding LogoutClickedCommand}" />
+                </Button.Behaviors>
+            </Button>
+            <Button Text="Current position"
+                    HorizontalOptions="FillAndExpand">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CurrentPositionClickedCommand}" />
+                </Button.Behaviors>
+            </Button>
+        </StackLayout>
+
+        <maps:Map VerticalOptions="FillAndExpand"
+                  MapType="Street" IsZoomEnabled="True"
+                  ItemsSource="{Binding AllMapPins}">
+            <maps:Map.Behaviors>
+                <mb:CurrentRegionBehavior Value="{Binding CurrentRegion}" />
+                <mb:MoveToRegionBehavior Request="{Binding MoveToRegion}" />
+                <tk:EventToCommandBehavior EventName="Loaded" Command="{Binding MapLoadedCommand}" />
+            </maps:Map.Behaviors>
+            <maps:Map.ItemTemplate>
+                <DataTemplate x:DataType="{x:Type kmap:MapPin}">
+                    <mb:KrisPinBehavior Location="{Binding Location}"
+                                        Address="{Binding Address}"
+                                        Label="{Binding Name}"
+                                        ImageSource="{Binding ImageSource}"
+                                        Type="Generic" />
+                </DataTemplate>
+            </maps:Map.ItemTemplate>
+        </maps:Map>
+        
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand"
+                     VerticalOptions="End">
+            <Button Text="Map"
+                    HorizontalOptions="FillAndExpand">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding GoToMapCommand}" />
+                </Button.Behaviors>
+            </Button>
+            <Button Text="Menu"
+                    HorizontalOptions="FillAndExpand">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding GoToMenuCommand}" />
+                </Button.Behaviors>
+            </Button>
+        </StackLayout>
+    </StackLayout>
+</ContentPage>

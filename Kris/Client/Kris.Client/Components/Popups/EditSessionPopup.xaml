@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<tk:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+          xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+          xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+          xmlns:vm="clr-namespace:Kris.Client.ViewModels.Popups"
+          xmlns:enum="clr-namespace:Kris.Common.Enums;assembly=Kris.Common"
+          x:Class="Kris.Client.Components.Popups.EditSessionPopup"
+          x:DataType="vm:EditSessionPopupViewModel">
+
+    <tk:Popup.Resources>
+        <ResourceDictionary>
+            <tk:EnumToBoolConverter x:Key="UserTypeAdminConverter">
+                <tk:EnumToBoolConverter.TrueValues>
+                    <enum:UserType>SuperAdmin</enum:UserType>
+                    <enum:UserType>Admin</enum:UserType>
+                </tk:EnumToBoolConverter.TrueValues>
+            </tk:EnumToBoolConverter>
+        </ResourceDictionary>
+    </tk:Popup.Resources>
+    
+    <StackLayout Orientation="Vertical"
+                 VerticalOptions="FillAndExpand">
+
+        <Label Text="TODO" />
+
+        <StackLayout Orientation="Vertical"
+                     VerticalOptions="FillAndExpand"
+                     IsVisible="{Binding UserType, Converter={StaticResource UserTypeAdminConverter}}">
+
+            <StackLayout Orientation="Vertical">
+                <Label Text="New name" />
+                <Entry Placeholder="Name"
+                       Text="{Binding Name}">
+                </Entry>
+                <Label Text="{Binding ErrorMessages[Name]}"
+                       IsVisible="{Binding ErrorMessages[Name]}"
+                       Style="{StaticResource errorMessageStyle}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Vertical">
+                <Label Text="New password" />
+                <Entry IsPassword="True"
+                       Text="{Binding Password}">
+                </Entry>
+                <Label Text="{Binding ErrorMessages[Password]}"
+                       IsVisible="{Binding ErrorMessages[Password]}"
+                       Style="{StaticResource errorMessageStyle}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Vertical">
+                <Label Text="Confirm new password" />
+                <Entry IsPassword="True"
+                       Text="{Binding PasswordVerification}">
+                </Entry>
+                <Label Text="{Binding ErrorMessages[PasswordVerification]}"
+                       IsVisible="{Binding ErrorMessages[PasswordVerification]}"
+                       Style="{StaticResource errorMessageStyle}" />
+            </StackLayout>
+
+            <Button Text="Delete session">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding DeleteClickedCommand}" />
+                </Button.Behaviors>
+            </Button>
+
+            <StackLayout Orientation="Horizontal"
+                         HorizontalOptions="FillAndExpand">
+                <Button Text="Cancel">
+                    <Button.Behaviors>
+                        <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CancelClickedCommand}" />
+                    </Button.Behaviors>
+                </Button>
+                <Button Text="Save changes">
+                    <Button.Behaviors>
+                        <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SaveClickedCommand}" />
+                    </Button.Behaviors>
+                </Button>
+            </StackLayout>
+        </StackLayout>
+    </StackLayout>
+</tk:Popup>
