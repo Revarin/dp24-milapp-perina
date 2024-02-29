@@ -15,6 +15,7 @@ public sealed class ConnectionSettingsDataProvider : IConnectionSettingsDataProv
     private readonly IStaticDataSource<GpsIntervalSettingsItem> _gpsIntervalSettingsItems;
     private readonly IStaticDataSource<PositionDownloadSettingsItem> _positionDownloadSettingsItems;
     private readonly IStaticDataSource<PositionUploadSettingsItem> _positionUploadSettingsItems;
+    private readonly IStaticDataSource<MapObjectDownloadSettingsItem> _mapObjectDownloadSettingsItems;
 
     public ConnectionSettingsDataProvider(ISettingsStore settingsStore, IOptions<DefaultPreferencesOptions> options)
     {
@@ -23,6 +24,7 @@ public sealed class ConnectionSettingsDataProvider : IConnectionSettingsDataProv
         _gpsIntervalSettingsItems = new GpsIntervalSettingsDataSource();
         _positionDownloadSettingsItems = new PositionDownloadSettingsDataSource();
         _positionUploadSettingsItems = new PositionUploadSettingsDataSource();
+        _mapObjectDownloadSettingsItems = new MapObjectDownloadSettingsDataSource();
     }
 
     public GpsIntervalSettingsItem GetCurrentGpsIntervalSettings()
@@ -35,6 +37,18 @@ public sealed class ConnectionSettingsDataProvider : IConnectionSettingsDataProv
         }
 
         return _gpsIntervalSettingsItems.Get().First(i => IsEqualSeconds(i.Value, _defaultOptions.GpsInterval));
+    }
+
+    public MapObjectDownloadSettingsItem GetCurrentMapObjectDownloadSettings()
+    {
+        var settings = _settingsStore.GetConnectionSettings();
+        if (settings?.MapObjectDownloadInterval != null)
+        {
+            var currentValue = _mapObjectDownloadSettingsItems.Get().FirstOrDefault(i => i.Value.Equals(settings.MapObjectDownloadInterval));
+            if (currentValue != null) return currentValue;
+        }
+
+        return _mapObjectDownloadSettingsItems.Get().First(i => IsEqualSeconds(i.Value, _defaultOptions.MapObjectDownloadFrequency));
     }
 
     public PositionDownloadSettingsItem GetCurrentPositionDownloadSettings()
@@ -67,13 +81,19 @@ public sealed class ConnectionSettingsDataProvider : IConnectionSettingsDataProv
         {
             GpsInterval = _gpsIntervalSettingsItems.Get().First(i => IsEqualSeconds(i.Value, _defaultOptions.GpsInterval)).Value,
             PositionDownloadInterval = _positionDownloadSettingsItems.Get().First(i => IsEqualSeconds(i.Value, _defaultOptions.PositionDownloadFrequency)).Value,
-            PositionUploadMultiplier = _positionUploadSettingsItems.Get().First(i => i.Value == _defaultOptions.PositionUploadFrequency).Value
+            PositionUploadMultiplier = _positionUploadSettingsItems.Get().First(i => i.Value == _defaultOptions.PositionUploadFrequency).Value,
+            MapObjectDownloadInterval = _mapObjectDownloadSettingsItems.Get().First(i => IsEqualSeconds(i.Value, _defaultOptions.MapObjectDownloadFrequency)).Value
         };
     }
 
     public IEnumerable<GpsIntervalSettingsItem> GetGpsIntervalSettingsItems()
     {
         return _gpsIntervalSettingsItems.Get();
+    }
+
+    public IEnumerable<MapObjectDownloadSettingsItem> GetMapObjectDownloadSettingsItems()
+    {
+        return _mapObjectDownloadSettingsItems.Get();
     }
 
     public IEnumerable<PositionDownloadSettingsItem> GetPositionDownloadSettingsItems()

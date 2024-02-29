@@ -27,6 +27,7 @@ public sealed class StoreUserSettingsCommandHandler : UserHandler, IRequestHandl
             user.Settings.GpsRequestInterval = newSettings.ConnectionSettings.GpsRequestInterval;
             user.Settings.PositionUploadFrequency = newSettings.ConnectionSettings.PositionUploadFrequency;
             user.Settings.PositionDownloadFrequency = newSettings.ConnectionSettings.PositionDownloadFrequency;
+            user.Settings.MapObjectDownloadFrequency = newSettings.ConnectionSettings.MapObjectDownloadFrequency;
         }
 
         await _userRepository.UpdateAsync(cancellationToken);
