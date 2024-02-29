@@ -19,7 +19,6 @@ using Kris.Client.Data.Providers;
 using Kris.Client.Platforms.Map;
 
 using MauiMap = Microsoft.Maui.Controls.Maps.Map;
-using Maui.TouchEffect.Hosting;
 
 namespace Kris.Client
 {
@@ -30,7 +29,6 @@ namespace Kris.Client
             var builder = MauiApp.CreateBuilder();
 
             builder.UseMauiApp<App>()
-                .UseMauiTouchEffect()
                 .UseMauiMaps()
                 .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
@@ -100,6 +98,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<ISettingsStore, SettingsStore>();
 
             builder.Services.AddTransient<IConnectionSettingsDataProvider, ConnectionSettingsDataProvider>();
+            builder.Services.AddTransient<IMapPointSymbolDataProvider, MapPointSymbolDataProvider>();
 
             builder.Services.AddSingleton<IHttpClientFactory, HttpClientFactory>();
             builder.Services.AddTransient<IUserController, UserClient>();

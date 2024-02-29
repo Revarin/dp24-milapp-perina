@@ -2,7 +2,6 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:touch="http://axemasta.com/schemas/2023/toucheffect"
              xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
              xmlns:vm="clr-namespace:Kris.Client.ViewModels.Views"
              xmlns:mb="clr-namespace:Kris.Client.Behaviors.Map"
@@ -34,13 +33,12 @@
         
         <maps:Map VerticalOptions="FillAndExpand"
                   MapType="Street" IsZoomEnabled="True"
-                  touch:TouchEffect.LongPressCommand="{Binding MapLongPressedCommand}"
                   ItemsSource="{Binding AllMapPins}">
             <maps:Map.Behaviors>
                 <mb:CurrentRegionBehavior Value="{Binding CurrentRegion}" />
                 <mb:MoveToRegionBehavior Request="{Binding MoveToRegion}" />
                 <tk:EventToCommandBehavior EventName="Loaded" Command="{Binding MapLoadedCommand}" />
-                <tk:EventToCommandBehavior EventName="MapClicked" Command="{Binding MapClickedCommand}" />
+                <tk:EventToCommandBehavior EventName="MapClicked" Command="{Binding MapClickedCommand}" x:TypeArguments="MapClickedEventArgs" />
             </maps:Map.Behaviors>
             <maps:Map.ItemTemplate>
                 <DataTemplate x:DataType="{x:Type kmap:MapPin}">

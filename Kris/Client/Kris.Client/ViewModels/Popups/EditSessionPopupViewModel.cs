@@ -61,6 +61,8 @@ public sealed partial class EditSessionPopupViewModel : PopupViewModel
     [RelayCommand]
     private async Task OnSaveClicked()
     {
+        if (ValidateAllProperties()) return;
+
         var passwordPopup = await _popupService.ShowPopupAsync<PasswordPopupViewModel>() as PasswordEventArgs;
         if (passwordPopup == null) return;
 

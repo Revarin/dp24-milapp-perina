@@ -17,6 +17,68 @@
                    IsVisible="{Binding ErrorMessages[PointName]}"
                    Style="{StaticResource errorMessageStyle}" />
         </StackLayout>
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand">
+            <StackLayout Orientation="Vertical"
+                         HorizontalOptions="StartAndExpand">
+                <Label Text="Latitude" />
+                <Label Text="{Binding Location.Latitude, StringFormat='{0:F4}'}"
+                       HorizontalOptions="FillAndExpand" />
+            </StackLayout>
+            <StackLayout Orientation="Vertical"
+                         HorizontalOptions="CenterAndExpand">
+                <Label Text="Longitude" />
+                <Label Text="{Binding Location.Longitude, StringFormat='{0:F4}'}"
+                       HorizontalOptions="FillAndExpand" />
+            </StackLayout>
+            <StackLayout Orientation="Vertical"
+                         HorizontalOptions="EndAndExpand">
+                <Label Text="Altitude" />
+                <Label Text="{Binding Location.Altitude, StringFormat='{0:F4}'}"
+                       HorizontalOptions="FillAndExpand" />
+            </StackLayout>
+        </StackLayout>
+
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand">
+
+            <StackLayout Orientation="Vertical"
+                         VerticalOptions="FillAndExpand">
+                <Label Text="Map symbol" />
+                <Label Text="{Binding ErrorMessages[MapSymbol]}"
+                       IsVisible="{Binding ErrorMessages[MapSymbol]}"
+                       Style="{StaticResource errorMessageStyle}" />
+                <StackLayout Orientation="Vertical">
+                    <Label Text="Shape" />
+                    <Picker Title="Symbol's shape"
+                            ItemsSource="{Binding MapPointShapeItems}"
+                            ItemDisplayBinding="{Binding Display}"
+                            SelectedItem="{Binding MapPointShapeSelectedItem}">
+                    </Picker>
+                </StackLayout>
+                <StackLayout Orientation="Vertical">
+                    <Label Text="Color" />
+                    <Picker Title="Symbol's color"
+                            ItemsSource="{Binding MapPointColorItems}"
+                            ItemDisplayBinding="{Binding Display}"
+                            SelectedItem="{Binding MapPointColorSelectedItem}">
+                    </Picker>
+                </StackLayout>
+                <StackLayout Orientation="Vertical">
+                    <Label Text="Sign" />
+                    <Picker Title="Symbol's sign"
+                            ItemsSource="{Binding MapPointSignItems}"
+                            ItemDisplayBinding="{Binding Display}"
+                            SelectedItem="{Binding MapPointSignSelectedItem}">
+                    </Picker>
+                </StackLayout>
+            </StackLayout>
+            <Image HorizontalOptions="EndAndExpand"
+                   WidthRequest="150">
+                
+            </Image>
+        </StackLayout>
+
         <StackLayout Orientation="Vertical">
             <Label Text="Description" />
             <Editor Placeholder="Description..." Keyboard="Text"
@@ -28,41 +90,14 @@
 
         <StackLayout Orientation="Horizontal"
                      HorizontalOptions="FillAndExpand">
-
-            <StackLayout Orientation="Vertical"
-                         VerticalOptions="FillAndExpand">
-                <Label Text="Map symbol" />
-                <StackLayout Orientation="Horizontal">
-                    <Label Text="Shape" />
-                    <Picker Title="Symbol's shape">
-
-                    </Picker>
-                </StackLayout>
-                <StackLayout Orientation="Horizontal">
-                    <Label Text="Color" />
-                    <Picker Title="Symbol's color">
-
-                    </Picker>
-                </StackLayout>
-                <StackLayout Orientation="Horizontal">
-                    <Label Text="Sign" />
-                    <Picker Title="Symbol's sign">
-
-                    </Picker>
-                </StackLayout>
-            </StackLayout>
-            <Image>
-                
-            </Image>
-        </StackLayout>
-
-        <StackLayout Orientation="Horizontal">
-            <Button Text="Cancel">
+            <Button Text="Cancel"
+                    HorizontalOptions="FillAndExpand">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CancelClickedCommand}" />
                 </Button.Behaviors>
             </Button>
-            <Button Text="Create">
+            <Button Text="Create"
+                    HorizontalOptions="FillAndExpand">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CreateClickedCommand}" />
                 </Button.Behaviors>

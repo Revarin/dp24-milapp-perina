@@ -12,9 +12,11 @@ public sealed class MapObjectClient : ClientBase, IMapObjectController
     {
     }
 
-    public Task<GetOneResponse<Guid>> AddMapPoint(AddMapPointRequest request, CancellationToken ct)
+    public async Task<GetOneResponse<Guid>> AddMapPoint(AddMapPointRequest request, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var jwt = _identityStore.GetJwtToken();
+        using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await PostAsync<AddMapPointRequest, GetOneResponse<Guid>>(httpClient, "Point", request, ct);
     }
 
     public Task<Response> DeleteMapPoint(Guid pointId, CancellationToken ct)

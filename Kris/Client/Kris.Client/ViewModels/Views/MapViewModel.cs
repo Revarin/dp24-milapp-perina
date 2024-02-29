@@ -1,6 +1,8 @@
-﻿using CommunityToolkit.Maui.Core.Extensions;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FluentResults;
 using Kris.Client.Common.Enums;
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
@@ -12,8 +14,10 @@ using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.Utility;
+using Kris.Client.ViewModels.Popups;
 using Kris.Common.Extensions;
 using MediatR;
+using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 using System.Collections.ObjectModel;
 
@@ -21,6 +25,7 @@ namespace Kris.Client.ViewModels.Views;
 
 public sealed partial class MapViewModel : PageViewModelBase
 {
+    private readonly IPopupService _popupService;
     private readonly ICurrentPositionListener _selfPositionListener;
     private readonly IUserPositionsListener _othersPositionListener;
 
@@ -39,10 +44,11 @@ public sealed partial class MapViewModel : PageViewModelBase
     private CancellationTokenSource _othersPositionCTS;
     private Task _othersPositionTask;
 
-    public MapViewModel(ICurrentPositionListener currentPositionListener, IUserPositionsListener userPositionsListener,
+    public MapViewModel(IPopupService popupService, ICurrentPositionListener currentPositionListener, IUserPositionsListener userPositionsListener,
         IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
         : base(mediator, navigationService, messageService, alertService)
     {
+        _popupService = popupService;
         _selfPositionListener = currentPositionListener;
         _othersPositionListener = userPositionsListener;
 
@@ -100,16 +106,41 @@ public sealed partial class MapViewModel : PageViewModelBase
     }
 
     [RelayCommand]
-    private Task OnMapLongPressed()
+    private async Task OnMapClicked(MapClickedEventArgs e)
     {
-        // TODO: Map object creation
-        throw new NotImplementedException();
-    }
+        // Map point creation
+        var query = new GetCurrentUserQuery();
+        var currentUser = await _mediator.Send(query, CancellationToken.None);
+        if (currentUser == null || !currentUser.SessionId.HasValue || !currentUser.UserType.HasValue)
+        {
+            await _alertService.ShowToastAsync("Must join a session to create map objects");
+            return;
+        }
 
-    [RelayCommand]
-    private void OnMapClicked(EventArgs e)
-    {
-        throw new NotImplementedException();
+        var resultEventArgs = await _popupService.ShowPopupAsync<CreateMapPointPopupViewModel>(vm =>
+        {
+            vm.Location = e.Location;
+        }) as ResultEventArgs<Guid>;
+        if (resultEventArgs == null) return;
+
+        var result = resultEventArgs.Result;
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UnauthorizedError>())
+            {
+                await _alertService.ShowToastAsync("Login expired");
+                await LogoutUser();
+            }
+            else
+            {
+                await _alertService.ShowToastAsync(result.Errors.FirstMessage());
+            }
+        }
+        else
+        {
+            await _alertService.ShowToastAsync("Map point created");
+        }
     }
 
     [RelayCommand]
