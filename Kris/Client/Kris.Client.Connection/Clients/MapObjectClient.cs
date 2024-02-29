@@ -1,7 +1,9 @@
 ﻿using Kris.Client.Data.Cache;
+using Kris.Common.Extensions;
 using Kris.Interface.Controllers;
 using Kris.Interface.Requests;
 using Kris.Interface.Responses;
+using System.Web;
 
 namespace Kris.Client.Connection.Clients;
 
@@ -29,8 +31,15 @@ public sealed class MapObjectClient : ClientBase, IMapObjectController
         throw new NotImplementedException();
     }
 
-    public Task<GetMapObjectsResponse> GetMapObjects(DateTime? from, CancellationToken ct)
+    public async Task<GetMapObjectsResponse> GetMapObjects(DateTime? from, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var jwt = _identityStore.GetJwtToken();
+        using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        var query = HttpUtility.ParseQueryString(string.Empty);
+        if (from.HasValue) query[nameof(from)] = from.Value.ToISOString();
+        var result = await GetAsync<GetMapObjectsResponse>(httpClient, string.Empty, query.ToString(), ct);
+
+        if (ct.IsCancellationRequested) ct.ThrowIfCancellationRequested();
+        return result;
     }
 }

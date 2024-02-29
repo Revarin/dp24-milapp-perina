@@ -2,7 +2,6 @@
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FluentResults;
 using Kris.Client.Common.Enums;
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
@@ -28,6 +27,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     private readonly IPopupService _popupService;
     private readonly ICurrentPositionListener _selfPositionListener;
     private readonly IUserPositionsListener _othersPositionListener;
+    private readonly IMapObjectsListener _mapObjectsListener;
 
     [ObservableProperty]
     private MapSpan _currentRegion;
@@ -43,14 +43,18 @@ public sealed partial class MapViewModel : PageViewModelBase
     private Task _selfPositionTask;
     private CancellationTokenSource _othersPositionCTS;
     private Task _othersPositionTask;
+    private CancellationTokenSource _mapObjectsCTS;
+    private Task _mapObjectsTask;
 
-    public MapViewModel(IPopupService popupService, ICurrentPositionListener currentPositionListener, IUserPositionsListener userPositionsListener,
+    public MapViewModel(IPopupService popupService, ICurrentPositionListener currentPositionListener,
+        IUserPositionsListener userPositionsListener, IMapObjectsListener mapObjectsListener,
         IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
         : base(mediator, navigationService, messageService, alertService)
     {
         _popupService = popupService;
         _selfPositionListener = currentPositionListener;
         _othersPositionListener = userPositionsListener;
+        _mapObjectsListener = mapObjectsListener;
 
         _messageService.Register<LogoutMessage>(this, OnLogout);
         _messageService.Register<CurrentSessionChangedMessage>(this, RestartPositionListeners);
@@ -73,6 +77,13 @@ public sealed partial class MapViewModel : PageViewModelBase
             _othersPositionListener.PositionsChanged += OnOthersPositionPositionChanged;
             _othersPositionListener.ErrorOccured += OnOthersPositionErrorOccured;
             _othersPositionTask = _othersPositionListener.StartListening(_othersPositionCTS.Token);
+        }
+        if (!_mapObjectsListener.IsListening)
+        {
+            _mapObjectsCTS = new CancellationTokenSource();
+            _mapObjectsListener.MapObjectsChanged += OnMapObjectsChanged;
+            _mapObjectsListener.ErrorOccured += OnMapObjectsErrorOccured;
+            _mapObjectsTask = _mapObjectsListener.StartListening(_mapObjectsCTS.Token);
         }
     }
 
@@ -209,6 +220,26 @@ public sealed partial class MapViewModel : PageViewModelBase
         }
     }
 
+    private void OnMapObjectsChanged(object sender, MapObjectsEventArgs e)
+    {
+        // TODO
+    }
+
+    private async void OnMapObjectsErrorOccured(object sender, ResultEventArgs e)
+    {
+        if (e.Result.HasError<UnauthorizedError>())
+        {
+            await _alertService.ShowToastAsync("Login expired");
+            await LogoutUser();
+        }
+        else
+        {
+            await _alertService.ShowToastAsync(e.Result.Errors.FirstMessage());
+            OnLogout(this, null);
+        }
+
+    }
+
     private async void OnLogout(object sender, LogoutMessage message)
     {
         if (_selfPositionListener.IsListening)
@@ -241,6 +272,22 @@ public sealed partial class MapViewModel : PageViewModelBase
             finally
             {
                 _othersPositionCTS.Dispose();
+            }
+        }
+        if (_mapObjectsListener.IsListening)
+        {
+            _mapObjectsCTS.Cancel();
+
+            try
+            {
+                await _mapObjectsTask;
+                _mapObjectsListener.MapObjectsChanged -= OnMapObjectsChanged;
+                _mapObjectsListener.ErrorOccured -= OnMapObjectsErrorOccured;
+            }
+            catch (TaskCanceledException) { }
+            finally
+            {
+                _mapObjectsCTS.Dispose();
             }
         }
 
@@ -283,6 +330,23 @@ public sealed partial class MapViewModel : PageViewModelBase
         }
         _othersPositionCTS = new CancellationTokenSource();
         _othersPositionTask = _othersPositionListener.StartListening(_othersPositionCTS.Token);
+
+        if (_mapObjectsListener.IsListening)
+        {
+            _mapObjectsCTS.Cancel();
+
+            try
+            {
+                await _mapObjectsTask;
+            }
+            catch (TaskCanceledException) { }
+            finally
+            {
+                _mapObjectsCTS.Dispose();
+            }
+        }
+        _mapObjectsCTS = new CancellationTokenSource();
+        _mapObjectsTask = _mapObjectsListener.StartListening(_mapObjectsCTS.Token);
 
         if (message is CurrentSessionChangedMessage)
         {

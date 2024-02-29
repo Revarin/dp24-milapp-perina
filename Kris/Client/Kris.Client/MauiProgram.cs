@@ -83,9 +83,11 @@ namespace Kris.Client
             builder.Services.AddSingleton<ISessionMapper, SessionMapper>();
             builder.Services.AddSingleton<IPositionMapper, PositionMapper>();
             builder.Services.AddSingleton<ISettingsMapper, SettingsMapper>();
+            builder.Services.AddSingleton<IMapObjectsMapper, MapObjectsMapper>();
 
             builder.Services.AddSingleton<ICurrentPositionListener, CurrentPositionListener>();
             builder.Services.AddSingleton<IUserPositionsListener, UserPositionsListener>();
+            builder.Services.AddSingleton<IMapObjectsListener, MapObjectsListener>();
 
             builder.Services.AddSingleton<IRouterService, RouterService>();
             builder.Services.AddSingleton<IAlertService, AlertService>();
