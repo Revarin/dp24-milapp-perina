@@ -1,5 +1,4 @@
 ﻿using FluentResults;
-using Kris.Common.Models;
 using Kris.Server.Common.Errors;
 using Kris.Server.Common.Exceptions;
 using Kris.Server.Core.Mappers;
