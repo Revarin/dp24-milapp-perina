@@ -16,10 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 using Kris.Client.Data.Providers;
-using Kris.Client.Platforms.Map;
 using Kris.Client.Components.Map;
-
-using MauiMap = Microsoft.Maui.Controls.Maps.Map;
 
 namespace Kris.Client
 {
@@ -41,7 +38,6 @@ namespace Kris.Client
             builder.ConfigureMauiHandlers(options =>
             {
 #if ANDROID || IOS
-                options.AddHandler<MauiMap, CustomMapHandler>();
                 options.AddHandler<KrisMap, KrisMapHandler>();
 #endif
             });

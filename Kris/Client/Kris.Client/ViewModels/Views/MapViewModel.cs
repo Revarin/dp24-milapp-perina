@@ -118,13 +118,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     }
 
     [RelayCommand]
-    private void OnLongClick(MapLongClickedEventArgs e)
-    {
-        ;
-    }
-
-    [RelayCommand]
-    private async Task OnMapClicked(MapClickedEventArgs e)
+    private async Task OnMapLongClicked(MapLongClickedEventArgs e)
     {
         // Map point creation
         var query = new GetCurrentUserQuery();

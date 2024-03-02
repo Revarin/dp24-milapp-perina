@@ -33,33 +33,26 @@
         </StackLayout>
 
         <cmpMap:KrisMap VerticalOptions="FillAndExpand"
-                     MapType="Street" IsZoomEnabled="True">
+                        MapType="Street" IsZoomEnabled="True"
+                        ItemsSource="{Binding AllMapPins}">
             <cmpMap:KrisMap.Behaviors>
-                <tk:EventToCommandBehavior EventName="MapLongClicked" Command="{Binding LongClickCommand}" x:TypeArguments="cmpEvent:MapLongClickedEventArgs" />
-            </cmpMap:KrisMap.Behaviors>
-        </cmpMap:KrisMap>
-        
-        <!--<maps:Map VerticalOptions="FillAndExpand"
-                  MapType="Street" IsZoomEnabled="True"
-                  ItemsSource="{Binding AllMapPins}">
-            <maps:Map.Behaviors>
                 <mb:CurrentRegionBehavior Value="{Binding CurrentRegion}" />
                 <mb:MoveToRegionBehavior Request="{Binding MoveToRegion}" />
                 <tk:EventToCommandBehavior EventName="Loaded" Command="{Binding MapLoadedCommand}" />
-                <tk:EventToCommandBehavior EventName="MapClicked" Command="{Binding MapClickedCommand}" x:TypeArguments="MapClickedEventArgs" />
-            </maps:Map.Behaviors>
-            <maps:Map.ItemTemplate>
-                <DataTemplate x:DataType="{x:Type kmap:MapPin}">
+                <tk:EventToCommandBehavior EventName="MapLongClicked" Command="{Binding MapLongClickedCommand}"
+                                           x:TypeArguments="cmpEvent:MapLongClickedEventArgs" />
+            </cmpMap:KrisMap.Behaviors>
+            <cmpMap:KrisMap.ItemTemplate>
+                <DataTemplate x:DataType="{x:Type cmpMap:KrisMapPin}">
                     <mb:KrisPinBehavior Location="{Binding Location}"
                                         Address="{Binding Address}"
                                         Label="{Binding Name}"
                                         ImageSource="{Binding ImageSource}"
-                                        Type="Generic">
-                    </mb:KrisPinBehavior>
+                                        Type="Generic" />
                 </DataTemplate>
-            </maps:Map.ItemTemplate>
-        </maps:Map>-->
-        
+            </cmpMap:KrisMap.ItemTemplate>
+        </cmpMap:KrisMap>
+
         <StackLayout Orientation="Horizontal"
                      HorizontalOptions="FillAndExpand"
                      VerticalOptions="End">
