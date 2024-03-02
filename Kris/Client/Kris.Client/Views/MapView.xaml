@@ -5,7 +5,8 @@
              xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
              xmlns:vm="clr-namespace:Kris.Client.ViewModels.Views"
              xmlns:mb="clr-namespace:Kris.Client.Behaviors.Map"
-             xmlns:kmap="clr-namespace:Kris.Client.Components.Map"
+             xmlns:cmpMap="clr-namespace:Kris.Client.Components.Map"
+             xmlns:cmpEvent="clr-namespace:Kris.Client.Components.Events"
              x:Class="Kris.Client.Views.MapView"
              x:DataType="vm:MapViewModel"
              Title="MapView">
@@ -30,8 +31,15 @@
                 </Button.Behaviors>
             </Button>
         </StackLayout>
+
+        <cmpMap:KrisMap VerticalOptions="FillAndExpand"
+                     MapType="Street" IsZoomEnabled="True">
+            <cmpMap:KrisMap.Behaviors>
+                <tk:EventToCommandBehavior EventName="MapLongClicked" Command="{Binding LongClickCommand}" x:TypeArguments="cmpEvent:MapLongClickedEventArgs" />
+            </cmpMap:KrisMap.Behaviors>
+        </cmpMap:KrisMap>
         
-        <maps:Map VerticalOptions="FillAndExpand"
+        <!--<maps:Map VerticalOptions="FillAndExpand"
                   MapType="Street" IsZoomEnabled="True"
                   ItemsSource="{Binding AllMapPins}">
             <maps:Map.Behaviors>
@@ -46,10 +54,11 @@
                                         Address="{Binding Address}"
                                         Label="{Binding Name}"
                                         ImageSource="{Binding ImageSource}"
-                                        Type="Generic" />
+                                        Type="Generic">
+                    </mb:KrisPinBehavior>
                 </DataTemplate>
             </maps:Map.ItemTemplate>
-        </maps:Map>
+        </maps:Map>-->
         
         <StackLayout Orientation="Horizontal"
                      HorizontalOptions="FillAndExpand"

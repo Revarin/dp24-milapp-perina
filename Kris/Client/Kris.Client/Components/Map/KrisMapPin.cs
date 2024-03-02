@@ -3,7 +3,7 @@ using Kris.Client.Core.Models;
 
 namespace Kris.Client.Components.Map;
 
-public class MapPin : MapObject
+public class KrisMapPin : KrisMapMarker
 {
     public string Address { get; set; }
     public Location Location { get; set; }
@@ -11,12 +11,13 @@ public class MapPin : MapObject
     public KrisPinType PinType { get; set; }
     public DateTime Updated { get; set; }
 
-    public MapPin()
+    public KrisMapPin()
     {
     }
 
-    public MapPin(UserPositionModel userPosition)
+    public KrisMapPin(UserPositionModel userPosition)
     {
+        // TODO: Bad
         Id = userPosition.UserId;
         Name = userPosition.UserName;
         Updated = userPosition.Updated;
@@ -25,8 +26,9 @@ public class MapPin : MapObject
         ImageSource = ImageSource.FromFile("point_blue.png");
     }
 
-    public MapPin(UserPositionModel userPosition, KrisPinType type) : this(userPosition)
+    public KrisMapPin(UserPositionModel userPosition, KrisPinType type) : this(userPosition)
     {
+        // TODO: Bas
         PinType = type;
         ImageSource = ImageSource.FromFile("point_green.png");
     }

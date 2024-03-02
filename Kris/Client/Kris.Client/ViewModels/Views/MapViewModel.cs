@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Enums;
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
+using Kris.Client.Components.Events;
 using Kris.Client.Components.Map;
 using Kris.Client.Core.Listeners;
 using Kris.Client.Core.Listeners.Events;
@@ -35,7 +36,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     private MoveToRegionRequest _moveToRegion = new MoveToRegionRequest();
 
     [ObservableProperty]
-    private ObservableCollection<MapPin> _allMapPins = new ObservableCollection<MapPin>();
+    private ObservableCollection<KrisMapPin> _allMapPins = new ObservableCollection<KrisMapPin>();
     [ObservableProperty]
     private ObservableCollection<UserPositionModel> _userPositions = new ObservableCollection<UserPositionModel>();
 
@@ -117,6 +118,12 @@ public sealed partial class MapViewModel : PageViewModelBase
     }
 
     [RelayCommand]
+    private void OnLongClick(MapLongClickedEventArgs e)
+    {
+        ;
+    }
+
+    [RelayCommand]
     private async Task OnMapClicked(MapClickedEventArgs e)
     {
         // Map point creation
@@ -162,7 +169,7 @@ public sealed partial class MapViewModel : PageViewModelBase
 
     private void OnSelfPositionPositionChanged(object sender, LocationEventArgs e)
     {
-        var userPin = new MapPin
+        var userPin = new KrisMapPin
         {
             Id = e.UserId,
             Name = e.UserName,
@@ -202,7 +209,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     private void OnOthersPositionPositionChanged(object sender, UserPositionsEventArgs e)
     {
         UserPositions = e.Positions.UnionBy(UserPositions, position => position.UserId).ToObservableCollection();
-        var userPins = UserPositions.Select(position => new MapPin(position));
+        var userPins = UserPositions.Select(position => new KrisMapPin(position));
         AllMapPins = userPins.UnionBy(AllMapPins, pin => pin.Id).ToObservableCollection();
     }
 
