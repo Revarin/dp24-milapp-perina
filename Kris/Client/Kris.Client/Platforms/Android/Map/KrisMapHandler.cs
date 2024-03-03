@@ -50,6 +50,7 @@ public partial class KrisMapHandler
     {
         if (handler is KrisMapHandler mapHandler)
         {
+            // TODO: REWORK
             foreach (var marker in mapHandler.Markers)
             {
                 marker.Remove();

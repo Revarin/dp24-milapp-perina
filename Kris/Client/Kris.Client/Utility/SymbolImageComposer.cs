@@ -7,7 +7,7 @@ public sealed class SymbolImageComposer : ISymbolImageComposer
 {
     private const string ImageResourcePath = "Kris.Client.Resources.Images";
 
-    public ImageSource ComposeMapPointSymbol(MapPointSymbolShape? pointShape, MapPointSymbolColor? pointColor, MapPointSymbolSign? pointSign)
+    public Stream ComposeMapPointSymbol(MapPointSymbolShape? pointShape, MapPointSymbolColor? pointColor, MapPointSymbolSign? pointSign)
     {
         if (!pointShape.HasValue || pointShape.Value == MapPointSymbolShape.None) return null;
 
@@ -42,7 +42,7 @@ public sealed class SymbolImageComposer : ISymbolImageComposer
         resultImage.Encode(resultImageStream, SKEncodedImageFormat.Png, 100);
         resultImageStream.Seek(0, SeekOrigin.Begin);
 
-        return ImageSource.FromStream(() => resultImageStream);
+        return resultImageStream;
     }
 
     private string PointShapeFileName(MapPointSymbolShape shape) => $"point_shape_{shape.ToString().ToLower()}.png";

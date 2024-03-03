@@ -80,7 +80,8 @@ namespace Kris.Client
             builder.Services.AddTransientPopup<EditSessionPopup, EditSessionPopupViewModel>();
             builder.Services.AddTransientPopup<CreateMapPointPopup, CreateMapPointPopupViewModel>();
 
-            builder.Services.AddTransient<ISymbolImageComposer, SymbolImageComposer>();
+            builder.Services.AddSingleton<ISymbolImageComposer, SymbolImageComposer>();
+            builder.Services.AddSingleton<IKrisMapObjectFactory, KrisMapObjectFactory>();
 
             builder.Services.AddSingleton<IUserMapper, UserMapper>();
             builder.Services.AddSingleton<ISessionMapper, SessionMapper>();
@@ -101,6 +102,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<IIdentityStore, IdentityStore>();
             builder.Services.AddSingleton<ILocationStore, LocationStore>();
             builder.Services.AddSingleton<ISettingsStore, SettingsStore>();
+            builder.Services.AddSingleton<ISymbolImageCache, SymbolImageCache>();
 
             builder.Services.AddTransient<IConnectionSettingsDataProvider, ConnectionSettingsDataProvider>();
             builder.Services.AddTransient<IMapPointSymbolDataProvider, MapPointSymbolDataProvider>();

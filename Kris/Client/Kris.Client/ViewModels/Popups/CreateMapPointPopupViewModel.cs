@@ -65,7 +65,8 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
         var pointColor = MapPointColorSelectedItem?.Value;
         var pointSign = MapPointSignSelectedItem?.Value;
 
-        Image = _symbolImageComposer.ComposeMapPointSymbol(pointShape, pointColor, pointSign);
+        var imageStream = _symbolImageComposer.ComposeMapPointSymbol(pointShape, pointColor, pointSign);
+        Image = ImageSource.FromStream(() => imageStream);
     }
 
     [RelayCommand]

@@ -5,4 +5,5 @@ public enum KrisPinType
     Generic,
     Self,
     User,
+    Point
 }

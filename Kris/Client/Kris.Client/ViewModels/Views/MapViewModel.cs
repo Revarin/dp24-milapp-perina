@@ -17,7 +17,6 @@ using Kris.Client.Utility;
 using Kris.Client.ViewModels.Popups;
 using Kris.Common.Extensions;
 using MediatR;
-using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 using System.Collections.ObjectModel;
 
@@ -26,6 +25,7 @@ namespace Kris.Client.ViewModels.Views;
 public sealed partial class MapViewModel : PageViewModelBase
 {
     private readonly IPopupService _popupService;
+    private readonly IKrisMapObjectFactory _krisMapObjectFactory;
     private readonly ICurrentPositionListener _selfPositionListener;
     private readonly IUserPositionsListener _othersPositionListener;
     private readonly IMapObjectsListener _mapObjectsListener;
@@ -37,8 +37,8 @@ public sealed partial class MapViewModel : PageViewModelBase
 
     [ObservableProperty]
     private ObservableCollection<KrisMapPin> _allMapPins = new ObservableCollection<KrisMapPin>();
-    [ObservableProperty]
-    private ObservableCollection<UserPositionModel> _userPositions = new ObservableCollection<UserPositionModel>();
+    //private List<UserPositionModel> _userPositions = new List<UserPositionModel>();
+    //private List<MapPointModel> _mapPoints = new List<MapPointModel>();
 
     private CancellationTokenSource _selfPositionCTS;
     private Task _selfPositionTask;
@@ -47,12 +47,13 @@ public sealed partial class MapViewModel : PageViewModelBase
     private CancellationTokenSource _mapObjectsCTS;
     private Task _mapObjectsTask;
 
-    public MapViewModel(IPopupService popupService, ICurrentPositionListener currentPositionListener,
-        IUserPositionsListener userPositionsListener, IMapObjectsListener mapObjectsListener,
+    public MapViewModel(IPopupService popupService, IKrisMapObjectFactory krisMapObjectFactory,
+        ICurrentPositionListener currentPositionListener, IUserPositionsListener userPositionsListener, IMapObjectsListener mapObjectsListener,
         IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
         : base(mediator, navigationService, messageService, alertService)
     {
         _popupService = popupService;
+        _krisMapObjectFactory = krisMapObjectFactory;
         _selfPositionListener = currentPositionListener;
         _othersPositionListener = userPositionsListener;
         _mapObjectsListener = mapObjectsListener;
@@ -163,16 +164,7 @@ public sealed partial class MapViewModel : PageViewModelBase
 
     private void OnSelfPositionPositionChanged(object sender, LocationEventArgs e)
     {
-        var userPin = new KrisMapPin
-        {
-            Id = e.UserId,
-            Name = e.UserName,
-            Updated = DateTime.Now,
-            Location = e.Location,
-            PinType = KrisPinType.Self,
-            ImageSource = ImageSource.FromFile("point_green.png")
-        };
-
+        var userPin = _krisMapObjectFactory.CreateMyPositionPin(e.UserId, e.UserName, e.Location);
         var oldUserPin = AllMapPins.FirstOrDefault(p => p.Id == e.UserId);
         if (oldUserPin != null) AllMapPins.Remove(oldUserPin);
         AllMapPins.Add(userPin);
@@ -202,8 +194,7 @@ public sealed partial class MapViewModel : PageViewModelBase
 
     private void OnOthersPositionPositionChanged(object sender, UserPositionsEventArgs e)
     {
-        UserPositions = e.Positions.UnionBy(UserPositions, position => position.UserId).ToObservableCollection();
-        var userPins = UserPositions.Select(position => new KrisMapPin(position));
+        var userPins = e.Positions.Select(_krisMapObjectFactory.CreateUserPositionPin);
         AllMapPins = userPins.UnionBy(AllMapPins, pin => pin.Id).ToObservableCollection();
     }
 
@@ -223,7 +214,8 @@ public sealed partial class MapViewModel : PageViewModelBase
 
     private void OnMapObjectsChanged(object sender, MapObjectsEventArgs e)
     {
-        // TODO
+        var pointPins = e.MapPoints.Select(_krisMapObjectFactory.CreateMapPoint);
+        AllMapPins = pointPins.UnionBy(AllMapPins, pin => pin.Id).ToObservableCollection();
     }
 
     private async void OnMapObjectsErrorOccured(object sender, ResultEventArgs e)
@@ -292,7 +284,6 @@ public sealed partial class MapViewModel : PageViewModelBase
             }
         }
 
-        UserPositions.Clear();
         AllMapPins.Clear();
     }
 
@@ -351,7 +342,6 @@ public sealed partial class MapViewModel : PageViewModelBase
 
         if (message is CurrentSessionChangedMessage)
         {
-            UserPositions.Clear();
             AllMapPins.Clear();
         }
     }

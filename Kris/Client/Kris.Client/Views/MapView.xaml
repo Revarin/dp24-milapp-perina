@@ -45,7 +45,6 @@
             <cmpMap:KrisMap.ItemTemplate>
                 <DataTemplate x:DataType="{x:Type cmpMap:KrisMapPin}">
                     <mb:KrisPinBehavior Location="{Binding Location}"
-                                        Address="{Binding Address}"
                                         Label="{Binding Name}"
                                         ImageSource="{Binding ImageSource}"
                                         Type="Generic" />
