@@ -17,6 +17,8 @@ using Microsoft.Extensions.Logging;
 using System.Reflection;
 using Kris.Client.Data.Providers;
 using Kris.Client.Components.Map;
+using SkiaSharp.Views.Maui.Controls.Hosting;
+using Kris.Client.Utility;
 
 namespace Kris.Client
 {
@@ -27,6 +29,7 @@ namespace Kris.Client
             var builder = MauiApp.CreateBuilder();
 
             builder.UseMauiApp<App>()
+                .UseSkiaSharp()
                 .UseMauiMaps()
                 .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
@@ -76,6 +79,8 @@ namespace Kris.Client
             builder.Services.AddTransientPopup<CreateSessionPopup, CreateSessionPopupViewModel>();
             builder.Services.AddTransientPopup<EditSessionPopup, EditSessionPopupViewModel>();
             builder.Services.AddTransientPopup<CreateMapPointPopup, CreateMapPointPopupViewModel>();
+
+            builder.Services.AddTransient<ISymbolImageComposer, SymbolImageComposer>();
 
             builder.Services.AddSingleton<IUserMapper, UserMapper>();
             builder.Services.AddSingleton<ISessionMapper, SessionMapper>();

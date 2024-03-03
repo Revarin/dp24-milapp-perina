@@ -5,6 +5,7 @@ using Kris.Client.Common.Events;
 using Kris.Client.Core.Requests;
 using Kris.Client.Data.Models.Picker;
 using Kris.Client.Data.Providers;
+using Kris.Client.Utility;
 using MediatR;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -14,6 +15,7 @@ namespace Kris.Client.ViewModels.Popups;
 public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
 {
     private readonly IMapPointSymbolDataProvider _symbolDataProvider;
+    private readonly ISymbolImageComposer _symbolImageComposer;
 
     [Required]
     [ObservableProperty]
@@ -39,16 +41,31 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     [ObservableProperty]
     private MapPointSymbolSignItem _mapPointSignSelectedItem;
 
+    [ObservableProperty]
+    private ImageSource _image;
+
     public event EventHandler<ResultEventArgs<Guid>> CreatedClosing;
 
-    public CreateMapPointPopupViewModel(IMapPointSymbolDataProvider symbolDataProvider, IMediator mediator)
+    public CreateMapPointPopupViewModel(IMapPointSymbolDataProvider symbolDataProvider, ISymbolImageComposer symbolImageComposer,
+        IMediator mediator)
         : base(mediator)
     {
         _symbolDataProvider = symbolDataProvider;
+        _symbolImageComposer = symbolImageComposer;
 
         _mapPointColorItems = _symbolDataProvider.GetMapPointSymbolColorItems().ToObservableCollection();
         _mapPointShapeItems = _symbolDataProvider.GetMapPointSymbolShapeItems().ToObservableCollection();
         _mapPointSignItems = _symbolDataProvider.GetMapPointSymbolSignItems().ToObservableCollection();
+    }
+
+    [RelayCommand]
+    private void OnSymbolComponentChanged()
+    {
+        var pointShape = MapPointShapeSelectedItem?.Value;
+        var pointColor = MapPointColorSelectedItem?.Value;
+        var pointSign = MapPointSignSelectedItem?.Value;
+
+        Image = _symbolImageComposer.ComposeMapPointSymbol(pointShape, pointColor, pointSign);
     }
 
     [RelayCommand]

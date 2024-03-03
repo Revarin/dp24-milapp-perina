@@ -54,6 +54,9 @@
                             ItemsSource="{Binding MapPointShapeItems}"
                             ItemDisplayBinding="{Binding Display}"
                             SelectedItem="{Binding MapPointShapeSelectedItem}">
+                        <Picker.Behaviors>
+                            <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
+                        </Picker.Behaviors>
                     </Picker>
                 </StackLayout>
                 <StackLayout Orientation="Vertical">
@@ -62,6 +65,9 @@
                             ItemsSource="{Binding MapPointColorItems}"
                             ItemDisplayBinding="{Binding Display}"
                             SelectedItem="{Binding MapPointColorSelectedItem}">
+                        <Picker.Behaviors>
+                            <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
+                        </Picker.Behaviors>
                     </Picker>
                 </StackLayout>
                 <StackLayout Orientation="Vertical">
@@ -70,12 +76,16 @@
                             ItemsSource="{Binding MapPointSignItems}"
                             ItemDisplayBinding="{Binding Display}"
                             SelectedItem="{Binding MapPointSignSelectedItem}">
+                        <Picker.Behaviors>
+                            <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
+                        </Picker.Behaviors>
                     </Picker>
                 </StackLayout>
             </StackLayout>
             <Image HorizontalOptions="EndAndExpand"
-                   WidthRequest="150">
-                
+                   VerticalOptions="Center"
+                   WidthRequest="100"
+                   Source="{Binding Image}">
             </Image>
         </StackLayout>
 
