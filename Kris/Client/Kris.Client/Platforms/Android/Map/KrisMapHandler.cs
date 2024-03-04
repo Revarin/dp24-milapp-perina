@@ -1,6 +1,5 @@
 ﻿using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
-using Android.Graphics;
 using Android.Graphics.Drawables;
 using Kris.Client.Platforms.Callbacks;
 using Kris.Client.Platforms.Listeners;
@@ -50,11 +49,9 @@ public partial class KrisMapHandler
     {
         if (handler is KrisMapHandler mapHandler)
         {
-            // TODO: REWORK
-            foreach (var marker in mapHandler.Markers)
-            {
-                marker.Remove();
-            }
+            // TODO: Rework, keep removing and adding pin
+            mapHandler.Markers.ForEach(marker => marker.Remove());
+            mapHandler.Markers.Clear();
 
             mapHandler.AddPins(map.Pins);
         }
@@ -85,11 +82,11 @@ public partial class KrisMapHandler
                             }
                         });
                     }
-                }
 
-                var marker = NativeMap.AddMarker(markerOption);
-                pin.MarkerId = marker.Id;
-                Markers.Add(marker);
+                    var marker = NativeMap.AddMarker(markerOption);
+                    pin.MarkerId = marker.Id;
+                    Markers.Add(marker);
+                }
             }
         }
     }

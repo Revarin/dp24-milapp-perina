@@ -204,7 +204,6 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
         });
         if (resultArgs == null) return;
 
-
         if (resultArgs is LoadResultEventArgs<SessionDetailModel>)
         {
             var result = (resultArgs as LoadResultEventArgs<SessionDetailModel>).Result;

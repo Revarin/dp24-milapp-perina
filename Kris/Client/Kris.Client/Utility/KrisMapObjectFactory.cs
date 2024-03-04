@@ -21,11 +21,13 @@ public sealed class KrisMapObjectFactory : IKrisMapObjectFactory
         var pin = new KrisMapPinViewModel
         {
             Id = userId,
+            CreatorId = userId,
             Name = userName,
             TimeStamp = DateTime.Now,
             Location = location,
             KrisPinType = KrisPinType.Self,
-            ImageSource = ImageSource.FromFile("point_green.png")
+            ImageSource = ImageSource.FromFile("point_green.png"),
+            ImageName = "point_green.png"
         };
         return pin;
     }
@@ -35,11 +37,13 @@ public sealed class KrisMapObjectFactory : IKrisMapObjectFactory
         var pin = new KrisMapPinViewModel
         {
             Id = userPosition.UserId,
+            CreatorId = userPosition.UserId,
             Name = userPosition.UserName,
             TimeStamp = userPosition.Updated,
             Location = userPosition.Positions.First(),
             KrisPinType = KrisPinType.User,
-            ImageSource = ImageSource.FromFile("point_blue.png")
+            ImageSource = ImageSource.FromFile("point_blue.png"),
+            ImageName = "point_blue.png"
         };
         return pin;
     }
@@ -58,12 +62,14 @@ public sealed class KrisMapObjectFactory : IKrisMapObjectFactory
         var pin = new KrisMapPinViewModel
         {
             Id = mapPoint.Id,
+            CreatorId = mapPoint.Creator.Id,
             Name = mapPoint.Name,
             TimeStamp = mapPoint.Created,
             Location = mapPoint.Location,
             Description = mapPoint.Description,
             KrisPinType = KrisPinType.Point,
-            ImageSource = _symbolImageCache.Load(symbolName)
+            ImageSource = _symbolImageCache.Load(symbolName),
+            ImageName = symbolName
         };
         return pin;
     }

@@ -44,10 +44,16 @@
             <cmpMap:KrisMap.ItemTemplate>
                 <DataTemplate x:DataType="{x:Type cmpMap:KrisMapPin}">
                     <cmpMap:KrisMapPin x:DataType="vm:KrisMapPinViewModel"
+                                       KrisId="{Binding Id}"
+                                       CreatorId="{Binding }"
                                        Label="{Binding Name}"
                                        Location="{Binding Location}"
                                        ImageSource="{Binding ImageSource}"
-                                       KrisType="{Binding KrisPinType}" />
+                                       ImageName="{Binding ImageName}"
+                                       KrisType="{Binding KrisPinType}"
+                                       Description="{Binding Description}"
+                                       MarkerClicked="KrisMapPin_MarkerClicked">
+                    </cmpMap:KrisMapPin>
                 </DataTemplate>
             </cmpMap:KrisMap.ItemTemplate>
         </cmpMap:KrisMap>

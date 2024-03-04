@@ -1,23 +1,31 @@
 ﻿using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FluentResults;
 using Kris.Client.Common.Events;
+using Kris.Client.Components.Map;
 using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Client.Data.Models.Picker;
 using Kris.Client.Data.Providers;
 using Kris.Client.Utility;
+using Kris.Common.Enums;
 using MediatR;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Kris.Client.ViewModels.Popups;
 
-public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
+public sealed partial class EditMapPointPopupViewModel : PopupViewModel
 {
     private readonly IMapPointSymbolDataProvider _symbolDataProvider;
     private readonly ISymbolImageComposer _symbolImageComposer;
+
+    public Guid PointId { get; set; }
+
+    [ObservableProperty]
+    private bool _isCreator;
+    [ObservableProperty]
+    private UserType _userType;
 
     [Required]
     [ObservableProperty]
@@ -46,18 +54,30 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     [ObservableProperty]
     private ImageSource _image;
 
-    public event EventHandler<ResultEventArgs<MapPointModel>> CreatedClosing;
+    public event EventHandler<UpdateResultEventArgs> UpdatedClosing;
+    public event EventHandler<DeleteResultEventArgs> DeletedClosing;
 
-    public CreateMapPointPopupViewModel(IMapPointSymbolDataProvider symbolDataProvider, ISymbolImageComposer symbolImageComposer,
+    public EditMapPointPopupViewModel(IMapPointSymbolDataProvider mapPointSymbolDataProvider, ISymbolImageComposer symbolImageComposer,
         IMediator mediator)
         : base(mediator)
     {
-        _symbolDataProvider = symbolDataProvider;
+        _symbolDataProvider = mapPointSymbolDataProvider;
         _symbolImageComposer = symbolImageComposer;
 
         _mapPointColorItems = _symbolDataProvider.GetMapPointSymbolColorItems().ToObservableCollection();
         _mapPointShapeItems = _symbolDataProvider.GetMapPointSymbolShapeItems().ToObservableCollection();
         _mapPointSignItems = _symbolDataProvider.GetMapPointSymbolSignItems().ToObservableCollection();
+    }
+
+    public void Initialize(CurrentUserModel user, KrisMapPin pin)
+    {
+        UserType = user.UserType.Value;
+        IsCreator = user.Id == pin.CreatorId;
+
+        PointId = pin.KrisId;
+        PointName = pin.Label;
+        Location = pin.Location;
+        Description = pin.Description;
     }
 
     [RelayCommand]
@@ -72,22 +92,14 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     }
 
     [RelayCommand]
-    private async Task OnCreateClicked()
+    private async Task OnSaveClicked()
     {
-        if (ValidateAllProperties())
-        {
-            if (ErrorMessages.ContainsKey(nameof(MapPointColorSelectedItem))
-                || ErrorMessages.ContainsKey(nameof(MapPointShapeSelectedItem))
-                || ErrorMessages.ContainsKey(nameof(MapPointSignSelectedItem)))
-            {
-                AddCustomError("MapSymbol", "Map symbol must be selected");
-            }
-            return;
-        }
+        if (ValidateAllProperties()) return;
 
         var ct = new CancellationToken();
-        var command = new CreateMapPointCommand
+        var command = new EditMapPointCommand
         {
+            PointId = PointId,
             Name = PointName,
             Description = Description,
             Location = Location,
@@ -97,23 +109,16 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
         };
         var result = await _mediator.Send(command, ct);
 
-        var returnResult = result.IsSuccess
-            ? Result.Ok(new MapPointModel
-            {
-                Id = result.Value,
-                Name = PointName,
-                Description = Description,
-                Location = Location,
-                Symbol = new Kris.Common.Models.MapPointSymbol
-                {
-                    Shape = MapPointShapeSelectedItem.Value,
-                    Color = MapPointColorSelectedItem.Value,
-                    Sign = MapPointSignSelectedItem.Value
-                },
-                Created = DateTime.MinValue
-            })
-            : Result.Fail(result.Errors);
+        UpdatedClosing?.Invoke(this, new UpdateResultEventArgs(result));
+    }
 
-        CreatedClosing?.Invoke(this, new ResultEventArgs<MapPointModel>(returnResult));
+    [RelayCommand]
+    private async Task OnDeleteClicked()
+    {
+        var ct = new CancellationToken();
+        var command = new DeleteMapPointCommand { Id = PointId };
+        var result = await _mediator.Send(command, ct);
+
+        DeletedClosing?.Invoke(this, new DeleteResultEventArgs(result));
     }
 }

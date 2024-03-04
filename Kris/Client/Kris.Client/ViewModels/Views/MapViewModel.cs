@@ -5,15 +5,18 @@ using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
 using Kris.Client.Components.Events;
+using Kris.Client.Components.Map;
 using Kris.Client.Core.Listeners;
 using Kris.Client.Core.Listeners.Events;
 using Kris.Client.Core.Messages;
+using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.Utility;
 using Kris.Client.ViewModels.Popups;
 using Kris.Common.Extensions;
 using MediatR;
+using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 using System.Collections.ObjectModel;
 
@@ -115,10 +118,10 @@ public sealed partial class MapViewModel : PageViewModelBase
         }
     }
 
+    // Map point creation
     [RelayCommand]
     private async Task OnMapLongClicked(MapLongClickedEventArgs e)
     {
-        // Map point creation
         var query = new GetCurrentUserQuery();
         var currentUser = await _mediator.Send(query, CancellationToken.None);
         if (currentUser == null || !currentUser.SessionId.HasValue || !currentUser.UserType.HasValue)
@@ -130,7 +133,7 @@ public sealed partial class MapViewModel : PageViewModelBase
         var resultEventArgs = await _popupService.ShowPopupAsync<CreateMapPointPopupViewModel>(vm =>
         {
             vm.Location = e.Location;
-        }) as ResultEventArgs<Guid>;
+        }) as ResultEventArgs<MapPointModel>;
         if (resultEventArgs == null) return;
 
         var result = resultEventArgs.Result;
@@ -150,6 +153,57 @@ public sealed partial class MapViewModel : PageViewModelBase
         else
         {
             await _alertService.ShowToastAsync("Map point created");
+            AllMapPins.Add(_krisMapObjectFactory.CreateMapPoint(result.Value));
+        }
+    }
+
+    public async Task OnKrisPinClickedAsync(KrisMapPin sender, PinClickedEventArgs e)
+    {
+        e.HideInfoWindow = true;
+
+        var query = new GetCurrentUserQuery();
+        var currentUser = await _mediator.Send(query, CancellationToken.None);
+        if (currentUser == null || !currentUser.SessionId.HasValue || !currentUser.UserType.HasValue)
+        {
+            await _alertService.ShowToastAsync("Invalid user data");
+            await LogoutUser();
+        }
+
+        var resultArgs = await _popupService.ShowPopupAsync<EditMapPointPopupViewModel>(vm =>
+        {
+            vm.Initialize(currentUser, sender);
+        });
+        if (resultArgs == null) return;
+
+        if (resultArgs is UpdateResultEventArgs)
+        {
+            // TODO
+        }
+        else if (resultArgs is DeleteResultEventArgs)
+        {
+            var result = (resultArgs as DeleteResultEventArgs).Result;
+            if (result.IsFailed)
+            {
+                if (result.HasError<UnauthorizedError>())
+                {
+                    await _alertService.ShowToastAsync("Login expired");
+                    await LogoutUser();
+                }
+                else if (result.HasError<EntityNotFoundError>())
+                {
+                    await _alertService.ShowToastAsync("Point not found");
+                }
+                else
+                {
+                    await _alertService.ShowToastAsync(result.Errors.FirstMessage());
+                }
+            }
+            else
+            {
+                await _alertService.ShowToastAsync("Point deleted");
+                var pinToRemove = AllMapPins.FirstOrDefault(p => p.Id == sender.KrisId);
+                AllMapPins.Remove(pinToRemove);
+            }
         }
     }
 

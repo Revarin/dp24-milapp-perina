@@ -21,14 +21,18 @@ public sealed class MapObjectClient : ClientBase, IMapObjectController
         return await PostAsync<AddMapPointRequest, GetOneResponse<Guid>>(httpClient, "Point", request, ct);
     }
 
-    public Task<Response> DeleteMapPoint(Guid pointId, CancellationToken ct)
+    public async Task<Response> DeleteMapPoint(Guid pointId, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var jwt = _identityStore.GetJwtToken();
+        using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await DeleteAsync<Response>(httpClient, $"Point/{pointId}", ct);
     }
 
-    public Task<Response> EditMapPoint(EditMapPointRequest request, CancellationToken ct)
+    public async Task<Response> EditMapPoint(EditMapPointRequest request, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var jwt = _identityStore.GetJwtToken();
+        using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await PutAsync<EditMapPointRequest, Response>(httpClient, "Point", request, ct);
     }
 
     public async Task<GetMapObjectsResponse> GetMapObjects(DateTime? from, CancellationToken ct)
