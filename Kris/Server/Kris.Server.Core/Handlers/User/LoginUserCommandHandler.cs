@@ -52,7 +52,8 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
                 {
                     GpsRequestInterval = user.Settings.GpsRequestInterval.GetValueOrDefault(),
                     PositionUploadFrequency = user.Settings.PositionUploadFrequency.GetValueOrDefault(),
-                    PositionDownloadFrequency = user.Settings.PositionDownloadFrequency.GetValueOrDefault()
+                    PositionDownloadFrequency = user.Settings.PositionDownloadFrequency.GetValueOrDefault(),
+                    MapObjectDownloadFrequency = user.Settings.MapObjectDownloadFrequency.GetValueOrDefault()
                 }
             }
         };

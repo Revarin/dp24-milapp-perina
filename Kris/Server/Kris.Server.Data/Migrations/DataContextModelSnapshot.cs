@@ -22,6 +22,35 @@ namespace Kris.Server.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Kris.Server.Data.Models.MapPointEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("SessionUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SessionUserId");
+
+                    b.ToTable("MapPoints");
+                });
+
             modelBuilder.Entity("Kris.Server.Data.Models.SessionEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -100,25 +129,13 @@ namespace Kris.Server.Data.Migrations
 
             modelBuilder.Entity("Kris.Server.Data.Models.UserPositionEntity", b =>
                 {
-                    b.Property<Guid>("SessionUserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Position0Data")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Position1Data")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Position2Data")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Updated")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("SessionUserId");
+                    b.HasKey("Id");
 
                     b.ToTable("UserPositions");
                 });
@@ -131,6 +148,9 @@ namespace Kris.Server.Data.Migrations
                     b.Property<int?>("GpsRequestInterval")
                         .HasColumnType("int");
 
+                    b.Property<int?>("MapObjectDownloadFrequency")
+                        .HasColumnType("int");
+
                     b.Property<int?>("PositionDownloadFrequency")
                         .HasColumnType("int");
 
@@ -140,6 +160,67 @@ namespace Kris.Server.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserSettings");
+                });
+
+            modelBuilder.Entity("Kris.Server.Data.Models.MapPointEntity", b =>
+                {
+                    b.HasOne("Kris.Server.Data.Models.SessionUserEntity", "SessionUser")
+                        .WithMany("MapPoints")
+                        .HasForeignKey("SessionUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Kris.Common.Models.GeoPosition", "Position", b1 =>
+                        {
+                            b1.Property<Guid>("MapPointEntityId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<double>("Altitude")
+                                .HasColumnType("float");
+
+                            b1.Property<double>("Latitude")
+                                .HasColumnType("float");
+
+                            b1.Property<double>("Longitude")
+                                .HasColumnType("float");
+
+                            b1.HasKey("MapPointEntityId");
+
+                            b1.ToTable("MapPoints");
+
+                            b1.WithOwner()
+                                .HasForeignKey("MapPointEntityId");
+                        });
+
+                    b.OwnsOne("Kris.Common.Models.MapPointSymbol", "Symbol", b1 =>
+                        {
+                            b1.Property<Guid>("MapPointEntityId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<int>("Color")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("Shape")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("Sign")
+                                .HasColumnType("int");
+
+                            b1.HasKey("MapPointEntityId");
+
+                            b1.ToTable("MapPoints");
+
+                            b1.WithOwner()
+                                .HasForeignKey("MapPointEntityId");
+                        });
+
+                    b.Navigation("Position")
+                        .IsRequired();
+
+                    b.Navigation("SessionUser");
+
+                    b.Navigation("Symbol")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Kris.Server.Data.Models.SessionUserEntity", b =>
@@ -175,9 +256,90 @@ namespace Kris.Server.Data.Migrations
                 {
                     b.HasOne("Kris.Server.Data.Models.SessionUserEntity", "SessionUser")
                         .WithMany()
-                        .HasForeignKey("SessionUserId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.OwnsOne("Kris.Common.Models.GeoSpatialPosition", "Position_0", b1 =>
+                        {
+                            b1.Property<Guid>("UserPositionEntityId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<double>("Altitude")
+                                .HasColumnType("float");
+
+                            b1.Property<double>("Latitude")
+                                .HasColumnType("float");
+
+                            b1.Property<double>("Longitude")
+                                .HasColumnType("float");
+
+                            b1.Property<DateTime>("Timestamp")
+                                .HasColumnType("datetime2");
+
+                            b1.HasKey("UserPositionEntityId");
+
+                            b1.ToTable("UserPositions");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserPositionEntityId");
+                        });
+
+                    b.OwnsOne("Kris.Common.Models.GeoSpatialPosition", "Position_1", b1 =>
+                        {
+                            b1.Property<Guid>("UserPositionEntityId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<double>("Altitude")
+                                .HasColumnType("float");
+
+                            b1.Property<double>("Latitude")
+                                .HasColumnType("float");
+
+                            b1.Property<double>("Longitude")
+                                .HasColumnType("float");
+
+                            b1.Property<DateTime>("Timestamp")
+                                .HasColumnType("datetime2");
+
+                            b1.HasKey("UserPositionEntityId");
+
+                            b1.ToTable("UserPositions");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserPositionEntityId");
+                        });
+
+                    b.OwnsOne("Kris.Common.Models.GeoSpatialPosition", "Position_2", b1 =>
+                        {
+                            b1.Property<Guid>("UserPositionEntityId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<double>("Altitude")
+                                .HasColumnType("float");
+
+                            b1.Property<double>("Latitude")
+                                .HasColumnType("float");
+
+                            b1.Property<double>("Longitude")
+                                .HasColumnType("float");
+
+                            b1.Property<DateTime>("Timestamp")
+                                .HasColumnType("datetime2");
+
+                            b1.HasKey("UserPositionEntityId");
+
+                            b1.ToTable("UserPositions");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserPositionEntityId");
+                        });
+
+                    b.Navigation("Position_0");
+
+                    b.Navigation("Position_1");
+
+                    b.Navigation("Position_2");
 
                     b.Navigation("SessionUser");
                 });
@@ -196,6 +358,11 @@ namespace Kris.Server.Data.Migrations
             modelBuilder.Entity("Kris.Server.Data.Models.SessionEntity", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Kris.Server.Data.Models.SessionUserEntity", b =>
+                {
+                    b.Navigation("MapPoints");
                 });
 
             modelBuilder.Entity("Kris.Server.Data.Models.UserEntity", b =>

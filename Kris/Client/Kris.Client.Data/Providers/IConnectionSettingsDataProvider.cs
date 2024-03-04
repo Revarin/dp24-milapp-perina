@@ -8,7 +8,9 @@ public interface IConnectionSettingsDataProvider : ISettingsDataProvider<Connect
     IEnumerable<GpsIntervalSettingsItem> GetGpsIntervalSettingsItems();
     IEnumerable<PositionUploadSettingsItem> GetPositionUploadSettingsItems();
     IEnumerable<PositionDownloadSettingsItem> GetPositionDownloadSettingsItems();
+    IEnumerable<MapObjectDownloadSettingsItem> GetMapObjectDownloadSettingsItems();
     GpsIntervalSettingsItem GetCurrentGpsIntervalSettings();
     PositionUploadSettingsItem GetCurrentPositionUploadSettings();
     PositionDownloadSettingsItem GetCurrentPositionDownloadSettings();
+    MapObjectDownloadSettingsItem GetCurrentMapObjectDownloadSettings();
 }

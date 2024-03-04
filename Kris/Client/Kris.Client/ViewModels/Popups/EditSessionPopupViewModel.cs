@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
 using Kris.Client.Components.Events;
+using Kris.Client.Components.Map;
 using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
@@ -61,6 +62,8 @@ public sealed partial class EditSessionPopupViewModel : PopupViewModel
     [RelayCommand]
     private async Task OnSaveClicked()
     {
+        if (ValidateAllProperties()) return;
+
         var passwordPopup = await _popupService.ShowPopupAsync<PasswordPopupViewModel>() as PasswordEventArgs;
         if (passwordPopup == null) return;
 

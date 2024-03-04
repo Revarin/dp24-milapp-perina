@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<tk:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+          xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+          xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+          xmlns:vm="clr-namespace:Kris.Client.ViewModels.Popups"
+          xmlns:enum="clr-namespace:Kris.Common.Enums;assembly=Kris.Common"
+          x:Class="Kris.Client.Components.Popups.EditMapPointPopup"
+          x:DataType="vm:EditMapPointPopupViewModel">
+
+    <tk:Popup.Resources>
+        <ResourceDictionary>
+            <tk:EnumToBoolConverter x:Key="UserTypeAdminConverter">
+                <tk:EnumToBoolConverter.TrueValues>
+                    <enum:UserType>SuperAdmin</enum:UserType>
+                    <enum:UserType>Admin</enum:UserType>
+                </tk:EnumToBoolConverter.TrueValues>
+            </tk:EnumToBoolConverter>
+            <tk:VariableMultiValueConverter x:Key="AnyMultiValueConverter"
+                                            ConditionType="Any">
+            </tk:VariableMultiValueConverter>
+        </ResourceDictionary>
+    </tk:Popup.Resources>
+
+    <StackLayout Orientation="Vertical"
+                 VerticalOptions="FillAndExpand">
+
+        <StackLayout Orientation="Vertical">
+            <Label Text="Name" />
+            <Entry Placeholder="Name"
+                   Text="{Binding PointName}" />
+            <Label Text="{Binding ErrorMessages[PointName]}"
+                   IsVisible="{Binding ErrorMessages[PointName]}"
+                   Style="{StaticResource errorMessageStyle}" />
+        </StackLayout>
+        
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand">
+            <StackLayout Orientation="Vertical"
+                         HorizontalOptions="StartAndExpand">
+                <Label Text="Latitude" />
+                <Label Text="{Binding Location.Latitude, StringFormat='{0:F4}'}"
+                       HorizontalOptions="FillAndExpand" />
+            </StackLayout>
+            <StackLayout Orientation="Vertical"
+                         HorizontalOptions="CenterAndExpand">
+                <Label Text="Longitude" />
+                <Label Text="{Binding Location.Longitude, StringFormat='{0:F4}'}"
+                       HorizontalOptions="FillAndExpand" />
+            </StackLayout>
+            <StackLayout Orientation="Vertical"
+                         HorizontalOptions="EndAndExpand">
+                <Label Text="Altitude" />
+                <Label Text="{Binding Location.Altitude, StringFormat='{0:F4}'}"
+                       HorizontalOptions="FillAndExpand" />
+            </StackLayout>
+        </StackLayout>
+
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand"
+                     IsVisible="False">
+            <StackLayout Orientation="Vertical"
+                         VerticalOptions="FillAndExpand">
+                <Label Text="Map symbol" />
+                <Label Text="{Binding ErrorMessages[MapSymbol]}"
+                       IsVisible="{Binding ErrorMessages[MapSymbol]}"
+                       Style="{StaticResource errorMessageStyle}" />
+                <StackLayout Orientation="Vertical">
+                    <Label Text="Shape" />
+                    <Picker Title="Symbol's shape"
+                            ItemsSource="{Binding MapPointShapeItems}"
+                            ItemDisplayBinding="{Binding Display}"
+                            SelectedItem="{Binding MapPointShapeSelectedItem}">
+                        <Picker.Behaviors>
+                            <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
+                        </Picker.Behaviors>
+                    </Picker>
+                </StackLayout>
+                <StackLayout Orientation="Vertical">
+                    <Label Text="Color" />
+                    <Picker Title="Symbol's color"
+                            ItemsSource="{Binding MapPointColorItems}"
+                            ItemDisplayBinding="{Binding Display}"
+                            SelectedItem="{Binding MapPointColorSelectedItem}">
+                        <Picker.Behaviors>
+                            <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
+                        </Picker.Behaviors>
+                    </Picker>
+                </StackLayout>
+                <StackLayout Orientation="Vertical">
+                    <Label Text="Sign" />
+                    <Picker Title="Symbol's sign"
+                            ItemsSource="{Binding MapPointSignItems}"
+                            ItemDisplayBinding="{Binding Display}"
+                            SelectedItem="{Binding MapPointSignSelectedItem}">
+                        <Picker.Behaviors>
+                            <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
+                        </Picker.Behaviors>
+                    </Picker>
+                </StackLayout>
+            </StackLayout>
+            <Image HorizontalOptions="EndAndExpand"
+                   VerticalOptions="Center"
+                   WidthRequest="100"
+                   Source="{Binding Image}">
+            </Image>
+        </StackLayout>
+
+        <StackLayout Orientation="Vertical">
+            <Label Text="Description" />
+            <Editor Placeholder="Description..." Keyboard="Text"
+                    Text="{Binding Description}" />
+            <Label Text="{Binding ErrorMessages[Description]}"
+                   IsVisible="{Binding ErrorMessages[Description]}"
+                   Style="{StaticResource errorMessageStyle}" />
+        </StackLayout>
+
+        <Button Text="Delete"
+                HorizontalOptions="FillAndExpand">
+            <Button.Behaviors>
+                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding DeleteClickedCommand}" />
+            </Button.Behaviors>
+            <Button.IsVisible>
+                <MultiBinding Converter="{StaticResource AnyMultiValueConverter}">
+                    <Binding Path="UserType" Converter="{StaticResource UserTypeAdminConverter}" />
+                    <Binding Path="IsCreator"/>
+                </MultiBinding>
+            </Button.IsVisible>
+        </Button>
+
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand">
+            <Button Text="Cancel"
+                    HorizontalOptions="FillAndExpand">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CancelClickedCommand}" />
+                </Button.Behaviors>
+            </Button>
+            <Button Text="Save (TODO)"
+                    HorizontalOptions="FillAndExpand"
+                    IsEnabled="False">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SaveClickedCommand}" />
+                </Button.Behaviors>
+            </Button>
+        </StackLayout>
+    </StackLayout>
+</tk:Popup>

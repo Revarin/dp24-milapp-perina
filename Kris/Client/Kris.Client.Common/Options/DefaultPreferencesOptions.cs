@@ -9,4 +9,5 @@ public sealed class DefaultPreferencesOptions : IOptions
     public int GpsInterval { get; set; }
     public int PositionUploadFrequency { get; set; }
     public int PositionDownloadFrequency { get; set; }
+    public int MapObjectDownloadFrequency { get; set; }
 }

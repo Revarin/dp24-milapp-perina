@@ -26,6 +26,6 @@ public class AuthorizationService : IAuthorizationService
         if (sessionUser == null) return new AuthorizationResult { IsAuthorized = false };
         if (sessionUser.UserType < minRole) return new AuthorizationResult { IsAuthorized = false };
 
-        return new AuthorizationResult { IsAuthorized = true, UserSessionId = sessionUser.Id, UserType = sessionUser.UserType };
+        return new AuthorizationResult { IsAuthorized = true, SessionUserId = sessionUser.Id, UserType = sessionUser.UserType };
     }
 }

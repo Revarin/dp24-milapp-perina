@@ -43,6 +43,17 @@
                 </Picker.Behaviors>
             </Picker>
         </StackLayout>
+        <StackLayout Orientation="Vertical">
+            <Label Text="Map objects download frequency" />
+            <Picker Title="Map objects download"
+                    ItemsSource="{Binding MapObjectDownloadItems}"
+                    ItemDisplayBinding="{Binding Display}"
+                    SelectedItem="{Binding MapObjectDownloadSelectedItem}">
+                <Picker.Behaviors>
+                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ConnectionSettingsSelectedIndexChangedCommand}" />
+                </Picker.Behaviors>
+            </Picker>
+        </StackLayout>
 
         <Label Text="User settings" FontSize="Subtitle"/>
         <StackLayout Orientation="Vertical">

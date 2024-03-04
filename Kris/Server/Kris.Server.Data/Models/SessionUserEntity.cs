@@ -1,5 +1,4 @@
 ﻿using Kris.Common.Enums;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Kris.Server.Data.Models;
 
@@ -11,4 +10,6 @@ public class SessionUserEntity : EntityBase
     public UserEntity? User { get; set; }
     public required UserType UserType { get; set; }
     public required DateTime Joined { get; set; }
+
+    public List<MapPointEntity> MapPoints { get; set; } = new List<MapPointEntity>();
 }

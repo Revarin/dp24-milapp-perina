@@ -5,4 +5,5 @@ public sealed class ConnectionSettingsEntity
     public TimeSpan GpsInterval { get; set; }
     public int PositionUploadMultiplier { get; set; }
     public TimeSpan PositionDownloadInterval { get; set; }
+    public TimeSpan MapObjectDownloadInterval { get; set; }
 }

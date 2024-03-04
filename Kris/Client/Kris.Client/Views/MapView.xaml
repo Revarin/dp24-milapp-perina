@@ -4,8 +4,8 @@
              xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
              xmlns:vm="clr-namespace:Kris.Client.ViewModels.Views"
-             xmlns:mb="clr-namespace:Kris.Client.Behaviors.Map"
-             xmlns:kmap="clr-namespace:Kris.Client.Components.Map"
+             xmlns:cmpMap="clr-namespace:Kris.Client.Components.Map"
+             xmlns:cmpEvent="clr-namespace:Kris.Client.Components.Events"
              x:Class="Kris.Client.Views.MapView"
              x:DataType="vm:MapViewModel"
              Title="MapView">
@@ -31,25 +31,33 @@
             </Button>
         </StackLayout>
 
-        <maps:Map VerticalOptions="FillAndExpand"
-                  MapType="Street" IsZoomEnabled="True"
-                  ItemsSource="{Binding AllMapPins}">
-            <maps:Map.Behaviors>
-                <mb:CurrentRegionBehavior Value="{Binding CurrentRegion}" />
-                <mb:MoveToRegionBehavior Request="{Binding MoveToRegion}" />
+        <cmpMap:KrisMap VerticalOptions="FillAndExpand"
+                        MapType="Street" IsZoomEnabled="True"
+                        ItemsSource="{Binding AllMapPins}"
+                        CurrentRegion="{Binding CurrentRegion}"
+                        MoveToRegionRequest="{Binding MoveToRegion}" >
+            <cmpMap:KrisMap.Behaviors>
                 <tk:EventToCommandBehavior EventName="Loaded" Command="{Binding MapLoadedCommand}" />
-            </maps:Map.Behaviors>
-            <maps:Map.ItemTemplate>
-                <DataTemplate x:DataType="{x:Type kmap:MapPin}">
-                    <mb:KrisPinBehavior Location="{Binding Location}"
-                                        Address="{Binding Address}"
-                                        Label="{Binding Name}"
-                                        ImageSource="{Binding ImageSource}"
-                                        Type="Generic" />
+                <tk:EventToCommandBehavior EventName="MapLongClicked" Command="{Binding MapLongClickedCommand}"
+                                           x:TypeArguments="cmpEvent:MapLongClickedEventArgs" />
+            </cmpMap:KrisMap.Behaviors>
+            <cmpMap:KrisMap.ItemTemplate>
+                <DataTemplate x:DataType="{x:Type cmpMap:KrisMapPin}">
+                    <cmpMap:KrisMapPin x:DataType="vm:KrisMapPinViewModel"
+                                       KrisId="{Binding Id}"
+                                       CreatorId="{Binding }"
+                                       Label="{Binding Name}"
+                                       Location="{Binding Location}"
+                                       ImageSource="{Binding ImageSource}"
+                                       ImageName="{Binding ImageName}"
+                                       KrisType="{Binding KrisPinType}"
+                                       Description="{Binding Description}"
+                                       MarkerClicked="KrisMapPin_MarkerClicked">
+                    </cmpMap:KrisMapPin>
                 </DataTemplate>
-            </maps:Map.ItemTemplate>
-        </maps:Map>
-        
+            </cmpMap:KrisMap.ItemTemplate>
+        </cmpMap:KrisMap>
+
         <StackLayout Orientation="Horizontal"
                      HorizontalOptions="FillAndExpand"
                      VerticalOptions="End">

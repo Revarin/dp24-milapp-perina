@@ -1,5 +1,4 @@
 ﻿using FluentResults;
-using Kris.Common.Models;
 using Kris.Server.Common.Errors;
 using Kris.Server.Common.Exceptions;
 using Kris.Server.Core.Mappers;
@@ -26,28 +25,25 @@ public sealed class SavePositionCommandHandler : PositionHandler, IRequestHandle
         var authResult = await _authorizationService.AuthorizeAsync(user, cancellationToken);
         if (!authResult.IsAuthorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
 
-        var position = await _positionRepository.GetAsync(authResult.UserSessionId, cancellationToken);
+        var position = await _positionRepository.GetAsync(authResult.SessionUserId, cancellationToken);
         if (position == null)
         {
             position = new UserPositionEntity
             {
-                SessionUserId = authResult.UserSessionId,
+                Id = authResult.SessionUserId,
                 Updated = DateTime.UtcNow,
-                Positions = new GeoSpatialPosition?[3]
-                {
-                    request.SavePosition.Position,
-                    null,
-                    null
-                }
+                Position_0 = request.SavePosition.Position,
+                Position_1 = null,
+                Position_2 = null,
             };
             var entity = await _positionRepository.InsertAsync(position, cancellationToken);
             if (entity == null) throw new DatabaseException("Failed to insert user position");
         }
         else
         {
-            position.Positions[2] = position.Positions[1];
-            position.Positions[1] = position.Positions[0];
-            position.Positions[0] = request.SavePosition.Position;
+            position.Position_2 = position.Position_1;
+            position.Position_1 = position.Position_0;
+            position.Position_0 = request.SavePosition.Position;
             position.Updated = DateTime.UtcNow;
             await _positionRepository.UpdateAsync(cancellationToken);
         }

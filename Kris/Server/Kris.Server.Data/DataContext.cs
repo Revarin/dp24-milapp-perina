@@ -10,6 +10,7 @@ public class DataContext : DbContext
     public DbSet<SessionUserEntity> SessionUsers { get; set; }
     public DbSet<UserPositionEntity> UserPositions { get; set; }
     public DbSet<UserSettingsEntity> UserSettings { get; set; }
+    public DbSet<MapPointEntity> MapPoints { get; set; }
 
     public DataContext(DbContextOptions options) : base(options)
     {
@@ -25,8 +26,9 @@ public class DataContext : DbContext
         modelBuilder.Entity<UserEntity>().HasKey(e => e.Id);
         modelBuilder.Entity<SessionEntity>().HasKey(e => e.Id);
         modelBuilder.Entity<SessionUserEntity>().HasKey(e => e.Id);
-        modelBuilder.Entity<UserPositionEntity>().HasKey(e => e.SessionUserId);
+        modelBuilder.Entity<UserPositionEntity>().HasKey(e => e.Id);
         modelBuilder.Entity<UserSettingsEntity>().HasKey(e => e.Id);
+        modelBuilder.Entity<MapPointEntity>().HasKey(e => e.Id);
 
         modelBuilder.Entity<SessionUserEntity>()
             .HasOne(e => e.User)
@@ -49,8 +51,11 @@ public class DataContext : DbContext
         modelBuilder.Entity<UserPositionEntity>()
             .HasOne(e => e.SessionUser)
             .WithMany()
-            .HasForeignKey(e => e.SessionUserId)
+            .HasForeignKey(e => e.Id)
             .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<UserPositionEntity>().OwnsOne(e => e.Position_0);
+        modelBuilder.Entity<UserPositionEntity>().OwnsOne(e => e.Position_1);
+        modelBuilder.Entity<UserPositionEntity>().OwnsOne(e => e.Position_2);
 
         modelBuilder.Entity<UserSettingsEntity>()
             .HasOne(e => e.User)
@@ -58,6 +63,14 @@ public class DataContext : DbContext
             .HasForeignKey(nameof(UserSettingsEntity), nameof(UserSettingsEntity.Id))
             .IsRequired(true)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<MapPointEntity>()
+            .HasOne(e => e.SessionUser)
+            .WithMany(e => e.MapPoints)
+            .HasForeignKey(e => e.SessionUserId)
+            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<MapPointEntity>().OwnsOne(e => e.Position);
+        modelBuilder.Entity<MapPointEntity>().OwnsOne(e => e.Symbol);
 
         base.OnModelCreating(modelBuilder);
     }

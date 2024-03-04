@@ -1,3 +1,4 @@
+using Kris.Client.Components.Map;
 using Kris.Client.ViewModels.Views;
 
 namespace Kris.Client.Views;
@@ -10,4 +11,10 @@ public partial class MapView : ContentPage
 		InitializeComponent();
 		(BindingContext as MapViewModel).Init();
 	}
+
+	// TODO: Temporaty
+    private async void KrisMapPin_MarkerClicked(object sender, Microsoft.Maui.Controls.Maps.PinClickedEventArgs e)
+    {
+		if (sender is KrisMapPin krisPin) await (BindingContext as MapViewModel).OnKrisPinClickedAsync(krisPin, e);
+    }
 }

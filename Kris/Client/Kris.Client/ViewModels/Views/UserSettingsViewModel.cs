@@ -37,6 +37,10 @@ public sealed partial class UserSettingsViewModel : PageViewModelBase
     private ObservableCollection<PositionDownloadSettingsItem> _positionDownloadItems;
     [ObservableProperty]
     private PositionDownloadSettingsItem _positionDownloadSelectedItem;
+    [ObservableProperty]
+    private ObservableCollection<MapObjectDownloadSettingsItem> _mapObjectDownloadItems;
+    [ObservableProperty]
+    private MapObjectDownloadSettingsItem _mapObjectDownloadSelectedItem;
 
     // User edit
     [Required]
@@ -63,6 +67,8 @@ public sealed partial class UserSettingsViewModel : PageViewModelBase
         _positionUploadSelectedItem = _settingsDataProvider.GetCurrentPositionUploadSettings();
         _positionDownloadItems = _settingsDataProvider.GetPositionDownloadSettingsItems().ToObservableCollection();
         _positionDownloadSelectedItem = _settingsDataProvider.GetCurrentPositionDownloadSettings();
+        _mapObjectDownloadItems = _settingsDataProvider.GetMapObjectDownloadSettingsItems().ToObservableCollection();
+        _mapObjectDownloadSelectedItem = _settingsDataProvider.GetCurrentMapObjectDownloadSettings();
     }
 
     [RelayCommand]
@@ -75,7 +81,8 @@ public sealed partial class UserSettingsViewModel : PageViewModelBase
             {
                 GpsInterval = GpsIntervalSelectedItem.Value,
                 PositionUploadMultiplier = PositionUploadSelectedItem.Value,
-                PositionDownloadInterval = PositionDownloadSelectedItem.Value
+                PositionDownloadInterval = PositionDownloadSelectedItem.Value,
+                MapObjectDownloadInterval = MapObjectDownloadSelectedItem.Value
             }
         };
         var result = await _mediator.Send(command, ct);

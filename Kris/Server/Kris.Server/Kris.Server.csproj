@@ -30,8 +30,4 @@
     <ProjectReference Include="..\Kris.Server.Data\Kris.Server.Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Filters\" />
-  </ItemGroup>
-
 </Project>
