@@ -34,10 +34,10 @@
 
         <cmpMap:KrisMap VerticalOptions="FillAndExpand"
                         MapType="Street" IsZoomEnabled="True"
-                        ItemsSource="{Binding AllMapPins}">
+                        ItemsSource="{Binding AllMapPins}"
+                        CurrentRegion="{Binding CurrentRegion}"
+                        MoveToRegionRequest="{Binding MoveToRegion}" >
             <cmpMap:KrisMap.Behaviors>
-                <mb:CurrentRegionBehavior Value="{Binding CurrentRegion}" />
-                <mb:MoveToRegionBehavior Request="{Binding MoveToRegion}" />
                 <tk:EventToCommandBehavior EventName="Loaded" Command="{Binding MapLoadedCommand}" />
                 <tk:EventToCommandBehavior EventName="MapLongClicked" Command="{Binding MapLongClickedCommand}"
                                            x:TypeArguments="cmpEvent:MapLongClickedEventArgs" />
