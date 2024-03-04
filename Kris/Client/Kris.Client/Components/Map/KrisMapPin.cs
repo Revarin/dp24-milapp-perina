@@ -1,19 +1,24 @@
 ﻿using Kris.Client.Common.Enums;
-using Kris.Client.Core.Models;
+using Microsoft.Maui.Controls.Maps;
 
 namespace Kris.Client.Components.Map;
 
-public class KrisMapPin
+public sealed class KrisMapPin : Pin, IKrisMapPin
 {
-    public Guid Id { get; init; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public Location Location { get; set; }
-    public DateTime TimeStamp { get; set; }
-    public KrisPinType PinType { get; set; }
-    public ImageSource ImageSource { get; set; }
+    public static readonly BindableProperty KrisTypeProperty = BindableProperty.Create(
+    "KrisType", typeof(KrisPinType), typeof(KrisMapPin));
 
-    public KrisMapPin()
+    public static readonly BindableProperty ImageSourceProperty = BindableProperty.Create(
+    "ImageSource", typeof(ImageSource), typeof(KrisMapPin));
+
+    public KrisPinType KrisType
     {
+        get { return (KrisPinType)GetValue(KrisTypeProperty); }
+        set { SetValue(KrisTypeProperty, value); }
+    }
+    public ImageSource ImageSource
+    {
+        get { return (ImageSource)GetValue(ImageSourceProperty); }
+        set { SetValue(ImageSourceProperty, value); }
     }
 }

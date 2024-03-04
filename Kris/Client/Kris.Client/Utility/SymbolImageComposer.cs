@@ -5,7 +5,7 @@ namespace Kris.Client.Utility;
 
 public sealed class SymbolImageComposer : ISymbolImageComposer
 {
-    private const string ImageResourcePath = "Kris.Client.Resources.Images";
+    private const string ImageResourcePath = "Kris.Client.Resources.Images.Point";
 
     public Stream ComposeMapPointSymbol(MapPointSymbolShape? pointShape, MapPointSymbolColor? pointColor, MapPointSymbolSign? pointSign)
     {

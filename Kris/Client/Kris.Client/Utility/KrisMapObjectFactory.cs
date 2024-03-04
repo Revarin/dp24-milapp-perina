@@ -1,7 +1,7 @@
 ﻿using Kris.Client.Common.Enums;
-using Kris.Client.Components.Map;
 using Kris.Client.Core.Models;
 using Kris.Client.Data.Cache;
+using Kris.Client.ViewModels.Views;
 
 namespace Kris.Client.Utility;
 
@@ -16,35 +16,35 @@ public sealed class KrisMapObjectFactory : IKrisMapObjectFactory
         _symbolImageCache = symbolImageCache;
     }
 
-    public KrisMapPin CreateMyPositionPin(Guid userId, string userName, Location location)
+    public KrisMapPinViewModel CreateMyPositionPin(Guid userId, string userName, Location location)
     {
-        var pin = new KrisMapPin
+        var pin = new KrisMapPinViewModel
         {
             Id = userId,
             Name = userName,
             TimeStamp = DateTime.Now,
             Location = location,
-            PinType = KrisPinType.Self,
+            KrisPinType = KrisPinType.Self,
             ImageSource = ImageSource.FromFile("point_green.png")
         };
         return pin;
     }
 
-    public KrisMapPin CreateUserPositionPin(UserPositionModel userPosition)
+    public KrisMapPinViewModel CreateUserPositionPin(UserPositionModel userPosition)
     {
-        var pin = new KrisMapPin
+        var pin = new KrisMapPinViewModel
         {
             Id = userPosition.UserId,
             Name = userPosition.UserName,
             TimeStamp = userPosition.Updated,
             Location = userPosition.Positions.First(),
-            PinType = KrisPinType.User,
+            KrisPinType = KrisPinType.User,
             ImageSource = ImageSource.FromFile("point_blue.png")
         };
         return pin;
     }
 
-    public KrisMapPin CreateMapPoint(MapPointModel mapPoint)
+    public KrisMapPinViewModel CreateMapPoint(MapPointModel mapPoint)
     {
         var symbol = mapPoint.Symbol;
         var symbolName = $"point_{symbol.Shape}_{symbol.Color}_{symbol.Sign}.png";
@@ -55,14 +55,14 @@ public sealed class KrisMapObjectFactory : IKrisMapObjectFactory
             _symbolImageCache.Save(symbolName, imageStream);
         }
 
-        var pin = new KrisMapPin
+        var pin = new KrisMapPinViewModel
         {
             Id = mapPoint.Id,
             Name = mapPoint.Name,
             TimeStamp = mapPoint.Created,
             Location = mapPoint.Location,
             Description = mapPoint.Description,
-            PinType = KrisPinType.Point,
+            KrisPinType = KrisPinType.Point,
             ImageSource = _symbolImageCache.Load(symbolName)
         };
         return pin;

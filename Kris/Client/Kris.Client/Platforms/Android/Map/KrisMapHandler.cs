@@ -1,7 +1,7 @@
 ﻿using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
+using Android.Graphics;
 using Android.Graphics.Drawables;
-using Kris.Client.Behaviors.Map;
 using Kris.Client.Platforms.Callbacks;
 using Kris.Client.Platforms.Listeners;
 using Microsoft.Maui.Maps;
@@ -71,26 +71,25 @@ public partial class KrisMapHandler
             if (pinHandler is IMapPinHandler mapPinHandler)
             {
                 var markerOption = mapPinHandler.PlatformView;
-                if (pin is KrisPinBehavior cp)
+                if (pin is KrisMapPin cp)
                 {
-                    cp.ImageSource.LoadImage(MauiContext, result =>
+                    if (cp.ImageSource != null)
                     {
-                        if (result?.Value is BitmapDrawable bitmapDrawable)
+                        cp.ImageSource.LoadImage(MauiContext, result =>
                         {
-                            markerOption.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmapDrawable.Bitmap));
-                        }
+                            if (result?.Value is BitmapDrawable bitmapDrawable)
+                            {
+                                // Performance?
+                                //var scaledBitmap = Bitmap.CreateScaledBitmap(bitmapDrawable.Bitmap, 200, 200, true);
+                                markerOption.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmapDrawable.Bitmap));
+                            }
+                        });
+                    }
+                }
 
-                        var marker = NativeMap.AddMarker(markerOption);
-                        pin.MarkerId = marker.Id;
-                        Markers.Add(marker);
-                    });
-                }
-                else
-                {
-                    var marker = NativeMap.AddMarker(markerOption);
-                    pin.MarkerId = marker.Id;
-                    Markers.Add(marker);
-                }
+                var marker = NativeMap.AddMarker(markerOption);
+                pin.MarkerId = marker.Id;
+                Markers.Add(marker);
             }
         }
     }

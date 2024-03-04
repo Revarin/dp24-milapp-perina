@@ -2,15 +2,12 @@
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Kris.Client.Common.Enums;
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
 using Kris.Client.Components.Events;
-using Kris.Client.Components.Map;
 using Kris.Client.Core.Listeners;
 using Kris.Client.Core.Listeners.Events;
 using Kris.Client.Core.Messages;
-using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.Utility;
@@ -36,7 +33,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     private MoveToRegionRequest _moveToRegion = new MoveToRegionRequest();
 
     [ObservableProperty]
-    private ObservableCollection<KrisMapPin> _allMapPins = new ObservableCollection<KrisMapPin>();
+    private ObservableCollection<KrisMapPinViewModel> _allMapPins = new ObservableCollection<KrisMapPinViewModel>();
     //private List<UserPositionModel> _userPositions = new List<UserPositionModel>();
     //private List<MapPointModel> _mapPoints = new List<MapPointModel>();
 
