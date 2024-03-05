@@ -109,17 +109,26 @@ public sealed class SessionController : KrisController, ISessionController
         var user = CurrentUser();
         if (user == null) return Response.Unauthorized<IdentityResponse>();
 
-        var command = new JoinSessionCommand { User = user, JoinSession = request };
-        var result = await _mediator.Send(command, ct);
+        var joinCommand = new JoinSessionCommand { User = user, JoinSession = request };
+        var joinResult = await _mediator.Send(joinCommand, ct);
 
-        if (result.IsFailed)
+        if (joinResult.IsFailed)
         {
-            if (result.HasError<EntityNotFoundError>()) return Response.NotFound<IdentityResponse>(result.Errors.FirstMessage());
-            else if (result.HasError<InvalidCredentialsError>()) return Response.Forbidden<IdentityResponse>(result.Errors.FirstMessage());
+            if (joinResult.HasError<EntityNotFoundError>()) return Response.NotFound<IdentityResponse>(joinResult.Errors.FirstMessage());
+            else if (joinResult.HasError<InvalidCredentialsError>()) return Response.Forbidden<IdentityResponse>(joinResult.Errors.FirstMessage());
             else return Response.InternalError<IdentityResponse>();
         }
 
-        return Response.Ok(result.Value);
+        var conversationCommand = new CreateDirectConversationsOnJoinCommand { User = user, JoinSession = request };
+        var conversationResult = await _mediator.Send(conversationCommand, ct);
+
+        if (conversationResult.IsFailed)
+        {
+            if (joinResult.HasError<EntityNotFoundError>()) return Response.NotFound<IdentityResponse>(joinResult.Errors.FirstMessage());
+            else return Response.InternalError<IdentityResponse>();
+        }
+
+        return Response.Ok(joinResult.Value);
     }
 
     [HttpPut("Leave/{sessionId:guid}")]

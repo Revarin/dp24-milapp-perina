@@ -4,7 +4,6 @@ namespace Kris.Server.Data.Models;
 
 public sealed class ConversationEntity : EntityBase
 {
-    public required string Name { get; set; }
     public required ConversationType ConversationType { get; set; }
     // Nullable to break cascade cycle (always required)
     public Guid? SessionId { get; set; }
