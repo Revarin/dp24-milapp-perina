@@ -11,6 +11,8 @@ public class DataContext : DbContext
     public DbSet<UserPositionEntity> UserPositions { get; set; }
     public DbSet<UserSettingsEntity> UserSettings { get; set; }
     public DbSet<MapPointEntity> MapPoints { get; set; }
+    public DbSet<ConversationEntity> Conversations { get; set; }
+    public DbSet<MessageEntity> Messages { get; set; }
 
     public DataContext(DbContextOptions options) : base(options)
     {

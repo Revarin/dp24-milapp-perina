@@ -9,30 +9,31 @@ using MediatR;
 
 namespace Kris.Server.Core.Handlers.Conversation;
 
-public sealed class CreateDirectConversationsOnJoinCommandHandler : ConversationHandler, IRequestHandler<CreateDirectConversationsOnJoinCommand, Result>
+public sealed class CreateDirectConversationsCommandHandler : ConversationHandler, IRequestHandler<CreateDirectConversationsCommand, Result>
 {
     private readonly ISessionRepository _sessionRepository;
 
-    public CreateDirectConversationsOnJoinCommandHandler(ISessionRepository sessionRepository,
+    public CreateDirectConversationsCommandHandler(ISessionRepository sessionRepository,
         IConversationRepository conversationRepository)
         : base(conversationRepository)
     {
         _sessionRepository = sessionRepository;
     }
 
-    public async Task<Result> Handle(CreateDirectConversationsOnJoinCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(CreateDirectConversationsCommand request, CancellationToken cancellationToken)
     {
         // Authentized from previous command
         // WARNING: Must not be accessible from API
+        var session = await _sessionRepository.GetWithConversations(request.SessionId, cancellationToken);
+        if (session == null) return Result.Fail(new EntityNotFoundError("Session", request.SessionId));
 
-        var session = await _sessionRepository.GetWithAllAsync(request.JoinSession.Id, cancellationToken);
-        if (session == null) return Result.Fail(new EntityNotFoundError("Session", request.JoinSession.Id));
-
-        var currentUser = session.Users.Find(sessionUser => sessionUser.UserId == request.User.UserId);
+        var currentUser = session.Users.Find(sessionUser => sessionUser.UserId == request.UserId);
         if (currentUser == null) throw new DatabaseException("User not in session");
 
         foreach (var otherUser in session.Users)
         {
+            if (otherUser.Id == currentUser.Id) continue;
+
             if (!session.Conversations.Any(conversation => 
                 conversation.ConversationType == ConversationType.Direct
                 && conversation.Users.Any(convUser => convUser.UserId == otherUser.UserId)

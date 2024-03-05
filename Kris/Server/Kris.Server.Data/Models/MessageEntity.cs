@@ -2,7 +2,7 @@
 
 namespace Kris.Server.Data.Models;
 
-public sealed class MessageEntity : EntityBase
+public class MessageEntity : EntityBase
 {
     public string? Body { get; set; }
     public required MessageType MessageType { get; set; }

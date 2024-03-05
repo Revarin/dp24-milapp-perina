@@ -34,6 +34,7 @@ public sealed class SessionRepository : RepositoryBase<SessionEntity>, ISessionR
     {
         return await _context.Sessions
             .Include(session => session.Conversations).ThenInclude(conversation => conversation.Users)
+            .Include(session => session.Conversations).ThenInclude(conversation => conversation.Messages)
             .Include(session => session.Users)
             .FirstOrDefaultAsync(session => session.Id == id, ct);
     }

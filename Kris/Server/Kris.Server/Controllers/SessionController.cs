@@ -11,6 +11,7 @@ using Kris.Server.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static Kris.Interface.Responses.IdentityResponse;
 
 namespace Kris.Server.Controllers;
 
@@ -119,7 +120,7 @@ public sealed class SessionController : KrisController, ISessionController
             else return Response.InternalError<IdentityResponse>();
         }
 
-        var conversationCommand = new CreateDirectConversationsOnJoinCommand { User = user, JoinSession = request };
+        var conversationCommand = new CreateDirectConversationsCommand { UserId = user.UserId, SessionId = request.Id };
         var conversationResult = await _mediator.Send(conversationCommand, ct);
 
         if (conversationResult.IsFailed)
@@ -143,17 +144,25 @@ public sealed class SessionController : KrisController, ISessionController
         var user = CurrentUser();
         if (user == null) return Response.Unauthorized<IdentityResponse>();
 
-        var command = new LeaveSessionCommand { User = user, SessionId = sessionId };
-        var result = await _mediator.Send(command, ct);
+        var leaveCommand = new LeaveSessionCommand { User = user, SessionId = sessionId };
+        var leaveResult = await _mediator.Send(leaveCommand, ct);
 
-        if (result.IsFailed)
+        if (leaveResult.IsFailed)
         {
-            if (result.HasError<UserNotInSessionError>()) return Response.BadRequest<IdentityResponse>(result.Errors.FirstMessage());
-            if (result.HasError<InvalidOperationError>()) return Response.BadRequest<IdentityResponse>(result.Errors.FirstMessage());
+            if (leaveResult.HasError<UserNotInSessionError>()) return Response.BadRequest<IdentityResponse>(leaveResult.Errors.FirstMessage());
+            if (leaveResult.HasError<InvalidOperationError>()) return Response.BadRequest<IdentityResponse>(leaveResult.Errors.FirstMessage());
             else return Response.InternalError<IdentityResponse>();
         }
 
-        return Response.Ok(result.Value);
+        var conversationCommand = new RemoveEmptyConversationsCommand { SessionId = sessionId };
+        var conversationResult = await _mediator.Send(conversationCommand, ct);
+
+        if (conversationResult.IsFailed)
+        {
+            return Response.InternalError<IdentityResponse>();
+        }
+
+        return Response.Ok(leaveResult.Value);
     }
 
     [HttpPut("Kick/{userId:guid}")]
@@ -170,15 +179,23 @@ public sealed class SessionController : KrisController, ISessionController
         var user = CurrentUser();
         if (user == null) return Response.Unauthorized<Response>();
 
-        var command = new KickFromSessionCommand { User = user, UserId = userId };
-        var result = await _mediator.Send(command, ct);
+        var kickCommand = new KickFromSessionCommand { User = user, UserId = userId };
+        var kickResult = await _mediator.Send(kickCommand, ct);
 
-        if (result.IsFailed)
+        if (kickResult.IsFailed)
         {
-            if (result.HasError<UnauthorizedError>()) return Response.Forbidden<Response>(result.Errors.FirstMessage());
-            else if (result.HasError<UserNotInSessionError>()) return Response.NotFound<Response>(result.Errors.FirstMessage());
-            else if (result.HasError<InvalidOperationError>()) return Response.BadRequest<Response>(result.Errors.FirstMessage());
+            if (kickResult.HasError<UnauthorizedError>()) return Response.Forbidden<Response>(kickResult.Errors.FirstMessage());
+            else if (kickResult.HasError<UserNotInSessionError>()) return Response.NotFound<Response>(kickResult.Errors.FirstMessage());
+            else if (kickResult.HasError<InvalidOperationError>()) return Response.BadRequest<Response>(kickResult.Errors.FirstMessage());
             else return Response.InternalError<Response>();
+        }
+
+        var conversationCommand = new RemoveEmptyConversationsCommand { SessionId = user.SessionId!.Value };
+        var conversationResult = await _mediator.Send(conversationCommand, ct);
+
+        if (conversationResult.IsFailed)
+        {
+            return Response.InternalError<IdentityResponse>();
         }
 
         return Response.Ok();

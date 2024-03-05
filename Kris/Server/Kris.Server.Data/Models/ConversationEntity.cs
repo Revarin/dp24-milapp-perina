@@ -2,7 +2,7 @@
 
 namespace Kris.Server.Data.Models;
 
-public sealed class ConversationEntity : EntityBase
+public class ConversationEntity : EntityBase
 {
     public required ConversationType ConversationType { get; set; }
     // Nullable to break cascade cycle (always required)
