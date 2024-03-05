@@ -12,4 +12,6 @@ public class SessionUserEntity : EntityBase
     public required DateTime Joined { get; set; }
 
     public List<MapPointEntity> MapPoints { get; set; } = new List<MapPointEntity>();
+    public List<ConversationEntity> Conversations { get; set; } = new List<ConversationEntity>();
+    public List<MessageEntity> SentMessages { get; set; } = new List<MessageEntity>();
 }
