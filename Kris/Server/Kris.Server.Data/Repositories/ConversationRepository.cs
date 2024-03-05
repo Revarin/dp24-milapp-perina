@@ -17,4 +17,12 @@ public sealed class ConversationRepository : RepositoryBase<ConversationEntity>,
             .Where(conversation => conversation.SessionId == sessionId)
             .ToListAsync();
     }
+
+    public async Task<ConversationEntity?> GetWithAllAsync(Guid id, CancellationToken ct)
+    {
+        return await _context.Conversations
+            .Include(conversation => conversation.Users)
+            .Include(conversation => conversation.Messages)
+            .FirstOrDefaultAsync(conversation => conversation.Id == id, ct);
+    }
 }

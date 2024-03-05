@@ -1,7 +1,6 @@
 ﻿using FluentResults;
 using Kris.Common.Enums;
 using Kris.Server.Common.Errors;
-using Kris.Server.Common.Exceptions;
 using Kris.Server.Core.Requests;
 using Kris.Server.Core.Services;
 using Kris.Server.Data.Repositories;
