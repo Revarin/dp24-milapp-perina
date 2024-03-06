@@ -1,10 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Core.Models;
 
 namespace Kris.Client.ViewModels.Items;
 
 public sealed partial class ConversationItemViewModel : ControllViewModelBase
 {
+    public event EventHandler ContactClicked;
+
     [ObservableProperty]
     private Guid _id;
     [ObservableProperty]
@@ -21,4 +24,7 @@ public sealed partial class ConversationItemViewModel : ControllViewModelBase
         MessageCount = model.MessageCount;
         LastMessage = model.LastMessage;
     }
+
+    [RelayCommand]
+    private void OnClicked() => ContactClicked?.Invoke(this, EventArgs.Empty);
 }

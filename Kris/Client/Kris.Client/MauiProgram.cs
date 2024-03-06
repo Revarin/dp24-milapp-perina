@@ -76,6 +76,8 @@ namespace Kris.Client
             builder.Services.AddTransient<UserSettingsViewModel>();
             builder.Services.AddTransient<ContactsView>();
             builder.Services.AddTransient<ContactsViewModel>();
+            builder.Services.AddTransient<ChatView>();
+            builder.Services.AddTransient<ChatViewModel>();
 
             builder.Services.AddTransientPopup<PasswordPopup, PasswordPopupViewModel>();
             builder.Services.AddTransientPopup<CreateSessionPopup, CreateSessionPopupViewModel>();

@@ -11,5 +11,6 @@ public sealed class AppShellViewModel : ObservableObject
         Routing.RegisterRoute(nameof(SessionSettingsView), typeof(SessionSettingsView));
         Routing.RegisterRoute(nameof(UserSettingsView), typeof(UserSettingsView));
         Routing.RegisterRoute(nameof(ContactsView), typeof(ContactsView));
+        Routing.RegisterRoute(nameof(ChatView), typeof(ChatView));
     }
 }

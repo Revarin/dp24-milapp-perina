@@ -6,7 +6,11 @@
              x:Class="Kris.Client.Components.Items.ConversationItem"
              x:DataType="vm:ConversationItemViewModel"
              BackgroundColor="DimGrey">
-    
+
+    <ContentView.GestureRecognizers>
+        <TapGestureRecognizer Command="{Binding ClickedCommand}" />
+    </ContentView.GestureRecognizers>
+
     <StackLayout Orientation="Horizontal"
                  HorizontalOptions="FillAndExpand">
         <Label Text="{Binding Name}" FontSize="Title" 
