@@ -1,6 +1,7 @@
 ﻿using FluentResults;
 using Kris.Common.Enums;
 using Kris.Server.Core.Requests;
+using Kris.Server.Core.Services;
 using Kris.Server.Data.Repositories;
 using MediatR;
 
@@ -9,8 +10,8 @@ namespace Kris.Server.Core.Handlers.Conversation;
 public sealed class RemoveEmptyConversationsCommandHandler : ConversationHandler, IRequestHandler<RemoveEmptyConversationsCommand, Result>
 {
 
-    public RemoveEmptyConversationsCommandHandler(IConversationRepository conversationRepository)
-        : base(conversationRepository)
+    public RemoveEmptyConversationsCommandHandler(IConversationRepository conversationRepository, IAuthorizationService authorizationService)
+        : base(conversationRepository, authorizationService)
     {
     }
 

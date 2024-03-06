@@ -9,6 +9,7 @@ using Kris.Server.Data.Repositories;
 using Kris.Server.Core.Services;
 using Kris.Server.Core.Mappers;
 using Kris.Server.Core.Handlers;
+using Kris.Server.Controllers;
 
 namespace Kris.Server;
 
@@ -20,10 +21,14 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddControllers();
+        builder.Services.AddSignalR();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(options =>
+        {
+            options.AddSignalRSwaggerGen();
+        });
 
         builder.Services.AddOptions<SettingsOptions>()
             .Bind(builder.Configuration.GetRequiredSection(SettingsOptions.Section))
@@ -97,6 +102,7 @@ public class Program
         app.UseAuthorization();
 
         app.MapControllers();
+        app.MapHub<MessageHub>(nameof(MessageHub));
 
         if (app.Environment.IsProduction())
         {

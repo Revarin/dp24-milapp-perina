@@ -3,6 +3,7 @@ using Kris.Common.Enums;
 using Kris.Server.Common.Errors;
 using Kris.Server.Common.Exceptions;
 using Kris.Server.Core.Requests;
+using Kris.Server.Core.Services;
 using Kris.Server.Data.Models;
 using Kris.Server.Data.Repositories;
 using MediatR;
@@ -14,8 +15,8 @@ public sealed class CreateDirectConversationsCommandHandler : ConversationHandle
     private readonly ISessionRepository _sessionRepository;
 
     public CreateDirectConversationsCommandHandler(ISessionRepository sessionRepository,
-        IConversationRepository conversationRepository)
-        : base(conversationRepository)
+        IConversationRepository conversationRepository, IAuthorizationService authorizationService)
+        : base(conversationRepository, authorizationService)
     {
         _sessionRepository = sessionRepository;
     }

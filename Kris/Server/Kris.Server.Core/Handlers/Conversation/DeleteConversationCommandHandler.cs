@@ -9,13 +9,9 @@ namespace Kris.Server.Core.Handlers.Conversation;
 
 public sealed class DeleteConversationCommandHandler : ConversationHandler, IRequestHandler<DeleteConversationCommand, Result>
 {
-    private readonly IAuthorizationService _authorizationService;
-
-    public DeleteConversationCommandHandler(IAuthorizationService authorizationService,
-        IConversationRepository conversationRepository)
-        : base(conversationRepository)
+    public DeleteConversationCommandHandler(IConversationRepository conversationRepository, IAuthorizationService authorizationService)
+        : base(conversationRepository, authorizationService)
     {
-        _authorizationService = authorizationService;
     }
 
     public async Task<Result> Handle(DeleteConversationCommand request, CancellationToken cancellationToken)

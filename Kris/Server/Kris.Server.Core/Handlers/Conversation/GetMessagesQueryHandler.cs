@@ -12,15 +12,13 @@ namespace Kris.Server.Core.Handlers.Conversation;
 
 public sealed class GetMessagesQueryHandler : ConversationHandler, IRequestHandler<GetMessagesQuery, Result<IEnumerable<MessageModel>>>
 {
-    private readonly IAuthorizationService _authorizationService;
     private readonly IMessageRepository _messageRepository;
     private readonly IMessageMapper _messageMapper;
 
-    public GetMessagesQueryHandler(IAuthorizationService authorizationService, IMessageRepository messageRepository,
-        IMessageMapper messageMapper, IConversationRepository conversationRepository)
-        : base(conversationRepository)
+    public GetMessagesQueryHandler(IMessageRepository messageRepository, IMessageMapper messageMapper,
+        IConversationRepository conversationRepository, IAuthorizationService authorizationService)
+        : base(conversationRepository, authorizationService)
     {
-        _authorizationService = authorizationService;
         _messageRepository = messageRepository;
         _messageMapper = messageMapper;
     }
