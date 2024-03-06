@@ -51,6 +51,7 @@ public class Program
         builder.Services.AddScoped<IUserSettingsRepository, UserSettingsRepository>();
         builder.Services.AddScoped<IMapPointRepository, MapPointRepository>();
         builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
+        builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
         builder.Services.AddSingleton<IJwtService, JwtService>();
         builder.Services.AddSingleton<IPasswordService, PasswordService>();
@@ -60,6 +61,8 @@ public class Program
         builder.Services.AddSingleton<ISessionMapper, SessionMapper>();
         builder.Services.AddSingleton<IPositionMapper, PositionMapper>();
         builder.Services.AddSingleton<IMapObjectMapper, MapObjectMapper>();
+        builder.Services.AddSingleton<IConversationMapper, ConversationMapper>();
+        builder.Services.AddSingleton<IMessageMapper, MessageMapper>();
 
         builder.Services.AddAuthentication(options =>
         {

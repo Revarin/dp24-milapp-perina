@@ -239,6 +239,6 @@ public sealed class SessionController : KrisController, ISessionController
 
         if (result.IsFailed) return Response.InternalError<GetManyResponse<SessionModel>>();
 
-        return Response.Ok(new GetManyResponse<SessionModel> { Values = result.Value });
+        return Response.Ok(new GetManyResponse<SessionModel>(result.Value));
     }
 }

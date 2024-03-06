@@ -1,5 +1,6 @@
 ﻿using Kris.Common.Extensions;
 using Kris.Interface.Controllers;
+using Kris.Interface.Models;
 using Kris.Interface.Responses;
 using Kris.Server.Common.Errors;
 using Kris.Server.Core.Requests;
@@ -43,5 +44,51 @@ public sealed class ConversationController : KrisController, IConversationContro
         }
 
         return Response.Ok();
+    }
+
+    [HttpGet]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<GetManyResponse<ConversationListModel>?> GetConversations(CancellationToken ct)
+    {
+        var user = CurrentUser();
+        if (user == null) return Response.Unauthorized<GetManyResponse<ConversationListModel>>();
+
+        var query = new GetConversationsQuery { User = user };
+        var result = await _mediator.Send(query, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<GetManyResponse<ConversationListModel>>(result.Errors.FirstMessage());
+            else return Response.InternalError<GetManyResponse<ConversationListModel>>();
+        }
+
+        return Response.Ok(new GetManyResponse<ConversationListModel>(result.Value));
+    }
+
+    [HttpGet("{conversationId:guid}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<GetManyResponse<MessageModel>?> GetMessages(Guid conversationId, int? count, int? offset, CancellationToken ct)
+    {
+        var user = CurrentUser();
+        if (user == null) return Response.Unauthorized<GetManyResponse<MessageModel>>();
+
+        var query = new GetMessagesQuery { User = user, ConversationId = conversationId, Count = count, From = offset };
+        var result = await _mediator.Send(query, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<GetManyResponse<MessageModel>>(result.Errors.FirstMessage());
+            else if (result.HasError<EntityNotFoundError>()) return Response.NotFound<GetManyResponse<MessageModel>>(result.Errors.FirstMessage());
+            else return Response.InternalError<GetManyResponse<MessageModel>>();
+        }
+
+        return Response.Ok(new GetManyResponse<MessageModel>(result.Value));
     }
 }
