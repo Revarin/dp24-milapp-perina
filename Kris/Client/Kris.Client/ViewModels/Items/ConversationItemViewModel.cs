@@ -17,7 +17,7 @@ public sealed partial class ConversationItemViewModel : ControllViewModelBase
     [ObservableProperty]
     private DateTime? _lastMessage;
 
-    public ConversationItemViewModel(ConversationListModel model)
+    public ConversationItemViewModel(ConversationModel model)
     {
         Id = model.Id;
         Name = model.Name;

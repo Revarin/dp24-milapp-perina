@@ -3,9 +3,9 @@ namespace Kris.Client.Core.Mappers;
 
 public sealed class ConversationMapper : IConversationMapper
 {
-    public Models.ConversationListModel Map(Interface.Models.ConversationListModel model)
+    public Models.ConversationModel Map(Interface.Models.ConversationListModel model)
     {
-        return new Models.ConversationListModel
+        return new Models.ConversationModel
         {
             Id = model.Id,
             Name = model.Name,

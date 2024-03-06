@@ -8,14 +8,17 @@ using MediatR;
 
 namespace Kris.Client.Core.Handlers.Conversation;
 
-public sealed class GetConversationsQueryHandler : ConversationHandler, IRequestHandler<GetConversationsQuery, Result<IEnumerable<ConversationListModel>>>
+public sealed class GetConversationsQueryHandler : ConversationHandler, IRequestHandler<GetConversationsQuery, Result<IEnumerable<ConversationModel>>>
 {
-    public GetConversationsQueryHandler(IConversationController conversationClient, IConversationMapper conversationMapper)
-        : base(conversationClient, conversationMapper)
+    private readonly IConversationMapper _conversationMapper;
+
+    public GetConversationsQueryHandler(IConversationMapper conversationMapper, IConversationController conversationClient)
+        : base(conversationClient)
     {
+        _conversationMapper = conversationMapper;
     }
 
-    public async Task<Result<IEnumerable<ConversationListModel>>> Handle(GetConversationsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<IEnumerable<ConversationModel>>> Handle(GetConversationsQuery request, CancellationToken cancellationToken)
     {
         var response = await _conversationClient.GetConversations(cancellationToken);
 

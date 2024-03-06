@@ -88,6 +88,9 @@
 	  <MauiXaml Update="Components\Items\ConversationItem.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Components\Items\MessageItem.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Components\Items\SessionItem.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

@@ -2,7 +2,7 @@
 
 namespace Kris.Client.Core.Models;
 
-public sealed class ConversationListModel
+public sealed class ConversationModel
 {
     public Guid Id { get; set; }
     public string Name { get; set; }

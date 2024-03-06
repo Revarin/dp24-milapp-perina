@@ -94,6 +94,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<ISettingsMapper, SettingsMapper>();
             builder.Services.AddSingleton<IMapObjectsMapper, MapObjectsMapper>();
             builder.Services.AddSingleton<IConversationMapper, ConversationMapper>();
+            builder.Services.AddSingleton<IMessageMapper, MessageMapper>();
 
             builder.Services.AddSingleton<ICurrentPositionListener, CurrentPositionListener>();
             builder.Services.AddSingleton<IUserPositionsListener, UserPositionsListener>();
