@@ -32,13 +32,13 @@ public sealed class MessageRepository : RepositoryBase<MessageEntity>, IMessageR
 
     public async Task<IEnumerable<MessageEntity>> GetByConversationAsync(Guid conversationId, int count, int from, CancellationToken ct)
     {
-        var range = new Range(from, from + count);
         return await _context.Messages
             .Include(message => message.Sender)
             .ThenInclude(sessionUser => sessionUser!.User)
             .Where(message => message.ConversationId == conversationId)
             .OrderByDescending(message => message.TimeStamp)
-            .Take(range)
+            .Skip(from)
+            .Take(count)
             .ToListAsync(ct);
     }
 }
