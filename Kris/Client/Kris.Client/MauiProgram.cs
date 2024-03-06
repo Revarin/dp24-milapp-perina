@@ -74,6 +74,8 @@ namespace Kris.Client
             builder.Services.AddTransient<SessionSettingsViewModel>();
             builder.Services.AddTransient<UserSettingsView>();
             builder.Services.AddTransient<UserSettingsViewModel>();
+            builder.Services.AddTransient<ContactsView>();
+            builder.Services.AddTransient<ContactsViewModel>();
 
             builder.Services.AddTransientPopup<PasswordPopup, PasswordPopupViewModel>();
             builder.Services.AddTransientPopup<CreateSessionPopup, CreateSessionPopupViewModel>();
@@ -89,6 +91,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<IPositionMapper, PositionMapper>();
             builder.Services.AddSingleton<ISettingsMapper, SettingsMapper>();
             builder.Services.AddSingleton<IMapObjectsMapper, MapObjectsMapper>();
+            builder.Services.AddSingleton<IConversationMapper, ConversationMapper>();
 
             builder.Services.AddSingleton<ICurrentPositionListener, CurrentPositionListener>();
             builder.Services.AddSingleton<IUserPositionsListener, UserPositionsListener>();
@@ -113,6 +116,7 @@ namespace Kris.Client
             builder.Services.AddTransient<ISessionController, SessionClient>();
             builder.Services.AddTransient<IPositionController, PositionClient>();
             builder.Services.AddTransient<IMapObjectController, MapObjectClient>();
+            builder.Services.AddTransient<IConversationController, ConversationClient>();
 
 #if DEBUG
     		builder.Logging.AddDebug();
