@@ -6,6 +6,8 @@ using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
 using Kris.Client.Components.Events;
 using Kris.Client.Components.Map;
+using Kris.Client.Connection.Hubs;
+using Kris.Client.Connection.Hubs.Events;
 using Kris.Client.Core.Listeners;
 using Kris.Client.Core.Listeners.Events;
 using Kris.Client.Core.Messages;
@@ -29,6 +31,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     private readonly ICurrentPositionListener _selfPositionListener;
     private readonly IUserPositionsListener _othersPositionListener;
     private readonly IMapObjectsListener _mapObjectsListener;
+    private readonly IMessageReceiver _messageReceiver;
 
     [ObservableProperty]
     private MapSpan _currentRegion;
@@ -47,8 +50,8 @@ public sealed partial class MapViewModel : PageViewModelBase
     private CancellationTokenSource _mapObjectsCTS;
     private Task _mapObjectsTask;
 
-    public MapViewModel(IPopupService popupService, IKrisMapObjectFactory krisMapObjectFactory,
-        ICurrentPositionListener currentPositionListener, IUserPositionsListener userPositionsListener, IMapObjectsListener mapObjectsListener,
+    public MapViewModel(IPopupService popupService, IKrisMapObjectFactory krisMapObjectFactory, ICurrentPositionListener currentPositionListener,
+        IUserPositionsListener userPositionsListener, IMapObjectsListener mapObjectsListener, IMessageReceiver messageReceiver,
         IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
         : base(mediator, navigationService, messageService, alertService)
     {
@@ -57,6 +60,7 @@ public sealed partial class MapViewModel : PageViewModelBase
         _selfPositionListener = currentPositionListener;
         _othersPositionListener = userPositionsListener;
         _mapObjectsListener = mapObjectsListener;
+        _messageReceiver = messageReceiver;
 
         _messageService.Register<LogoutMessage>(this, OnLogout);
         _messageService.Register<CurrentSessionChangedMessage>(this, RestartPositionListeners);
@@ -64,7 +68,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     }
 
     [RelayCommand]
-    private void OnAppearing()
+    private async Task OnAppearing()
     {
         if (!_selfPositionListener.IsListening)
         {
@@ -86,6 +90,11 @@ public sealed partial class MapViewModel : PageViewModelBase
             _mapObjectsListener.MapObjectsChanged += OnMapObjectsChanged;
             _mapObjectsListener.ErrorOccured += OnMapObjectsErrorOccured;
             _mapObjectsTask = _mapObjectsListener.StartListening(_mapObjectsCTS.Token);
+        }
+        if (!_messageReceiver.IsConnected)
+        {
+            await _messageReceiver.Connect();
+            _messageReceiver.MessageReceived += OnMessageReceived;
         }
     }
 
@@ -284,6 +293,12 @@ public sealed partial class MapViewModel : PageViewModelBase
 
     }
 
+    private async void OnMessageReceived(object sender, MessageReceivedEventArgs e)
+    {
+        // TODO: Better notification
+        await _alertService.ShowToastAsync($"{e.SenderName}: {e.Body}");
+    }
+
     private async void OnLogout(object sender, LogoutMessage message)
     {
         if (_selfPositionListener.IsListening)
@@ -333,6 +348,11 @@ public sealed partial class MapViewModel : PageViewModelBase
             {
                 _mapObjectsCTS.Dispose();
             }
+        }
+        if (_messageReceiver.IsConnected)
+        {
+            _messageReceiver.MessageReceived -= OnMessageReceived;
+            await _messageReceiver.Disconnect();
         }
 
         AllMapPins.Clear();
@@ -394,6 +414,9 @@ public sealed partial class MapViewModel : PageViewModelBase
         if (message is CurrentSessionChangedMessage)
         {
             AllMapPins.Clear();
+
+            await _messageReceiver.Disconnect();
+            await _messageReceiver.Connect();
         }
     }
 }

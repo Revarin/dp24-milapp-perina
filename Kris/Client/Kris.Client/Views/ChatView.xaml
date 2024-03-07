@@ -11,6 +11,9 @@
     <ContentPage.Behaviors>
         <tk:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}" />
     </ContentPage.Behaviors>
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior Command="{Binding BackButtonPressedCommand}" />
+    </Shell.BackButtonBehavior>
     
     <StackLayout Orientation="Vertical"
                  VerticalOptions="FillAndExpand">
@@ -31,11 +34,14 @@
                      HorizontalOptions="FillAndExpand"
                      VerticalOptions="End">
             <Entry HorizontalOptions="FillAndExpand"
-                   Placeholder="Send message...">
+                   Placeholder="Send message..."
+                   Text="{Binding MessageBody}">
             </Entry>
             <Button Text="Send"
                     HorizontalOptions="End">
-                
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SendPressedCommand}" />
+                </Button.Behaviors>
             </Button>
         </StackLayout>
 
