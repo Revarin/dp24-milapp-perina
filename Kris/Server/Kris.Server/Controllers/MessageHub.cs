@@ -20,11 +20,12 @@ public class MessageHub : KrisHub<IMessageReceiver>, IMessageHub
 
     [HttpPost]
     [Authorize]
-    public async Task<Response?> SendMessage(SendMessageRequest request, CancellationToken ct)
+    public async Task<Response?> SendMessage([FromBody]SendMessageRequest request)
     {
         var user = CurrentUser();
         if (user == null) return Unauthorized();
 
+        var ct = new CancellationToken();
         var command = new SendMessageCommand { User = user, SendMessage = request };
         var result = await _mediator.Send(command, ct);
 
@@ -37,7 +38,7 @@ public class MessageHub : KrisHub<IMessageReceiver>, IMessageHub
 
         var notification = result.Value;
         await Clients.Users(notification.UsersToNotify.Select(id => id.ToString()).ToList())
-            .ReceiveMessage(notification.Message, ct);
+            .ReceiveMessage(notification.Message);
 
         return Ok();
     }
