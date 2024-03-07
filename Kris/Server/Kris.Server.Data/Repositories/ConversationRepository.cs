@@ -31,8 +31,9 @@ public sealed class ConversationRepository : RepositoryBase<ConversationEntity>,
     public async Task<ConversationEntity?> GetWithAllAsync(Guid id, CancellationToken ct)
     {
         return await _context.Conversations
-            .Include(conversation => conversation.Users)
             .Include(conversation => conversation.Messages)
+            .Include(conversation => conversation.Users)
+            .ThenInclude(sessionUser => sessionUser.User)
             .FirstOrDefaultAsync(conversation => conversation.Id == id, ct);
     }
 
