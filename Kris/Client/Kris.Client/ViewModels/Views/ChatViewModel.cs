@@ -4,6 +4,8 @@ using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Constants;
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Utility;
+using Kris.Client.Connection.Hubs;
+using Kris.Client.Connection.Hubs.Events;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.ViewModels.Items;
@@ -15,6 +17,8 @@ namespace Kris.Client.ViewModels.Views;
 
 public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributable
 {
+    private readonly IMessageReceiver _messageReceiver;
+
     [ObservableProperty]
     private Guid _conversationId;
     [ObservableProperty]
@@ -22,9 +26,14 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
     [ObservableProperty]
     private ObservableCollection<MessageItemViewModel> _messages;
 
-    public ChatViewModel(IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
+    [ObservableProperty]
+    private string _messageBody;
+
+    public ChatViewModel(IMessageReceiver messageReceiver,
+        IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
         : base(mediator, navigationService, messageService, alertService)
     {
+        _messageReceiver = messageReceiver;
     }
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -34,10 +43,26 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
     }
 
     [RelayCommand]
-    private async Task OnAppearing() => await LoadMessages();
+    private async Task OnAppearing()
+    {
+        _messageReceiver.MessageReceived += OnMessageReceived;
+        await LoadMessagesAsync();
+    }
+
+    [RelayCommand]
+    private void OnBackButtonPressed()
+    {
+        _messageReceiver.MessageReceived -= OnMessageReceived;
+    }
+
+    [RelayCommand]
+    private async Task OnSendPressed()
+    {
+        await SendMessageAsync();
+    }
 
     // Implementation
-    private async Task LoadMessages()
+    private async Task LoadMessagesAsync()
     {
         var ct = new CancellationToken();
         var query = new GetMessagesQuery { ConversationId = ConversationId, Page = 0 };
@@ -53,6 +78,7 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
             else if (result.HasError<EntityNotFoundError>())
             {
                 await _alertService.ShowToastAsync("Conversation does not exists");
+                _messageReceiver.MessageReceived -= OnMessageReceived;
                 await _navigationService.GoToAsync("..", RouterNavigationType.PushUpward);
             }
             else
@@ -64,5 +90,35 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
         {
             Messages = result.Value.Select(m => new MessageItemViewModel(m)).ToObservableCollection();
         }
+    }
+
+    private async Task SendMessageAsync()
+    {
+        var ct = new CancellationToken();
+        var command = new SendMessageCommand { ConversationId = ConversationId, Body = MessageBody };
+        await _mediator.Send(command, ct);
+        MessageBody = string.Empty;
+    }
+
+    private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
+    {
+    }
+
+    protected override Task GoToMap()
+    {
+        _messageReceiver.MessageReceived -= OnMessageReceived;
+        return base.GoToMap();
+    }
+
+    protected override Task GoToMenu()
+    {
+        _messageReceiver.MessageReceived -= OnMessageReceived;
+        return base.GoToMenu();
+    }
+
+    protected override Task LogoutUser()
+    {
+        _messageReceiver.MessageReceived -= OnMessageReceived;
+        return base.LogoutUser();
     }
 }

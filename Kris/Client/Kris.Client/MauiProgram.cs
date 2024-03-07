@@ -19,6 +19,7 @@ using Kris.Client.Data.Providers;
 using Kris.Client.Components.Map;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using Kris.Client.Utility;
+using Kris.Client.Connection.Hubs;
 
 namespace Kris.Client
 {
@@ -121,8 +122,12 @@ namespace Kris.Client
             builder.Services.AddTransient<IMapObjectController, MapObjectClient>();
             builder.Services.AddTransient<IConversationController, ConversationClient>();
 
+            builder.Services.AddSingleton<MessageClient>();
+            builder.Services.AddSingleton<IMessageHub>(s => s.GetRequiredService<MessageClient>());
+            builder.Services.AddSingleton<Connection.Hubs.IMessageReceiver>(s => s.GetRequiredService<MessageClient>());
+
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();
