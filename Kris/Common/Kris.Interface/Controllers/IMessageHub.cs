@@ -4,5 +4,5 @@ namespace Kris.Interface.Controllers;
 
 public interface IMessageHub
 {
-    Task SendMessage(SendMessageRequest request, CancellationToken ct);
+    Task SendMessage(SendMessageRequest request);
 }
