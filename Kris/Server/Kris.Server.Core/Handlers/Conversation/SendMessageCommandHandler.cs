@@ -47,9 +47,7 @@ public sealed class SendMessageCommandHandler : ConversationHandler, IRequestHan
         return Result.Ok(new MessageNotificationModel
         {
             Message = _messageMapper.Map(newMessage),
-            UsersToNotify = conversation.Users
-                .Where(sessionUser => sessionUser.Id != authResult.SessionUserId)
-                .Select(sessionUser => sessionUser.UserId).ToList()
+            UsersToNotify = conversation.Users.Select(sessionUser => sessionUser.UserId).ToList()
         });
     }
 }
