@@ -16,6 +16,7 @@ using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.Utility;
 using Kris.Client.ViewModels.Popups;
+using Kris.Client.Views;
 using Kris.Common.Extensions;
 using MediatR;
 using Microsoft.Maui.Controls.Maps;
@@ -296,6 +297,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     private async void OnMessageReceived(object sender, MessageReceivedEventArgs e)
     {
         // TODO: Better notification
+        if (Shell.Current.CurrentPage is ChatView) return;
         await _alertService.ShowToastAsync($"{e.SenderName}: {e.Body}");
     }
 

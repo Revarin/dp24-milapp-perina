@@ -3,9 +3,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Constants;
 using Kris.Client.Common.Errors;
-using Kris.Client.Common.Utility;
 using Kris.Client.Connection.Hubs;
 using Kris.Client.Connection.Hubs.Events;
+using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.ViewModels.Items;
@@ -50,9 +50,10 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
     }
 
     [RelayCommand]
-    private void OnBackButtonPressed()
+    private async Task OnBackButtonPressed()
     {
         _messageReceiver.MessageReceived -= OnMessageReceived;
+        await _navigationService.GoToAsync("..");
     }
 
     [RelayCommand]
@@ -79,7 +80,7 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
             {
                 await _alertService.ShowToastAsync("Conversation does not exists");
                 _messageReceiver.MessageReceived -= OnMessageReceived;
-                await _navigationService.GoToAsync("..", RouterNavigationType.PushUpward);
+                await _navigationService.GoToAsync("..");
             }
             else
             {
@@ -88,7 +89,10 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
         }
         else
         {
-            Messages = result.Value.Select(m => new MessageItemViewModel(m)).ToObservableCollection();
+            Messages = result.Value
+                .OrderBy(m => m.TimeStamp)
+                .Select(m => new MessageItemViewModel(m))
+                .ToObservableCollection();
         }
     }
 
@@ -102,6 +106,15 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
 
     private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
     {
+        var message = new MessageModel
+        {
+            Id = e.Id,
+            SenderId = e.SenderId,
+            SenderName = e.SenderName,
+            Body = e.Body,
+            TimeStamp = e.TimeStamp
+        };
+        Messages.Add(new MessageItemViewModel(message));
     }
 
     protected override Task GoToMap()

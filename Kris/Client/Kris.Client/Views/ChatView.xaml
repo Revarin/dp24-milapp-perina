@@ -21,6 +21,7 @@
         <StackLayout Orientation="Vertical"
                      VerticalOptions="FillAndExpand">
             <CollectionView ItemsSource="{Binding Messages}"
+                            VerticalOptions="EndAndExpand"
                             SelectionMode="None">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>

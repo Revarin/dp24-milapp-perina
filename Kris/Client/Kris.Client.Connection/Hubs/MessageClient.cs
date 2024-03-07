@@ -10,7 +10,6 @@ using Kris.Interface.Requests;
 using Kris.Interface.Responses;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Options;
-using System.Net;
 
 namespace Kris.Client.Connection.Hubs;
 
@@ -72,11 +71,18 @@ public sealed class MessageClient : IMessageHub, IMessageReceiver
 
     public async Task ReceiveMessage(MessageModel message)
     {
-        await Task.Run(() => MessageReceived?.Invoke(this, new MessageReceivedEventArgs(message)));
+        await Application.Current.MainPage.Dispatcher.DispatchAsync(() =>
+        {
+            MessageReceived?.Invoke(this, new MessageReceivedEventArgs(message));
+        });
     }
 
     public async Task ReceiveError(Response response)
     {
-        await Task.Run(() => ErrorReceived?.Invoke(this, new ResultEventArgs(Result.Fail("ERROR"))));
+        throw new Exception("MESSAGE SEND ERROR");
+        await Application.Current.MainPage.Dispatcher.DispatchAsync(() =>
+        {
+            ErrorReceived?.Invoke(this, new ResultEventArgs(Result.Fail("ERROR")));
+        });
     }
 }
