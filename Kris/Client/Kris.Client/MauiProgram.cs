@@ -19,6 +19,7 @@ using Kris.Client.Data.Providers;
 using Kris.Client.Components.Map;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using Kris.Client.Utility;
+using Kris.Client.Connection.Hubs;
 
 namespace Kris.Client
 {
@@ -74,6 +75,10 @@ namespace Kris.Client
             builder.Services.AddTransient<SessionSettingsViewModel>();
             builder.Services.AddTransient<UserSettingsView>();
             builder.Services.AddTransient<UserSettingsViewModel>();
+            builder.Services.AddTransient<ContactsView>();
+            builder.Services.AddTransient<ContactsViewModel>();
+            builder.Services.AddTransient<ChatView>();
+            builder.Services.AddTransient<ChatViewModel>();
 
             builder.Services.AddTransientPopup<PasswordPopup, PasswordPopupViewModel>();
             builder.Services.AddTransientPopup<CreateSessionPopup, CreateSessionPopupViewModel>();
@@ -89,6 +94,8 @@ namespace Kris.Client
             builder.Services.AddSingleton<IPositionMapper, PositionMapper>();
             builder.Services.AddSingleton<ISettingsMapper, SettingsMapper>();
             builder.Services.AddSingleton<IMapObjectsMapper, MapObjectsMapper>();
+            builder.Services.AddSingleton<IConversationMapper, ConversationMapper>();
+            builder.Services.AddSingleton<IMessageMapper, MessageMapper>();
 
             builder.Services.AddSingleton<ICurrentPositionListener, CurrentPositionListener>();
             builder.Services.AddSingleton<IUserPositionsListener, UserPositionsListener>();
@@ -113,9 +120,14 @@ namespace Kris.Client
             builder.Services.AddTransient<ISessionController, SessionClient>();
             builder.Services.AddTransient<IPositionController, PositionClient>();
             builder.Services.AddTransient<IMapObjectController, MapObjectClient>();
+            builder.Services.AddTransient<IConversationController, ConversationClient>();
+
+            builder.Services.AddSingleton<MessageClient>();
+            builder.Services.AddSingleton<IMessageHub>(s => s.GetRequiredService<MessageClient>());
+            builder.Services.AddSingleton<Connection.Hubs.IMessageReceiver>(s => s.GetRequiredService<MessageClient>());
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();

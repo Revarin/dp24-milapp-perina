@@ -22,6 +22,40 @@ namespace Kris.Server.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ConversationEntitySessionUserEntity", b =>
+                {
+                    b.Property<Guid>("ConversationsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UsersId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ConversationsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("ConversationEntitySessionUserEntity");
+                });
+
+            modelBuilder.Entity("Kris.Server.Data.Models.ConversationEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ConversationType")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("SessionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SessionId");
+
+                    b.ToTable("Conversations");
+                });
+
             modelBuilder.Entity("Kris.Server.Data.Models.MapPointEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -49,6 +83,36 @@ namespace Kris.Server.Data.Migrations
                     b.HasIndex("SessionUserId");
 
                     b.ToTable("MapPoints");
+                });
+
+            modelBuilder.Entity("Kris.Server.Data.Models.MessageEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Body")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ConversationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("MessageType")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("SenderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConversationId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("Kris.Server.Data.Models.SessionEntity", b =>
@@ -162,6 +226,31 @@ namespace Kris.Server.Data.Migrations
                     b.ToTable("UserSettings");
                 });
 
+            modelBuilder.Entity("ConversationEntitySessionUserEntity", b =>
+                {
+                    b.HasOne("Kris.Server.Data.Models.ConversationEntity", null)
+                        .WithMany()
+                        .HasForeignKey("ConversationsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Kris.Server.Data.Models.SessionUserEntity", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Kris.Server.Data.Models.ConversationEntity", b =>
+                {
+                    b.HasOne("Kris.Server.Data.Models.SessionEntity", "Session")
+                        .WithMany("Conversations")
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Session");
+                });
+
             modelBuilder.Entity("Kris.Server.Data.Models.MapPointEntity", b =>
                 {
                     b.HasOne("Kris.Server.Data.Models.SessionUserEntity", "SessionUser")
@@ -221,6 +310,24 @@ namespace Kris.Server.Data.Migrations
 
                     b.Navigation("Symbol")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Kris.Server.Data.Models.MessageEntity", b =>
+                {
+                    b.HasOne("Kris.Server.Data.Models.ConversationEntity", "Conversation")
+                        .WithMany("Messages")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Kris.Server.Data.Models.SessionUserEntity", "Sender")
+                        .WithMany("SentMessages")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("Kris.Server.Data.Models.SessionUserEntity", b =>
@@ -355,14 +462,23 @@ namespace Kris.Server.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Kris.Server.Data.Models.ConversationEntity", b =>
+                {
+                    b.Navigation("Messages");
+                });
+
             modelBuilder.Entity("Kris.Server.Data.Models.SessionEntity", b =>
                 {
+                    b.Navigation("Conversations");
+
                     b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Kris.Server.Data.Models.SessionUserEntity", b =>
                 {
                     b.Navigation("MapPoints");
+
+                    b.Navigation("SentMessages");
                 });
 
             modelBuilder.Entity("Kris.Server.Data.Models.UserEntity", b =>

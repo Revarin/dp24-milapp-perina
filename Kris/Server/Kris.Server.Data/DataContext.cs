@@ -11,6 +11,8 @@ public class DataContext : DbContext
     public DbSet<UserPositionEntity> UserPositions { get; set; }
     public DbSet<UserSettingsEntity> UserSettings { get; set; }
     public DbSet<MapPointEntity> MapPoints { get; set; }
+    public DbSet<ConversationEntity> Conversations { get; set; }
+    public DbSet<MessageEntity> Messages { get; set; }
 
     public DataContext(DbContextOptions options) : base(options)
     {
@@ -29,13 +31,14 @@ public class DataContext : DbContext
         modelBuilder.Entity<UserPositionEntity>().HasKey(e => e.Id);
         modelBuilder.Entity<UserSettingsEntity>().HasKey(e => e.Id);
         modelBuilder.Entity<MapPointEntity>().HasKey(e => e.Id);
+        modelBuilder.Entity<ConversationEntity>().HasKey(e => e.Id);
+        modelBuilder.Entity<MessageEntity>().HasKey(e => e.Id);
 
         modelBuilder.Entity<SessionUserEntity>()
             .HasOne(e => e.User)
             .WithMany(e => e.AllSessions)
             .HasForeignKey(e => e.UserId)
             .OnDelete(DeleteBehavior.Cascade);
-
         modelBuilder.Entity<SessionUserEntity>()
             .HasOne(e => e.Session)
             .WithMany(e => e.Users)
@@ -71,6 +74,27 @@ public class DataContext : DbContext
             .OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<MapPointEntity>().OwnsOne(e => e.Position);
         modelBuilder.Entity<MapPointEntity>().OwnsOne(e => e.Symbol);
+
+        // OnDelete.NoAction to break cascade cycle, must delete manualy
+        modelBuilder.Entity<ConversationEntity>()
+            .HasOne(e => e.Session)
+            .WithMany(e => e.Conversations)
+            .HasForeignKey(e => e.SessionId)
+            .OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<ConversationEntity>()
+            .HasMany(e => e.Users)
+            .WithMany(e => e.Conversations);
+
+        modelBuilder.Entity<MessageEntity>()
+            .HasOne(e => e.Conversation)
+            .WithMany(e => e.Messages)
+            .HasForeignKey(e => e.ConversationId)
+            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<MessageEntity>()
+            .HasOne(e => e.Sender)
+            .WithMany(e => e.SentMessages)
+            .HasForeignKey(e => e.SenderId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         base.OnModelCreating(modelBuilder);
     }

@@ -33,7 +33,7 @@ public sealed class EditSessionCommandHandler : SessionHandler, IRequestHandler<
         var authResult = await _authorizationService.AuthorizeAsync(user, UserType.Admin, cancellationToken);
         if (!authResult.IsAuthorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
 
-        var session = await _sessionRepository.GetWithUsersAsync(user.SessionId.Value, cancellationToken);
+        var session = await _sessionRepository.GetWithAllAsync(user.SessionId.Value, cancellationToken);
         if (session == null) throw new NullableException();
         if (session.Name != user.SessionName) return Result.Fail(new UnauthorizedError("Invalid token"));
 

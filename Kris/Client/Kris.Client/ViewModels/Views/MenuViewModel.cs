@@ -24,4 +24,10 @@ public sealed partial class MenuViewModel : PageViewModelBase
     {
         await _navigationService.GoToAsync(nameof(UserSettingsView), RouterNavigationType.PushUpward);
     }
+
+    [RelayCommand]
+    private async Task OnContactsClicked()
+    {
+        await _navigationService.GoToAsync(nameof(ContactsView), RouterNavigationType.PushUpward);
+    }
 }
