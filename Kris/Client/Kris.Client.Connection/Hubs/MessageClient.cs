@@ -43,8 +43,8 @@ public sealed class MessageClient : IMessageHub, IMessageReceiver
             })
             .Build();
 
+        _hubConnection.KeepAliveInterval = TimeSpan.FromSeconds(_connectionOptions.HubKeepAliveSeconds);
         _hubConnection.On<MessageModel>(nameof(ReceiveMessage), ReceiveMessage);
-        _hubConnection.On<Response>(nameof(ReceiveError), ReceiveError);
 
         await _hubConnection.StartAsync().ContinueWith(_ => IsConnected = true);
     }
@@ -59,14 +59,14 @@ public sealed class MessageClient : IMessageHub, IMessageReceiver
         }
     }
 
-    public async Task SendMessage(SendMessageRequest request)
+    public async Task<Response> SendMessage(SendMessageRequest request)
     {
         if (_hubConnection.State != HubConnectionState.Connected)
         {
             await _hubConnection.StartAsync();
         }
 
-        await _hubConnection.SendAsync("SendMessage", request);
+        return await _hubConnection.InvokeAsync<Response>("SendMessage", request);
     }
 
     public async Task ReceiveMessage(MessageModel message)
@@ -74,15 +74,6 @@ public sealed class MessageClient : IMessageHub, IMessageReceiver
         await Application.Current.MainPage.Dispatcher.DispatchAsync(() =>
         {
             MessageReceived?.Invoke(this, new MessageReceivedEventArgs(message));
-        });
-    }
-
-    public async Task ReceiveError(Response response)
-    {
-        throw new Exception("MESSAGE SEND ERROR");
-        await Application.Current.MainPage.Dispatcher.DispatchAsync(() =>
-        {
-            ErrorReceived?.Invoke(this, new ResultEventArgs(Result.Fail("ERROR")));
         });
     }
 }

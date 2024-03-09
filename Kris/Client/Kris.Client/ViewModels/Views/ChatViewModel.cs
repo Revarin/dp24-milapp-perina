@@ -53,16 +53,13 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
     private async Task OnBackButtonPressed()
     {
         _messageReceiver.MessageReceived -= OnMessageReceived;
-        await _navigationService.GoToAsync("..");
+        await _navigationService.GoBackAsync();
     }
 
     [RelayCommand]
-    private async Task OnSendPressed()
-    {
-        await SendMessageAsync();
-    }
+    private async Task OnSendPressed() => await SendMessageAsync();
 
-    // Implementation
+    // CORE
     private async Task LoadMessagesAsync()
     {
         var ct = new CancellationToken();
@@ -80,7 +77,7 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
             {
                 await _alertService.ShowToastAsync("Conversation does not exists");
                 _messageReceiver.MessageReceived -= OnMessageReceived;
-                await _navigationService.GoToAsync("..");
+                await _navigationService.GoBackAsync();
             }
             else
             {
@@ -100,8 +97,31 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
     {
         var ct = new CancellationToken();
         var command = new SendMessageCommand { ConversationId = ConversationId, Body = MessageBody };
-        await _mediator.Send(command, ct);
-        MessageBody = string.Empty;
+        var result = await _mediator.Send(command, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UnauthorizedError>())
+            {
+                await _alertService.ShowToastAsync("Login expired");
+                await LogoutUser();
+            }
+            else if (result.HasError<EntityNotFoundError>())
+            {
+                await _alertService.ShowToastAsync("Conversation does not exists");
+                _messageReceiver.MessageReceived -= OnMessageReceived;
+                await _navigationService.GoBackAsync();
+            }
+            else
+            {
+                await _alertService.ShowToastAsync(result.Errors.FirstMessage());
+            }
+
+        }
+        else
+        {
+            MessageBody = string.Empty;
+        }
     }
 
     private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
@@ -117,6 +137,7 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
         Messages.Add(new MessageItemViewModel(message));
     }
 
+    // MISC
     protected override Task GoToMap()
     {
         _messageReceiver.MessageReceived -= OnMessageReceived;

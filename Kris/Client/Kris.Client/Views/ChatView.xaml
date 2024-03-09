@@ -19,10 +19,13 @@
                  VerticalOptions="FillAndExpand">
 
         <StackLayout Orientation="Vertical"
-                     VerticalOptions="FillAndExpand">
+                     VerticalOptions="FillAndExpand"
+                     HorizontalOptions="FillAndExpand">
             <CollectionView ItemsSource="{Binding Messages}"
                             VerticalOptions="EndAndExpand"
-                            SelectionMode="None">
+                            HorizontalOptions="FillAndExpand"
+                            SelectionMode="None"
+                            ItemsUpdatingScrollMode="KeepLastItemInView">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <item:MessageItem BindingContext="{Binding .}" />

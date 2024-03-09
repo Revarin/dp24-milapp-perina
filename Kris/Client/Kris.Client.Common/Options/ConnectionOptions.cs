@@ -6,6 +6,7 @@ public sealed class ConnectionOptions : IOptions
 {
     public static string Section => "Connection";
 
-    public string ApiUrl { get; set; }
-    public string ApiKey { get; set; }
+    public string ApiUrl { get; init; }
+    public string ApiKey { get; init; }
+    public int HubKeepAliveSeconds { get; init; }
 }

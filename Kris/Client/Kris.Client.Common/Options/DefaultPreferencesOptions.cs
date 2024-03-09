@@ -6,8 +6,8 @@ public sealed class DefaultPreferencesOptions : IOptions
 {
     public static string Section => "DefaultPreferences";
 
-    public int GpsInterval { get; set; }
-    public int PositionUploadFrequency { get; set; }
-    public int PositionDownloadFrequency { get; set; }
-    public int MapObjectDownloadFrequency { get; set; }
+    public int GpsInterval { get; init; }
+    public int PositionUploadFrequency { get; init; }
+    public int PositionDownloadFrequency { get; init; }
+    public int MapObjectDownloadFrequency { get; init; }
 }

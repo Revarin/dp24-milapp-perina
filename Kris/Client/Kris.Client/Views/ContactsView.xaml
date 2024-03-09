@@ -6,7 +6,7 @@
              xmlns:item="clr-namespace:Kris.Client.Components.Items"
              x:Class="Kris.Client.Views.ContactsView"
              x:DataType="vm:ContactsViewModel"
-             Title="ContactsView">
+             Title="Contacts">
 
     <ContentPage.Behaviors>
         <tk:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}" />
@@ -16,8 +16,7 @@
                  VerticalOptions="FillAndExpand">
 
         <StackLayout Orientation="Vertical">
-            <Label Text="Contacts" FontSize="Subtitle" />
-            <CollectionView ItemsSource="{Binding Contacts}"
+            <CollectionView ItemsSource="{Binding SpecialContacts}"
                             SelectionMode="None">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
@@ -26,7 +25,21 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </StackLayout>
-        
+
+        <Line HorizontalOptions="FillAndExpand" />
+        <Label Text="------------------------------------------------------------------" />
+
+        <StackLayout Orientation="Vertical">
+            <CollectionView ItemsSource="{Binding DirectContacts}"
+                            SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <item:ConversationItem BindingContext="{Binding .}" />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+
         <StackLayout Orientation="Horizontal"
                     HorizontalOptions="FillAndExpand"
                     VerticalOptions="EndAndExpand">

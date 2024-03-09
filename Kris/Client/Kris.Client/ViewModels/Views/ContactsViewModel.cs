@@ -17,17 +17,20 @@ namespace Kris.Client.ViewModels.Views;
 public sealed partial class ContactsViewModel : PageViewModelBase
 {
     [ObservableProperty]
-    private ObservableCollection<ConversationItemViewModel> _contacts;
+    private ObservableCollection<ConversationItemViewModel> _specialContacts;
+    [ObservableProperty]
+    private ObservableCollection<ConversationItemViewModel> _directContacts;
 
     public ContactsViewModel(IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
         : base(mediator, navigationService, messageService, alertService)
     {
     }
 
+    // HANDLERS
     [RelayCommand]
     private async Task OnAppearing() => await LoadConversations();
 
-    // Implementations
+    // CORE
     private async Task LoadConversations()
     {
         var ct = new CancellationToken();
@@ -48,8 +51,13 @@ public sealed partial class ContactsViewModel : PageViewModelBase
         }
         else
         {
-            Contacts = result.Value.Select(c => new ConversationItemViewModel(c)).ToObservableCollection();
-            foreach (var c in Contacts)
+            SpecialContacts = result.Value.SpecialConversations.Select(c => new ConversationItemViewModel(c)).ToObservableCollection();
+            foreach (var c in SpecialContacts)
+            {
+                c.ContactClicked += OnContactClicked;
+            }
+            DirectContacts = result.Value.DirectConversations.Select(c => new ConversationItemViewModel(c)).ToObservableCollection();
+            foreach (var c in DirectContacts)
             {
                 c.ContactClicked += OnContactClicked;
             }
