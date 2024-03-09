@@ -13,9 +13,11 @@ public sealed class ConversationClient : ClientBase, IConversationController
     {
     }
 
-    public Task<Response> DeleteConversation(Guid conversationId, CancellationToken ct)
+    public async Task<Response> DeleteConversation(Guid conversationId, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var jwt = _identityStore.GetJwtToken();
+        using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await DeleteAsync<Response>(httpClient, conversationId.ToString(), ct);
     }
 
     public async Task<GetManyResponse<ConversationListModel>> GetConversations(CancellationToken ct)

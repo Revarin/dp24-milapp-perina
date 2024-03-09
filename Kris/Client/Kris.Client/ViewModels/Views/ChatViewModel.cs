@@ -36,6 +36,7 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
         _messageReceiver = messageReceiver;
     }
 
+    // HANDLERS
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
         ConversationId = (Guid)query[QueryConstants.ContactsToChat.ConversationId];
@@ -50,14 +51,13 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
     }
 
     [RelayCommand]
-    private async Task OnBackButtonPressed()
-    {
-        _messageReceiver.MessageReceived -= OnMessageReceived;
-        await _navigationService.GoBackAsync();
-    }
+    private async Task OnBackButtonPressed() => await GoToContacts();
 
     [RelayCommand]
     private async Task OnSendPressed() => await SendMessageAsync();
+
+    [RelayCommand]
+    private async Task OnDeletePressed() => await DeleteConversation();
 
     // CORE
     private async Task LoadMessagesAsync()
@@ -76,8 +76,7 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
             else if (result.HasError<EntityNotFoundError>())
             {
                 await _alertService.ShowToastAsync("Conversation does not exists");
-                _messageReceiver.MessageReceived -= OnMessageReceived;
-                await _navigationService.GoBackAsync();
+                await GoToContacts();
             }
             else
             {
@@ -109,18 +108,50 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
             else if (result.HasError<EntityNotFoundError>())
             {
                 await _alertService.ShowToastAsync("Conversation does not exists");
-                _messageReceiver.MessageReceived -= OnMessageReceived;
-                await _navigationService.GoBackAsync();
+                await GoToContacts();
             }
             else
             {
                 await _alertService.ShowToastAsync(result.Errors.FirstMessage());
             }
-
         }
         else
         {
             MessageBody = string.Empty;
+        }
+    }
+
+    private async Task DeleteConversation()
+    {
+        var ct = new CancellationToken();
+        var command = new DeleteConversationCommand { ConversationId = ConversationId };
+        var result = await _mediator.Send(command, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UnauthorizedError>())
+            {
+                await _alertService.ShowToastAsync("Login expired");
+                await LogoutUser();
+            }
+            else if (result.HasError<EntityNotFoundError>())
+            {
+                await _alertService.ShowToastAsync("Conversation does not exists");
+                await GoToContacts();
+            }
+            else if (result.HasError<ForbiddenError>())
+            {
+                await _alertService.ShowToastAsync("Cannot delete conversation with active users");
+            }
+            else
+            {
+                await _alertService.ShowToastAsync(result.Errors.FirstMessage());
+            }
+        }
+        else
+        {
+            await _alertService.ShowToastAsync("Conversation deleted");
+            await GoToContacts();
         }
     }
 
@@ -154,5 +185,11 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
     {
         _messageReceiver.MessageReceived -= OnMessageReceived;
         return base.LogoutUser();
+    }
+
+    private async Task GoToContacts()
+    {
+        _messageReceiver.MessageReceived -= OnMessageReceived;
+        await _navigationService.GoBackAsync();
     }
 }
