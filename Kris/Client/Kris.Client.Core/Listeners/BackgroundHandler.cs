@@ -1,14 +1,14 @@
 ﻿using FluentResults;
 using Kris.Client.Common.Events;
+using Kris.Client.Data.Models;
 
 namespace Kris.Client.Core.Listeners;
 
-public abstract class BackgroundListener : IBackgroundListener
+public abstract class BackgroundHandler : IBackgroundHandler
 {
     public event EventHandler<ResultEventArgs> ErrorOccured;
-    public bool IsListening { get; protected set; }
 
-    public abstract Task StartListening(CancellationToken ct);
+    public abstract Task ExecuteAsync(ConnectionSettingsEntity connectionSettings, UserIdentityEntity userIdentity, uint iteration, CancellationToken ct);
 
     protected void OnErrorOccured(Result result)
     {

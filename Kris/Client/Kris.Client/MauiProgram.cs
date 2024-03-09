@@ -97,9 +97,10 @@ namespace Kris.Client
             builder.Services.AddSingleton<IConversationMapper, ConversationMapper>();
             builder.Services.AddSingleton<IMessageMapper, MessageMapper>();
 
-            builder.Services.AddSingleton<ICurrentPositionListener, CurrentPositionListener>();
-            builder.Services.AddSingleton<IUserPositionsListener, UserPositionsListener>();
-            builder.Services.AddSingleton<IMapObjectsListener, MapObjectsListener>();
+            builder.Services.AddSingleton<IBackgroundLoop, BackgroundLoop>();
+            builder.Services.AddSingleton<ICurrentPositionBackgroundHandler, CurrentPositionBackgroundHandler>();
+            builder.Services.AddSingleton<IUserPositionsBackgroundHandler, UserPositionsBackgroundHandler>();
+            builder.Services.AddSingleton<IMapObjectsBackgroundHandler, MapObjectsBackgroundHandler>();
 
             builder.Services.AddSingleton<IRouterService, RouterService>();
             builder.Services.AddSingleton<IAlertService, AlertService>();
