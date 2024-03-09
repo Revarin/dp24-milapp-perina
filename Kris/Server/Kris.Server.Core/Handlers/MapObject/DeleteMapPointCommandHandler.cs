@@ -28,7 +28,8 @@ public sealed class DeleteMapPointCommandHandler : MapObjectHandler, IRequestHan
         var authResult = await _authorizationService.AuthorizeAsync(user, minRole, cancellationToken);
         if (!authResult.IsAuthorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
 
-        await _mapPointRepository.DeleteAsync(mapPoint, cancellationToken);
+        _mapPointRepository.Delete(mapPoint);
+        await _mapPointRepository.UpdateAsync(cancellationToken);
 
         return Result.Ok();
     }

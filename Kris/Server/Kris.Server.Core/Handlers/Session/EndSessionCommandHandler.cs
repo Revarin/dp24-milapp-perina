@@ -48,12 +48,10 @@ public sealed class EndSessionCommandHandler : SessionHandler, IRequestHandler<E
             }
         }
         // Cascade delete conversations
-        foreach (var c in session.Conversations)
-        {
-            await _conversationRepository.DeleteAsync(c, cancellationToken);
-        }
+        _conversationRepository.DeleteRange(session.Conversations);
 
-        await _sessionRepository.DeleteAsync(session, cancellationToken);
+        _sessionRepository.Delete(session);
+        await _sessionRepository.UpdateAsync(cancellationToken);
 
         user.SessionId = null;
         user.SessionName = null;
