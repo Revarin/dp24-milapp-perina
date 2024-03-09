@@ -28,8 +28,12 @@ public sealed partial class RegisterViewModel : PageViewModelBase
     {
     }
 
+    // HANDLERS
     [RelayCommand]
-    private async Task OnRegisterClicked()
+    private async Task OnRegisterButtonClicked() => await RegisterUserAsync();
+
+    // CORE
+    private async Task RegisterUserAsync()
     {
         if (ValidateAllProperties()) return;
 
@@ -56,6 +60,7 @@ public sealed partial class RegisterViewModel : PageViewModelBase
         }
     }
 
+    // MISC
     protected override void Cleanup()
     {
         Login = string.Empty;

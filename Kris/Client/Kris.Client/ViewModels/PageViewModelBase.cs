@@ -56,10 +56,9 @@ public abstract partial class PageViewModelBase : ObservableValidator
     }
 
     [RelayCommand]
-    protected virtual async Task GoToMap() => await _navigationService.GoToAsync(nameof(MapView), RouterNavigationType.ReplaceUpward);
-
+    protected virtual async Task OnMapButtonClicked() => await _navigationService.GoToAsync(nameof(MapView), RouterNavigationType.ReplaceUpward);
     [RelayCommand]
-    protected virtual async Task GoToMenu() => await _navigationService.GoToAsync(nameof(MenuView), RouterNavigationType.ReplaceUpward);
+    protected virtual async Task OnMenuButtonClicked() => await _navigationService.GoToAsync(nameof(MenuView), RouterNavigationType.ReplaceUpward);
 
     protected virtual async Task LogoutUser()
     {

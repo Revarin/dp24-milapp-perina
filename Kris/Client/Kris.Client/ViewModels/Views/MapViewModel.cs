@@ -29,9 +29,10 @@ public sealed partial class MapViewModel : PageViewModelBase
 {
     private readonly IPopupService _popupService;
     private readonly IKrisMapObjectFactory _krisMapObjectFactory;
-    private readonly ICurrentPositionListener _selfPositionListener;
-    private readonly IUserPositionsListener _othersPositionListener;
-    private readonly IMapObjectsListener _mapObjectsListener;
+    private readonly IBackgroundLoop _backgroundLoop;
+    private readonly ICurrentPositionBackgroundHandler _currentPositionBackgroundHandler;
+    private readonly IUserPositionsBackgroundHandler _userPositionsBackgroundHandler;
+    private readonly IMapObjectsBackgroundHandler _mapObjectsBackgroundHandler;
     private readonly IMessageReceiver _messageReceiver;
 
     [ObservableProperty]
@@ -41,57 +42,78 @@ public sealed partial class MapViewModel : PageViewModelBase
 
     [ObservableProperty]
     private ObservableCollection<KrisMapPinViewModel> _allMapPins = new ObservableCollection<KrisMapPinViewModel>();
-    //private List<UserPositionModel> _userPositions = new List<UserPositionModel>();
-    //private List<MapPointModel> _mapPoints = new List<MapPointModel>();
 
-    private CancellationTokenSource _selfPositionCTS;
-    private Task _selfPositionTask;
-    private CancellationTokenSource _othersPositionCTS;
-    private Task _othersPositionTask;
-    private CancellationTokenSource _mapObjectsCTS;
-    private Task _mapObjectsTask;
+    private CancellationTokenSource _backgroundLoopCTS;
+    private Task _backgroundLoopTask;
 
-    public MapViewModel(IPopupService popupService, IKrisMapObjectFactory krisMapObjectFactory, ICurrentPositionListener currentPositionListener,
-        IUserPositionsListener userPositionsListener, IMapObjectsListener mapObjectsListener, IMessageReceiver messageReceiver,
+    public MapViewModel(IPopupService popupService, IKrisMapObjectFactory krisMapObjectFactory, IBackgroundLoop backgroundLoop,
+        ICurrentPositionBackgroundHandler currentPositionBackgroundHandler, IUserPositionsBackgroundHandler userPositionsBackgroundHandler,
+        IMapObjectsBackgroundHandler mapObjectsBackgroundHandler, IMessageReceiver messageReceiver,
         IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
         : base(mediator, navigationService, messageService, alertService)
     {
         _popupService = popupService;
         _krisMapObjectFactory = krisMapObjectFactory;
-        _selfPositionListener = currentPositionListener;
-        _othersPositionListener = userPositionsListener;
-        _mapObjectsListener = mapObjectsListener;
+        _backgroundLoop = backgroundLoop;
+        _currentPositionBackgroundHandler = currentPositionBackgroundHandler;
+        _userPositionsBackgroundHandler = userPositionsBackgroundHandler;
+        _mapObjectsBackgroundHandler = mapObjectsBackgroundHandler;
         _messageReceiver = messageReceiver;
 
         _messageService.Register<LogoutMessage>(this, OnLogout);
-        _messageService.Register<CurrentSessionChangedMessage>(this, RestartPositionListeners);
-        _messageService.Register<ConnectionSettingsChangedMessage>(this, RestartPositionListeners);
+        _messageService.Register<CurrentSessionChangedMessage>(this, OnBackgroundContextChanged);
+        _messageService.Register<ConnectionSettingsChangedMessage>(this, OnBackgroundContextChanged);
     }
 
+    // HANDLERS
     [RelayCommand]
     private async Task OnAppearing()
     {
-        if (!_selfPositionListener.IsListening)
+        StartBackgroudListeners();
+        await StartMessageListenerAsync();
+    }
+    [RelayCommand]
+    private async Task OnMapLoaded() => await MoveToCurrentRegionAsync();
+    [RelayCommand]
+    private async Task OnLogoutButtonClicked() => await LogoutUser();
+    [RelayCommand]
+    private async Task OnCurrentPositionButtonClicked() => await MoveToCurrentPositionAsync();
+    [RelayCommand]
+    private async Task OnMapLongClicked(MapLongClickedEventArgs e) => await ShowCreateMapPointPopupAsync(e.Location);
+    public async Task OnKrisPinClicked(KrisMapPin sender, PinClickedEventArgs e)
+    {
+        e.HideInfoWindow = true;
+        await ShowEditMapPointPopupAsync(sender);
+    }
+
+    private void OnCurrentPositionChanged(object sender, LocationEventArgs e) => AddCurrentUserPositionToMap(e.UserId, e.UserName, e.Location);
+    private void OnUserPositionsChanged(object sender, UserPositionsEventArgs e) => AddOtherUserPositionsToMap(e.Positions);
+    private void OnMapObjectsChanged(object sender, MapObjectsEventArgs e) => AddMapObjectsToMap(e.MapPoints);
+    private async void OnMessageReceived(object sender, MessageReceivedEventArgs e) => await ShowMessageNotification(e.SenderName, e.Body);
+
+    // CORE
+    private void StartBackgroudListeners()
+    {
+        if (!_backgroundLoop.IsRunning)
         {
-            _selfPositionCTS = new CancellationTokenSource();
-            _selfPositionListener.PositionChanged += OnSelfPositionPositionChanged;
-            _selfPositionListener.ErrorOccured += OnSelfPositionErrorOccured;
-            _selfPositionTask = _selfPositionListener.StartListening(_selfPositionCTS.Token);
+            _currentPositionBackgroundHandler.CurrentPositionChanged += OnCurrentPositionChanged;
+            _userPositionsBackgroundHandler.UserPositionsChanged += OnUserPositionsChanged;
+            _mapObjectsBackgroundHandler.MapObjectsChanged += OnMapObjectsChanged;
+            _currentPositionBackgroundHandler.ErrorOccured += OnBackgroundHandlerErrorOccured;
+            _userPositionsBackgroundHandler.ErrorOccured += OnBackgroundHandlerErrorOccured;
+            _mapObjectsBackgroundHandler.ErrorOccured += OnBackgroundHandlerErrorOccured;
+
+            _backgroundLoop.RegisterService(_currentPositionBackgroundHandler);
+            _backgroundLoop.RegisterService(_userPositionsBackgroundHandler);
+            _backgroundLoop.RegisterService(_mapObjectsBackgroundHandler);
+
+            _backgroundLoopCTS = new CancellationTokenSource();
+            _backgroundLoopTask = _backgroundLoop.Start(_backgroundLoopCTS.Token);
         }
-        if (!_othersPositionListener.IsListening)
-        {
-            _othersPositionCTS = new CancellationTokenSource();
-            _othersPositionListener.PositionsChanged += OnOthersPositionPositionChanged;
-            _othersPositionListener.ErrorOccured += OnOthersPositionErrorOccured;
-            _othersPositionTask = _othersPositionListener.StartListening(_othersPositionCTS.Token);
-        }
-        if (!_mapObjectsListener.IsListening)
-        {
-            _mapObjectsCTS = new CancellationTokenSource();
-            _mapObjectsListener.MapObjectsChanged += OnMapObjectsChanged;
-            _mapObjectsListener.ErrorOccured += OnMapObjectsErrorOccured;
-            _mapObjectsTask = _mapObjectsListener.StartListening(_mapObjectsCTS.Token);
-        }
+    }
+
+    private async Task StartMessageListenerAsync()
+    {
         if (!_messageReceiver.IsConnected)
         {
             await _messageReceiver.Connect();
@@ -99,8 +121,7 @@ public sealed partial class MapViewModel : PageViewModelBase
         }
     }
 
-    [RelayCommand]
-    private async Task OnMapLoaded()
+    private async Task MoveToCurrentRegionAsync()
     {
         var query = new GetCurrentRegionQuery();
         var currentRegion = await _mediator.Send(query, CancellationToken.None);
@@ -111,8 +132,7 @@ public sealed partial class MapViewModel : PageViewModelBase
         }
     }
 
-    [RelayCommand]
-    private async Task OnCurrentPositionClicked()
+    private async Task MoveToCurrentPositionAsync()
     {
         var query = new GetCurrentPositionQuery();
         var currentPosition = await _mediator.Send(query, CancellationToken.None);
@@ -128,9 +148,7 @@ public sealed partial class MapViewModel : PageViewModelBase
         }
     }
 
-    // Map point creation
-    [RelayCommand]
-    private async Task OnMapLongClicked(MapLongClickedEventArgs e)
+    private async Task ShowCreateMapPointPopupAsync(Location location)
     {
         var query = new GetCurrentUserQuery();
         var currentUser = await _mediator.Send(query, CancellationToken.None);
@@ -142,7 +160,7 @@ public sealed partial class MapViewModel : PageViewModelBase
 
         var resultEventArgs = await _popupService.ShowPopupAsync<CreateMapPointPopupViewModel>(vm =>
         {
-            vm.Location = e.Location;
+            vm.Location = location;
         }) as ResultEventArgs<MapPointModel>;
         if (resultEventArgs == null) return;
 
@@ -167,10 +185,8 @@ public sealed partial class MapViewModel : PageViewModelBase
         }
     }
 
-    public async Task OnKrisPinClickedAsync(KrisMapPin sender, PinClickedEventArgs e)
+    private async Task ShowEditMapPointPopupAsync(KrisMapPin pin)
     {
-        e.HideInfoWindow = true;
-
         var query = new GetCurrentUserQuery();
         var currentUser = await _mediator.Send(query, CancellationToken.None);
         if (currentUser == null || !currentUser.SessionId.HasValue || !currentUser.UserType.HasValue)
@@ -181,7 +197,7 @@ public sealed partial class MapViewModel : PageViewModelBase
 
         var resultArgs = await _popupService.ShowPopupAsync<EditMapPointPopupViewModel>(vm =>
         {
-            vm.Initialize(currentUser, sender);
+            vm.Initialize(currentUser, pin);
         });
         if (resultArgs == null) return;
 
@@ -211,27 +227,41 @@ public sealed partial class MapViewModel : PageViewModelBase
             else
             {
                 await _alertService.ShowToastAsync("Point deleted");
-                var pinToRemove = AllMapPins.FirstOrDefault(p => p.Id == sender.KrisId);
+                var pinToRemove = AllMapPins.FirstOrDefault(p => p.Id == pin.KrisId);
                 AllMapPins.Remove(pinToRemove);
             }
         }
     }
 
-    [RelayCommand]
-    private async Task OnLogoutClicked()
+    private void AddCurrentUserPositionToMap(Guid userId, string userName, Location location)
     {
-        await LogoutUser();
-    }
-
-    private void OnSelfPositionPositionChanged(object sender, LocationEventArgs e)
-    {
-        var userPin = _krisMapObjectFactory.CreateMyPositionPin(e.UserId, e.UserName, e.Location);
-        var oldUserPin = AllMapPins.FirstOrDefault(p => p.Id == e.UserId);
+        var userPin = _krisMapObjectFactory.CreateMyPositionPin(userId, userName, location);
+        var oldUserPin = AllMapPins.FirstOrDefault(p => p.Id == userId);
         if (oldUserPin != null) AllMapPins.Remove(oldUserPin);
         AllMapPins.Add(userPin);
     }
+    
+    private void AddOtherUserPositionsToMap(IEnumerable<UserPositionModel> userPositions)
+    {
+        var userPins = userPositions.Select(_krisMapObjectFactory.CreateUserPositionPin);
+        AllMapPins = userPins.UnionBy(AllMapPins, pin => pin.Id).ToObservableCollection();
+    }
 
-    private async void OnSelfPositionErrorOccured(object sender, ResultEventArgs e)
+    private void AddMapObjectsToMap(IEnumerable<MapPointModel> mapPoints)
+    {
+        var pointPins = mapPoints.Select(_krisMapObjectFactory.CreateMapPoint);
+        AllMapPins = pointPins.UnionBy(AllMapPins, pin => pin.Id).ToObservableCollection();
+    }
+
+    private async Task ShowMessageNotification(string sender, string message)
+    {
+        // TODO: Better notification
+        if (Shell.Current.CurrentPage is ChatView) return;
+        await _alertService.ShowToastAsync($"{sender}: {message}");
+    }
+
+    // MISC
+    private async void OnBackgroundHandlerErrorOccured(object sender, ResultEventArgs e)
     {
         if (e.Result.HasError<ServiceDisabledError>())
         {
@@ -253,104 +283,31 @@ public sealed partial class MapViewModel : PageViewModelBase
         }
     }
 
-    private void OnOthersPositionPositionChanged(object sender, UserPositionsEventArgs e)
-    {
-        var userPins = e.Positions.Select(_krisMapObjectFactory.CreateUserPositionPin);
-        AllMapPins = userPins.UnionBy(AllMapPins, pin => pin.Id).ToObservableCollection();
-    }
-
-    private async void OnOthersPositionErrorOccured(object sender, ResultEventArgs e)
-    {
-        if (e.Result.HasError<UnauthorizedError>())
-        {
-            await _alertService.ShowToastAsync("Login expired");
-            await LogoutUser();
-        }
-        else
-        {
-            await _alertService.ShowToastAsync(e.Result.Errors.FirstMessage());
-            OnLogout(this, null);
-        }
-    }
-
-    private void OnMapObjectsChanged(object sender, MapObjectsEventArgs e)
-    {
-        var pointPins = e.MapPoints.Select(_krisMapObjectFactory.CreateMapPoint);
-        AllMapPins = pointPins.UnionBy(AllMapPins, pin => pin.Id).ToObservableCollection();
-    }
-
-    private async void OnMapObjectsErrorOccured(object sender, ResultEventArgs e)
-    {
-        if (e.Result.HasError<UnauthorizedError>())
-        {
-            await _alertService.ShowToastAsync("Login expired");
-            await LogoutUser();
-        }
-        else
-        {
-            await _alertService.ShowToastAsync(e.Result.Errors.FirstMessage());
-            OnLogout(this, null);
-        }
-
-    }
-
-    private async void OnMessageReceived(object sender, MessageReceivedEventArgs e)
-    {
-        // TODO: Better notification
-        if (Shell.Current.CurrentPage is ChatView) return;
-        await _alertService.ShowToastAsync($"{e.SenderName}: {e.Body}");
-    }
-
     private async void OnLogout(object sender, LogoutMessage message)
     {
-        if (_selfPositionListener.IsListening)
+        if (_backgroundLoop.IsRunning)
         {
-            _selfPositionCTS.Cancel();
+            _backgroundLoopCTS.Cancel();
 
             try
             {
-                await _selfPositionTask;
-                _selfPositionListener.PositionChanged -= OnSelfPositionPositionChanged;
-                _selfPositionListener.ErrorOccured -= OnSelfPositionErrorOccured;
+                await _backgroundLoopTask;
             }
             catch (TaskCanceledException) { }
             finally
             {
-                _selfPositionCTS.Dispose();
-            }
-        }
-        if (_othersPositionListener.IsListening)
-        {
-            _othersPositionCTS.Cancel();
+                _currentPositionBackgroundHandler.CurrentPositionChanged -= OnCurrentPositionChanged;
+                _userPositionsBackgroundHandler.UserPositionsChanged -= OnUserPositionsChanged;
+                _mapObjectsBackgroundHandler.MapObjectsChanged -= OnMapObjectsChanged;
+                _currentPositionBackgroundHandler.ErrorOccured -= OnBackgroundHandlerErrorOccured;
+                _userPositionsBackgroundHandler.ErrorOccured -= OnBackgroundHandlerErrorOccured;
+                _mapObjectsBackgroundHandler.ErrorOccured -= OnBackgroundHandlerErrorOccured;
 
-            try
-            {
-                await _othersPositionTask;
-                _othersPositionListener.PositionsChanged -= OnOthersPositionPositionChanged;
-                _othersPositionListener.ErrorOccured -= OnOthersPositionErrorOccured;
-            }
-            catch (TaskCanceledException) { }
-            finally
-            {
-                _othersPositionCTS.Dispose();
+                _backgroundLoop.ClearServices();
+                _backgroundLoopCTS.Dispose();
             }
         }
-        if (_mapObjectsListener.IsListening)
-        {
-            _mapObjectsCTS.Cancel();
 
-            try
-            {
-                await _mapObjectsTask;
-                _mapObjectsListener.MapObjectsChanged -= OnMapObjectsChanged;
-                _mapObjectsListener.ErrorOccured -= OnMapObjectsErrorOccured;
-            }
-            catch (TaskCanceledException) { }
-            finally
-            {
-                _mapObjectsCTS.Dispose();
-            }
-        }
         if (_messageReceiver.IsConnected)
         {
             _messageReceiver.MessageReceived -= OnMessageReceived;
@@ -360,58 +317,10 @@ public sealed partial class MapViewModel : PageViewModelBase
         AllMapPins.Clear();
     }
 
-    private async void RestartPositionListeners(object sender, MessageBase message)
+    private async void OnBackgroundContextChanged(object sender, MessageBase message)
     {
-        if (_selfPositionListener.IsListening)
-        {
-            _selfPositionCTS.Cancel();
-
-            try
-            {
-                await _selfPositionTask;
-            }
-            catch (TaskCanceledException) { }
-            finally
-            {
-                _selfPositionCTS.Dispose();
-            }
-        }
-        _selfPositionCTS = new CancellationTokenSource();
-        _selfPositionTask = _selfPositionListener.StartListening(_selfPositionCTS.Token);
-
-        if (_othersPositionListener.IsListening)
-        {
-            _othersPositionCTS.Cancel();
-
-            try
-            {
-                await _othersPositionTask;
-            }
-            catch (TaskCanceledException) { }
-            finally
-            {
-                _othersPositionCTS.Dispose();
-            }
-        }
-        _othersPositionCTS = new CancellationTokenSource();
-        _othersPositionTask = _othersPositionListener.StartListening(_othersPositionCTS.Token);
-
-        if (_mapObjectsListener.IsListening)
-        {
-            _mapObjectsCTS.Cancel();
-
-            try
-            {
-                await _mapObjectsTask;
-            }
-            catch (TaskCanceledException) { }
-            finally
-            {
-                _mapObjectsCTS.Dispose();
-            }
-        }
-        _mapObjectsCTS = new CancellationTokenSource();
-        _mapObjectsTask = _mapObjectsListener.StartListening(_mapObjectsCTS.Token);
+        // TODO: Rename a move
+        _backgroundLoop.ReloadSettings = true;
 
         if (message is CurrentSessionChangedMessage)
         {

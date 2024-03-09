@@ -37,8 +37,17 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
         _popupService = popupService;
     }
 
+    // HANDLERS
     [RelayCommand]
-    private async Task OnAppearing()
+    private async Task OnAppearing() => await LoadSessionAsync();
+    [RelayCommand]
+    private async Task OnCreateSessionButtonClicked() => await ShowCreateSessionPopupAsync();
+    private async void OnSessionJoining(object sender, EntityIdEventArgs e) => await JoinSessionAsync(e.Id);
+    private async void OnSessionLeaving(object sender, EntityIdEventArgs e) => await LeaveSessionAsync(e.Id);
+    private async void OnSessionEditing(object sender, EntityIdEventArgs e) => await ShowEditSessionPopupAsync(e.Id);
+
+    // CORE
+    private async Task LoadSessionAsync()
     {
         var ct = new CancellationToken();
         var query = new GetSessionsQuery();
@@ -90,8 +99,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
         }
     }
 
-    [RelayCommand]
-    private async Task OnCreateSessionClicked()
+    private async Task ShowCreateSessionPopupAsync()
     {
         var resultEventArgs = await _popupService.ShowPopupAsync<CreateSessionPopupViewModel>() as ResultEventArgs;
         if (resultEventArgs == null) return;
@@ -115,15 +123,16 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
             await _alertService.ShowToastAsync("Session created");
             await OnAppearing();
         }
+
     }
 
-    private async void OnSessionJoining(object sender, EntityIdEventArgs eId)
+    private async Task JoinSessionAsync(Guid sessionId)
     {
         var ePassword = await _popupService.ShowPopupAsync<PasswordPopupViewModel>() as PasswordEventArgs;
         if (ePassword == null) return;
 
         var ct = new CancellationToken();
-        var command = new JoinSessionCommand { SessionId = eId.Id, Password = ePassword.Password };
+        var command = new JoinSessionCommand { SessionId = sessionId, Password = ePassword.Password };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
@@ -155,10 +164,10 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
         }
     }
 
-    private async void OnSessionLeaving(object sender, EntityIdEventArgs e)
+    private async Task LeaveSessionAsync(Guid sessionId)
     {
         var ct = new CancellationToken();
-        var command = new LeaveSessionCommand { SessionId = e.Id };
+        var command = new LeaveSessionCommand { SessionId = sessionId };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed)
@@ -186,7 +195,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
         }
     }
 
-    private async void OnSessionEditing(object sender, EntityIdEventArgs e)
+    private async Task ShowEditSessionPopupAsync(Guid sessionId)
     {
         var query = new GetCurrentUserQuery();
         var currentUser = await _mediator.Send(query, CancellationToken.None);
@@ -196,11 +205,11 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
             await LogoutUser();
         }
 
-        var resultArgs = await _popupService.ShowPopupAsync<EditSessionPopupViewModel>(vm =>
+        var resultArgs = await _popupService.ShowPopupAsync<EditSessionPopupViewModel>(async vm =>
         {
-            vm.SessionId = e.Id;
+            vm.SessionId = sessionId;
             vm.UserType = currentUser.UserType.Value;
-            vm.LoadSessionDetail();
+            await vm.LoadSessionDetailAsync();
         });
         if (resultArgs == null) return;
 

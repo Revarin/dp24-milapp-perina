@@ -117,7 +117,7 @@
         <Button Text="Delete"
                 HorizontalOptions="FillAndExpand">
             <Button.Behaviors>
-                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding DeleteClickedCommand}" />
+                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding DeleteButtonClickedCommand}" />
             </Button.Behaviors>
             <Button.IsVisible>
                 <MultiBinding Converter="{StaticResource AnyMultiValueConverter}">
@@ -132,14 +132,14 @@
             <Button Text="Cancel"
                     HorizontalOptions="FillAndExpand">
                 <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CancelClickedCommand}" />
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CancelButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
             <Button Text="Save (TODO)"
                     HorizontalOptions="FillAndExpand"
                     IsEnabled="False">
                 <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SaveClickedCommand}" />
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SaveButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
         </StackLayout>

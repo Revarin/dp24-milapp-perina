@@ -12,14 +12,14 @@ public sealed partial class PasswordPopupViewModel : PopupViewModel
     [ObservableProperty]
     private string _password;
 
+    public event EventHandler<PasswordEventArgs> AcceptedClosing;
+
     public PasswordPopupViewModel(IMediator mediator) : base(mediator)
     {
     }
 
-    public event EventHandler<PasswordEventArgs> AcceptedClosing;
-
     [RelayCommand]
-    private void OnOkClicked()
+    private void OnOkButtonClicked()
     {
         if (ValidateAllProperties()) return;
         AcceptedClosing?.Invoke(this, new PasswordEventArgs(Password));

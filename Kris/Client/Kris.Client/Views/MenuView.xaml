@@ -29,20 +29,20 @@
             <Button Grid.Row="0" Grid.Column="0"
                     Text="Sessions settings">
                 <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SessionSettingsClickedCommand}" />
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SessionSettingsButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
             <Button Grid.Row="0" Grid.Column="1"
                     Text="User settings">
                 <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding UserSettingsClickedCommand}" />
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding UserSettingsButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
             <Button Grid.Row="1" Grid.Column="0"
                     Text="Contacts"
                     IsEnabled="{Binding InSession}">
                 <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding ContactsClickedCommand}" />
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding ContactsButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
             <Button Grid.Row="1" Grid.Column="1"
@@ -62,13 +62,13 @@
             <Button Text="Map"
                     HorizontalOptions="FillAndExpand">
                 <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding GoToMapCommand}" />
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MapButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
             <Button Text="Menu"
                     HorizontalOptions="FillAndExpand">
                 <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding GoToMenuCommand}" />
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MenuButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
         </StackLayout>

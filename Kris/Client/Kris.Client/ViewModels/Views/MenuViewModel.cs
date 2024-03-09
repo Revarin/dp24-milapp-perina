@@ -20,19 +20,16 @@ public sealed partial class MenuViewModel : PageViewModelBase
 
     // HANDLERS
     [RelayCommand]
-    private async Task OnAppearing() => await GetCurrentSession();
-
+    private async Task OnAppearing() => await GetCurrentSessionAsync();
     [RelayCommand]
-    private async Task OnSessionSettingsClicked() => await _navigationService.GoToAsync(nameof(SessionSettingsView), RouterNavigationType.PushUpward);
-
+    private async Task OnSessionSettingsButtonClicked() => await _navigationService.GoToAsync(nameof(SessionSettingsView), RouterNavigationType.PushUpward);
     [RelayCommand]
-    private async Task OnUserSettingsClicked() => await _navigationService.GoToAsync(nameof(UserSettingsView), RouterNavigationType.PushUpward);
-
+    private async Task OnUserSettingsButtonClicked() => await _navigationService.GoToAsync(nameof(UserSettingsView), RouterNavigationType.PushUpward);
     [RelayCommand]
-    private async Task OnContactsClicked() => await _navigationService.GoToAsync(nameof(ContactsView), RouterNavigationType.PushUpward);
+    private async Task OnContactsButtonClicked() => await _navigationService.GoToAsync(nameof(ContactsView), RouterNavigationType.PushUpward);
 
     // CORE
-    private async Task GetCurrentSession()
+    private async Task GetCurrentSessionAsync()
     {
         var ct = new CancellationToken();
         var query = new GetCurrentUserQuery();

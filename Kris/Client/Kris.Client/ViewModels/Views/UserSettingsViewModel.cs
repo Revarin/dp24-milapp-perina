@@ -71,8 +71,14 @@ public sealed partial class UserSettingsViewModel : PageViewModelBase
         _mapObjectDownloadSelectedItem = _settingsDataProvider.GetCurrentMapObjectDownloadSettings();
     }
 
+    // HANDLERS
     [RelayCommand]
-    private async Task OnConnectionSettingsSelectedIndexChanged()
+    private async Task OnConnectionSettingsSelectedIndexChanged() => await UpdateConnectionSettingsAsync();
+    [RelayCommand]
+    private async Task OnEditUserButtonClicked() => await UpdateUserAsync();
+
+    // CORE
+    private async Task UpdateConnectionSettingsAsync()
     {
         var ct = new CancellationToken();
         var command = new UpdateConnectionSettingsCommand
@@ -105,8 +111,7 @@ public sealed partial class UserSettingsViewModel : PageViewModelBase
         }
     }
 
-    [RelayCommand]
-    private async Task OnEditUserClicked()
+    private async Task UpdateUserAsync()
     {
         if (ValidateAllProperties()) return;
 
@@ -140,6 +145,7 @@ public sealed partial class UserSettingsViewModel : PageViewModelBase
         }
     }
 
+    // MISC
     protected override void Cleanup()
     {
         Login = string.Empty;

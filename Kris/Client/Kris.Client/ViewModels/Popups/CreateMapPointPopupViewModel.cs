@@ -60,8 +60,14 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
         _mapPointSignItems = _symbolDataProvider.GetMapPointSymbolSignItems().ToObservableCollection();
     }
 
+    // HANDLERS
     [RelayCommand]
-    private void OnSymbolComponentChanged()
+    private void OnSymbolComponentChanged() => RedrawSymbol();
+    [RelayCommand]
+    private async Task OnCreateButtonClicked() => await CreateMapPointAsync();
+
+    // CORE
+    private void RedrawSymbol()
     {
         var pointShape = MapPointShapeSelectedItem?.Value;
         var pointColor = MapPointColorSelectedItem?.Value;
@@ -71,8 +77,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
         Image = ImageSource.FromStream(() => imageStream);
     }
 
-    [RelayCommand]
-    private async Task OnCreateClicked()
+    private async Task CreateMapPointAsync()
     {
         if (ValidateAllProperties())
         {

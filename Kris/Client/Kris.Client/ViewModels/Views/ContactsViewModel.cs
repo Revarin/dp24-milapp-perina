@@ -28,10 +28,10 @@ public sealed partial class ContactsViewModel : PageViewModelBase
 
     // HANDLERS
     [RelayCommand]
-    private async Task OnAppearing() => await LoadConversations();
+    private async Task OnAppearing() => await LoadConversationsAsync();
 
     // CORE
-    private async Task LoadConversations()
+    private async Task LoadConversationsAsync()
     {
         var ct = new CancellationToken();
         var query = new GetConversationsQuery();
