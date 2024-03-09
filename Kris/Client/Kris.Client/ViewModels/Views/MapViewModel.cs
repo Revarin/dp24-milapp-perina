@@ -61,8 +61,8 @@ public sealed partial class MapViewModel : PageViewModelBase
         _messageReceiver = messageReceiver;
 
         _messageService.Register<LogoutMessage>(this, OnLogout);
-        _messageService.Register<CurrentSessionChangedMessage>(this, RestartPositionListeners);
-        _messageService.Register<ConnectionSettingsChangedMessage>(this, RestartPositionListeners);
+        _messageService.Register<CurrentSessionChangedMessage>(this, OnBackgroundContextChanged);
+        _messageService.Register<ConnectionSettingsChangedMessage>(this, OnBackgroundContextChanged);
     }
 
     // HANDLERS
@@ -75,6 +75,8 @@ public sealed partial class MapViewModel : PageViewModelBase
     [RelayCommand]
     private async Task OnMapLoaded() => await MoveToCurrentRegionAsync();
     [RelayCommand]
+    private async Task OnLogoutButtonClicked() => await LogoutUser();
+    [RelayCommand]
     private async Task OnCurrentPositionButtonClicked() => await MoveToCurrentPositionAsync();
     [RelayCommand]
     private async Task OnMapLongClicked(MapLongClickedEventArgs e) => await ShowCreateMapPointPopupAsync(e.Location);
@@ -83,147 +85,23 @@ public sealed partial class MapViewModel : PageViewModelBase
         e.HideInfoWindow = true;
         await ShowEditMapPointPopupAsync(sender);
     }
-    [RelayCommand]
-    private async Task OnLogoutButtonClicked() => await LogoutUser();
 
-
-    private void OnSelfPositionPositionChanged(object sender, LocationEventArgs e)
-    {
-        var userPin = _krisMapObjectFactory.CreateMyPositionPin(e.UserId, e.UserName, e.Location);
-        var oldUserPin = AllMapPins.FirstOrDefault(p => p.Id == e.UserId);
-        if (oldUserPin != null) AllMapPins.Remove(oldUserPin);
-        AllMapPins.Add(userPin);
-    }
-
-    private async void OnSelfPositionErrorOccured(object sender, ResultEventArgs e)
-    {
-        if (e.Result.HasError<ServiceDisabledError>())
-        {
-            await _alertService.ShowToastAsync("GPS service is disabled");
-        }
-        else if (e.Result.HasError<ServicePermissionError>())
-        {
-            await _alertService.ShowToastAsync("GPS service is not permitted");
-        }
-        else if (e.Result.HasError<UnauthorizedError>())
-        {
-            await _alertService.ShowToastAsync("Login expired");
-            await LogoutUser();
-        }
-        else
-        {
-            await _alertService.ShowToastAsync(e.Result.Errors.FirstMessage());
-            OnLogout(this, null);
-        }
-    }
-
-    private void OnOthersPositionPositionChanged(object sender, UserPositionsEventArgs e)
-    {
-        var userPins = e.Positions.Select(_krisMapObjectFactory.CreateUserPositionPin);
-        AllMapPins = userPins.UnionBy(AllMapPins, pin => pin.Id).ToObservableCollection();
-    }
-
-    private async void OnOthersPositionErrorOccured(object sender, ResultEventArgs e)
-    {
-        if (e.Result.HasError<UnauthorizedError>())
-        {
-            await _alertService.ShowToastAsync("Login expired");
-            await LogoutUser();
-        }
-        else
-        {
-            await _alertService.ShowToastAsync(e.Result.Errors.FirstMessage());
-            OnLogout(this, null);
-        }
-    }
-
-    private void OnMapObjectsChanged(object sender, MapObjectsEventArgs e)
-    {
-        var pointPins = e.MapPoints.Select(_krisMapObjectFactory.CreateMapPoint);
-        AllMapPins = pointPins.UnionBy(AllMapPins, pin => pin.Id).ToObservableCollection();
-    }
-
-    private async void OnMapObjectsErrorOccured(object sender, ResultEventArgs e)
-    {
-        if (e.Result.HasError<UnauthorizedError>())
-        {
-            await _alertService.ShowToastAsync("Login expired");
-            await LogoutUser();
-        }
-        else
-        {
-            await _alertService.ShowToastAsync(e.Result.Errors.FirstMessage());
-            OnLogout(this, null);
-        }
-
-    }
-
-    private async void OnMessageReceived(object sender, MessageReceivedEventArgs e)
-    {
-        // TODO: Better notification
-        if (Shell.Current.CurrentPage is ChatView) return;
-        await _alertService.ShowToastAsync($"{e.SenderName}: {e.Body}");
-    }
-
-
-    private async void OnLogout(object sender, LogoutMessage message)
-    {
-        if (_backgroundLoop.IsRunning)
-        {
-            _backgroundLoopCTS.Cancel();
-
-            try
-            {
-                await _backgroundLoopTask;
-            }
-            catch (TaskCanceledException) { }
-            finally
-            {
-                _currentPositionBackgroundHandler.CurrentPositionChanged -= OnSelfPositionPositionChanged;
-                _currentPositionBackgroundHandler.ErrorOccured -= OnSelfPositionErrorOccured;
-                _userPositionsBackgroundHandler.UserPositionsChanged -= OnOthersPositionPositionChanged;
-                _userPositionsBackgroundHandler.ErrorOccured -= OnOthersPositionErrorOccured;
-                _mapObjectsBackgroundHandler.MapObjectsChanged -= OnMapObjectsChanged;
-                _mapObjectsBackgroundHandler.ErrorOccured -= OnMapObjectsErrorOccured;
-
-                _backgroundLoop.ClearServices();
-                _backgroundLoopCTS.Dispose();
-            }
-        }
-
-        if (_messageReceiver.IsConnected)
-        {
-            _messageReceiver.MessageReceived -= OnMessageReceived;
-            await _messageReceiver.Disconnect();
-        }
-
-        AllMapPins.Clear();
-    }
-
-    private async void RestartPositionListeners(object sender, MessageBase message)
-    {
-        _backgroundLoop.ReloadSettings = true;
-
-        if (message is CurrentSessionChangedMessage)
-        {
-            AllMapPins.Clear();
-
-            await _messageReceiver.Disconnect();
-            await _messageReceiver.Connect();
-        }
-    }
+    private void OnCurrentPositionChanged(object sender, LocationEventArgs e) => AddCurrentUserPositionToMap(e.UserId, e.UserName, e.Location);
+    private void OnUserPositionsChanged(object sender, UserPositionsEventArgs e) => AddOtherUserPositionsToMap(e.Positions);
+    private void OnMapObjectsChanged(object sender, MapObjectsEventArgs e) => AddMapObjectsToMap(e.MapPoints);
+    private async void OnMessageReceived(object sender, MessageReceivedEventArgs e) => await ShowMessageNotification(e.SenderName, e.Body);
 
     // CORE
     private void StartBackgroudListeners()
     {
         if (!_backgroundLoop.IsRunning)
         {
-            _currentPositionBackgroundHandler.CurrentPositionChanged += OnSelfPositionPositionChanged;
-            _currentPositionBackgroundHandler.ErrorOccured += OnSelfPositionErrorOccured;
-            _userPositionsBackgroundHandler.UserPositionsChanged += OnOthersPositionPositionChanged;
-            _userPositionsBackgroundHandler.ErrorOccured += OnOthersPositionErrorOccured;
+            _currentPositionBackgroundHandler.CurrentPositionChanged += OnCurrentPositionChanged;
+            _userPositionsBackgroundHandler.UserPositionsChanged += OnUserPositionsChanged;
             _mapObjectsBackgroundHandler.MapObjectsChanged += OnMapObjectsChanged;
-            _mapObjectsBackgroundHandler.ErrorOccured += OnMapObjectsErrorOccured;
+            _currentPositionBackgroundHandler.ErrorOccured += OnBackgroundHandlerErrorOccured;
+            _userPositionsBackgroundHandler.ErrorOccured += OnBackgroundHandlerErrorOccured;
+            _mapObjectsBackgroundHandler.ErrorOccured += OnBackgroundHandlerErrorOccured;
 
             _backgroundLoop.RegisterService(_currentPositionBackgroundHandler);
             _backgroundLoop.RegisterService(_userPositionsBackgroundHandler);
@@ -355,5 +233,101 @@ public sealed partial class MapViewModel : PageViewModelBase
         }
     }
 
+    private void AddCurrentUserPositionToMap(Guid userId, string userName, Location location)
+    {
+        var userPin = _krisMapObjectFactory.CreateMyPositionPin(userId, userName, location);
+        var oldUserPin = AllMapPins.FirstOrDefault(p => p.Id == userId);
+        if (oldUserPin != null) AllMapPins.Remove(oldUserPin);
+        AllMapPins.Add(userPin);
+    }
+    
+    private void AddOtherUserPositionsToMap(IEnumerable<UserPositionModel> userPositions)
+    {
+        var userPins = userPositions.Select(_krisMapObjectFactory.CreateUserPositionPin);
+        AllMapPins = userPins.UnionBy(AllMapPins, pin => pin.Id).ToObservableCollection();
+    }
+
+    private void AddMapObjectsToMap(IEnumerable<MapPointModel> mapPoints)
+    {
+        var pointPins = mapPoints.Select(_krisMapObjectFactory.CreateMapPoint);
+        AllMapPins = pointPins.UnionBy(AllMapPins, pin => pin.Id).ToObservableCollection();
+    }
+
+    private async Task ShowMessageNotification(string sender, string message)
+    {
+        // TODO: Better notification
+        if (Shell.Current.CurrentPage is ChatView) return;
+        await _alertService.ShowToastAsync($"{sender}: {message}");
+    }
+
     // MISC
+    private async void OnBackgroundHandlerErrorOccured(object sender, ResultEventArgs e)
+    {
+        if (e.Result.HasError<ServiceDisabledError>())
+        {
+            await _alertService.ShowToastAsync("GPS service is disabled");
+        }
+        else if (e.Result.HasError<ServicePermissionError>())
+        {
+            await _alertService.ShowToastAsync("GPS service is not permitted");
+        }
+        else if (e.Result.HasError<UnauthorizedError>())
+        {
+            await _alertService.ShowToastAsync("Login expired");
+            await LogoutUser();
+        }
+        else
+        {
+            await _alertService.ShowToastAsync(e.Result.Errors.FirstMessage());
+            OnLogout(this, null);
+        }
+    }
+
+    private async void OnLogout(object sender, LogoutMessage message)
+    {
+        if (_backgroundLoop.IsRunning)
+        {
+            _backgroundLoopCTS.Cancel();
+
+            try
+            {
+                await _backgroundLoopTask;
+            }
+            catch (TaskCanceledException) { }
+            finally
+            {
+                _currentPositionBackgroundHandler.CurrentPositionChanged -= OnCurrentPositionChanged;
+                _userPositionsBackgroundHandler.UserPositionsChanged -= OnUserPositionsChanged;
+                _mapObjectsBackgroundHandler.MapObjectsChanged -= OnMapObjectsChanged;
+                _currentPositionBackgroundHandler.ErrorOccured -= OnBackgroundHandlerErrorOccured;
+                _userPositionsBackgroundHandler.ErrorOccured -= OnBackgroundHandlerErrorOccured;
+                _mapObjectsBackgroundHandler.ErrorOccured -= OnBackgroundHandlerErrorOccured;
+
+                _backgroundLoop.ClearServices();
+                _backgroundLoopCTS.Dispose();
+            }
+        }
+
+        if (_messageReceiver.IsConnected)
+        {
+            _messageReceiver.MessageReceived -= OnMessageReceived;
+            await _messageReceiver.Disconnect();
+        }
+
+        AllMapPins.Clear();
+    }
+
+    private async void OnBackgroundContextChanged(object sender, MessageBase message)
+    {
+        // TODO: Rename a move
+        _backgroundLoop.ReloadSettings = true;
+
+        if (message is CurrentSessionChangedMessage)
+        {
+            AllMapPins.Clear();
+
+            await _messageReceiver.Disconnect();
+            await _messageReceiver.Connect();
+        }
+    }
 }
