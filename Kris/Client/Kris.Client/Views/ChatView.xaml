@@ -12,7 +12,7 @@
         <tk:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}" />
     </ContentPage.Behaviors>
     <Shell.BackButtonBehavior>
-        <BackButtonBehavior Command="{Binding BackButtonPressedCommand}" />
+        <BackButtonBehavior Command="{Binding BackButtonClickedCommand}" />
     </Shell.BackButtonBehavior>
     
     <StackLayout Orientation="Vertical"
@@ -21,7 +21,7 @@
         <Button Text="Delete"
                 HorizontalOptions="End">
             <Button.Behaviors>
-                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding DeletePressedCommand}" />
+                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding DeleteButtonClickedCommand}" />
             </Button.Behaviors>
         </Button>
         
@@ -52,7 +52,7 @@
             <Button Text="Send"
                     HorizontalOptions="End">
                 <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SendPressedCommand}" />
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SendButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
         </StackLayout>
@@ -63,16 +63,15 @@
             <Button Text="Map"
                     HorizontalOptions="FillAndExpand">
                 <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding GoToMapCommand}" />
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MapButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
             <Button Text="Menu"
                     HorizontalOptions="FillAndExpand">
                 <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding GoToMenuCommand}" />
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MenuButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
         </StackLayout>
-        
     </StackLayout>
 </ContentPage>

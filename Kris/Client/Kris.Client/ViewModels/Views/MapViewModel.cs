@@ -41,8 +41,6 @@ public sealed partial class MapViewModel : PageViewModelBase
 
     [ObservableProperty]
     private ObservableCollection<KrisMapPinViewModel> _allMapPins = new ObservableCollection<KrisMapPinViewModel>();
-    //private List<UserPositionModel> _userPositions = new List<UserPositionModel>();
-    //private List<MapPointModel> _mapPoints = new List<MapPointModel>();
 
     private CancellationTokenSource _selfPositionCTS;
     private Task _selfPositionTask;
@@ -68,160 +66,27 @@ public sealed partial class MapViewModel : PageViewModelBase
         _messageService.Register<ConnectionSettingsChangedMessage>(this, RestartPositionListeners);
     }
 
+    // HANDLERS
     [RelayCommand]
     private async Task OnAppearing()
     {
-        if (!_selfPositionListener.IsListening)
-        {
-            _selfPositionCTS = new CancellationTokenSource();
-            _selfPositionListener.PositionChanged += OnSelfPositionPositionChanged;
-            _selfPositionListener.ErrorOccured += OnSelfPositionErrorOccured;
-            _selfPositionTask = _selfPositionListener.StartListening(_selfPositionCTS.Token);
-        }
-        if (!_othersPositionListener.IsListening)
-        {
-            _othersPositionCTS = new CancellationTokenSource();
-            _othersPositionListener.PositionsChanged += OnOthersPositionPositionChanged;
-            _othersPositionListener.ErrorOccured += OnOthersPositionErrorOccured;
-            _othersPositionTask = _othersPositionListener.StartListening(_othersPositionCTS.Token);
-        }
-        if (!_mapObjectsListener.IsListening)
-        {
-            _mapObjectsCTS = new CancellationTokenSource();
-            _mapObjectsListener.MapObjectsChanged += OnMapObjectsChanged;
-            _mapObjectsListener.ErrorOccured += OnMapObjectsErrorOccured;
-            _mapObjectsTask = _mapObjectsListener.StartListening(_mapObjectsCTS.Token);
-        }
-        if (!_messageReceiver.IsConnected)
-        {
-            await _messageReceiver.Connect();
-            _messageReceiver.MessageReceived += OnMessageReceived;
-        }
+        StartBackgroudListeners();
+        await StartMessageListenerAsync();
     }
-
     [RelayCommand]
-    private async Task OnMapLoaded()
-    {
-        var query = new GetCurrentRegionQuery();
-        var currentRegion = await _mediator.Send(query, CancellationToken.None);
-
-        if (currentRegion != null)
-        {
-            MoveToRegion.Execute(currentRegion);
-        }
-    }
-
+    private async Task OnMapLoaded() => await MoveToCurrentRegionAsync();
     [RelayCommand]
-    private async Task OnCurrentPositionClicked()
-    {
-        var query = new GetCurrentPositionQuery();
-        var currentPosition = await _mediator.Send(query, CancellationToken.None);
-
-        if (currentPosition == null)
-        {
-            await _alertService.ShowToastAsync("No current position");
-        }
-        else
-        {
-            var newRegion = MapSpan.FromCenterAndRadius(currentPosition, CurrentRegion.Radius);
-            MoveToRegion.Execute(newRegion);
-        }
-    }
-
-    // Map point creation
+    private async Task OnCurrentPositionButtonClicked() => await MoveToCurrentPositionAsync();
     [RelayCommand]
-    private async Task OnMapLongClicked(MapLongClickedEventArgs e)
-    {
-        var query = new GetCurrentUserQuery();
-        var currentUser = await _mediator.Send(query, CancellationToken.None);
-        if (currentUser == null || !currentUser.SessionId.HasValue || !currentUser.UserType.HasValue)
-        {
-            await _alertService.ShowToastAsync("Must join a session to create map objects");
-            return;
-        }
-
-        var resultEventArgs = await _popupService.ShowPopupAsync<CreateMapPointPopupViewModel>(vm =>
-        {
-            vm.Location = e.Location;
-        }) as ResultEventArgs<MapPointModel>;
-        if (resultEventArgs == null) return;
-
-        var result = resultEventArgs.Result;
-
-        if (result.IsFailed)
-        {
-            if (result.HasError<UnauthorizedError>())
-            {
-                await _alertService.ShowToastAsync("Login expired");
-                await LogoutUser();
-            }
-            else
-            {
-                await _alertService.ShowToastAsync(result.Errors.FirstMessage());
-            }
-        }
-        else
-        {
-            await _alertService.ShowToastAsync("Map point created");
-            AllMapPins.Add(_krisMapObjectFactory.CreateMapPoint(result.Value));
-        }
-    }
-
-    public async Task OnKrisPinClickedAsync(KrisMapPin sender, PinClickedEventArgs e)
+    private async Task OnMapLongClicked(MapLongClickedEventArgs e) => await ShowCreateMapPointPopupAsync(e.Location);
+    public async Task OnKrisPinClicked(KrisMapPin sender, PinClickedEventArgs e)
     {
         e.HideInfoWindow = true;
-
-        var query = new GetCurrentUserQuery();
-        var currentUser = await _mediator.Send(query, CancellationToken.None);
-        if (currentUser == null || !currentUser.SessionId.HasValue || !currentUser.UserType.HasValue)
-        {
-            await _alertService.ShowToastAsync("Invalid user data");
-            await LogoutUser();
-        }
-
-        var resultArgs = await _popupService.ShowPopupAsync<EditMapPointPopupViewModel>(vm =>
-        {
-            vm.Initialize(currentUser, sender);
-        });
-        if (resultArgs == null) return;
-
-        if (resultArgs is UpdateResultEventArgs)
-        {
-            // TODO
-        }
-        else if (resultArgs is DeleteResultEventArgs)
-        {
-            var result = (resultArgs as DeleteResultEventArgs).Result;
-            if (result.IsFailed)
-            {
-                if (result.HasError<UnauthorizedError>())
-                {
-                    await _alertService.ShowToastAsync("Login expired");
-                    await LogoutUser();
-                }
-                else if (result.HasError<EntityNotFoundError>())
-                {
-                    await _alertService.ShowToastAsync("Point not found");
-                }
-                else
-                {
-                    await _alertService.ShowToastAsync(result.Errors.FirstMessage());
-                }
-            }
-            else
-            {
-                await _alertService.ShowToastAsync("Point deleted");
-                var pinToRemove = AllMapPins.FirstOrDefault(p => p.Id == sender.KrisId);
-                AllMapPins.Remove(pinToRemove);
-            }
-        }
+        await ShowEditMapPointPopupAsync(sender);
     }
-
     [RelayCommand]
-    private async Task OnLogoutClicked()
-    {
-        await LogoutUser();
-    }
+    private async Task OnLogoutButtonClicked() => await LogoutUser();
+
 
     private void OnSelfPositionPositionChanged(object sender, LocationEventArgs e)
     {
@@ -300,6 +165,7 @@ public sealed partial class MapViewModel : PageViewModelBase
         if (Shell.Current.CurrentPage is ChatView) return;
         await _alertService.ShowToastAsync($"{e.SenderName}: {e.Body}");
     }
+
 
     private async void OnLogout(object sender, LogoutMessage message)
     {
@@ -421,4 +287,153 @@ public sealed partial class MapViewModel : PageViewModelBase
             await _messageReceiver.Connect();
         }
     }
+
+    // CORE
+    private void StartBackgroudListeners()
+    {
+        if (!_selfPositionListener.IsListening)
+        {
+            _selfPositionCTS = new CancellationTokenSource();
+            _selfPositionListener.PositionChanged += OnSelfPositionPositionChanged;
+            _selfPositionListener.ErrorOccured += OnSelfPositionErrorOccured;
+            _selfPositionTask = _selfPositionListener.StartListening(_selfPositionCTS.Token);
+        }
+        if (!_othersPositionListener.IsListening)
+        {
+            _othersPositionCTS = new CancellationTokenSource();
+            _othersPositionListener.PositionsChanged += OnOthersPositionPositionChanged;
+            _othersPositionListener.ErrorOccured += OnOthersPositionErrorOccured;
+            _othersPositionTask = _othersPositionListener.StartListening(_othersPositionCTS.Token);
+        }
+        if (!_mapObjectsListener.IsListening)
+        {
+            _mapObjectsCTS = new CancellationTokenSource();
+            _mapObjectsListener.MapObjectsChanged += OnMapObjectsChanged;
+            _mapObjectsListener.ErrorOccured += OnMapObjectsErrorOccured;
+            _mapObjectsTask = _mapObjectsListener.StartListening(_mapObjectsCTS.Token);
+        }
+    }
+
+    private async Task StartMessageListenerAsync()
+    {
+        if (!_messageReceiver.IsConnected)
+        {
+            await _messageReceiver.Connect();
+            _messageReceiver.MessageReceived += OnMessageReceived;
+        }
+    }
+
+    private async Task MoveToCurrentRegionAsync()
+    {
+        var query = new GetCurrentRegionQuery();
+        var currentRegion = await _mediator.Send(query, CancellationToken.None);
+
+        if (currentRegion != null)
+        {
+            MoveToRegion.Execute(currentRegion);
+        }
+    }
+
+    private async Task MoveToCurrentPositionAsync()
+    {
+        var query = new GetCurrentPositionQuery();
+        var currentPosition = await _mediator.Send(query, CancellationToken.None);
+
+        if (currentPosition == null)
+        {
+            await _alertService.ShowToastAsync("No current position");
+        }
+        else
+        {
+            var newRegion = MapSpan.FromCenterAndRadius(currentPosition, CurrentRegion.Radius);
+            MoveToRegion.Execute(newRegion);
+        }
+    }
+
+    private async Task ShowCreateMapPointPopupAsync(Location location)
+    {
+        var query = new GetCurrentUserQuery();
+        var currentUser = await _mediator.Send(query, CancellationToken.None);
+        if (currentUser == null || !currentUser.SessionId.HasValue || !currentUser.UserType.HasValue)
+        {
+            await _alertService.ShowToastAsync("Must join a session to create map objects");
+            return;
+        }
+
+        var resultEventArgs = await _popupService.ShowPopupAsync<CreateMapPointPopupViewModel>(vm =>
+        {
+            vm.Location = location;
+        }) as ResultEventArgs<MapPointModel>;
+        if (resultEventArgs == null) return;
+
+        var result = resultEventArgs.Result;
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UnauthorizedError>())
+            {
+                await _alertService.ShowToastAsync("Login expired");
+                await LogoutUser();
+            }
+            else
+            {
+                await _alertService.ShowToastAsync(result.Errors.FirstMessage());
+            }
+        }
+        else
+        {
+            await _alertService.ShowToastAsync("Map point created");
+            AllMapPins.Add(_krisMapObjectFactory.CreateMapPoint(result.Value));
+        }
+    }
+
+    private async Task ShowEditMapPointPopupAsync(KrisMapPin pin)
+    {
+        var query = new GetCurrentUserQuery();
+        var currentUser = await _mediator.Send(query, CancellationToken.None);
+        if (currentUser == null || !currentUser.SessionId.HasValue || !currentUser.UserType.HasValue)
+        {
+            await _alertService.ShowToastAsync("Invalid user data");
+            await LogoutUser();
+        }
+
+        var resultArgs = await _popupService.ShowPopupAsync<EditMapPointPopupViewModel>(vm =>
+        {
+            vm.Initialize(currentUser, pin);
+        });
+        if (resultArgs == null) return;
+
+        if (resultArgs is UpdateResultEventArgs)
+        {
+            // TODO
+        }
+        else if (resultArgs is DeleteResultEventArgs)
+        {
+            var result = (resultArgs as DeleteResultEventArgs).Result;
+            if (result.IsFailed)
+            {
+                if (result.HasError<UnauthorizedError>())
+                {
+                    await _alertService.ShowToastAsync("Login expired");
+                    await LogoutUser();
+                }
+                else if (result.HasError<EntityNotFoundError>())
+                {
+                    await _alertService.ShowToastAsync("Point not found");
+                }
+                else
+                {
+                    await _alertService.ShowToastAsync(result.Errors.FirstMessage());
+                }
+            }
+            else
+            {
+                await _alertService.ShowToastAsync("Point deleted");
+                var pinToRemove = AllMapPins.FirstOrDefault(p => p.Id == pin.KrisId);
+                AllMapPins.Remove(pinToRemove);
+            }
+        }
+    }
+
+    // MISC
 }

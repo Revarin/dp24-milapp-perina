@@ -89,7 +89,7 @@
 
             <Button Text="Save user changes">
                 <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding EditUserClickedCommand}" />
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding EditUserButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
         </StackLayout>
@@ -100,13 +100,13 @@
             <Button Text="Map"
                     HorizontalOptions="FillAndExpand">
                 <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding GoToMapCommand}" />
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MapButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
             <Button Text="Menu"
                     HorizontalOptions="FillAndExpand">
                 <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding GoToMenuCommand}" />
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MenuButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
         </StackLayout>

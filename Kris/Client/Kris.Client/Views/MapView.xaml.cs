@@ -15,6 +15,6 @@ public partial class MapView : ContentPage
 	// TODO: Temporaty
     private async void KrisMapPin_MarkerClicked(object sender, Microsoft.Maui.Controls.Maps.PinClickedEventArgs e)
     {
-		if (sender is KrisMapPin krisPin) await (BindingContext as MapViewModel).OnKrisPinClickedAsync(krisPin, e);
+		if (sender is KrisMapPin krisPin) await (BindingContext as MapViewModel).OnKrisPinClicked(krisPin, e);
     }
 }

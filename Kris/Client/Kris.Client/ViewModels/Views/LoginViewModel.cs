@@ -24,7 +24,15 @@ public sealed partial class LoginViewModel : PageViewModelBase
     {
     }
 
-    protected override async Task InitAsync()
+    // HANDLERS
+    protected override async Task InitAsync() => await GetCurrentUserAsync();
+    [RelayCommand]
+    private async Task OnRegisterButtonClicked() => await _navigationService.GoToAsync(nameof(RegisterView), RouterNavigationType.PushUpward);
+    [RelayCommand]
+    private async Task OnLoginButtonClicked() => await LoginUserAsync();
+
+    // CORE
+    private async Task GetCurrentUserAsync()
     {
         var ct = new CancellationToken();
         var query = new GetCurrentUserQuery();
@@ -44,14 +52,7 @@ public sealed partial class LoginViewModel : PageViewModelBase
         }
     }
 
-    [RelayCommand]
-    private async Task OnRegisterClicked()
-    {
-        await _navigationService.GoToAsync(nameof(RegisterView), RouterNavigationType.PushUpward);
-    }
-
-    [RelayCommand]
-    private async Task OnLoginClicked()
+    private async Task LoginUserAsync()
     {
         if (ValidateAllProperties()) return;
 
@@ -78,6 +79,7 @@ public sealed partial class LoginViewModel : PageViewModelBase
         }
     }
 
+    // MISC
     protected override void Cleanup()
     {
         Login = string.Empty;

@@ -30,12 +30,12 @@
         
         <Button Text="Login">
             <Button.Behaviors>
-                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding LoginClickedCommand}" />
+                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding LoginButtonClickedCommand}" />
             </Button.Behaviors>
         </Button>
         <Button Text="Register">
             <Button.Behaviors>
-                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding RegisterClickedCommand}" />
+                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding RegisterButtonClickedCommand}" />
             </Button.Behaviors>
         </Button>
     </StackLayout>

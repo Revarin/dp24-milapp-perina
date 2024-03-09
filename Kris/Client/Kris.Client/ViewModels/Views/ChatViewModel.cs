@@ -49,15 +49,12 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
         _messageReceiver.MessageReceived += OnMessageReceived;
         await LoadMessagesAsync();
     }
-
     [RelayCommand]
-    private async Task OnBackButtonPressed() => await GoToContacts();
-
+    private async Task OnBackButtonClicked() => await GoToContactsAsync();
     [RelayCommand]
-    private async Task OnSendPressed() => await SendMessageAsync();
-
+    private async Task OnSendButtonClicked() => await SendMessageAsync();
     [RelayCommand]
-    private async Task OnDeletePressed() => await DeleteConversation();
+    private async Task OnDeleteButtonClicked() => await DeleteConversationAsync();
 
     // CORE
     private async Task LoadMessagesAsync()
@@ -76,7 +73,7 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
             else if (result.HasError<EntityNotFoundError>())
             {
                 await _alertService.ShowToastAsync("Conversation does not exists");
-                await GoToContacts();
+                await GoToContactsAsync();
             }
             else
             {
@@ -108,7 +105,7 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
             else if (result.HasError<EntityNotFoundError>())
             {
                 await _alertService.ShowToastAsync("Conversation does not exists");
-                await GoToContacts();
+                await GoToContactsAsync();
             }
             else
             {
@@ -121,7 +118,7 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
         }
     }
 
-    private async Task DeleteConversation()
+    private async Task DeleteConversationAsync()
     {
         var ct = new CancellationToken();
         var command = new DeleteConversationCommand { ConversationId = ConversationId };
@@ -137,7 +134,7 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
             else if (result.HasError<EntityNotFoundError>())
             {
                 await _alertService.ShowToastAsync("Conversation does not exists");
-                await GoToContacts();
+                await GoToContactsAsync();
             }
             else if (result.HasError<ForbiddenError>())
             {
@@ -151,7 +148,7 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
         else
         {
             await _alertService.ShowToastAsync("Conversation deleted");
-            await GoToContacts();
+            await GoToContactsAsync();
         }
     }
 
@@ -169,16 +166,16 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
     }
 
     // MISC
-    protected override Task GoToMap()
+    protected override Task OnMapButtonClicked()
     {
         _messageReceiver.MessageReceived -= OnMessageReceived;
-        return base.GoToMap();
+        return base.OnMapButtonClicked();
     }
 
-    protected override Task GoToMenu()
+    protected override Task OnMenuButtonClicked()
     {
         _messageReceiver.MessageReceived -= OnMessageReceived;
-        return base.GoToMenu();
+        return base.OnMenuButtonClicked();
     }
 
     protected override Task LogoutUser()
@@ -187,7 +184,7 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
         return base.LogoutUser();
     }
 
-    private async Task GoToContacts()
+    private async Task GoToContactsAsync()
     {
         _messageReceiver.MessageReceived -= OnMessageReceived;
         await _navigationService.GoBackAsync();
