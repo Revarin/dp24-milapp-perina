@@ -19,19 +19,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
-        builder.Services.AddControllers();
-        builder.Services.AddSignalR(options =>
-        {
-        });
-
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(options =>
-        {
-            options.AddSignalRSwaggerGen();
-        });
-
+        // Register appsettings
         builder.Services.AddOptions<SettingsOptions>()
             .Bind(builder.Configuration.GetRequiredSection(SettingsOptions.Section))
             .ValidateDataAnnotations()
@@ -40,6 +28,25 @@ public class Program
             .Bind(builder.Configuration.GetRequiredSection(JwtOptions.Section))
             .ValidateDataAnnotations()
             .ValidateOnStart();
+
+        // Add services to the container.
+        builder.Services.AddControllers();
+        builder.Services.AddSignalR(options =>
+        {
+            var settingsOptions = builder.Configuration.GetSection(SettingsOptions.Section).Get<SettingsOptions>();
+            if (settingsOptions == null) throw new Exception(nameof(settingsOptions));
+
+            options.ClientTimeoutInterval = TimeSpan.FromSeconds(settingsOptions.SignalRKeepAliveSeconds * 2);
+            options.HandshakeTimeout = TimeSpan.FromSeconds(settingsOptions.SignalRKeepAliveSeconds);
+            options.KeepAliveInterval = TimeSpan.FromSeconds(settingsOptions.SignalRKeepAliveSeconds);
+        });
+
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen(options =>
+        {
+            options.AddSignalRSwaggerGen();
+        });
 
         builder.Services.AddDbContext<DataContext>(options =>
         {

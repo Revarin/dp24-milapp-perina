@@ -18,11 +18,21 @@
     <StackLayout Orientation="Vertical"
                  VerticalOptions="FillAndExpand">
 
+        <Button Text="Delete"
+                HorizontalOptions="End">
+            <Button.Behaviors>
+                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding DeletePressedCommand}" />
+            </Button.Behaviors>
+        </Button>
+        
         <StackLayout Orientation="Vertical"
-                     VerticalOptions="FillAndExpand">
+                     VerticalOptions="FillAndExpand"
+                     HorizontalOptions="FillAndExpand">
             <CollectionView ItemsSource="{Binding Messages}"
                             VerticalOptions="EndAndExpand"
-                            SelectionMode="None">
+                            HorizontalOptions="FillAndExpand"
+                            SelectionMode="None"
+                            ItemsUpdatingScrollMode="KeepLastItemInView">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <item:MessageItem BindingContext="{Binding .}" />
@@ -36,6 +46,7 @@
                      VerticalOptions="End">
             <Entry HorizontalOptions="FillAndExpand"
                    Placeholder="Send message..."
+                   Keyboard="Chat"
                    Text="{Binding MessageBody}">
             </Entry>
             <Button Text="Send"

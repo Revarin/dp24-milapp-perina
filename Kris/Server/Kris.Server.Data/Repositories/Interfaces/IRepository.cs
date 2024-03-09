@@ -9,5 +9,6 @@ public interface IRepository<T> where T : EntityBase
     Task<IEnumerable<T>> GetAsync(Func<T, bool> predicate, CancellationToken ct);
     Task<T> InsertAsync(T entity, CancellationToken ct);
     Task UpdateAsync(CancellationToken ct);
-    Task DeleteAsync(T entity, CancellationToken ct);
+    void Delete(T entity);
+    void DeleteRange(IEnumerable<T> entities);
 }

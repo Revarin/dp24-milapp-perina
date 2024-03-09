@@ -10,18 +10,18 @@ using MediatR;
 
 namespace Kris.Server.Core.Handlers.Conversation;
 
-public sealed class CreateDirectConversationsCommandHandler : ConversationHandler, IRequestHandler<CreateDirectConversationsCommand, Result>
+public sealed class JoinConversationsCommandHandler : ConversationHandler, IRequestHandler<JoinConversationsCommand, Result>
 {
     private readonly ISessionRepository _sessionRepository;
 
-    public CreateDirectConversationsCommandHandler(ISessionRepository sessionRepository,
+    public JoinConversationsCommandHandler(ISessionRepository sessionRepository,
         IConversationRepository conversationRepository, IAuthorizationService authorizationService)
         : base(conversationRepository, authorizationService)
     {
         _sessionRepository = sessionRepository;
     }
 
-    public async Task<Result> Handle(CreateDirectConversationsCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(JoinConversationsCommand request, CancellationToken cancellationToken)
     {
         // Authentized from previous command
         // WARNING: Must not be accessible from API
@@ -31,6 +31,15 @@ public sealed class CreateDirectConversationsCommandHandler : ConversationHandle
         var currentUser = session.Users.Find(sessionUser => sessionUser.UserId == request.UserId);
         if (currentUser == null) throw new DatabaseException("User not in session");
 
+        // Join global conversations
+        var globalConversation = session.Conversations.Find(conversation => conversation.ConversationType == ConversationType.Global);
+        if (globalConversation == null) throw new DatabaseException("Global conversation is missing");
+        if (!globalConversation.Users.Contains(currentUser))
+        {
+            globalConversation.Users.Add(currentUser);
+        }
+
+        // Create direct conversations with all users
         foreach (var otherUser in session.Users)
         {
             if (otherUser.Id == currentUser.Id) continue;

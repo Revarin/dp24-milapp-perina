@@ -4,6 +4,11 @@ namespace Kris.Client.Core.Services;
 
 public sealed class RouterService : IRouterService
 {
+    public async Task GoBackAsync()
+    {
+        await Shell.Current.GoToAsync("..");
+    }
+
     public async Task GoToAsync(string route, RouterNavigationType type = RouterNavigationType.PushUpward)
     {
         var prefix = GetPrefix(type);

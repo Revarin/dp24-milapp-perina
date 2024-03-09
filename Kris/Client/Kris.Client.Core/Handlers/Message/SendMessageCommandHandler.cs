@@ -1,11 +1,13 @@
-﻿using Kris.Client.Core.Requests;
+﻿using FluentResults;
+using Kris.Client.Common.Errors;
+using Kris.Client.Core.Requests;
 using Kris.Interface.Controllers;
 using Kris.Interface.Requests;
 using MediatR;
 
 namespace Kris.Client.Core.Handlers.Message;
 
-public sealed class SendMessageCommandHandler : MessageHandler, IRequestHandler<SendMessageCommand>
+public sealed class SendMessageCommandHandler : MessageHandler, IRequestHandler<SendMessageCommand, Result>
 {
     private readonly IMessageHub _messageClient;
 
@@ -14,7 +16,7 @@ public sealed class SendMessageCommandHandler : MessageHandler, IRequestHandler<
         _messageClient = messageClient;
     }
 
-    public async Task Handle(SendMessageCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(SendMessageCommand request, CancellationToken cancellationToken)
     {
         var httpRequest = new SendMessageRequest
         {
@@ -22,6 +24,16 @@ public sealed class SendMessageCommandHandler : MessageHandler, IRequestHandler<
             Message = request.Body,
             Sent = DateTime.UtcNow
         };
-        await _messageClient.SendMessage(httpRequest);
+        var response = await _messageClient.SendMessage(httpRequest);
+        if (response == null) return Result.Fail(new ServerError("No response"));
+
+        if (!response.IsSuccess())
+        {
+            if (response.IsUnauthorized()) return Result.Fail(new UnauthorizedError());
+            else if (response.IsNotFound()) return Result.Fail(new EntityNotFoundError());
+            else return Result.Fail(new ServerError(response.Message));
+        }
+
+        return Result.Ok();
     }
 }
