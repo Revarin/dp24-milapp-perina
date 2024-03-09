@@ -50,6 +50,13 @@ public sealed class CreateSessionCommandHandler : SessionHandler, IRequestHandle
             UserType = UserType.SuperAdmin,
             Joined = DateTime.UtcNow
         };
+        var globalConversation = new ConversationEntity
+        {
+            ConversationType = ConversationType.Global,
+            SessionId = session.Id,
+        };
+        globalConversation.Users.Add(sessionUser);
+        session.Conversations.Add(globalConversation);
         session.Users.Add(sessionUser);
         user.CurrentSession = sessionUser;
         var sessionEntity = await _sessionRepository.InsertAsync(session, cancellationToken);

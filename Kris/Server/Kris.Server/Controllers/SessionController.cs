@@ -120,7 +120,7 @@ public sealed class SessionController : KrisController, ISessionController
             else return Response.InternalError<IdentityResponse>();
         }
 
-        var conversationCommand = new CreateDirectConversationsCommand { UserId = user.UserId, SessionId = request.Id };
+        var conversationCommand = new JoinConversationsCommand { UserId = user.UserId, SessionId = request.Id };
         var conversationResult = await _mediator.Send(conversationCommand, ct);
 
         if (conversationResult.IsFailed)

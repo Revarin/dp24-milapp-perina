@@ -1,4 +1,5 @@
-﻿using Kris.Interface.Models;
+﻿using Kris.Common.Enums;
+using Kris.Interface.Models;
 using Kris.Server.Data.Models;
 
 namespace Kris.Server.Core.Mappers;
@@ -19,7 +20,20 @@ public sealed class ConversationMapper : IConversationMapper
                 Name = user.User!.Login
             }).ToList()
         };
-        conversation.Name = string.Join(' ', conversation.Users.Select(user => user.Name));
+
+        switch (conversation.ConversationType)
+        {
+            case ConversationType.Direct:
+                conversation.Name = string.Join(' ', conversation.Users.Select(user => user.Name));
+                break;
+            case ConversationType.Global:
+                conversation.Name = "Global chat";
+                break;
+            default:
+                conversation.Name = "Chat";
+                break;
+        }
+
         return conversation;
     }
 }
