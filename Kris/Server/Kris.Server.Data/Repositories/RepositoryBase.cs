@@ -40,14 +40,13 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : EntityBase
         await _context.SaveChangesAsync(ct);
     }
 
-    public async Task DeleteAsync(T entity, CancellationToken ct)
+    public void Delete(T entity)
     {
         _dbSet.Remove(entity);
-        await _context.SaveChangesAsync(ct);
     }
 
-    public async Task ForceSaveAsync(CancellationToken ct)
+    public void DeleteRange(IEnumerable<T> entities)
     {
-        await _context.SaveChangesAsync(ct);
+        _dbSet.RemoveRange(entities);
     }
 }

@@ -29,7 +29,8 @@ public sealed class DeleteUserCommandHandler : UserHandler, IRequestHandler<Dele
         var passwordVerified = _passwordService.VerifyPassword(user.Password, request.Password);
         if (!passwordVerified) return Result.Fail(new InvalidCredentialsError());
 
-        await _userRepository.DeleteAsync(user, cancellationToken);
+        _userRepository.Delete(user);
+        await _userRepository.UpdateAsync(cancellationToken);
 
         return Result.Ok();
     }

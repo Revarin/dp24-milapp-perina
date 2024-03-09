@@ -27,7 +27,8 @@ public sealed class DeleteConversationCommandHandler : ConversationHandler, IReq
 
         if (conversation.Users.Count == 0)
         {
-            await _conversationRepository.DeleteAsync(conversation, cancellationToken);
+            _conversationRepository.Delete(conversation);
+            await _conversationRepository.UpdateAsync(cancellationToken);
         }
         else
         {
@@ -35,7 +36,8 @@ public sealed class DeleteConversationCommandHandler : ConversationHandler, IReq
             if (conversationUser.UserId != user.UserId || conversationUser.Id != authResult.SessionUserId)
                 return Result.Fail(new UnauthorizedError("Cannot delete conversation you are not participating"));
 
-            await _conversationRepository.DeleteAsync(conversation, cancellationToken);
+            _conversationRepository.Delete(conversation);
+            await _conversationRepository.UpdateAsync(cancellationToken);
         }
 
         return Result.Ok();

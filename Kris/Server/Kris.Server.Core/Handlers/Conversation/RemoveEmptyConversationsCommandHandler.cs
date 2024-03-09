@@ -27,7 +27,8 @@ public sealed class RemoveEmptyConversationsCommandHandler : ConversationHandler
                 && conversation.Users.Count <= 1
                 && conversation.Messages.Count == 0)
             {
-                await _conversationRepository.DeleteAsync(conversation, cancellationToken);
+                _conversationRepository.Delete(conversation);
+                await _conversationRepository.UpdateAsync(cancellationToken);
             }
         }
 
