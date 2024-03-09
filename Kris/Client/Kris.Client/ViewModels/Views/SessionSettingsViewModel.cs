@@ -196,11 +196,11 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
             await LogoutUser();
         }
 
-        var resultArgs = await _popupService.ShowPopupAsync<EditSessionPopupViewModel>(vm =>
+        var resultArgs = await _popupService.ShowPopupAsync<EditSessionPopupViewModel>(async vm =>
         {
             vm.SessionId = e.Id;
             vm.UserType = currentUser.UserType.Value;
-            vm.LoadSessionDetail();
+            await vm.LoadSessionDetailAsync();
         });
         if (resultArgs == null) return;
 

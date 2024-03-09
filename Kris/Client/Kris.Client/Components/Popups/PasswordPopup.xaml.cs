@@ -10,12 +10,12 @@ public partial class PasswordPopup : Popup
 	{
 		BindingContext = vm;
 		InitializeComponent();
-        (BindingContext as PasswordPopupViewModel).CancelClosing += OnCancelClosing;
-        (BindingContext as PasswordPopupViewModel).AcceptedClosing += OnAcceptClosing;
+        (BindingContext as PasswordPopupViewModel).CancelClosing += CancelClose;
+        (BindingContext as PasswordPopupViewModel).AcceptedClosing += ReturnClose;
         (BindingContext as PasswordPopupViewModel).Init();
     }
 
-    private async void OnCancelClosing(object sender, EventArgs e) => await CloseAsync();
+    private async void CancelClose(object sender, EventArgs e) => await CloseAsync();
 
-    private async void OnAcceptClosing(object sender, PasswordEventArgs e) => await CloseAsync(e);
+    private async void ReturnClose(object sender, PasswordEventArgs e) => await CloseAsync(e);
 }

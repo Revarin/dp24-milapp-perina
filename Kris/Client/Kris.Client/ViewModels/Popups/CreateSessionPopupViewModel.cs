@@ -29,8 +29,12 @@ public sealed partial class CreateSessionPopupViewModel : PopupViewModel
     {
     }
 
+    // HANDLERS
     [RelayCommand]
-    private async Task OnCreateClicked()
+    private async Task OnCreateButtonClicked() => await CreateSessionAsync();
+
+    // CORE
+    private async Task CreateSessionAsync()
     {
         if (ValidateAllProperties()) return;
 

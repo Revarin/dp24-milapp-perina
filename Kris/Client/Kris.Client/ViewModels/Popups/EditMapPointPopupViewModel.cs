@@ -71,6 +71,7 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
 
     public void Initialize(CurrentUserModel user, KrisMapPin pin)
     {
+        // TODO: Rework
         UserType = user.UserType.Value;
         IsCreator = user.Id == pin.CreatorId;
 
@@ -80,8 +81,16 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
         Description = pin.Description;
     }
 
+    // HANDLERS
     [RelayCommand]
-    private void OnSymbolComponentChanged()
+    private void OnSymbolComponentChanged() => RedrawSymbol();
+    [RelayCommand]
+    private async Task OnSaveButtonClicked() => await UpdateMapPointAsync();
+    [RelayCommand]
+    private async Task OnDeleteButtonClicked() => await DeleteMapPointAsync();
+
+    // CORE
+    private void RedrawSymbol()
     {
         var pointShape = MapPointShapeSelectedItem?.Value;
         var pointColor = MapPointColorSelectedItem?.Value;
@@ -91,8 +100,7 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
         Image = ImageSource.FromStream(() => imageStream);
     }
 
-    [RelayCommand]
-    private async Task OnSaveClicked()
+    private async Task UpdateMapPointAsync()
     {
         if (ValidateAllProperties()) return;
 
@@ -112,8 +120,7 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
         UpdatedClosing?.Invoke(this, new UpdateResultEventArgs(result));
     }
 
-    [RelayCommand]
-    private async Task OnDeleteClicked()
+    private async Task DeleteMapPointAsync()
     {
         var ct = new CancellationToken();
         var command = new DeleteMapPointCommand { Id = PointId };

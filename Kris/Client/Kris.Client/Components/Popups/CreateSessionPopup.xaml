@@ -40,12 +40,12 @@
         <StackLayout Orientation="Horizontal">
             <Button Text="Cancel">
                 <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CancelClickedCommand}" />
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CancelButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
             <Button Text="Create">
                 <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CreateClickedCommand}" />
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CreateButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
         </StackLayout>

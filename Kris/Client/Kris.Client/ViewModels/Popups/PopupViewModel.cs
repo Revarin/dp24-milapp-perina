@@ -12,6 +12,5 @@ public abstract partial class PopupViewModel : FormViewModelBase
     }
 
     [RelayCommand]
-    private void OnCancelClicked() => CancelClosing?.Invoke(this, EventArgs.Empty);
-
+    private void OnCancelButtonClicked() => CancelClosing?.Invoke(this, EventArgs.Empty);
 }

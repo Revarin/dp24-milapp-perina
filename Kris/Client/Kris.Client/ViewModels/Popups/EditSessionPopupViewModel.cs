@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
 using Kris.Client.Components.Events;
-using Kris.Client.Components.Map;
 using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
@@ -45,7 +44,14 @@ public sealed partial class EditSessionPopupViewModel : PopupViewModel
         _alertService = alertService;
     }
 
-    public async void LoadSessionDetail()
+    // HANDLERS
+    [RelayCommand]
+    private async Task OnSaveButtonClicked() => await UpdateSessionAsync();
+    [RelayCommand]
+    private async Task OnDeleteButtonClicked() => await DeleteSessionAsync();
+
+    // CORE
+    public async Task LoadSessionDetailAsync()
     {
         var ct = new CancellationToken();
         var query = new GetSessionDetailQuery { SessionId = SessionId };
@@ -59,8 +65,7 @@ public sealed partial class EditSessionPopupViewModel : PopupViewModel
         Name = result.Value.Name;
     }
 
-    [RelayCommand]
-    private async Task OnSaveClicked()
+    private async Task UpdateSessionAsync()
     {
         if (ValidateAllProperties()) return;
 
@@ -80,8 +85,7 @@ public sealed partial class EditSessionPopupViewModel : PopupViewModel
         UpdatedClosing?.Invoke(this, new UpdateResultEventArgs(result));
     }
 
-    [RelayCommand]
-    private async Task OnDeleteClicked()
+    private async Task DeleteSessionAsync()
     {
         var passwordPopup = await _popupService.ShowPopupAsync<PasswordPopupViewModel>() as PasswordEventArgs;
         if (passwordPopup == null) return;

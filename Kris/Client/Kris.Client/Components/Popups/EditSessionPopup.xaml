@@ -59,7 +59,7 @@
 
             <Button Text="Delete session">
                 <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding DeleteClickedCommand}" />
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding DeleteButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
 
@@ -67,12 +67,12 @@
                          HorizontalOptions="FillAndExpand">
                 <Button Text="Cancel">
                     <Button.Behaviors>
-                        <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CancelClickedCommand}" />
+                        <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CancelButtonClickedCommand}" />
                     </Button.Behaviors>
                 </Button>
                 <Button Text="Save changes">
                     <Button.Behaviors>
-                        <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SaveClickedCommand}" />
+                        <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SaveButtonClickedCommand}" />
                     </Button.Behaviors>
                 </Button>
             </StackLayout>
