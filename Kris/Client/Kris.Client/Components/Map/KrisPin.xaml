@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<StackLayout xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kris.Client.Components.Map.KrisPin"
+             Orientation="Vertical">
+
+    <Image Source="{Binding Image}" ZIndex="9999"
+           WidthRequest="24"
+           HeightRequest="24"
+           VerticalOptions="End"
+           HorizontalOptions="Center"/>
+    <Label Text="{Binding Label}"
+           TextColor="Black"
+           BackgroundColor="Transparent"
+           FontSize="12"
+           VerticalOptions="End"
+           HorizontalTextAlignment="Center"/>
+</StackLayout>

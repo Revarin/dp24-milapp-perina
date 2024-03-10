@@ -1,11 +1,18 @@
 ﻿using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
+using Android.Graphics;
 using Android.Graphics.Drawables;
+using AndroidX.ConstraintLayout.Core.Motion.Utils;
+using Java.IO;
+using Java.Lang;
+using Kris.Client.Platforms.Android.Utility;
 using Kris.Client.Platforms.Callbacks;
 using Kris.Client.Platforms.Listeners;
 using Microsoft.Maui.Maps;
 using Microsoft.Maui.Maps.Handlers;
 using Microsoft.Maui.Platform;
+using static System.Net.Mime.MediaTypeNames;
+using File = Java.IO.File;
 
 namespace Kris.Client.Components.Map;
 
@@ -68,19 +75,60 @@ public partial class KrisMapHandler
             if (pinHandler is IMapPinHandler mapPinHandler)
             {
                 var markerOption = mapPinHandler.PlatformView;
-                if (pin is KrisMapPin cp)
+                if (pin is KrisMPin krisPin)
                 {
-                    if (cp.ImageSource != null)
+                    //var iconView = krisPin.View.Invoke();
+                    //var nativeView = iconView.ToPlatform(MauiContext);
+                    //var bitmapDescriptor = BitmapUtilities.ConvertViewToBitmapDescriptor(nativeView);
+                    //markerOption.SetIcon(bitmapDescriptor);
+
+                    if (krisPin.KrisType == Common.Enums.KrisPinType.Point)
                     {
-                        cp.ImageSource.LoadImage(MauiContext, result =>
+                        //var imageBitmapDesc = BitmapDescriptorFactory.FromBitmap(imageBitmap);
+                        //markerOption.SetIcon(imageBitmapDesc);
+
+                        // Text
+                        var paint = new Android.Graphics.Paint
                         {
-                            if (result?.Value is BitmapDrawable bitmapDrawable)
-                            {
-                                // Performance?
-                                //var scaledBitmap = Bitmap.CreateScaledBitmap(bitmapDrawable.Bitmap, 200, 200, true);
-                                markerOption.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmapDrawable.Bitmap));
-                            }
-                        });
+                            AntiAlias = true,
+                            Color = Android.Graphics.Color.Black,
+                            TextSize = (Context.Resources.DisplayMetrics.Density * 14f) + 0.5f,
+                            TextAlign = Android.Graphics.Paint.Align.Left
+                        };
+                        var baseline = -paint.Ascent();
+                        var textWidth = (int)(paint.MeasureText(krisPin.Label));
+                        var textHeight = (int)(baseline + paint.Descent());
+                        //var textBitmap = Bitmap.CreateBitmap(width, height, Bitmap.Config.Argb8888);
+                        //var canvas = new Canvas(textBitmap);
+                        //canvas.DrawRGB(255, 0, 0);
+                        //canvas.DrawText(krisPin.Label, 0, baseline, paint);
+
+                        // Image
+                        var imageFile = new File(Context.CacheDir, krisPin.ImageName);
+                        var imageBitmap = BitmapFactory.DecodeFile(imageFile.AbsolutePath);
+
+                        // Combine
+                        var finalHeight = textHeight + imageBitmap.Height;
+                        var finalWidth = System.Math.Max(textWidth, imageBitmap.Width);
+                        var imageLeft = (finalWidth / 2) - (imageBitmap.Width / 2);
+                        var finalBitmap = Bitmap.CreateBitmap(finalWidth, finalHeight, Bitmap.Config.Argb8888);
+                        var canvas = new Canvas(finalBitmap);
+                        canvas.DrawRGB(200, 200, 200);
+                        //var scaleMatrix = new Matrix();
+                        //scaleMatrix.SetScale(1.2f, 1.2f);
+                        //canvas.DrawBitmap(imageBitmap, scaleMatrix, null);
+                        canvas.DrawText(krisPin.Label, 0, baseline, paint);
+                        canvas.DrawBitmap(imageBitmap, imageLeft, textHeight, null);
+
+                        var finalBitmapDesc = BitmapDescriptorFactory.FromBitmap(finalBitmap);
+                        markerOption.SetIcon(finalBitmapDesc);
+                    }
+                    else
+                    {
+                        var labelView = new Label { Text = krisPin.Label, TextColor = Microsoft.Maui.Graphics.Color.FromRgb(0,0,0) };
+                        var labelNative = labelView.ToPlatform(MauiContext);
+                        var labelBitmapDesc = BitmapUtilities.ConvertViewToBitmapDescriptor(labelNative);
+                        markerOption.SetIcon(labelBitmapDesc);
                     }
 
                     var marker = NativeMap.AddMarker(markerOption);

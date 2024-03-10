@@ -13,4 +13,5 @@ public sealed class KrisMapPinViewModel
     public KrisPinType KrisPinType { get; set; }
     public ImageSource ImageSource { get; set; }
     public string ImageName { get; set; }
+    public Func<View> View { get; set; }
 }

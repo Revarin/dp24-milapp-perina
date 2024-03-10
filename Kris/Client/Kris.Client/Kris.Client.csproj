@@ -94,6 +94,9 @@
 	  <MauiXaml Update="Components\Items\SessionItem.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Components\Map\KrisPin.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Components\Popups\CreateMapPointPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

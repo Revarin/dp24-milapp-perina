@@ -1,4 +1,5 @@
 ﻿using Kris.Client.Common.Enums;
+using Kris.Client.Components.Map;
 using Kris.Client.Core.Models;
 using Kris.Client.Data.Cache;
 using Kris.Client.ViewModels.Views;
@@ -26,8 +27,8 @@ public sealed class KrisMapObjectFactory : IKrisMapObjectFactory
             TimeStamp = DateTime.Now,
             Location = location,
             KrisPinType = KrisPinType.Self,
-            ImageSource = ImageSource.FromFile("point_green.png"),
-            ImageName = "point_green.png"
+            ImageName = "point_green.png",
+            View = () => new KrisPin(userName, "point_green.png", false)
         };
         return pin;
     }
@@ -42,8 +43,8 @@ public sealed class KrisMapObjectFactory : IKrisMapObjectFactory
             TimeStamp = userPosition.Updated,
             Location = userPosition.Positions.First(),
             KrisPinType = KrisPinType.User,
-            ImageSource = ImageSource.FromFile("point_blue.png"),
-            ImageName = "point_blue.png"
+            ImageName = "point_blue.png",
+            View = () => new KrisPin(userPosition.UserName, "point_blue.png", false)
         };
         return pin;
     }
@@ -68,8 +69,8 @@ public sealed class KrisMapObjectFactory : IKrisMapObjectFactory
             Location = mapPoint.Location,
             Description = mapPoint.Description,
             KrisPinType = KrisPinType.Point,
-            ImageSource = _symbolImageCache.Load(symbolName),
-            ImageName = symbolName
+            ImageName = symbolName,
+            View = () => new KrisPin(mapPoint.Name, symbolName, true)
         };
         return pin;
     }
