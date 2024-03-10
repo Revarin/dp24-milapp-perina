@@ -1,7 +1,7 @@
 ﻿using Android.Graphics;
 using Android.Views;
 
-namespace Kris.Client.Platforms.Android.Utility;
+namespace Kris.Client.Platforms.Utility;
 
 // Source: Maui.GoogleMaps
 public static class BitmapUtilities

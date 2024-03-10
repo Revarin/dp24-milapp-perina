@@ -57,16 +57,14 @@
                 </DataTemplate>
             </cmpMap:KrisMap.ItemTemplate>-->
             <cmpMap:KrisMap.ItemTemplate>
-                <DataTemplate x:DataType="{x:Type cmpMap:KrisMPin}">
-                    <cmpMap:KrisMPin x:DataType="vm:KrisMapPinViewModel"
+                <DataTemplate x:DataType="{x:Type cmpMap:KrisMapPin}">
+                    <cmpMap:KrisMapPin x:DataType="vm:KrisMapPinViewModel"
                                      Label="{Binding Name}"
                                      Location="{Binding Location}"
                                      KrisId="{Binding Id}"
                                      KrisType="{Binding KrisPinType}"
-                                     ImageSource="{Binding ImageSource}"
-                                     ImageName="{Binding ImageName}"
-                                     View="{Binding View}">
-                    </cmpMap:KrisMPin>
+                                     ImageName="{Binding ImageName}">
+                    </cmpMap:KrisMapPin>
                 </DataTemplate>
             </cmpMap:KrisMap.ItemTemplate>
         </cmpMap:KrisMap>

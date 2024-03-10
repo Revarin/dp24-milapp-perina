@@ -187,50 +187,51 @@ public sealed partial class MapViewModel : PageViewModelBase
 
     private async Task ShowEditMapPointPopupAsync(KrisMapPin pin)
     {
-        var query = new GetCurrentUserQuery();
-        var currentUser = await _mediator.Send(query, CancellationToken.None);
-        if (currentUser == null || !currentUser.SessionId.HasValue || !currentUser.UserType.HasValue)
-        {
-            await _alertService.ShowToastAsync("Invalid user data");
-            await LogoutUser();
-        }
+        throw new NotImplementedException();
+        //var query = new GetCurrentUserQuery();
+        //var currentUser = await _mediator.Send(query, CancellationToken.None);
+        //if (currentUser == null || !currentUser.SessionId.HasValue || !currentUser.UserType.HasValue)
+        //{
+        //    await _alertService.ShowToastAsync("Invalid user data");
+        //    await LogoutUser();
+        //}
 
-        var resultArgs = await _popupService.ShowPopupAsync<EditMapPointPopupViewModel>(vm =>
-        {
-            vm.Initialize(currentUser, pin);
-        });
-        if (resultArgs == null) return;
+        //var resultArgs = await _popupService.ShowPopupAsync<EditMapPointPopupViewModel>(vm =>
+        //{
+        //    vm.Initialize(currentUser, pin);
+        //});
+        //if (resultArgs == null) return;
 
-        if (resultArgs is UpdateResultEventArgs)
-        {
-            // TODO
-        }
-        else if (resultArgs is DeleteResultEventArgs)
-        {
-            var result = (resultArgs as DeleteResultEventArgs).Result;
-            if (result.IsFailed)
-            {
-                if (result.HasError<UnauthorizedError>())
-                {
-                    await _alertService.ShowToastAsync("Login expired");
-                    await LogoutUser();
-                }
-                else if (result.HasError<EntityNotFoundError>())
-                {
-                    await _alertService.ShowToastAsync("Point not found");
-                }
-                else
-                {
-                    await _alertService.ShowToastAsync(result.Errors.FirstMessage());
-                }
-            }
-            else
-            {
-                await _alertService.ShowToastAsync("Point deleted");
-                var pinToRemove = AllMapPins.FirstOrDefault(p => p.Id == pin.KrisId);
-                AllMapPins.Remove(pinToRemove);
-            }
-        }
+        //if (resultArgs is UpdateResultEventArgs)
+        //{
+        //    // TODO
+        //}
+        //else if (resultArgs is DeleteResultEventArgs)
+        //{
+        //    var result = (resultArgs as DeleteResultEventArgs).Result;
+        //    if (result.IsFailed)
+        //    {
+        //        if (result.HasError<UnauthorizedError>())
+        //        {
+        //            await _alertService.ShowToastAsync("Login expired");
+        //            await LogoutUser();
+        //        }
+        //        else if (result.HasError<EntityNotFoundError>())
+        //        {
+        //            await _alertService.ShowToastAsync("Point not found");
+        //        }
+        //        else
+        //        {
+        //            await _alertService.ShowToastAsync(result.Errors.FirstMessage());
+        //        }
+        //    }
+        //    else
+        //    {
+        //        await _alertService.ShowToastAsync("Point deleted");
+        //        var pinToRemove = AllMapPins.FirstOrDefault(p => p.Id == pin.KrisId);
+        //        AllMapPins.Remove(pinToRemove);
+        //    }
+        //}
     }
 
     private void AddCurrentUserPositionToMap(Guid userId, string userName, Location location)

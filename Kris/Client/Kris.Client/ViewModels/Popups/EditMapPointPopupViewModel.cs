@@ -72,13 +72,14 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
     public void Initialize(CurrentUserModel user, KrisMapPin pin)
     {
         // TODO: Rework
-        UserType = user.UserType.Value;
-        IsCreator = user.Id == pin.CreatorId;
+        throw new NotImplementedException();
+        //UserType = user.UserType.Value;
+        //IsCreator = user.Id == pin.CreatorId;
 
-        PointId = pin.KrisId;
-        PointName = pin.Label;
-        Location = pin.Location;
-        Description = pin.Description;
+        //PointId = pin.KrisId;
+        //PointName = pin.Label;
+        //Location = pin.Location;
+        //Description = pin.Description;
     }
 
     // HANDLERS
