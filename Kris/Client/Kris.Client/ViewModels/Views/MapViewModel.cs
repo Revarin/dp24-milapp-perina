@@ -161,7 +161,7 @@ public sealed partial class MapViewModel : PageViewModelBase
         var resultEventArgs = await _popupService.ShowPopupAsync<CreateMapPointPopupViewModel>(vm =>
         {
             vm.Location = location;
-        }) as ResultEventArgs<MapPointModel>;
+        }) as ResultEventArgs<MapPointListModel>;
         if (resultEventArgs == null) return;
 
         var result = resultEventArgs.Result;
@@ -248,7 +248,7 @@ public sealed partial class MapViewModel : PageViewModelBase
         AllMapPins = userPins.UnionBy(AllMapPins, pin => pin.Id).ToObservableCollection();
     }
 
-    private void AddMapObjectsToMap(IEnumerable<MapPointModel> mapPoints)
+    private void AddMapObjectsToMap(IEnumerable<MapPointListModel> mapPoints)
     {
         var pointPins = mapPoints.Select(_krisMapObjectFactory.CreateMapPoint);
         AllMapPins = pointPins.UnionBy(AllMapPins, pin => pin.Id).ToObservableCollection();

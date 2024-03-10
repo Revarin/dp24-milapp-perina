@@ -5,5 +5,6 @@ namespace Kris.Server.Core.Mappers;
 
 public interface IMapObjectMapper
 {
-    MapPointModel MapPoint(MapPointEntity entity);
+    MapPointListModel MapPointList(MapPointEntity entity);
+    MapPointDetailModel MapPointDetail(MapPointEntity entity);
 }

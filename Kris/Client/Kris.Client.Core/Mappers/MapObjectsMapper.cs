@@ -3,13 +3,12 @@ namespace Kris.Client.Core.Mappers;
 
 public sealed class MapObjectsMapper : IMapObjectsMapper
 {
-    public Models.MapPointModel Map(Interface.Models.MapPointModel model)
+    public Models.MapPointListModel Map(Interface.Models.MapPointListModel model)
     {
-        return new Models.MapPointModel
+        return new Models.MapPointListModel
         {
             Id = model.Id,
             Name = model.Name,
-            Description = model.Description,
             Created = model.Created,
             Creator = new Models.UserListModel
             {

@@ -46,7 +46,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     [ObservableProperty]
     private ImageSource _image;
 
-    public event EventHandler<ResultEventArgs<MapPointModel>> CreatedClosing;
+    public event EventHandler<ResultEventArgs<MapPointListModel>> CreatedClosing;
 
     public CreateMapPointPopupViewModel(IMapPointSymbolDataProvider symbolDataProvider, ISymbolImageComposer symbolImageComposer,
         IMediator mediator)
@@ -103,11 +103,10 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
         var result = await _mediator.Send(command, ct);
 
         var returnResult = result.IsSuccess
-            ? Result.Ok(new MapPointModel
+            ? Result.Ok(new MapPointListModel
             {
                 Id = result.Value,
                 Name = PointName,
-                Description = Description,
                 Location = Location,
                 Symbol = new Kris.Common.Models.MapPointSymbol
                 {
@@ -119,6 +118,6 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
             })
             : Result.Fail(result.Errors);
 
-        CreatedClosing?.Invoke(this, new ResultEventArgs<MapPointModel>(returnResult));
+        CreatedClosing?.Invoke(this, new ResultEventArgs<MapPointListModel>(returnResult));
     }
 }

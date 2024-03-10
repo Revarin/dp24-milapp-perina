@@ -1,6 +1,7 @@
 ﻿using Kris.Client.Data.Cache;
 using Kris.Common.Extensions;
 using Kris.Interface.Controllers;
+using Kris.Interface.Models;
 using Kris.Interface.Requests;
 using Kris.Interface.Responses;
 using System.Web;
@@ -45,5 +46,10 @@ public sealed class MapObjectClient : ClientBase, IMapObjectController
 
         if (ct.IsCancellationRequested) ct.ThrowIfCancellationRequested();
         return result;
+    }
+
+    public Task<GetOneResponse<MapPointDetailModel>> GetMapPoint(Guid pointId, CancellationToken ct)
+    {
+        throw new NotImplementedException();
     }
 }

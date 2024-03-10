@@ -8,7 +8,6 @@ public sealed class KrisMapPinViewModel
     public Guid CreatorId { get; init; }
     public string CreatorName { get; set; }
     public string Name { get; set; }
-    public string Description { get; set; }
     public Location Location { get; set; }
     public DateTime TimeStamp { get; set; }
     public KrisPinType KrisPinType { get; set; }

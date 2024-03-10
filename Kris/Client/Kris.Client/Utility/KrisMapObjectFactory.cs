@@ -65,7 +65,7 @@ public sealed class KrisMapObjectFactory : IKrisMapObjectFactory
         return pin;
     }
 
-    public KrisMapPinViewModel CreateMapPoint(MapPointModel mapPoint)
+    public KrisMapPinViewModel CreateMapPoint(MapPointListModel mapPoint)
     {
         var symbol = mapPoint.Symbol;
         var symbolName = $"point_{symbol.Shape}_{symbol.Color}_{symbol.Sign}.png";
@@ -84,7 +84,6 @@ public sealed class KrisMapObjectFactory : IKrisMapObjectFactory
             CreatorName = mapPoint.Creator.Name,
             TimeStamp = mapPoint.Created,
             Location = mapPoint.Location,
-            Description = mapPoint.Description,
             KrisPinType = KrisPinType.Point,
             ImageName = symbolName
         };

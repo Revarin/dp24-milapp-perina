@@ -41,7 +41,7 @@ public sealed class MapObjectsBackgroundHandler : BackgroundHandler, IMapObjects
 
     }
 
-    private void OnMapObjectsChanged(IEnumerable<MapPointModel> mapPoints, DateTime loaded)
+    private void OnMapObjectsChanged(IEnumerable<MapPointListModel> mapPoints, DateTime loaded)
     {
         Application.Current.Dispatcher.Dispatch(() => MapObjectsChanged?.Invoke(this, new MapObjectsEventArgs(mapPoints, loaded)));
     }
