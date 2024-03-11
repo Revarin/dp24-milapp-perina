@@ -11,7 +11,9 @@ public sealed class MapPointRepository : RepositoryBase<MapPointEntity>, IMapPoi
 
     public Task<MapPointEntity?> GetWithUserAsync(Guid id, CancellationToken ct)
     {
-        return _context.MapPoints.Include(mapPoint => mapPoint.SessionUser)
+        return _context.MapPoints
+            .Include(mapPoint => mapPoint.SessionUser)
+            .ThenInclude(sessionUser => sessionUser!.User)
             .FirstOrDefaultAsync(mapPoint => mapPoint.Id == id, ct);
     }
 
@@ -22,7 +24,8 @@ public sealed class MapPointRepository : RepositoryBase<MapPointEntity>, IMapPoi
 
     public async Task<IEnumerable<MapPointEntity>> GetWithUsersAsync(Guid sessionId, DateTime from, CancellationToken ct)
     {
-        return await _context.MapPoints.Include(mapPoint => mapPoint.SessionUser)
+        return await _context.MapPoints
+            .Include(mapPoint => mapPoint.SessionUser)
             .ThenInclude(sessionUser => sessionUser!.User)
             .Where(mapPoint => mapPoint.SessionUser!.SessionId == sessionId
                 && mapPoint.Created > from)

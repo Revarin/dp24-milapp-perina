@@ -2,6 +2,7 @@
 using Kris.Client.Core.Models;
 using Kris.Client.Data.Cache;
 using Kris.Client.ViewModels.Views;
+using Kris.Common.Enums;
 
 namespace Kris.Client.Utility;
 
@@ -18,37 +19,53 @@ public sealed class KrisMapObjectFactory : IKrisMapObjectFactory
 
     public KrisMapPinViewModel CreateMyPositionPin(Guid userId, string userName, Location location)
     {
+        var symbolName = $"point_{MapPointSymbolShape.Circle}_{MapPointSymbolColor.Green}_{MapPointSymbolSign.None}.png";
+
+        if (!_symbolImageCache.Exists(symbolName))
+        {
+            var imageStream = _symbolImageComposer.ComposeMapPointSymbol(MapPointSymbolShape.Circle, MapPointSymbolColor.Green, MapPointSymbolSign.None);
+            _symbolImageCache.Save(symbolName, imageStream);
+        }
+
         var pin = new KrisMapPinViewModel
         {
             Id = userId,
-            CreatorId = userId,
             Name = userName,
+            CreatorId = userId,
+            CreatorName = userName,
             TimeStamp = DateTime.Now,
             Location = location,
             KrisPinType = KrisPinType.Self,
-            ImageSource = ImageSource.FromFile("point_green.png"),
-            ImageName = "point_green.png"
+            ImageName = symbolName
         };
         return pin;
     }
 
     public KrisMapPinViewModel CreateUserPositionPin(UserPositionModel userPosition)
     {
+        var symbolName = $"point_{MapPointSymbolShape.Circle}_{MapPointSymbolColor.Blue}_{MapPointSymbolSign.None}.png";
+
+        if (!_symbolImageCache.Exists(symbolName))
+        {
+            var imageStream = _symbolImageComposer.ComposeMapPointSymbol(MapPointSymbolShape.Circle, MapPointSymbolColor.Blue, MapPointSymbolSign.None);
+            _symbolImageCache.Save(symbolName, imageStream);
+        }
+
         var pin = new KrisMapPinViewModel
         {
             Id = userPosition.UserId,
-            CreatorId = userPosition.UserId,
             Name = userPosition.UserName,
+            CreatorId = userPosition.UserId,
+            CreatorName = userPosition.UserName,
             TimeStamp = userPosition.Updated,
             Location = userPosition.Positions.First(),
             KrisPinType = KrisPinType.User,
-            ImageSource = ImageSource.FromFile("point_blue.png"),
-            ImageName = "point_blue.png"
+            ImageName = symbolName
         };
         return pin;
     }
 
-    public KrisMapPinViewModel CreateMapPoint(MapPointModel mapPoint)
+    public KrisMapPinViewModel CreateMapPoint(MapPointListModel mapPoint)
     {
         var symbol = mapPoint.Symbol;
         var symbolName = $"point_{symbol.Shape}_{symbol.Color}_{symbol.Sign}.png";
@@ -62,13 +79,12 @@ public sealed class KrisMapObjectFactory : IKrisMapObjectFactory
         var pin = new KrisMapPinViewModel
         {
             Id = mapPoint.Id,
-            CreatorId = mapPoint.Creator.Id,
             Name = mapPoint.Name,
+            CreatorId = mapPoint.Creator.Id,
+            CreatorName = mapPoint.Creator.Name,
             TimeStamp = mapPoint.Created,
             Location = mapPoint.Location,
-            Description = mapPoint.Description,
             KrisPinType = KrisPinType.Point,
-            ImageSource = _symbolImageCache.Load(symbolName),
             ImageName = symbolName
         };
         return pin;

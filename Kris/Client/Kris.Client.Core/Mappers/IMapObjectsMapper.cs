@@ -1,9 +1,12 @@
-﻿using InterfaceMapPointModel = Kris.Interface.Models.MapPointModel;
-using ClientMapPointModel = Kris.Client.Core.Models.MapPointModel;
+﻿using InterfaceMapPointListModel = Kris.Interface.Models.MapPointListModel;
+using InterfaceMapPointDetailModel = Kris.Interface.Models.MapPointDetailModel;
+using ClientMapPointListModel = Kris.Client.Core.Models.MapPointListModel;
+using ClientMapPointDetailModel = Kris.Client.Core.Models.MapPointDetailModel;
 
 namespace Kris.Client.Core.Mappers;
 
 public interface IMapObjectsMapper
 {
-    ClientMapPointModel Map(InterfaceMapPointModel model);
+    ClientMapPointListModel MapPoint(InterfaceMapPointListModel model);
+    ClientMapPointDetailModel MapPoint(InterfaceMapPointDetailModel model);
 }

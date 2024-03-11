@@ -1,5 +1,6 @@
 ﻿using Kris.Common.Extensions;
 using Kris.Interface.Controllers;
+using Kris.Interface.Models;
 using Kris.Interface.Requests;
 using Kris.Interface.Responses;
 using Kris.Server.Common.Errors;
@@ -110,5 +111,29 @@ public sealed class MapObjectController : KrisController, IMapObjectController
         }
 
         return Response.Ok();
+    }
+
+    [HttpGet("Point/{pointId:guid}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<GetOneResponse<MapPointDetailModel>?> GetMapPoint(Guid pointId, CancellationToken ct)
+    {
+        var user = CurrentUser();
+        if (user == null) return Response.Unauthorized<GetOneResponse<MapPointDetailModel>>();
+
+        var query = new GetMapPointQuery { User = user, PointId = pointId };
+        var result = await _mediator.Send(query, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<GetOneResponse<MapPointDetailModel>>(result.Errors.FirstMessage());
+            else if (result.HasError<EntityNotFoundError>()) return Response.NotFound<GetOneResponse<MapPointDetailModel>>(result.Errors.FirstMessage());
+            else return Response.InternalError<GetOneResponse<MapPointDetailModel>>();
+        }
+
+        return Response.Ok(new GetOneResponse<MapPointDetailModel>(result.Value));
     }
 }

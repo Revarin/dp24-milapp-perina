@@ -8,4 +8,5 @@ public interface IBackgroundHandler
     public event EventHandler<ResultEventArgs> ErrorOccured;
 
     Task ExecuteAsync(ConnectionSettingsEntity connectionSettings, UserIdentityEntity userIdentity, uint iteration, CancellationToken ct);
+    void ResetLastUpdate();
 }

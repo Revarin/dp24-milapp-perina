@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  mssql-server:
+    image: "mcr.microsoft.com/mssql/server:latest"
+    container_name: MSSQL-Server
+    user: root
+    ports:
+      - "1403:1433"
+    environment:
+      MSSQL_SA_PASSWORD: Gate2MsSql
+      ACCEPT_EULA: Y
+      MSSQL_PID: Express
+
+  kris.server:
+    image: ${DOCKER_REGISTRY-}krisserver
+    build:
+      context: .
+      dockerfile: Server/Kris.Server/Dockerfile
+    container_name: KrisServer
+    depends_on:
+      - mssql-server
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:7000;http://+:5000
+      - CONNECTIONSTRINGS__DEFAULTCONNECTION=Data Source=mssql-server,1433;User ID=master;Password=Gate2MsSql;Initial Catalog=kris;TrustServerCertificate=true
+      - APPSETTINGS__APIKEY=VerySecretAPIKey
+      - APPSETTINGS__SIGNALRKEEPALIVESECONDS=60
+      - JWT__KEY=VerySecretJWTKey001ThatMustNotBeUsedInProduction
+      - JWT__EXPIRATIONMINUTES=300
+      - JWT__ISSUER=Kris
+    ports:
+      - "5000:5000"
+      - "7000:7000"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro

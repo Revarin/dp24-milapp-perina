@@ -8,3 +8,10 @@ public sealed class UpdateResultEventArgs : ResultEventArgs
     {
     }
 }
+
+public sealed class UpdateResultEventArgs<T> : ResultEventArgs<T>
+{
+    public UpdateResultEventArgs(Result<T> result) : base(result)
+    {
+    }
+}

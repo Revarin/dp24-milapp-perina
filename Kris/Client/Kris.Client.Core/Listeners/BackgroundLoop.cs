@@ -37,19 +37,26 @@ public sealed class BackgroundLoop : IBackgroundLoop
         _identityStore = identityStore;
     }
 
-    public void RegisterService(IBackgroundHandler service)
+    public void RegisterHandler(IBackgroundHandler handler)
     {
-        handlers.Add(service);
+        handlers.Add(handler);
     }
 
-    public void UnregisterService(IBackgroundHandler service)
+    public void UnregisterHandler(IBackgroundHandler handler)
     {
-        handlers.Remove(service);
+        handler.ResetLastUpdate();
+        handlers.Remove(handler);
     }
 
-    public void ClearServices()
+    public void ClearHandlers()
     {
+        handlers.ForEach(h => h.ResetLastUpdate());
         handlers.Clear();
+    }
+
+    public void ResetHandlers()
+    {
+        handlers.ForEach(h => h.ResetLastUpdate());
     }
 
     public Task Start(CancellationToken ct)

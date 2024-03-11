@@ -1,8 +1,8 @@
 ﻿using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
-using Android.Graphics.Drawables;
 using Kris.Client.Platforms.Callbacks;
 using Kris.Client.Platforms.Listeners;
+using Kris.Client.Platforms.Utility;
 using Microsoft.Maui.Maps;
 using Microsoft.Maui.Maps.Handlers;
 using Microsoft.Maui.Platform;
@@ -68,20 +68,11 @@ public partial class KrisMapHandler
             if (pinHandler is IMapPinHandler mapPinHandler)
             {
                 var markerOption = mapPinHandler.PlatformView;
-                if (pin is KrisMapPin cp)
+                if (pin is IKrisMapPin krisPin)
                 {
-                    if (cp.ImageSource != null)
-                    {
-                        cp.ImageSource.LoadImage(MauiContext, result =>
-                        {
-                            if (result?.Value is BitmapDrawable bitmapDrawable)
-                            {
-                                // Performance?
-                                //var scaledBitmap = Bitmap.CreateScaledBitmap(bitmapDrawable.Bitmap, 200, 200, true);
-                                markerOption.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmapDrawable.Bitmap));
-                            }
-                        });
-                    }
+                    var bitmap = PinIconDrawer.DrawImageWithLabel(krisPin.ImageName, krisPin.Label, Context);
+                    var bitmapDesc = BitmapDescriptorFactory.FromBitmap(bitmap);
+                    markerOption.SetIcon(bitmapDesc);
 
                     var marker = NativeMap.AddMarker(markerOption);
                     pin.MarkerId = marker.Id;

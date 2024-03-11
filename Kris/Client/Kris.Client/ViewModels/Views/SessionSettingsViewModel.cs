@@ -2,7 +2,6 @@
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FluentResults;
 using Kris.Client.Common.Enums;
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
@@ -121,9 +120,9 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
         else
         {
             await _alertService.ShowToastAsync("Session created");
+            _messageService.Send(new CurrentSessionChangedMessage());
             await OnAppearing();
         }
-
     }
 
     private async Task JoinSessionAsync(Guid sessionId)
