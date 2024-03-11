@@ -41,29 +41,15 @@
                 <tk:EventToCommandBehavior EventName="MapLongClicked" Command="{Binding MapLongClickedCommand}"
                                            x:TypeArguments="cmpEvent:MapLongClickedEventArgs" />
             </cmpMap:KrisMap.Behaviors>
-            <!--<cmpMap:KrisMap.ItemTemplate>
-                <DataTemplate x:DataType="{x:Type cmpMap:KrisMapPin}">
-                    <cmpMap:KrisMapPin x:DataType="vm:KrisMapPinViewModel"
-                                       KrisId="{Binding Id}"
-                                       CreatorId="{Binding }"
-                                       Label="{Binding Name}"
-                                       Location="{Binding Location}"
-                                       ImageSource="{Binding ImageSource}"
-                                       ImageName="{Binding ImageName}"
-                                       KrisType="{Binding KrisPinType}"
-                                       Description="{Binding Description}"
-                                       MarkerClicked="KrisMapPin_MarkerClicked">
-                    </cmpMap:KrisMapPin>
-                </DataTemplate>
-            </cmpMap:KrisMap.ItemTemplate>-->
             <cmpMap:KrisMap.ItemTemplate>
                 <DataTemplate x:DataType="{x:Type cmpMap:KrisMapPin}">
                     <cmpMap:KrisMapPin x:DataType="vm:KrisMapPinViewModel"
-                                     Label="{Binding Name}"
-                                     Location="{Binding Location}"
-                                     KrisId="{Binding Id}"
-                                     KrisType="{Binding KrisPinType}"
-                                     ImageName="{Binding ImageName}">
+                                       Label="{Binding Name}"
+                                       Location="{Binding Location}"
+                                       KrisId="{Binding Id}"
+                                       KrisType="{Binding KrisPinType}"
+                                       ImageName="{Binding ImageName}"
+                                       MarkerClicked="KrisMapPin_MarkerClicked">
                     </cmpMap:KrisMapPin>
                 </DataTemplate>
             </cmpMap:KrisMap.ItemTemplate>

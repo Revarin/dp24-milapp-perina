@@ -48,8 +48,10 @@ public sealed class MapObjectClient : ClientBase, IMapObjectController
         return result;
     }
 
-    public Task<GetOneResponse<MapPointDetailModel>> GetMapPoint(Guid pointId, CancellationToken ct)
+    public async Task<GetOneResponse<MapPointDetailModel>> GetMapPoint(Guid pointId, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var jwt = _identityStore.GetJwtToken();
+        using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await GetAsync<GetOneResponse<MapPointDetailModel>>(httpClient, $"Point/{pointId}", ct);
     }
 }

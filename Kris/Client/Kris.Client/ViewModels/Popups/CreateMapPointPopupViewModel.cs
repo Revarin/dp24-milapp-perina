@@ -19,6 +19,9 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     private readonly IMapPointSymbolDataProvider _symbolDataProvider;
     private readonly ISymbolImageComposer _symbolImageComposer;
 
+    public Guid CurrentUserId { get; set; }
+    public string CurrentUserName { get; set; }
+
     [Required]
     [ObservableProperty]
     private string _pointName;
@@ -67,6 +70,13 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     private async Task OnCreateButtonClicked() => await CreateMapPointAsync();
 
     // CORE
+    public void Setup(Guid userId, string userName, Location location)
+    {
+        CurrentUserId = userId;
+        CurrentUserName = userName;
+        Location = location;
+    }
+
     private void RedrawSymbol()
     {
         var pointShape = MapPointShapeSelectedItem?.Value;
@@ -107,6 +117,11 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
             {
                 Id = result.Value,
                 Name = PointName,
+                Creator = new UserListModel
+                {
+                    Id = CurrentUserId,
+                    Name = CurrentUserName
+                },
                 Location = Location,
                 Symbol = new Kris.Common.Models.MapPointSymbol
                 {

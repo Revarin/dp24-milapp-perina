@@ -10,6 +10,7 @@ public partial class EditMapPointPopup : Popup
 		BindingContext = vm;
 		InitializeComponent();
 		(BindingContext as EditMapPointPopupViewModel).CancelClosing += CancelClose;
+		(BindingContext as EditMapPointPopupViewModel).LoadErrorClosing += ReturnClose;
 		(BindingContext as EditMapPointPopupViewModel).DeletedClosing += ReturnClose;
 		(BindingContext as EditMapPointPopupViewModel).UpdatedClosing += ReturnClose;
         (BindingContext as EditMapPointPopupViewModel).Init();

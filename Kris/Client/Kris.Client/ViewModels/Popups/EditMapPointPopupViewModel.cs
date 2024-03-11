@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FluentResults;
 using Kris.Client.Common.Events;
 using Kris.Client.Components.Map;
 using Kris.Client.Core.Models;
@@ -21,11 +22,9 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
     private readonly ISymbolImageComposer _symbolImageComposer;
 
     public Guid PointId { get; set; }
-
-    [ObservableProperty]
-    private bool _isCreator;
-    [ObservableProperty]
-    private UserType _userType;
+    public Guid CurrentUserId { get; set; }
+    public string CurrentUserName { get; set; }
+    public UserType CurrentUserType { get; set; }
 
     [Required]
     [ObservableProperty]
@@ -34,6 +33,8 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
     private string _description;
     [ObservableProperty]
     private Location _location;
+    [ObservableProperty]
+    private DateTime _created;
 
     [ObservableProperty]
     private ObservableCollection<MapPointSymbolColorItem> _mapPointColorItems;
@@ -53,8 +54,11 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
 
     [ObservableProperty]
     private ImageSource _image;
+    [ObservableProperty]
+    private bool _canEdit;
 
-    public event EventHandler<UpdateResultEventArgs> UpdatedClosing;
+    public event EventHandler<LoadResultEventArgs<MapPointDetailModel>> LoadErrorClosing;
+    public event EventHandler<UpdateResultEventArgs<MapPointListModel>> UpdatedClosing;
     public event EventHandler<DeleteResultEventArgs> DeletedClosing;
 
     public EditMapPointPopupViewModel(IMapPointSymbolDataProvider mapPointSymbolDataProvider, ISymbolImageComposer symbolImageComposer,
@@ -69,19 +73,6 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
         _mapPointSignItems = _symbolDataProvider.GetMapPointSymbolSignItems().ToObservableCollection();
     }
 
-    public void Initialize(CurrentUserModel user, KrisMapPin pin)
-    {
-        // TODO: Rework
-        throw new NotImplementedException();
-        //UserType = user.UserType.Value;
-        //IsCreator = user.Id == pin.CreatorId;
-
-        //PointId = pin.KrisId;
-        //PointName = pin.Label;
-        //Location = pin.Location;
-        //Description = pin.Description;
-    }
-
     // HANDLERS
     [RelayCommand]
     private void OnSymbolComponentChanged() => RedrawSymbol();
@@ -91,6 +82,38 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
     private async Task OnDeleteButtonClicked() => await DeleteMapPointAsync();
 
     // CORE
+    public void Setup(Guid pointId, Guid currentUserId, string currentUserName, UserType currentUserType)
+    {
+        PointId = pointId;
+        CurrentUserId = currentUserId;
+        CurrentUserName = currentUserName;
+        CurrentUserType = currentUserType;
+    }
+
+    public async Task LoadMapPointDetailAsync()
+    {
+        var ct = new CancellationToken();
+        var query = new GetMapPointDetailQuery { PointId = PointId };
+        var result = await _mediator.Send(query, ct);
+
+        if (result.IsFailed)
+        {
+            LoadErrorClosing?.Invoke(this, new LoadResultEventArgs<MapPointDetailModel>(result));
+        }
+
+        var mapPoint = result.Value;
+
+        PointName = mapPoint.Name;
+        Description = mapPoint.Description;
+        Location = mapPoint.Location;
+        Created = mapPoint.Created;
+        MapPointShapeSelectedItem = MapPointShapeItems.FirstOrDefault(shape => shape.Value == mapPoint.Symbol.Shape);
+        MapPointColorSelectedItem = MapPointColorItems.FirstOrDefault(color => color.Value == mapPoint.Symbol.Color);
+        MapPointSignSelectedItem = MapPointSignItems.FirstOrDefault(sign => sign.Value == mapPoint.Symbol.Sign);
+
+        CanEdit = CurrentUserType >= UserType.Admin || mapPoint.Creator.Id == CurrentUserId;
+    }
+
     private void RedrawSymbol()
     {
         var pointShape = MapPointShapeSelectedItem?.Value;
@@ -118,7 +141,28 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
         };
         var result = await _mediator.Send(command, ct);
 
-        UpdatedClosing?.Invoke(this, new UpdateResultEventArgs(result));
+        var returnResult = result.IsSuccess
+            ? Result.Ok(new MapPointListModel
+            {
+                Id = PointId,
+                Name = PointName,
+                Creator = new UserListModel
+                {
+                    Id = CurrentUserId,
+                    Name = CurrentUserName
+                },
+                Location = Location,
+                Symbol = new Kris.Common.Models.MapPointSymbol
+                {
+                    Shape = MapPointShapeSelectedItem.Value,
+                    Color = MapPointColorSelectedItem.Value,
+                    Sign = MapPointSignSelectedItem.Value
+                },
+                Created = DateTime.MinValue
+            })
+            : result;
+
+        UpdatedClosing?.Invoke(this, new UpdateResultEventArgs<MapPointListModel>(returnResult));
     }
 
     private async Task DeleteMapPointAsync()

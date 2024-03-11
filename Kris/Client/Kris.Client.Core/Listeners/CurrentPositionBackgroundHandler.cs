@@ -69,6 +69,10 @@ public sealed class CurrentPositionBackgroundHandler : BackgroundHandler, ICurre
         }
     }
 
+    public override void ResetLastUpdate()
+    {
+    }
+
     private async Task AskForGpsPermissionAsync()
     {
         _permissionStatus = await _permissionService.CheckPermissionAsync<Permissions.LocationWhenInUse>();

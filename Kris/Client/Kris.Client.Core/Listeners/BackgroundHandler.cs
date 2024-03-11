@@ -10,6 +10,8 @@ public abstract class BackgroundHandler : IBackgroundHandler
 
     public abstract Task ExecuteAsync(ConnectionSettingsEntity connectionSettings, UserIdentityEntity userIdentity, uint iteration, CancellationToken ct);
 
+    public abstract void ResetLastUpdate();
+
     protected void OnErrorOccured(Result result)
     {
         Application.Current.Dispatcher.Dispatch(() => ErrorOccured?.Invoke(this, new ResultEventArgs(result)));

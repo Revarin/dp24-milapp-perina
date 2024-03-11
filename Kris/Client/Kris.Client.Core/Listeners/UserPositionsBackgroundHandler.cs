@@ -39,6 +39,10 @@ public sealed class UserPositionsBackgroundHandler : BackgroundHandler, IUserPos
         OnUserPositionsChanged(response.UserPositions.Select(_positionMapper.Map), response.Resolved);
         _lastUpdate = response.Resolved;
     }
+    public override void ResetLastUpdate()
+    {
+        _lastUpdate = DateTime.MinValue;
+    }
 
     private void OnUserPositionsChanged(IEnumerable<UserPositionModel> positions, DateTime loaded)
     {

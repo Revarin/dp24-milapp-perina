@@ -2,6 +2,7 @@
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Kris.Client.Common.Enums;
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
 using Kris.Client.Components.Events;
@@ -103,9 +104,9 @@ public sealed partial class MapViewModel : PageViewModelBase
             _userPositionsBackgroundHandler.ErrorOccured += OnBackgroundHandlerErrorOccured;
             _mapObjectsBackgroundHandler.ErrorOccured += OnBackgroundHandlerErrorOccured;
 
-            _backgroundLoop.RegisterService(_currentPositionBackgroundHandler);
-            _backgroundLoop.RegisterService(_userPositionsBackgroundHandler);
-            _backgroundLoop.RegisterService(_mapObjectsBackgroundHandler);
+            _backgroundLoop.RegisterHandler(_currentPositionBackgroundHandler);
+            _backgroundLoop.RegisterHandler(_userPositionsBackgroundHandler);
+            _backgroundLoop.RegisterHandler(_mapObjectsBackgroundHandler);
 
             _backgroundLoopCTS = new CancellationTokenSource();
             _backgroundLoopTask = _backgroundLoop.Start(_backgroundLoopCTS.Token);
@@ -160,7 +161,7 @@ public sealed partial class MapViewModel : PageViewModelBase
 
         var resultEventArgs = await _popupService.ShowPopupAsync<CreateMapPointPopupViewModel>(vm =>
         {
-            vm.Location = location;
+            vm.Setup(currentUser.Id, currentUser.Login, location);
         }) as ResultEventArgs<MapPointListModel>;
         if (resultEventArgs == null) return;
 
@@ -187,71 +188,112 @@ public sealed partial class MapViewModel : PageViewModelBase
 
     private async Task ShowEditMapPointPopupAsync(KrisMapPin pin)
     {
-        throw new NotImplementedException();
-        //var query = new GetCurrentUserQuery();
-        //var currentUser = await _mediator.Send(query, CancellationToken.None);
-        //if (currentUser == null || !currentUser.SessionId.HasValue || !currentUser.UserType.HasValue)
-        //{
-        //    await _alertService.ShowToastAsync("Invalid user data");
-        //    await LogoutUser();
-        //}
+        if (pin.KrisType != KrisPinType.Point) return;
 
-        //var resultArgs = await _popupService.ShowPopupAsync<EditMapPointPopupViewModel>(vm =>
-        //{
-        //    vm.Initialize(currentUser, pin);
-        //});
-        //if (resultArgs == null) return;
+        var query = new GetCurrentUserQuery();
+        var currentUser = await _mediator.Send(query, CancellationToken.None);
+        if (currentUser == null || !currentUser.SessionId.HasValue || !currentUser.UserType.HasValue)
+        {
+            await _alertService.ShowToastAsync("Invalid user data");
+            await LogoutUser();
+        }
 
-        //if (resultArgs is UpdateResultEventArgs)
-        //{
-        //    // TODO
-        //}
-        //else if (resultArgs is DeleteResultEventArgs)
-        //{
-        //    var result = (resultArgs as DeleteResultEventArgs).Result;
-        //    if (result.IsFailed)
-        //    {
-        //        if (result.HasError<UnauthorizedError>())
-        //        {
-        //            await _alertService.ShowToastAsync("Login expired");
-        //            await LogoutUser();
-        //        }
-        //        else if (result.HasError<EntityNotFoundError>())
-        //        {
-        //            await _alertService.ShowToastAsync("Point not found");
-        //        }
-        //        else
-        //        {
-        //            await _alertService.ShowToastAsync(result.Errors.FirstMessage());
-        //        }
-        //    }
-        //    else
-        //    {
-        //        await _alertService.ShowToastAsync("Point deleted");
-        //        var pinToRemove = AllMapPins.FirstOrDefault(p => p.Id == pin.KrisId);
-        //        AllMapPins.Remove(pinToRemove);
-        //    }
-        //}
+        var resultArgs = await _popupService.ShowPopupAsync<EditMapPointPopupViewModel>(async vm =>
+        {
+            vm.Setup(pin.KrisId, currentUser.Id, currentUser.Login, currentUser.UserType.Value);
+            await vm.LoadMapPointDetailAsync();
+        });
+        if (resultArgs == null) return;
+
+        if (resultArgs is LoadResultEventArgs<MapPointDetailModel>)
+        {
+            var result = (resultArgs as LoadResultEventArgs<MapPointDetailModel>).Result;
+            if (result.IsFailed)
+            {
+                if (result.HasError<UnauthorizedError>())
+                {
+                    await _alertService.ShowToastAsync("Login expired");
+                    await LogoutUser();
+                }
+                else
+                {
+                    await _alertService.ShowToastAsync(result.Errors.FirstMessage());
+                }
+            }
+        }
+        else if (resultArgs is UpdateResultEventArgs<MapPointListModel>)
+        {
+            var result = (resultArgs as UpdateResultEventArgs<MapPointListModel>).Result;
+            if (result.IsFailed)
+            {
+                if (result.HasError<UnauthorizedError>())
+                {
+                    await _alertService.ShowToastAsync("Login expired");
+                    await LogoutUser();
+                }
+                else if (result.HasError<EntityNotFoundError>())
+                {
+                    await _alertService.ShowToastAsync("Pin not found");
+                }
+                else
+                {
+                    await _alertService.ShowToastAsync(result.Errors.FirstMessage());
+                }
+            }
+            else
+            {
+                await _alertService.ShowToastAsync("Map point updated");
+                var pinToRemove = AllMapPins.FirstOrDefault(p => p.KrisPinType == KrisPinType.Point && p.Id == result.Value.Id);
+                AllMapPins.Remove(pinToRemove);
+                AllMapPins.Add(_krisMapObjectFactory.CreateMapPoint(result.Value));
+            }
+        }
+        else if (resultArgs is DeleteResultEventArgs)
+        {
+            var result = (resultArgs as DeleteResultEventArgs).Result;
+            if (result.IsFailed)
+            {
+                if (result.HasError<UnauthorizedError>())
+                {
+                    await _alertService.ShowToastAsync("Login expired");
+                    await LogoutUser();
+                }
+                else if (result.HasError<EntityNotFoundError>())
+                {
+                    await _alertService.ShowToastAsync("Point not found");
+                }
+                else
+                {
+                    await _alertService.ShowToastAsync(result.Errors.FirstMessage());
+                }
+            }
+            else
+            {
+                await _alertService.ShowToastAsync("Point deleted");
+                var pinToRemove = AllMapPins.FirstOrDefault(p => p.KrisPinType == KrisPinType.Point && p.Id == pin.KrisId);
+                AllMapPins.Remove(pinToRemove);
+            }
+        }
     }
 
     private void AddCurrentUserPositionToMap(Guid userId, string userName, Location location)
     {
         var userPin = _krisMapObjectFactory.CreateMyPositionPin(userId, userName, location);
-        var oldUserPin = AllMapPins.FirstOrDefault(p => p.Id == userId);
-        if (oldUserPin != null) AllMapPins.Remove(oldUserPin);
+        var oldUserPin = AllMapPins.FirstOrDefault(p => p.KrisPinType == KrisPinType.Self && p.Id == userId);
+        AllMapPins.Remove(oldUserPin);
         AllMapPins.Add(userPin);
     }
     
     private void AddOtherUserPositionsToMap(IEnumerable<UserPositionModel> userPositions)
     {
         var userPins = userPositions.Select(_krisMapObjectFactory.CreateUserPositionPin);
-        AllMapPins = userPins.UnionBy(AllMapPins, pin => pin.Id).ToObservableCollection();
+        AllMapPins = userPins.UnionBy(AllMapPins, pin => new { pin.Id, pin.KrisPinType }).ToObservableCollection();
     }
 
     private void AddMapObjectsToMap(IEnumerable<MapPointListModel> mapPoints)
     {
         var pointPins = mapPoints.Select(_krisMapObjectFactory.CreateMapPoint);
-        AllMapPins = pointPins.UnionBy(AllMapPins, pin => pin.Id).ToObservableCollection();
+        AllMapPins = pointPins.UnionBy(AllMapPins, pin => new { pin.Id, pin.KrisPinType }).ToObservableCollection();
     }
 
     private async Task ShowMessageNotification(string sender, string message)
@@ -304,7 +346,7 @@ public sealed partial class MapViewModel : PageViewModelBase
                 _userPositionsBackgroundHandler.ErrorOccured -= OnBackgroundHandlerErrorOccured;
                 _mapObjectsBackgroundHandler.ErrorOccured -= OnBackgroundHandlerErrorOccured;
 
-                _backgroundLoop.ClearServices();
+                _backgroundLoop.ClearHandlers();
                 _backgroundLoopCTS.Dispose();
             }
         }
@@ -326,6 +368,7 @@ public sealed partial class MapViewModel : PageViewModelBase
         if (message is CurrentSessionChangedMessage)
         {
             AllMapPins.Clear();
+            _backgroundLoop.ResetHandlers();
 
             await _messageReceiver.Disconnect();
             await _messageReceiver.Connect();

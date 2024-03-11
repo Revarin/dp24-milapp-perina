@@ -7,27 +7,14 @@
           x:Class="Kris.Client.Components.Popups.EditMapPointPopup"
           x:DataType="vm:EditMapPointPopupViewModel">
 
-    <tk:Popup.Resources>
-        <ResourceDictionary>
-            <tk:EnumToBoolConverter x:Key="UserTypeAdminConverter">
-                <tk:EnumToBoolConverter.TrueValues>
-                    <enum:UserType>SuperAdmin</enum:UserType>
-                    <enum:UserType>Admin</enum:UserType>
-                </tk:EnumToBoolConverter.TrueValues>
-            </tk:EnumToBoolConverter>
-            <tk:VariableMultiValueConverter x:Key="AnyMultiValueConverter"
-                                            ConditionType="Any">
-            </tk:VariableMultiValueConverter>
-        </ResourceDictionary>
-    </tk:Popup.Resources>
-
     <StackLayout Orientation="Vertical"
                  VerticalOptions="FillAndExpand">
 
         <StackLayout Orientation="Vertical">
             <Label Text="Name" />
             <Entry Placeholder="Name"
-                   Text="{Binding PointName}" />
+                   Text="{Binding PointName}"
+                   IsReadOnly="{Binding CanEdit, Converter={tk:InvertedBoolConverter}}"/>
             <Label Text="{Binding ErrorMessages[PointName]}"
                    IsVisible="{Binding ErrorMessages[PointName]}"
                    Style="{StaticResource errorMessageStyle}" />
@@ -56,10 +43,10 @@
         </StackLayout>
 
         <StackLayout Orientation="Horizontal"
-                     HorizontalOptions="FillAndExpand"
-                     IsVisible="False">
+                     HorizontalOptions="FillAndExpand">
             <StackLayout Orientation="Vertical"
-                         VerticalOptions="FillAndExpand">
+                         VerticalOptions="FillAndExpand"
+                         IsVisible="{Binding CanEdit}">
                 <Label Text="Map symbol" />
                 <Label Text="{Binding ErrorMessages[MapSymbol]}"
                        IsVisible="{Binding ErrorMessages[MapSymbol]}"
@@ -108,23 +95,19 @@
         <StackLayout Orientation="Vertical">
             <Label Text="Description" />
             <Editor Placeholder="Description..." Keyboard="Text"
-                    Text="{Binding Description}" />
+                    Text="{Binding Description}"
+                    IsReadOnly="{Binding CanEdit, Converter={tk:InvertedBoolConverter}}"/>
             <Label Text="{Binding ErrorMessages[Description]}"
                    IsVisible="{Binding ErrorMessages[Description]}"
                    Style="{StaticResource errorMessageStyle}" />
         </StackLayout>
 
         <Button Text="Delete"
-                HorizontalOptions="FillAndExpand">
+                HorizontalOptions="FillAndExpand"
+                IsVisible="{Binding CanEdit}">
             <Button.Behaviors>
                 <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding DeleteButtonClickedCommand}" />
             </Button.Behaviors>
-            <Button.IsVisible>
-                <MultiBinding Converter="{StaticResource AnyMultiValueConverter}">
-                    <Binding Path="UserType" Converter="{StaticResource UserTypeAdminConverter}" />
-                    <Binding Path="IsCreator"/>
-                </MultiBinding>
-            </Button.IsVisible>
         </Button>
 
         <StackLayout Orientation="Horizontal"
@@ -135,9 +118,9 @@
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CancelButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
-            <Button Text="Save (TODO)"
+            <Button Text="Save"
                     HorizontalOptions="FillAndExpand"
-                    IsEnabled="False">
+                    IsVisible="{Binding CanEdit}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SaveButtonClickedCommand}" />
                 </Button.Behaviors>

@@ -5,8 +5,9 @@ public interface IBackgroundLoop
     public bool IsRunning { get; }
     public bool ReloadSettings { get; set; }
 
-    void RegisterService(IBackgroundHandler service);
-    void UnregisterService(IBackgroundHandler service);
-    void ClearServices();
+    void RegisterHandler(IBackgroundHandler handler);
+    void UnregisterHandler(IBackgroundHandler handler);
+    void ClearHandlers();
+    void ResetHandlers();
     Task Start(CancellationToken ct);
 }
