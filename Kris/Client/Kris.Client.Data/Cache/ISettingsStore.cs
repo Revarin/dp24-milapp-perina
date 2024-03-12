@@ -6,4 +6,6 @@ public interface ISettingsStore
 {
     void StoreConnectionSettings(ConnectionSettingsEntity settings);
     ConnectionSettingsEntity GetConnectionSettings();
+    void StoreMapSettings(MapSettingsEntity settings);
+    MapSettingsEntity GetMapSettings();
 }

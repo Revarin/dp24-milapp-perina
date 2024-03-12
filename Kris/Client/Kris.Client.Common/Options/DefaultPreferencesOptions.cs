@@ -1,4 +1,5 @@
-﻿using Kris.Common;
+﻿using Kris.Client.Common.Enums;
+using Kris.Common;
 
 namespace Kris.Client.Common.Options;
 
@@ -10,4 +11,5 @@ public sealed class DefaultPreferencesOptions : IOptions
     public int PositionUploadFrequency { get; init; }
     public int PositionDownloadFrequency { get; init; }
     public int MapObjectDownloadFrequency { get; init; }
+    public CoordinateSystem CoordinateSystem { get; init; }
 }

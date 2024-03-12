@@ -75,6 +75,8 @@ namespace Kris.Client
             builder.Services.AddTransient<SessionSettingsViewModel>();
             builder.Services.AddTransient<UserSettingsView>();
             builder.Services.AddTransient<UserSettingsViewModel>();
+            builder.Services.AddTransient<MapSettingsView>();
+            builder.Services.AddTransient<MapSettingsViewModel>();
             builder.Services.AddTransient<ContactsView>();
             builder.Services.AddTransient<ContactsViewModel>();
             builder.Services.AddTransient<ChatView>();
@@ -115,6 +117,7 @@ namespace Kris.Client
 
             builder.Services.AddTransient<IConnectionSettingsDataProvider, ConnectionSettingsDataProvider>();
             builder.Services.AddTransient<IMapPointSymbolDataProvider, MapPointSymbolDataProvider>();
+            builder.Services.AddTransient<IMapSettingsDataProvider,  MapSettingsDataProvider>();
 
             builder.Services.AddSingleton<IHttpClientFactory, HttpClientFactory>();
             builder.Services.AddTransient<IUserController, UserClient>();

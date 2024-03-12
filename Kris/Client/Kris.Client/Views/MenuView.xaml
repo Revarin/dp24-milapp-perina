@@ -46,7 +46,10 @@
                 </Button.Behaviors>
             </Button>
             <Button Grid.Row="1" Grid.Column="1"
-                    Text="D">
+                    Text="Map settings">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MapSettingsButtonClickedCommand}" />
+                </Button.Behaviors>
             </Button>
             <Button Grid.Row="2" Grid.Column="0"
                     Text="E">
