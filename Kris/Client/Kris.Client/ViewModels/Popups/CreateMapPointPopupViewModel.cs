@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluentResults;
 using Kris.Client.Common.Events;
+using Kris.Client.Converters;
 using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Client.Data.Models.Picker;
@@ -16,6 +17,7 @@ namespace Kris.Client.ViewModels.Popups;
 
 public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
 {
+    private readonly IMapSettingsDataProvider _mapSettingsDataProvider;
     private readonly IMapPointSymbolDataProvider _symbolDataProvider;
     private readonly ISymbolImageComposer _symbolImageComposer;
 
@@ -28,7 +30,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     [ObservableProperty]
     private string _description;
     [ObservableProperty]
-    private Location _location;
+    private LocationCoordinates _locationCoordinates;
 
     [ObservableProperty]
     private ObservableCollection<MapPointSymbolColorItem> _mapPointColorItems;
@@ -51,16 +53,17 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
 
     public event EventHandler<ResultEventArgs<MapPointListModel>> CreatedClosing;
 
-    public CreateMapPointPopupViewModel(IMapPointSymbolDataProvider symbolDataProvider, ISymbolImageComposer symbolImageComposer,
-        IMediator mediator)
+    public CreateMapPointPopupViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IMapPointSymbolDataProvider symbolDataProvider,
+        ISymbolImageComposer symbolImageComposer, IMediator mediator)
         : base(mediator)
     {
+        _mapSettingsDataProvider = mapSettingsDataProvider;
         _symbolDataProvider = symbolDataProvider;
         _symbolImageComposer = symbolImageComposer;
 
-        _mapPointColorItems = _symbolDataProvider.GetMapPointSymbolColorItems().ToObservableCollection();
-        _mapPointShapeItems = _symbolDataProvider.GetMapPointSymbolShapeItems().ToObservableCollection();
-        _mapPointSignItems = _symbolDataProvider.GetMapPointSymbolSignItems().ToObservableCollection();
+        MapPointColorItems = _symbolDataProvider.GetMapPointSymbolColorItems().ToObservableCollection();
+        MapPointShapeItems = _symbolDataProvider.GetMapPointSymbolShapeItems().ToObservableCollection();
+        MapPointSignItems = _symbolDataProvider.GetMapPointSymbolSignItems().ToObservableCollection();
     }
 
     // HANDLERS
@@ -74,7 +77,11 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     {
         CurrentUserId = userId;
         CurrentUserName = userName;
-        Location = location;
+        LocationCoordinates = new LocationCoordinates
+        {
+            Location = location,
+            CoordinateSystem = _mapSettingsDataProvider.GetCurrentCoordinateSystem().Value
+        };
     }
 
     private void RedrawSymbol()
@@ -105,7 +112,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
         {
             Name = PointName,
             Description = Description,
-            Location = Location,
+            Location = LocationCoordinates.Location,
             Shape = MapPointShapeSelectedItem.Value,
             Color = MapPointColorSelectedItem.Value,
             Sign = MapPointSignSelectedItem.Value
@@ -122,7 +129,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
                     Id = CurrentUserId,
                     Name = CurrentUserName
                 },
-                Location = Location,
+                Location = LocationCoordinates.Location,
                 Symbol = new Kris.Common.Models.MapPointSymbol
                 {
                     Shape = MapPointShapeSelectedItem.Value,

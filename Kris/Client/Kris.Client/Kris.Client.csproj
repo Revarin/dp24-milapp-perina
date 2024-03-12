@@ -51,6 +51,7 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" />
 		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="CoordinateSharp" />
 		<PackageReference Include="FluentResults" />
 		<PackageReference Include="MediatR" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" />

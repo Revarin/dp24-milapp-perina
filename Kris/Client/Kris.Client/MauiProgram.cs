@@ -20,6 +20,7 @@ using Kris.Client.Components.Map;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using Kris.Client.Utility;
 using Kris.Client.Connection.Hubs;
+using CoordinateSharp;
 
 namespace Kris.Client
 {
@@ -133,6 +134,8 @@ namespace Kris.Client
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
+
+            GlobalSettings.Default_EagerLoad = new EagerLoad(EagerLoadType.UTM_MGRS);
 
             return builder.Build();
         }
