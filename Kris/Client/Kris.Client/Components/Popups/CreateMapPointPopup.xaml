@@ -23,10 +23,19 @@
                    Style="{StaticResource errorMessageStyle}" />
         </StackLayout>
 
-        <Label Text="{Binding LocationCoordinates, Converter={StaticResource LocationToCoordinates}}"
-               HorizontalOptions="FillAndExpand"
-               FontSize="Medium" FontAttributes="Bold" />
-
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand">
+            <Label Text="{Binding LocationCoordinates, Converter={StaticResource LocationToCoordinates}}"
+                   HorizontalOptions="FillAndExpand"
+                   FontAttributes="Bold" />
+            <Button Text="C"
+                    HorizontalOptions="End">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CoordinatesCopyButtonClickedCommand}" />
+                </Button.Behaviors>
+            </Button>
+        </StackLayout>
+        
         <StackLayout Orientation="Horizontal"
                      HorizontalOptions="FillAndExpand">
 

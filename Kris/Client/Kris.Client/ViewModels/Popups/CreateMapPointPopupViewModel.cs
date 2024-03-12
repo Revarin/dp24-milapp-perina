@@ -1,11 +1,14 @@
 ﻿using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CoordinateSharp;
 using FluentResults;
+using Kris.Client.Common.Enums;
 using Kris.Client.Common.Events;
 using Kris.Client.Converters;
 using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
+using Kris.Client.Core.Services;
 using Kris.Client.Data.Models.Picker;
 using Kris.Client.Data.Providers;
 using Kris.Client.Utility;
@@ -20,6 +23,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     private readonly IMapSettingsDataProvider _mapSettingsDataProvider;
     private readonly IMapPointSymbolDataProvider _symbolDataProvider;
     private readonly ISymbolImageComposer _symbolImageComposer;
+    private readonly IClipboardService _clipboardService;
 
     public Guid CurrentUserId { get; set; }
     public string CurrentUserName { get; set; }
@@ -54,12 +58,13 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     public event EventHandler<ResultEventArgs<MapPointListModel>> CreatedClosing;
 
     public CreateMapPointPopupViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IMapPointSymbolDataProvider symbolDataProvider,
-        ISymbolImageComposer symbolImageComposer, IMediator mediator)
+        ISymbolImageComposer symbolImageComposer, IClipboardService clipboardService, IMediator mediator)
         : base(mediator)
     {
         _mapSettingsDataProvider = mapSettingsDataProvider;
         _symbolDataProvider = symbolDataProvider;
         _symbolImageComposer = symbolImageComposer;
+        _clipboardService = clipboardService;
 
         MapPointColorItems = _symbolDataProvider.GetMapPointSymbolColorItems().ToObservableCollection();
         MapPointShapeItems = _symbolDataProvider.GetMapPointSymbolShapeItems().ToObservableCollection();
@@ -69,6 +74,8 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     // HANDLERS
     [RelayCommand]
     private void OnSymbolComponentChanged() => RedrawSymbol();
+    [RelayCommand]
+    private async Task OnCoordinatesCopyButtonClicked() => await SaveLocationCoordinatesToClipboardAsync();
     [RelayCommand]
     private async Task OnCreateButtonClicked() => await CreateMapPointAsync();
 
@@ -82,6 +89,28 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
             Location = location,
             CoordinateSystem = _mapSettingsDataProvider.GetCurrentCoordinateSystem().Value
         };
+    }
+
+    private async Task SaveLocationCoordinatesToClipboardAsync()
+    {
+        var coordinate = new Coordinate(LocationCoordinates.Location.Latitude, LocationCoordinates.Location.Longitude);
+        string coordinateString;
+
+        switch (LocationCoordinates.CoordinateSystem)
+        {
+            case CoordinateSystem.LatLong:
+                coordinateString = coordinate.ToString();
+                break;
+            case CoordinateSystem.UTM:
+                coordinateString = coordinate.UTM.ToString();
+                break;
+            case CoordinateSystem.MGRS:
+            default:
+                coordinateString = coordinate.MGRS.ToString();
+                break;
+        }
+
+        await _clipboardService.SetAsync(coordinateString);
     }
 
     private void RedrawSymbol()
