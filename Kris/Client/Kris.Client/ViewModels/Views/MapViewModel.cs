@@ -9,12 +9,14 @@ using Kris.Client.Components.Events;
 using Kris.Client.Components.Map;
 using Kris.Client.Connection.Hubs;
 using Kris.Client.Connection.Hubs.Events;
+using Kris.Client.Converters;
 using Kris.Client.Core.Listeners;
 using Kris.Client.Core.Listeners.Events;
 using Kris.Client.Core.Messages;
 using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
+using Kris.Client.Data.Providers;
 using Kris.Client.Utility;
 using Kris.Client.ViewModels.Popups;
 using Kris.Client.Views;
@@ -28,6 +30,7 @@ namespace Kris.Client.ViewModels.Views;
 
 public sealed partial class MapViewModel : PageViewModelBase
 {
+    private readonly IMapSettingsDataProvider _mapSettingsDataProvider;
     private readonly IPopupService _popupService;
     private readonly IKrisMapObjectFactory _krisMapObjectFactory;
     private readonly IBackgroundLoop _backgroundLoop;
@@ -40,6 +43,8 @@ public sealed partial class MapViewModel : PageViewModelBase
     private MapSpan _currentRegion;
     [ObservableProperty]
     private MoveToRegionRequest _moveToRegion = new MoveToRegionRequest();
+    [ObservableProperty]
+    private LocationCoordinates _currentPosition;
 
     [ObservableProperty]
     private ObservableCollection<KrisMapPinViewModel> _allMapPins = new ObservableCollection<KrisMapPinViewModel>();
@@ -47,12 +52,14 @@ public sealed partial class MapViewModel : PageViewModelBase
     private CancellationTokenSource _backgroundLoopCTS;
     private Task _backgroundLoopTask;
 
-    public MapViewModel(IPopupService popupService, IKrisMapObjectFactory krisMapObjectFactory, IBackgroundLoop backgroundLoop,
+    public MapViewModel(IMapSettingsDataProvider mapSettingsDataProvider,
+        IPopupService popupService, IKrisMapObjectFactory krisMapObjectFactory, IBackgroundLoop backgroundLoop,
         ICurrentPositionBackgroundHandler currentPositionBackgroundHandler, IUserPositionsBackgroundHandler userPositionsBackgroundHandler,
         IMapObjectsBackgroundHandler mapObjectsBackgroundHandler, IMessageReceiver messageReceiver,
         IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
         : base(mediator, navigationService, messageService, alertService)
     {
+        _mapSettingsDataProvider = mapSettingsDataProvider;
         _popupService = popupService;
         _krisMapObjectFactory = krisMapObjectFactory;
         _backgroundLoop = backgroundLoop;
@@ -278,6 +285,12 @@ public sealed partial class MapViewModel : PageViewModelBase
 
     private void AddCurrentUserPositionToMap(Guid userId, string userName, Location location)
     {
+        CurrentPosition = new LocationCoordinates
+        {
+            CoordinateSystem = _mapSettingsDataProvider.GetCurrentCoordinateSystem().Value,
+            Location = location
+        };
+
         var userPin = _krisMapObjectFactory.CreateMyPositionPin(userId, userName, location);
         var oldUserPin = AllMapPins.FirstOrDefault(p => p.KrisPinType == KrisPinType.Self && p.Id == userId);
         AllMapPins.Remove(oldUserPin);
