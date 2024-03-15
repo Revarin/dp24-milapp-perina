@@ -4,6 +4,7 @@
              xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
              xmlns:vm="clr-namespace:Kris.Client.ViewModels.Views"
+             xmlns:conv="clr-namespace:Kris.Client.Converters"
              xmlns:cmpMap="clr-namespace:Kris.Client.Components.Map"
              xmlns:cmpEvent="clr-namespace:Kris.Client.Components.Events"
              x:Class="Kris.Client.Views.MapView"
@@ -13,6 +14,10 @@
         <tk:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}" />
     </ContentPage.Behaviors>
     
+    <ContentPage.Resources>
+        <conv:LocationToCoordinatesConverter x:Key="LocationToCoordinates" />
+    </ContentPage.Resources>
+
     <StackLayout Orientation="Vertical"
                  VerticalOptions="FillAndExpand">
         <StackLayout Orientation="Horizontal"
@@ -31,30 +36,40 @@
             </Button>
         </StackLayout>
 
-        <cmpMap:KrisMap VerticalOptions="FillAndExpand"
-                        MapType="Street" IsZoomEnabled="True"
-                        ItemsSource="{Binding AllMapPins}"
-                        CurrentRegion="{Binding CurrentRegion}"
-                        MoveToRegionRequest="{Binding MoveToRegion}" >
-            <cmpMap:KrisMap.Behaviors>
-                <tk:EventToCommandBehavior EventName="Loaded" Command="{Binding MapLoadedCommand}" />
-                <tk:EventToCommandBehavior EventName="MapLongClicked" Command="{Binding MapLongClickedCommand}"
-                                           x:TypeArguments="cmpEvent:MapLongClickedEventArgs" />
-            </cmpMap:KrisMap.Behaviors>
-            <cmpMap:KrisMap.ItemTemplate>
-                <DataTemplate x:DataType="{x:Type cmpMap:KrisMapPin}">
-                    <cmpMap:KrisMapPin x:DataType="vm:KrisMapPinViewModel"
-                                       Label="{Binding Name}"
-                                       Location="{Binding Location}"
-                                       KrisId="{Binding Id}"
-                                       KrisType="{Binding KrisPinType}"
-                                       ImageName="{Binding ImageName}"
-                                       MarkerClicked="KrisMapPin_MarkerClicked">
-                    </cmpMap:KrisMapPin>
-                </DataTemplate>
-            </cmpMap:KrisMap.ItemTemplate>
-        </cmpMap:KrisMap>
+        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+            <cmpMap:KrisMap VerticalOptions="FillAndExpand"
+                            MapType="Street" IsZoomEnabled="True"
+                            KrisMapStyle="{Binding MapStyle}"
+                            ItemsSource="{Binding AllMapPins}"
+                            CurrentRegion="{Binding CurrentRegion}"
+                            MoveToRegionRequest="{Binding MoveToRegion}" >
+                <cmpMap:KrisMap.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Loaded" Command="{Binding MapLoadedCommand}" />
+                    <tk:EventToCommandBehavior EventName="MapLongClicked" Command="{Binding MapLongClickedCommand}"
+                                               x:TypeArguments="cmpEvent:MapLongClickedEventArgs" />
+                </cmpMap:KrisMap.Behaviors>
+                <cmpMap:KrisMap.ItemTemplate>
+                    <DataTemplate x:DataType="{x:Type cmpMap:KrisMapPin}">
+                        <cmpMap:KrisMapPin x:DataType="vm:KrisMapPinViewModel"
+                                           Label="{Binding Name}"
+                                           Location="{Binding Location}"
+                                           KrisId="{Binding Id}"
+                                           KrisType="{Binding KrisPinType}"
+                                           ImageName="{Binding ImageName}"
+                                           MarkerClicked="KrisMapPin_MarkerClicked">
+                        </cmpMap:KrisMapPin>
+                    </DataTemplate>
+                </cmpMap:KrisMap.ItemTemplate>
+            </cmpMap:KrisMap>
 
+            <StackLayout Orientation="Vertical"
+                         HorizontalOptions="Start"
+                         VerticalOptions="Start">
+                <Label Text="{Binding CurrentPosition, Converter={StaticResource LocationToCoordinates}}" TextColor="WhiteSmoke"
+                       FontSize="Medium" FontAttributes="Bold" />
+            </StackLayout>
+        </Grid>
+            
         <StackLayout Orientation="Horizontal"
                      HorizontalOptions="FillAndExpand"
                      VerticalOptions="End">

@@ -16,9 +16,10 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
     private readonly ISettingsStore _settingsStore;
     private readonly ISettingsMapper _settingsMapper;
     private readonly IConnectionSettingsDataProvider _userSettingsDataProvider;
+    private readonly IMapSettingsDataProvider _mapSettingsDataProvider;
 
-    public LoginUserCommandHandler(IIdentityStore identityStore, ISettingsStore settingsStore,
-        ISettingsMapper settingsMapper, IConnectionSettingsDataProvider userSettingsDataProvider,
+    public LoginUserCommandHandler(IIdentityStore identityStore, ISettingsStore settingsStore, ISettingsMapper settingsMapper,
+        IConnectionSettingsDataProvider userSettingsDataProvider, IMapSettingsDataProvider mapSettingsDataProvider,
         IUserController userClient, IUserMapper userMapper)
         : base(userClient, userMapper)
     {
@@ -26,6 +27,7 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
         _settingsStore = settingsStore;
         _settingsMapper = settingsMapper;
         _userSettingsDataProvider = userSettingsDataProvider;
+        _mapSettingsDataProvider = mapSettingsDataProvider;
     }
 
     public async Task<Result> Handle(LoginUserCommand request, CancellationToken cancellationToken)
@@ -51,6 +53,14 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
         else
         {
             _settingsStore.StoreConnectionSettings(_userSettingsDataProvider.GetDefault());
+        }
+        if (response.Settings.MapSettings != null)
+        {
+            _settingsStore.StoreMapSettings(_settingsMapper.Map(response.Settings.MapSettings));
+        }
+        else
+        {
+            _settingsStore.StoreMapSettings(_mapSettingsDataProvider.GetDefault());
         }
 
         return Result.Ok();

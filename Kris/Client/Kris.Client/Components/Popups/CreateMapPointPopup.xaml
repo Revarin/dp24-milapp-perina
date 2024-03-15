@@ -3,12 +3,17 @@
           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
           xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
           xmlns:vm="clr-namespace:Kris.Client.ViewModels.Popups"
+          xmlns:conv="clr-namespace:Kris.Client.Converters"
           x:Class="Kris.Client.Components.Popups.CreateMapPointPopup"
           x:DataType="vm:CreateMapPointPopupViewModel">
+
+    <tk:Popup.Resources>
+        <conv:LocationToCoordinatesConverter x:Key="LocationToCoordinates" />
+    </tk:Popup.Resources>
     
     <StackLayout Orientation="Vertical"
                  VerticalOptions="FillAndExpand">
-        
+
         <StackLayout Orientation="Vertical">
             <Label Text="Name" />
             <Entry Placeholder="Name"
@@ -17,28 +22,20 @@
                    IsVisible="{Binding ErrorMessages[PointName]}"
                    Style="{StaticResource errorMessageStyle}" />
         </StackLayout>
+
         <StackLayout Orientation="Horizontal"
                      HorizontalOptions="FillAndExpand">
-            <StackLayout Orientation="Vertical"
-                         HorizontalOptions="StartAndExpand">
-                <Label Text="Latitude" />
-                <Label Text="{Binding Location.Latitude, StringFormat='{0:F4}'}"
-                       HorizontalOptions="FillAndExpand" />
-            </StackLayout>
-            <StackLayout Orientation="Vertical"
-                         HorizontalOptions="CenterAndExpand">
-                <Label Text="Longitude" />
-                <Label Text="{Binding Location.Longitude, StringFormat='{0:F4}'}"
-                       HorizontalOptions="FillAndExpand" />
-            </StackLayout>
-            <StackLayout Orientation="Vertical"
-                         HorizontalOptions="EndAndExpand">
-                <Label Text="Altitude" />
-                <Label Text="{Binding Location.Altitude, StringFormat='{0:F4}'}"
-                       HorizontalOptions="FillAndExpand" />
-            </StackLayout>
+            <Label Text="{Binding LocationCoordinates, Converter={StaticResource LocationToCoordinates}}"
+                   HorizontalOptions="FillAndExpand"
+                   FontAttributes="Bold" />
+            <Button Text="C"
+                    HorizontalOptions="End">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CoordinatesCopyButtonClickedCommand}" />
+                </Button.Behaviors>
+            </Button>
         </StackLayout>
-
+        
         <StackLayout Orientation="Horizontal"
                      HorizontalOptions="FillAndExpand">
 

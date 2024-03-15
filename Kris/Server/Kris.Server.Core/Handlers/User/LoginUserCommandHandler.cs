@@ -54,6 +54,10 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
                     PositionUploadFrequency = user.Settings.PositionUploadFrequency.GetValueOrDefault(),
                     PositionDownloadFrequency = user.Settings.PositionDownloadFrequency.GetValueOrDefault(),
                     MapObjectDownloadFrequency = user.Settings.MapObjectDownloadFrequency.GetValueOrDefault()
+                },
+                MapSettings = user.Settings.IsMapSettingsNull() ? null : new MapSettingsModel
+                {
+                    CoordinateSystem = user.Settings.CoordinateSystem.GetValueOrDefault()
                 }
             }
         };

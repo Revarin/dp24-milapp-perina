@@ -9,5 +9,6 @@ public sealed class LoginResponse : IdentityResponse
     public sealed class UserSettings
     {
         public ConnectionSettingsModel? ConnectionSettings { get; set; }
+        public MapSettingsModel? MapSettings { get; set; }
     }
 }

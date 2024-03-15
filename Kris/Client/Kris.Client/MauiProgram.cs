@@ -20,6 +20,7 @@ using Kris.Client.Components.Map;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using Kris.Client.Utility;
 using Kris.Client.Connection.Hubs;
+using CoordinateSharp;
 
 namespace Kris.Client
 {
@@ -75,6 +76,8 @@ namespace Kris.Client
             builder.Services.AddTransient<SessionSettingsViewModel>();
             builder.Services.AddTransient<UserSettingsView>();
             builder.Services.AddTransient<UserSettingsViewModel>();
+            builder.Services.AddTransient<MapSettingsView>();
+            builder.Services.AddTransient<MapSettingsViewModel>();
             builder.Services.AddTransient<ContactsView>();
             builder.Services.AddTransient<ContactsViewModel>();
             builder.Services.AddTransient<ChatView>();
@@ -107,6 +110,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<IGpsService, GpsService>();
             builder.Services.AddSingleton<IPermissionService, PermissionService>();
             builder.Services.AddSingleton<IMessageService, MessageService>();
+            builder.Services.AddSingleton<IClipboardService, ClipboardService>();
 
             builder.Services.AddSingleton<IIdentityStore, IdentityStore>();
             builder.Services.AddSingleton<ILocationStore, LocationStore>();
@@ -115,6 +119,7 @@ namespace Kris.Client
 
             builder.Services.AddTransient<IConnectionSettingsDataProvider, ConnectionSettingsDataProvider>();
             builder.Services.AddTransient<IMapPointSymbolDataProvider, MapPointSymbolDataProvider>();
+            builder.Services.AddTransient<IMapSettingsDataProvider,  MapSettingsDataProvider>();
 
             builder.Services.AddSingleton<IHttpClientFactory, HttpClientFactory>();
             builder.Services.AddTransient<IUserController, UserClient>();
@@ -130,6 +135,8 @@ namespace Kris.Client
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
+
+            GlobalSettings.Default_EagerLoad = new EagerLoad(EagerLoadType.UTM_MGRS);
 
             return builder.Build();
         }

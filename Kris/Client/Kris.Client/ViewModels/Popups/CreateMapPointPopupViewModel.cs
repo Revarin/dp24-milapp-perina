@@ -1,13 +1,18 @@
 ﻿using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CoordinateSharp;
 using FluentResults;
+using Kris.Client.Common.Enums;
 using Kris.Client.Common.Events;
+using Kris.Client.Converters;
 using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
+using Kris.Client.Core.Services;
 using Kris.Client.Data.Models.Picker;
 using Kris.Client.Data.Providers;
 using Kris.Client.Utility;
+using Kris.Common.Enums;
 using MediatR;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -16,8 +21,10 @@ namespace Kris.Client.ViewModels.Popups;
 
 public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
 {
+    private readonly IMapSettingsDataProvider _mapSettingsDataProvider;
     private readonly IMapPointSymbolDataProvider _symbolDataProvider;
     private readonly ISymbolImageComposer _symbolImageComposer;
+    private readonly IClipboardService _clipboardService;
 
     public Guid CurrentUserId { get; set; }
     public string CurrentUserName { get; set; }
@@ -28,7 +35,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     [ObservableProperty]
     private string _description;
     [ObservableProperty]
-    private Location _location;
+    private LocationCoordinates _locationCoordinates;
 
     [ObservableProperty]
     private ObservableCollection<MapPointSymbolColorItem> _mapPointColorItems;
@@ -51,21 +58,25 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
 
     public event EventHandler<ResultEventArgs<MapPointListModel>> CreatedClosing;
 
-    public CreateMapPointPopupViewModel(IMapPointSymbolDataProvider symbolDataProvider, ISymbolImageComposer symbolImageComposer,
-        IMediator mediator)
+    public CreateMapPointPopupViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IMapPointSymbolDataProvider symbolDataProvider,
+        ISymbolImageComposer symbolImageComposer, IClipboardService clipboardService, IMediator mediator)
         : base(mediator)
     {
+        _mapSettingsDataProvider = mapSettingsDataProvider;
         _symbolDataProvider = symbolDataProvider;
         _symbolImageComposer = symbolImageComposer;
+        _clipboardService = clipboardService;
 
-        _mapPointColorItems = _symbolDataProvider.GetMapPointSymbolColorItems().ToObservableCollection();
-        _mapPointShapeItems = _symbolDataProvider.GetMapPointSymbolShapeItems().ToObservableCollection();
-        _mapPointSignItems = _symbolDataProvider.GetMapPointSymbolSignItems().ToObservableCollection();
+        MapPointColorItems = _symbolDataProvider.GetMapPointSymbolColorItems().ToObservableCollection();
+        MapPointShapeItems = _symbolDataProvider.GetMapPointSymbolShapeItems().ToObservableCollection();
+        MapPointSignItems = _symbolDataProvider.GetMapPointSymbolSignItems().ToObservableCollection();
     }
 
     // HANDLERS
     [RelayCommand]
     private void OnSymbolComponentChanged() => RedrawSymbol();
+    [RelayCommand]
+    private async Task OnCoordinatesCopyButtonClicked() => await SaveLocationCoordinatesToClipboardAsync();
     [RelayCommand]
     private async Task OnCreateButtonClicked() => await CreateMapPointAsync();
 
@@ -74,7 +85,33 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     {
         CurrentUserId = userId;
         CurrentUserName = userName;
-        Location = location;
+        LocationCoordinates = new LocationCoordinates
+        {
+            Location = location,
+            CoordinateSystem = _mapSettingsDataProvider.GetCurrentCoordinateSystem().Value
+        };
+    }
+
+    private async Task SaveLocationCoordinatesToClipboardAsync()
+    {
+        var coordinate = new Coordinate(LocationCoordinates.Location.Latitude, LocationCoordinates.Location.Longitude);
+        string coordinateString;
+
+        switch (LocationCoordinates.CoordinateSystem)
+        {
+            case CoordinateSystem.LatLong:
+                coordinateString = coordinate.ToString();
+                break;
+            case CoordinateSystem.UTM:
+                coordinateString = coordinate.UTM.ToString();
+                break;
+            case CoordinateSystem.MGRS:
+            default:
+                coordinateString = coordinate.MGRS.ToString();
+                break;
+        }
+
+        await _clipboardService.SetAsync(coordinateString);
     }
 
     private void RedrawSymbol()
@@ -105,7 +142,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
         {
             Name = PointName,
             Description = Description,
-            Location = Location,
+            Location = LocationCoordinates.Location,
             Shape = MapPointShapeSelectedItem.Value,
             Color = MapPointColorSelectedItem.Value,
             Sign = MapPointSignSelectedItem.Value
@@ -122,7 +159,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
                     Id = CurrentUserId,
                     Name = CurrentUserName
                 },
-                Location = Location,
+                Location = LocationCoordinates.Location,
                 Symbol = new Kris.Common.Models.MapPointSymbol
                 {
                     Shape = MapPointShapeSelectedItem.Value,

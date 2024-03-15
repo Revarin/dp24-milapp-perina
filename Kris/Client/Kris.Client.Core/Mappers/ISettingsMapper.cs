@@ -7,4 +7,6 @@ public interface ISettingsMapper
 {
     ConnectionSettingsEntity Map(ConnectionSettingsModel model);
     ConnectionSettingsModel Map(ConnectionSettingsEntity entity);
+    MapSettingsEntity Map(MapSettingsModel model);
+    MapSettingsModel Map(MapSettingsEntity entity);
 }

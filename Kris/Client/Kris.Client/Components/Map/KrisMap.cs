@@ -21,6 +21,9 @@ public sealed class KrisMap : MauiMap, IKrisMap
         "MoveToRegionRequest", typeof(MoveToRegionRequest), typeof(KrisMap), default(MoveToRegionRequest), BindingMode.OneWay,
         propertyChanged: OnMoveToRegionChanged);
 
+    public static readonly BindableProperty KrisMapStyleProperty = BindableProperty.Create(
+        "KrisMapStyle", typeof(KrisMapStyle), typeof(KrisMap), null);
+
     public MapSpan CurrentRegion
     {
         get { return (MapSpan)GetValue(CurrentRegionProperty); }
@@ -30,6 +33,11 @@ public sealed class KrisMap : MauiMap, IKrisMap
     {
         get { return (MoveToRegionRequest)GetValue(MoveToRegionRequestProperty); }
         set { SetValue(MoveToRegionRequestProperty, value); }
+    }
+    public KrisMapStyle KrisMapStyle
+    {
+        get { return (KrisMapStyle)GetValue(KrisMapStyleProperty); }
+        set { SetValue(KrisMapStyleProperty, value); }
     }
 
     private DateTime _nextSave = DateTime.MinValue;
