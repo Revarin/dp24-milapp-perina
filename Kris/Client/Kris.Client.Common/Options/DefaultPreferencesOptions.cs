@@ -1,5 +1,5 @@
-﻿using Kris.Client.Common.Enums;
-using Kris.Common;
+﻿using Kris.Common;
+using Kris.Common.Enums;
 
 namespace Kris.Client.Common.Options;
 

@@ -1,5 +1,5 @@
 ﻿using CoordinateSharp;
-using Kris.Client.Common.Enums;
+using Kris.Common.Enums;
 using System.Globalization;
 
 namespace Kris.Client.Converters;

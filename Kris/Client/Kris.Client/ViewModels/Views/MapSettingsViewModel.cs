@@ -1,12 +1,14 @@
 ﻿using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Kris.Client.Common.Errors;
 using Kris.Client.Core.Messages;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.Data.Models;
 using Kris.Client.Data.Models.Picker;
 using Kris.Client.Data.Providers;
+using Kris.Common.Extensions;
 using MediatR;
 using System.Collections.ObjectModel;
 
@@ -50,7 +52,15 @@ public sealed partial class MapSettingsViewModel : PageViewModelBase
 
         if (result.IsFailed)
         {
-            // TODO
+            if (result.HasError<UnauthorizedError>())
+            {
+                await _alertService.ShowToastAsync("Login expired");
+                await LogoutUser();
+            }
+            else
+            {
+                await _alertService.ShowToastAsync(result.Errors.FirstMessage());
+            }
         }
         else
         {

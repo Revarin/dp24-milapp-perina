@@ -12,6 +12,7 @@ using Kris.Client.Core.Services;
 using Kris.Client.Data.Models.Picker;
 using Kris.Client.Data.Providers;
 using Kris.Client.Utility;
+using Kris.Common.Enums;
 using MediatR;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;

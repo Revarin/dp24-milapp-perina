@@ -1,5 +1,5 @@
-﻿using Kris.Client.Common.Enums;
-using Kris.Client.Data.Models.Picker;
+﻿using Kris.Client.Data.Models.Picker;
+using Kris.Common.Enums;
 
 namespace Kris.Client.Data.Static.Picker;
 

@@ -1,4 +1,4 @@
-﻿using Kris.Client.Common.Enums;
+﻿using Kris.Common.Enums;
 
 namespace Kris.Client.Data.Models;
 

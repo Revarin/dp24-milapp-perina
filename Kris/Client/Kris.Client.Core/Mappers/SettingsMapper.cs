@@ -26,4 +26,20 @@ public sealed class SettingsMapper : ISettingsMapper
             MapObjectDownloadFrequency = (int)entity.MapObjectDownloadInterval.TotalSeconds
         };
     }
+
+    public MapSettingsEntity Map(MapSettingsModel model)
+    {
+        return new MapSettingsEntity
+        {
+            CoordinateSystem = model.CoordinateSystem
+        };
+    }
+
+    public MapSettingsModel Map(MapSettingsEntity entity)
+    {
+        return new MapSettingsModel
+        {
+            CoordinateSystem = entity.CoordinateSystem.GetValueOrDefault()
+        };
+    }
 }
