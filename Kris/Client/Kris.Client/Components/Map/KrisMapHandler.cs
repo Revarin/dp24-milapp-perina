@@ -7,6 +7,7 @@ public partial class KrisMapHandler : MapHandler, IKrisMapHandler
     public static readonly IPropertyMapper<IKrisMap, IKrisMapHandler> KrisPropertyMapper = new PropertyMapper<IKrisMap, IKrisMapHandler>(Mapper)
     {
         [nameof(IKrisMap.Pins)] = MapPins,
+        [nameof(IKrisMap.KrisMapStyle)] = MapKrisMapStyle
     };
     public static readonly CommandMapper<IKrisMap, IKrisMapHandler> KrisCommandMapper = new CommandMapper<IKrisMap, IKrisMapHandler>(CommandMapper)
     {

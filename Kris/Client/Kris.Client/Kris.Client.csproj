@@ -10,15 +10,15 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 
 		<!-- Display name -->
-		<ApplicationTitle>Kris v2.6.0</ApplicationTitle>
+		<ApplicationTitle>Kris v2.6.1</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>fit.dp.perina.kris</ApplicationId>
 		<ApplicationIdGuid>b9336060-ad5c-4c34-b406-7a96ba2a9ca3</ApplicationIdGuid>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>2.6.0</ApplicationDisplayVersion>
-		<ApplicationVersion>260</ApplicationVersion>
+		<ApplicationDisplayVersion>2.6.1</ApplicationDisplayVersion>
+		<ApplicationVersion>261</ApplicationVersion>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
@@ -46,6 +46,7 @@
 
 	<ItemGroup>
 		<EmbeddedResource Include="appsettings.json" />
+		<EmbeddedResource Include="Resources\Styles\MapMilitaryDark.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -138,5 +139,7 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
+
+	<ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>

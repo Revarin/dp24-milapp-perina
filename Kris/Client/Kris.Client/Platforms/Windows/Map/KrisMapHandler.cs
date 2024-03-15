@@ -9,4 +9,9 @@ public partial class KrisMapHandler
         throw new NotImplementedException();
         base.ConnectHandler(platformView);
     }
+
+    private static void MapKrisMapStyle(IKrisMapHandler handler, IKrisMap map)
+    {
+        throw new NotImplementedException();
+    }
 }

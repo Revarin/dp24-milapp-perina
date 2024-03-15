@@ -22,9 +22,11 @@ using Kris.Client.ViewModels.Popups;
 using Kris.Client.Views;
 using Kris.Common.Extensions;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 using System.Collections.ObjectModel;
+using System.Reflection;
 
 namespace Kris.Client.ViewModels.Views;
 
@@ -46,6 +48,8 @@ public sealed partial class MapViewModel : PageViewModelBase
     [ObservableProperty]
     private LocationCoordinates _currentPosition;
 
+    [ObservableProperty]
+    private KrisMapStyle _mapStyle = null;
     [ObservableProperty]
     private ObservableCollection<KrisMapPinViewModel> _allMapPins = new ObservableCollection<KrisMapPinViewModel>();
 
@@ -79,6 +83,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     {
         StartBackgroudListeners();
         await StartMessageListenerAsync();
+        await LoadMapStyle();
     }
     [RelayCommand]
     private async Task OnMapLoaded() => await MoveToCurrentRegionAsync();
@@ -126,6 +131,14 @@ public sealed partial class MapViewModel : PageViewModelBase
         {
             await _messageReceiver.Connect();
             _messageReceiver.MessageReceived += OnMessageReceived;
+        }
+    }
+
+    private async Task LoadMapStyle()
+    {
+        if (MapStyle == null)
+        {
+            MapStyle = await MapStyleLoader.LoadStyleAsync(Kris.Common.Enums.MapStyle.MilitaryDark);
         }
     }
 

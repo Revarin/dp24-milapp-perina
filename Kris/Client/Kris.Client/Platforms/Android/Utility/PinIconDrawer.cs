@@ -12,7 +12,7 @@ public static class PinIconDrawer
         var paint = new Android.Graphics.Paint
         {
             AntiAlias = true,
-            Color = Android.Graphics.Color.Black,
+            Color = Android.Graphics.Color.WhiteSmoke,
             TextSize = (context.Resources.DisplayMetrics.Density * 14f) + 0.5f,
             TextAlign = Android.Graphics.Paint.Align.Left
         };

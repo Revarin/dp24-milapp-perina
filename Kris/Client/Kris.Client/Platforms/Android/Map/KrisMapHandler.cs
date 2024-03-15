@@ -81,4 +81,13 @@ public partial class KrisMapHandler
             }
         }
     }
+
+    private static void MapKrisMapStyle(IKrisMapHandler handler, IKrisMap map)
+    {
+        if (handler.Map != null)
+        {
+            var mapStyleOptions = map.KrisMapStyle != null ? new MapStyleOptions(map.KrisMapStyle.JsonStyle) : null;
+            handler.Map.SetMapStyle(mapStyleOptions);
+        }
+    }
 }

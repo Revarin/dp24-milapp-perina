@@ -39,6 +39,7 @@
         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
             <cmpMap:KrisMap VerticalOptions="FillAndExpand"
                             MapType="Street" IsZoomEnabled="True"
+                            KrisMapStyle="{Binding MapStyle}"
                             ItemsSource="{Binding AllMapPins}"
                             CurrentRegion="{Binding CurrentRegion}"
                             MoveToRegionRequest="{Binding MoveToRegion}" >
@@ -64,7 +65,7 @@
             <StackLayout Orientation="Vertical"
                          HorizontalOptions="Start"
                          VerticalOptions="Start">
-                <Label Text="{Binding CurrentPosition, Converter={StaticResource LocationToCoordinates}}" TextColor="Black"
+                <Label Text="{Binding CurrentPosition, Converter={StaticResource LocationToCoordinates}}" TextColor="WhiteSmoke"
                        FontSize="Medium" FontAttributes="Bold" />
             </StackLayout>
         </Grid>
