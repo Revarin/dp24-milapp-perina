@@ -29,6 +29,10 @@ public sealed class StoreUserSettingsCommandHandler : UserHandler, IRequestHandl
             user.Settings.PositionDownloadFrequency = newSettings.ConnectionSettings.PositionDownloadFrequency;
             user.Settings.MapObjectDownloadFrequency = newSettings.ConnectionSettings.MapObjectDownloadFrequency;
         }
+        if (newSettings.MapSettings != null)
+        {
+            user.Settings.CoordinateSystem = newSettings.MapSettings.CoordinateSystem;
+        }
 
         await _userRepository.UpdateAsync(cancellationToken);
 
