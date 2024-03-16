@@ -33,6 +33,7 @@ public class DataContext : DbContext
         modelBuilder.Entity<MapPointEntity>().HasKey(e => e.Id);
         modelBuilder.Entity<ConversationEntity>().HasKey(e => e.Id);
         modelBuilder.Entity<MessageEntity>().HasKey(e => e.Id);
+        modelBuilder.Entity<MapPointAttachmentEntity>().HasKey(e => e.Id);
 
         modelBuilder.Entity<SessionUserEntity>()
             .HasOne(e => e.User)
@@ -95,6 +96,12 @@ public class DataContext : DbContext
             .WithMany(e => e.SentMessages)
             .HasForeignKey(e => e.SenderId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<MapPointAttachmentEntity>()
+            .HasOne(e => e.MapPoint)
+            .WithMany(e => e.Attachments)
+            .HasForeignKey(e => e.MapPointId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         base.OnModelCreating(modelBuilder);
     }
