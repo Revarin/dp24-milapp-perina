@@ -1,5 +1,6 @@
 ﻿using Kris.Common.Enums;
 using Kris.Common.Models;
+using Kris.Interface.Models;
 
 namespace Kris.Interface.Requests;
 
@@ -11,4 +12,6 @@ public sealed class EditMapPointRequest : RequestBase
     public MapObjectType Type { get; set; }
     public required GeoPosition Position { get; set; }
     public required MapPointSymbol Symbol { get; set; }
+    public List<Guid> DeletedAttachments { get; set; } = new List<Guid>();
+    public List<MapPointAttachmentModel> NewAttachments { get; set; } = new List<MapPointAttachmentModel>();
 }

@@ -9,11 +9,12 @@ public sealed class MapPointRepository : RepositoryBase<MapPointEntity>, IMapPoi
     {
     }
 
-    public Task<MapPointEntity?> GetWithUserAsync(Guid id, CancellationToken ct)
+    public Task<MapPointEntity?> GetWithAllAsync(Guid id, CancellationToken ct)
     {
         return _context.MapPoints
             .Include(mapPoint => mapPoint.SessionUser)
             .ThenInclude(sessionUser => sessionUser!.User)
+            .Include(mapPoint => mapPoint.Attachments)
             .FirstOrDefaultAsync(mapPoint => mapPoint.Id == id, ct);
     }
 

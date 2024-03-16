@@ -20,7 +20,14 @@ public sealed class MapObjectMapper : IMapObjectMapper
             {
                 Id = entity.SessionUser!.UserId,
                 Name = entity.SessionUser!.User?.Login
-            }
+            },
+            Attachments = entity.Attachments.Select(attachment => new MapPointAttachmentModel
+            {
+                Id = attachment.Id,
+                Name = attachment.Name,
+                FileExtension = attachment.FileExtension,
+                Base64Bytes = Convert.ToBase64String(attachment.Bytes)
+            }).ToList()
         };
     }
 

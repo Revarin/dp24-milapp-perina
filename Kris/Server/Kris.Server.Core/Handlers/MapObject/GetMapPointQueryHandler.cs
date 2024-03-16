@@ -29,7 +29,7 @@ public sealed class GetMapPointQueryHandler : MapObjectHandler, IRequestHandler<
         var authResult = await _authorizationService.AuthorizeAsync(user, cancellationToken);
         if (!authResult.IsAuthorized) return Result.Fail(new UnauthorizedError(user.Login, user.SessionName, user.UserType));
 
-        var mapPoint = await _mapPointRepository.GetWithUserAsync(request.PointId, cancellationToken);
+        var mapPoint = await _mapPointRepository.GetWithAllAsync(request.PointId, cancellationToken);
         if (mapPoint == null) return Result.Fail(new EntityNotFoundError("MapPoint", request.PointId));
 
         return Result.Ok(_mapObjectMapper.MapPointDetail(mapPoint));
