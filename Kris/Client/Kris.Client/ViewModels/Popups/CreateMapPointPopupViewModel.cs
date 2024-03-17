@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui.Core.Extensions;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CoordinateSharp;
@@ -24,6 +25,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
 {
     private readonly IMapSettingsDataProvider _mapSettingsDataProvider;
     private readonly IMapPointSymbolDataProvider _symbolDataProvider;
+    private readonly IPopupService _popupService;
     private readonly ISymbolImageComposer _symbolImageComposer;
     private readonly IFilePickerService _filePickerService;
     private readonly IClipboardService _clipboardService;
@@ -64,12 +66,13 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     public event EventHandler<ResultEventArgs<MapPointListModel>> CreatedClosing;
 
     public CreateMapPointPopupViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IMapPointSymbolDataProvider symbolDataProvider,
-        ISymbolImageComposer symbolImageComposer, IFilePickerService filePickerService, IClipboardService clipboardService,
-        IMediator mediator)
+        IPopupService popupService, ISymbolImageComposer symbolImageComposer, IFilePickerService filePickerService,
+        IClipboardService clipboardService, IMediator mediator)
         : base(mediator)
     {
         _mapSettingsDataProvider = mapSettingsDataProvider;
         _symbolDataProvider = symbolDataProvider;
+        _popupService = popupService;
         _symbolImageComposer = symbolImageComposer;
         _filePickerService = filePickerService;
         _clipboardService = clipboardService;
@@ -129,7 +132,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
         var fileResult = await _filePickerService.PickImageAsync();
         if (fileResult == null) return;
 
-        var imageItem = new ImageItemViewModel(fileResult.FullPath, true);
+        var imageItem = new ImageItemViewModel(_popupService, fileResult.FullPath, true);
         imageItem.DeleteClicked += OnImageAttachmentDeleteClicked;
         ImageAttachments.Add(imageItem);
     }

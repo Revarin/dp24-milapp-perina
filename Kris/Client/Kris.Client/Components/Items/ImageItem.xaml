@@ -5,10 +5,14 @@
              xmlns:vm="clr-namespace:Kris.Client.ViewModels.Items"
              x:Class="Kris.Client.Components.Items.ImageItem"
              x:DataType="vm:ImageItemViewModel">
-    <Grid>
+    <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
         <Image Source="{Binding ImageSource}"
                WidthRequest="150"
-               HeightRequest="150" />
+               HeightRequest="150">
+            <Image.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding ImageClickedCommand}" />
+            </Image.GestureRecognizers>
+        </Image>
         <Button Text="X" IsVisible="{Binding CanDelete}"
                 VerticalOptions="Start"
                 HorizontalOptions="Start">

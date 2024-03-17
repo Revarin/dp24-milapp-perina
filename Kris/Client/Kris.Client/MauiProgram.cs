@@ -89,6 +89,7 @@ namespace Kris.Client
             builder.Services.AddTransientPopup<EditSessionPopup, EditSessionPopupViewModel>();
             builder.Services.AddTransientPopup<CreateMapPointPopup, CreateMapPointPopupViewModel>();
             builder.Services.AddTransientPopup<EditMapPointPopup, EditMapPointPopupViewModel>();
+            builder.Services.AddTransientPopup<ImagePopup, ImagePopupViewModel>();
 
             builder.Services.AddSingleton<ISymbolImageComposer, SymbolImageComposer>();
             builder.Services.AddSingleton<IKrisMapObjectFactory, KrisMapObjectFactory>();

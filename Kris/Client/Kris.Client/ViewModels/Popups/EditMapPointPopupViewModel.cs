@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui.Core.Extensions;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CoordinateSharp;
@@ -23,6 +24,7 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
 {
     private readonly IMapSettingsDataProvider _mapSettingsDataProvider;
     private readonly IMapPointSymbolDataProvider _symbolDataProvider;
+    private readonly IPopupService _popupService;
     private readonly ISymbolImageComposer _symbolImageComposer;
     private readonly IFilePickerService _filePickerService;
     private readonly IClipboardService _clipboardService;
@@ -73,13 +75,14 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
     private List<Guid> _attachmentsToDelete = new List<Guid>();
 
     public EditMapPointPopupViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IMapPointSymbolDataProvider mapPointSymbolDataProvider,
-        ISymbolImageComposer symbolImageComposer, IFilePickerService filePickerService, IClipboardService clipboardService,
-        IMediator mediator)
+        IPopupService popupService, ISymbolImageComposer symbolImageComposer, IFilePickerService filePickerService,
+        IClipboardService clipboardService, IMediator mediator)
         : base(mediator)
     {
         _mapSettingsDataProvider = mapSettingsDataProvider;
         _symbolDataProvider = mapPointSymbolDataProvider;
         _symbolImageComposer = symbolImageComposer;
+        _popupService = popupService;
         _filePickerService = filePickerService;
         _clipboardService = clipboardService;
 
@@ -139,9 +142,9 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
 
         foreach (var attachment in mapPoint.Attachments)
         {
-            var imageAttachment = new ImageItemViewModel(attachment.Base64Bytes, attachment.Id, attachment.Name, CanEdit);
-            imageAttachment.DeleteClicked += OnImageAttachmentDeleteClicked;
-            ImageAttachments.Add(imageAttachment);
+            var imageItem = new ImageItemViewModel(_popupService, attachment.Base64Bytes, attachment.Id, attachment.Name, CanEdit);
+            imageItem.DeleteClicked += OnImageAttachmentDeleteClicked;
+            ImageAttachments.Add(imageItem);
         }
     }
 
@@ -160,7 +163,7 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
         var fileResult = await _filePickerService.PickImageAsync();
         if (fileResult == null) return;
 
-        var imageItem = new ImageItemViewModel(fileResult.FullPath, true);
+        var imageItem = new ImageItemViewModel(_popupService, fileResult.FullPath, true);
         imageItem.DeleteClicked += OnImageAttachmentDeleteClicked;
         ImageAttachments.Add(imageItem);
     }
