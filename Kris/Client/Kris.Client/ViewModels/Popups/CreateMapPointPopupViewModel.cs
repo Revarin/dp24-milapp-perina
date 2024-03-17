@@ -56,10 +56,10 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     private MapPointSymbolSignItem _mapPointSignSelectedItem;
 
     [ObservableProperty]
-    private ImageSource _image;
+    private ObservableCollection<ImageItemViewModel> _imageAttachments = new ObservableCollection<ImageItemViewModel>();
 
     [ObservableProperty]
-    private ObservableCollection<ImageItemViewModel> _imageAttachments = new ObservableCollection<ImageItemViewModel>();
+    private ImageSource _image;
 
     public event EventHandler<ResultEventArgs<MapPointListModel>> CreatedClosing;
 
@@ -129,7 +129,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
         var fileResult = await _filePickerService.PickImageAsync();
         if (fileResult == null) return;
 
-        var imageItem = new ImageItemViewModel(await fileResult.OpenReadAsync(), fileResult.FullPath, true);
+        var imageItem = new ImageItemViewModel(fileResult.FullPath, true);
         imageItem.DeleteClicked += OnImageAttachmentDeleteClicked;
         ImageAttachments.Add(imageItem);
     }
@@ -173,7 +173,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
             Shape = MapPointShapeSelectedItem.Value,
             Color = MapPointColorSelectedItem.Value,
             Sign = MapPointSignSelectedItem.Value,
-            Attachments = ImageAttachments.Select(imageAttachment => imageAttachment.FilePath).ToList(),
+            Attachments = ImageAttachments.Select(attachment => attachment.FilePath).ToList(),
         };
         var result = await _mediator.Send(command, ct);
 

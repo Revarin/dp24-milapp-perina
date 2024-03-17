@@ -13,4 +13,6 @@ public sealed class EditMapPointCommand : IRequest<Result>
     public MapPointSymbolShape Shape { get; set; }
     public MapPointSymbolColor Color { get; set; }
     public MapPointSymbolSign Sign { get; set; }
+    public List<Guid> DeletedAttachments { get; set; } = new List<Guid>();
+    public List<string> NewAttachments { get; set; } = new List<string>();
 }

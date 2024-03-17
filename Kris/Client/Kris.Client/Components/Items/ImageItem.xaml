@@ -5,9 +5,10 @@
              xmlns:vm="clr-namespace:Kris.Client.ViewModels.Items"
              x:Class="Kris.Client.Components.Items.ImageItem"
              x:DataType="vm:ImageItemViewModel">
-    <Grid WidthRequest="150"
-          HeightRequest="150">
-        <Image Source="{Binding ImageSource}" />
+    <Grid>
+        <Image Source="{Binding ImageSource}"
+               WidthRequest="150"
+               HeightRequest="150" />
         <Button Text="X" IsVisible="{Binding CanDelete}"
                 VerticalOptions="Start"
                 HorizontalOptions="Start">
