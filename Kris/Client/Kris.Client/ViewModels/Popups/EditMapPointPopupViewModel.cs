@@ -26,7 +26,7 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
     private readonly IMapPointSymbolDataProvider _symbolDataProvider;
     private readonly IPopupService _popupService;
     private readonly ISymbolImageComposer _symbolImageComposer;
-    private readonly IFilePickerService _filePickerService;
+    private readonly IMediaService _filePickerService;
     private readonly IClipboardService _clipboardService;
 
     public Guid PointId { get; set; }
@@ -75,7 +75,7 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
     private List<Guid> _attachmentsToDelete = new List<Guid>();
 
     public EditMapPointPopupViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IMapPointSymbolDataProvider mapPointSymbolDataProvider,
-        IPopupService popupService, ISymbolImageComposer symbolImageComposer, IFilePickerService filePickerService,
+        IPopupService popupService, ISymbolImageComposer symbolImageComposer, IMediaService filePickerService,
         IClipboardService clipboardService, IMediator mediator)
         : base(mediator)
     {
@@ -97,7 +97,10 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
     [RelayCommand]
     private async Task OnCoordinatesCopyButtonClicked() => await SaveLocationCoordinatesToClipboardAsync();
     [RelayCommand]
-    private async Task OnAddAttachmentButtonClicked() => await PickAttachmentAsync();
+    private async Task OnPickImageAttachmentButtonClicked() => await PickImageAsync();
+    [RelayCommand]
+    private async Task OnTakeImageAttachmentButtonClicked() => await TakeImageAsync();
+
     [RelayCommand]
     private async Task OnSaveButtonClicked() => await UpdateMapPointAsync();
     [RelayCommand]
@@ -158,14 +161,18 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
         Image = ImageSource.FromStream(() => imageStream);
     }
 
-    private async Task PickAttachmentAsync()
+    private async Task PickImageAsync()
     {
         var fileResult = await _filePickerService.PickImageAsync();
         if (fileResult == null) return;
+        AddImageAttachment(fileResult);
+    }
 
-        var imageItem = new ImageItemViewModel(_popupService, fileResult.FullPath, true);
-        imageItem.DeleteClicked += OnImageAttachmentDeleteClicked;
-        ImageAttachments.Add(imageItem);
+    private async Task TakeImageAsync()
+    {
+        var fileResult = await _filePickerService.TakePhotoAsync();
+        if (fileResult == null) return;
+        AddImageAttachment(fileResult);
     }
 
     private void RemoveAttachment(ImageItemViewModel image)
@@ -249,5 +256,13 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
         var result = await _mediator.Send(command, ct);
 
         DeletedClosing?.Invoke(this, new DeleteResultEventArgs(result));
+    }
+
+    // MISC
+    private void AddImageAttachment(FileResult result)
+    {
+        var imageItem = new ImageItemViewModel(_popupService, result.FullPath, true);
+        imageItem.DeleteClicked += OnImageAttachmentDeleteClicked;
+        ImageAttachments.Add(imageItem);
     }
 }

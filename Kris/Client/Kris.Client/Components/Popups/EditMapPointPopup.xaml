@@ -105,13 +105,13 @@
             <Button Text="Add attachment"
                     HorizontalOptions="FillAndExpand">
                 <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding AddAttachmentButtonClickedCommand}" />
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding PickImageAttachmentButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
-            <Button Text="Photo (TODO)"
+            <Button Text="Photo"
                     HorizontalOptions="FillAndExpand">
                 <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding }" />
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding TakeImageAttachmentButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
         </StackLayout>

@@ -1,6 +1,7 @@
 ﻿namespace Kris.Client.Core.Services;
 
-public interface IFilePickerService
+public interface IMediaService
 {
     Task<FileResult> PickImageAsync();
+    Task<FileResult> TakePhotoAsync();
 }
