@@ -21,6 +21,7 @@ using SkiaSharp.Views.Maui.Controls.Hosting;
 using Kris.Client.Utility;
 using Kris.Client.Connection.Hubs;
 using CoordinateSharp;
+using Kris.Client.Core.Image;
 
 namespace Kris.Client
 {
@@ -91,6 +92,7 @@ namespace Kris.Client
 
             builder.Services.AddSingleton<ISymbolImageComposer, SymbolImageComposer>();
             builder.Services.AddSingleton<IKrisMapObjectFactory, KrisMapObjectFactory>();
+            builder.Services.AddTransient<IImageAttachmentComposer, ImageAttachmentComposer>();
 
             builder.Services.AddSingleton<IUserMapper, UserMapper>();
             builder.Services.AddSingleton<ISessionMapper, SessionMapper>();

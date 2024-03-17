@@ -129,7 +129,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
         var fileResult = await _filePickerService.PickImageAsync();
         if (fileResult == null) return;
 
-        var imageItem = new ImageItemViewModel(await fileResult.OpenReadAsync(), true);
+        var imageItem = new ImageItemViewModel(await fileResult.OpenReadAsync(), fileResult.FullPath, true);
         imageItem.DeleteClicked += OnImageAttachmentDeleteClicked;
         ImageAttachments.Add(imageItem);
     }
@@ -172,7 +172,8 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
             Location = LocationCoordinates.Location,
             Shape = MapPointShapeSelectedItem.Value,
             Color = MapPointColorSelectedItem.Value,
-            Sign = MapPointSignSelectedItem.Value
+            Sign = MapPointSignSelectedItem.Value,
+            Attachments = ImageAttachments.Select(imageAttachment => imageAttachment.FilePath).ToList(),
         };
         var result = await _mediator.Send(command, ct);
 

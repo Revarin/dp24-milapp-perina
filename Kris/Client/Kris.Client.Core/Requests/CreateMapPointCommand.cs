@@ -12,4 +12,5 @@ public sealed class CreateMapPointCommand : IRequest<Result<Guid>>
     public MapPointSymbolShape Shape { get; set; }
     public MapPointSymbolColor Color { get; set; }
     public MapPointSymbolSign Sign { get; set; }
+    public List<string> Attachments { get; set; }
 }

@@ -1,8 +1,10 @@
 ﻿using FluentResults;
 using Kris.Client.Common.Errors;
+using Kris.Client.Core.Image;
 using Kris.Client.Core.Requests;
 using Kris.Common.Models;
 using Kris.Interface.Controllers;
+using Kris.Interface.Models;
 using Kris.Interface.Requests;
 using MediatR;
 
@@ -10,9 +12,13 @@ namespace Kris.Client.Core.Handlers.MapObjects;
 
 public sealed class CreateMapPointCommandHandler : MapObjectsHandler, IRequestHandler<CreateMapPointCommand, Result<Guid>>
 {
-    public CreateMapPointCommandHandler(IMapObjectController mapObjectClient)
+    private readonly IImageAttachmentComposer _imageAttachmentComposer;
+
+    public CreateMapPointCommandHandler(IImageAttachmentComposer imageAttachmentComposer,
+        IMapObjectController mapObjectClient)
         : base(mapObjectClient)
     {
+        _imageAttachmentComposer = imageAttachmentComposer;
     }
 
     public async Task<Result<Guid>> Handle(CreateMapPointCommand request, CancellationToken cancellationToken)
@@ -32,7 +38,13 @@ public sealed class CreateMapPointCommandHandler : MapObjectsHandler, IRequestHa
                 Shape = request.Shape,
                 Color = request.Color,
                 Sign = request.Sign
-            }
+            },
+            Attachments = request.Attachments.Select(attachment => new MapPointAttachmentModel
+            {
+                Name = Path.GetFileName(attachment),
+                FileExtension = "jpeg",
+                Base64Bytes = Convert.ToBase64String(_imageAttachmentComposer.ComposeScaledImageAttachment(attachment).ToArray())
+            }).ToList()
         };
         var response = await _mapObjectClient.AddMapPoint(httpRequest, cancellationToken);
 

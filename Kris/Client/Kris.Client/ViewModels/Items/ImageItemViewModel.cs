@@ -7,14 +7,17 @@ public sealed partial class ImageItemViewModel : ControllViewModelBase
 {
     public event EventHandler DeleteClicked;
 
+    public string FilePath { get; set; }
+
     [ObservableProperty]
     private ImageSource _imageSource;
     [ObservableProperty]
     private bool _canDelete;
 
-    public ImageItemViewModel(Stream imageStream, bool canDelete)
+    public ImageItemViewModel(Stream imageStream, string filePath, bool canDelete)
     {
         ImageSource = ImageSource.FromStream(() => imageStream);
+        FilePath = filePath;
         CanDelete = canDelete;
     }
 
