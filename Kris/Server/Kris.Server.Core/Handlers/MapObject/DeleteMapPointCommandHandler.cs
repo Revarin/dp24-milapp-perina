@@ -21,7 +21,7 @@ public sealed class DeleteMapPointCommandHandler : MapObjectHandler, IRequestHan
     public async Task<Result> Handle(DeleteMapPointCommand request, CancellationToken cancellationToken)
     {
         var user = request.User;
-        var mapPoint = await _mapPointRepository.GetWithUserAsync(request.MapPointId, cancellationToken);
+        var mapPoint = await _mapPointRepository.GetWithAllAsync(request.MapPointId, cancellationToken);
         if (mapPoint == null) return Result.Fail(new EntityNotFoundError("MapPoint", request.MapPointId));
 
         var minRole = user.UserId == mapPoint.SessionUser!.UserId ? UserType.Basic : UserType.Admin;

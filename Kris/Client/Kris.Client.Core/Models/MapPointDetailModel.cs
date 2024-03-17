@@ -11,4 +11,5 @@ public sealed class MapPointDetailModel
     public Location Location { get; set; }
     public MapPointSymbol Symbol { get; set; }
     public string Description { get; set; }
+    public List<AttachmentModel> Attachments { get; set; } = new List<AttachmentModel>();
 }

@@ -1,6 +1,7 @@
 ﻿using FluentResults;
 using Kris.Server.Common.Errors;
 using Kris.Server.Common.Exceptions;
+using Kris.Server.Core.Mappers;
 using Kris.Server.Core.Requests;
 using Kris.Server.Core.Services;
 using Kris.Server.Data.Models;
@@ -12,11 +13,14 @@ namespace Kris.Server.Core.Handlers.MapObject;
 public sealed class AddMapPointCommandHandler : MapObjectHandler, IRequestHandler<AddMapPointCommand, Result<Guid>>
 {
     private readonly IMapPointRepository _mapPointRepository;
+    private readonly IAttachmentMapper _attachmentMapper;
 
-    public AddMapPointCommandHandler(IMapPointRepository mapPointRepository, IAuthorizationService authorizationService)
+    public AddMapPointCommandHandler(IMapPointRepository mapPointRepository, IAttachmentMapper attachmentMapper,
+        IAuthorizationService authorizationService)
         : base(authorizationService)
     {
         _mapPointRepository = mapPointRepository;
+        _attachmentMapper = attachmentMapper;
     }
 
     public async Task<Result<Guid>> Handle(AddMapPointCommand request, CancellationToken cancellationToken)
@@ -35,8 +39,10 @@ public sealed class AddMapPointCommandHandler : MapObjectHandler, IRequestHandle
             Position = request.AddMapPoint.Position,
             Symbol = request.AddMapPoint.Symbol,
             Created = DateTime.UtcNow,
-            SessionUserId = authResult.SessionUserId
+            SessionUserId = authResult.SessionUserId,
         };
+        mapPoint.Attachments.AddRange(request.AddMapPoint.Attachments
+            .Select(attachment => _attachmentMapper.MapPointAttachment(attachment, mapPoint.Id)));
         var entity = await _mapPointRepository.InsertAsync(mapPoint, cancellationToken);
         if (entity == null) throw new DatabaseException("Failed to insert map point");
 

@@ -4,8 +4,10 @@
           xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
           xmlns:vm="clr-namespace:Kris.Client.ViewModels.Popups"
           xmlns:conv="clr-namespace:Kris.Client.Converters"
+          xmlns:item="clr-namespace:Kris.Client.Components.Items"
           x:Class="Kris.Client.Components.Popups.CreateMapPointPopup"
-          x:DataType="vm:CreateMapPointPopupViewModel">
+          x:DataType="vm:CreateMapPointPopupViewModel"
+          CanBeDismissedByTappingOutsideOfPopup="False">
 
     <tk:Popup.Resources>
         <conv:LocationToCoordinatesConverter x:Key="LocationToCoordinates" />
@@ -94,6 +96,32 @@
                    IsVisible="{Binding ErrorMessages[Description]}"
                    Style="{StaticResource errorMessageStyle}" />
         </StackLayout>
+
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand">
+            <Button Text="Add attachment"
+                    HorizontalOptions="FillAndExpand">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding PickImageAttachmentButtonClickedCommand}" />
+                </Button.Behaviors>
+            </Button>
+            <Button Text="Photo"
+                    HorizontalOptions="FillAndExpand">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding TakeImageAttachmentButtonClickedCommand}" />
+                </Button.Behaviors>
+            </Button>
+        </StackLayout>
+
+        <CollectionView ItemsSource="{Binding ImageAttachments}"
+                        ItemsLayout="VerticalGrid, 3"
+                        SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <item:ImageItem BindingContext="{Binding .}" />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
         <StackLayout Orientation="Horizontal"
                      HorizontalOptions="FillAndExpand">

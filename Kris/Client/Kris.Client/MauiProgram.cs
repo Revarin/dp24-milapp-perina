@@ -21,6 +21,7 @@ using SkiaSharp.Views.Maui.Controls.Hosting;
 using Kris.Client.Utility;
 using Kris.Client.Connection.Hubs;
 using CoordinateSharp;
+using Kris.Client.Core.Image;
 
 namespace Kris.Client
 {
@@ -88,9 +89,11 @@ namespace Kris.Client
             builder.Services.AddTransientPopup<EditSessionPopup, EditSessionPopupViewModel>();
             builder.Services.AddTransientPopup<CreateMapPointPopup, CreateMapPointPopupViewModel>();
             builder.Services.AddTransientPopup<EditMapPointPopup, EditMapPointPopupViewModel>();
+            builder.Services.AddTransientPopup<ImagePopup, ImagePopupViewModel>();
 
             builder.Services.AddSingleton<ISymbolImageComposer, SymbolImageComposer>();
             builder.Services.AddSingleton<IKrisMapObjectFactory, KrisMapObjectFactory>();
+            builder.Services.AddTransient<IImageAttachmentComposer, ImageAttachmentComposer>();
 
             builder.Services.AddSingleton<IUserMapper, UserMapper>();
             builder.Services.AddSingleton<ISessionMapper, SessionMapper>();
@@ -111,6 +114,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<IPermissionService, PermissionService>();
             builder.Services.AddSingleton<IMessageService, MessageService>();
             builder.Services.AddSingleton<IClipboardService, ClipboardService>();
+            builder.Services.AddSingleton<IMediaService, MediaService>();
 
             builder.Services.AddSingleton<IIdentityStore, IdentityStore>();
             builder.Services.AddSingleton<ILocationStore, LocationStore>();

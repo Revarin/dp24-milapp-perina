@@ -77,6 +77,7 @@ public class Program
         builder.Services.AddSingleton<IMapObjectMapper, MapObjectMapper>();
         builder.Services.AddSingleton<IConversationMapper, ConversationMapper>();
         builder.Services.AddSingleton<IMessageMapper, MessageMapper>();
+        builder.Services.AddSingleton<IAttachmentMapper, AttachmentMapper>();
 
         builder.Services.AddAuthentication(options =>
         {

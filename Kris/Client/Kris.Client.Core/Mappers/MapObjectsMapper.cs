@@ -33,7 +33,14 @@ public sealed class MapObjectsMapper : IMapObjectsMapper
                 Name = model.User.Name
             },
             Location = new Location(model.Position.Latitude, model.Position.Longitude, model.Position.Altitude),
-            Symbol = model.Symbol
+            Symbol = model.Symbol,
+            Attachments = model.Attachments.Select(attachment => new Models.AttachmentModel
+            {
+                Id = attachment.Id.Value,
+                Name = attachment.Name,
+                FileExtension = attachment.FileExtension,
+                Base64Bytes = attachment.Base64Bytes
+            }).ToList()
         };
     }
 }

@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui.Core.Extensions;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CoordinateSharp;
@@ -12,6 +13,7 @@ using Kris.Client.Core.Services;
 using Kris.Client.Data.Models.Picker;
 using Kris.Client.Data.Providers;
 using Kris.Client.Utility;
+using Kris.Client.ViewModels.Items;
 using Kris.Common.Enums;
 using MediatR;
 using System.Collections.ObjectModel;
@@ -23,7 +25,9 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
 {
     private readonly IMapSettingsDataProvider _mapSettingsDataProvider;
     private readonly IMapPointSymbolDataProvider _symbolDataProvider;
+    private readonly IPopupService _popupService;
     private readonly ISymbolImageComposer _symbolImageComposer;
+    private readonly IMediaService _filePickerService;
     private readonly IClipboardService _clipboardService;
 
     public Guid CurrentUserId { get; set; }
@@ -54,17 +58,23 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     private MapPointSymbolSignItem _mapPointSignSelectedItem;
 
     [ObservableProperty]
+    private ObservableCollection<ImageItemViewModel> _imageAttachments = new ObservableCollection<ImageItemViewModel>();
+
+    [ObservableProperty]
     private ImageSource _image;
 
     public event EventHandler<ResultEventArgs<MapPointListModel>> CreatedClosing;
 
     public CreateMapPointPopupViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IMapPointSymbolDataProvider symbolDataProvider,
-        ISymbolImageComposer symbolImageComposer, IClipboardService clipboardService, IMediator mediator)
+        IPopupService popupService, ISymbolImageComposer symbolImageComposer, IMediaService filePickerService,
+        IClipboardService clipboardService, IMediator mediator)
         : base(mediator)
     {
         _mapSettingsDataProvider = mapSettingsDataProvider;
         _symbolDataProvider = symbolDataProvider;
+        _popupService = popupService;
         _symbolImageComposer = symbolImageComposer;
+        _filePickerService = filePickerService;
         _clipboardService = clipboardService;
 
         MapPointColorItems = _symbolDataProvider.GetMapPointSymbolColorItems().ToObservableCollection();
@@ -78,7 +88,12 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     [RelayCommand]
     private async Task OnCoordinatesCopyButtonClicked() => await SaveLocationCoordinatesToClipboardAsync();
     [RelayCommand]
+    private async Task OnPickImageAttachmentButtonClicked() => await PickImageAsync();
+    [RelayCommand]
+    private async Task OnTakeImageAttachmentButtonClicked() => await TakeImageAsync();
+    [RelayCommand]
     private async Task OnCreateButtonClicked() => await CreateMapPointAsync();
+    private void OnImageAttachmentDeleteClicked(object sender, EventArgs e) => RemoveAttachment(sender as ImageItemViewModel);
 
     // CORE
     public void Setup(Guid userId, string userName, Location location)
@@ -114,6 +129,27 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
         await _clipboardService.SetAsync(coordinateString);
     }
 
+    private async Task PickImageAsync()
+    {
+        var fileResult = await _filePickerService.PickImageAsync();
+        if (fileResult == null) return;
+        AddImageAttachment(fileResult);
+    }
+
+    private async Task TakeImageAsync()
+    {
+        var fileResult = await _filePickerService.TakePhotoAsync();
+        if (fileResult == null) return;
+        AddImageAttachment(fileResult);
+    }
+
+    private void RemoveAttachment(ImageItemViewModel image)
+    {
+        if (image == null) return;
+        image.DeleteClicked -= OnImageAttachmentDeleteClicked;
+        ImageAttachments.Remove(image);
+    }
+
     private void RedrawSymbol()
     {
         var pointShape = MapPointShapeSelectedItem?.Value;
@@ -145,7 +181,8 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
             Location = LocationCoordinates.Location,
             Shape = MapPointShapeSelectedItem.Value,
             Color = MapPointColorSelectedItem.Value,
-            Sign = MapPointSignSelectedItem.Value
+            Sign = MapPointSignSelectedItem.Value,
+            Attachments = ImageAttachments.Select(attachment => attachment.FilePath).ToList(),
         };
         var result = await _mediator.Send(command, ct);
 
@@ -171,5 +208,13 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
             : Result.Fail(result.Errors);
 
         CreatedClosing?.Invoke(this, new ResultEventArgs<MapPointListModel>(returnResult));
+    }
+
+    // MISC
+    private void AddImageAttachment(FileResult result)
+    {
+        var imageItem = new ImageItemViewModel(_popupService, result.FullPath, true);
+        imageItem.DeleteClicked += OnImageAttachmentDeleteClicked;
+        ImageAttachments.Add(imageItem);
     }
 }

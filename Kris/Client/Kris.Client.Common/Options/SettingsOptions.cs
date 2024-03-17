@@ -8,4 +8,5 @@ public sealed class SettingsOptions : IOptions
 
     public int LoginExpirationMinutes { get; init; }
     public int ChatMessagesPageSize { get; init; }
+    public int ImageAttachmentMaxDimension { get; init; }
 }

@@ -4,6 +4,7 @@
           xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
           xmlns:vm="clr-namespace:Kris.Client.ViewModels.Popups"
           xmlns:conv="clr-namespace:Kris.Client.Converters"
+          xmlns:item="clr-namespace:Kris.Client.Components.Items"
           xmlns:enum="clr-namespace:Kris.Common.Enums;assembly=Kris.Common"
           x:Class="Kris.Client.Components.Popups.EditMapPointPopup"
           x:DataType="vm:EditMapPointPopupViewModel">
@@ -98,13 +99,32 @@
                    Style="{StaticResource errorMessageStyle}" />
         </StackLayout>
 
-        <Button Text="Delete"
-                HorizontalOptions="FillAndExpand"
-                IsVisible="{Binding CanEdit}">
-            <Button.Behaviors>
-                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding DeleteButtonClickedCommand}" />
-            </Button.Behaviors>
-        </Button>
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand"
+                     IsVisible="{Binding CanEdit}">
+            <Button Text="Add attachment"
+                    HorizontalOptions="FillAndExpand">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding PickImageAttachmentButtonClickedCommand}" />
+                </Button.Behaviors>
+            </Button>
+            <Button Text="Photo"
+                    HorizontalOptions="FillAndExpand">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding TakeImageAttachmentButtonClickedCommand}" />
+                </Button.Behaviors>
+            </Button>
+        </StackLayout>
+
+        <CollectionView ItemsSource="{Binding ImageAttachments}"
+                        ItemsLayout="VerticalGrid, 3"
+                        SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <item:ImageItem BindingContext="{Binding .}" />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
         <StackLayout Orientation="Horizontal"
                      HorizontalOptions="FillAndExpand">
@@ -112,6 +132,13 @@
                     HorizontalOptions="FillAndExpand">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CancelButtonClickedCommand}" />
+                </Button.Behaviors>
+            </Button>
+            <Button Text="Delete"
+                    HorizontalOptions="FillAndExpand"
+                    IsVisible="{Binding CanEdit}">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding DeleteButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
             <Button Text="Save"

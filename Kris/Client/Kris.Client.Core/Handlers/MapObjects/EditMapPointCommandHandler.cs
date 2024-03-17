@@ -1,8 +1,10 @@
 ﻿using FluentResults;
 using Kris.Client.Common.Errors;
+using Kris.Client.Core.Image;
 using Kris.Client.Core.Requests;
 using Kris.Common.Models;
 using Kris.Interface.Controllers;
+using Kris.Interface.Models;
 using Kris.Interface.Requests;
 using MediatR;
 
@@ -10,9 +12,13 @@ namespace Kris.Client.Core.Handlers.MapObjects;
 
 public sealed class EditMapPointCommandHandler : MapObjectsHandler, IRequestHandler<EditMapPointCommand, Result>
 {
-    public EditMapPointCommandHandler(IMapObjectController mapObjectClient)
+    private readonly IImageAttachmentComposer _imageAttachmentComposer;
+
+    public EditMapPointCommandHandler(IImageAttachmentComposer imageAttachmentComposer,
+        IMapObjectController mapObjectClient)
         : base(mapObjectClient)
     {
+        _imageAttachmentComposer = imageAttachmentComposer;
     }
 
     public async Task<Result> Handle(EditMapPointCommand request, CancellationToken cancellationToken)
@@ -33,7 +39,14 @@ public sealed class EditMapPointCommandHandler : MapObjectsHandler, IRequestHand
                 Shape = request.Shape,
                 Color = request.Color,
                 Sign = request.Sign
-            }
+            },
+            DeletedAttachments = request.DeletedAttachments,
+            NewAttachments = request.NewAttachments.Select(attachment => new MapPointAttachmentModel
+            {
+                Name = Path.GetFileName(attachment),
+                FileExtension = "jpeg",
+                Base64Bytes = Convert.ToBase64String(_imageAttachmentComposer.ComposeScaledImageAttachment(attachment).ToArray())
+            }).ToList()
         };
         var response = await _mapObjectClient.EditMapPoint(httpRequest, cancellationToken);
 
