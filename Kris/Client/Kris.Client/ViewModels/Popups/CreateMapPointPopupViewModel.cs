@@ -12,6 +12,7 @@ using Kris.Client.Core.Services;
 using Kris.Client.Data.Models.Picker;
 using Kris.Client.Data.Providers;
 using Kris.Client.Utility;
+using Kris.Client.ViewModels.Items;
 using Kris.Common.Enums;
 using MediatR;
 using System.Collections.ObjectModel;
@@ -24,6 +25,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     private readonly IMapSettingsDataProvider _mapSettingsDataProvider;
     private readonly IMapPointSymbolDataProvider _symbolDataProvider;
     private readonly ISymbolImageComposer _symbolImageComposer;
+    private readonly IFilePickerService _filePickerService;
     private readonly IClipboardService _clipboardService;
 
     public Guid CurrentUserId { get; set; }
@@ -56,15 +58,20 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     [ObservableProperty]
     private ImageSource _image;
 
+    [ObservableProperty]
+    private ObservableCollection<ImageItemViewModel> _imageAttachments = new ObservableCollection<ImageItemViewModel>();
+
     public event EventHandler<ResultEventArgs<MapPointListModel>> CreatedClosing;
 
     public CreateMapPointPopupViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IMapPointSymbolDataProvider symbolDataProvider,
-        ISymbolImageComposer symbolImageComposer, IClipboardService clipboardService, IMediator mediator)
+        ISymbolImageComposer symbolImageComposer, IFilePickerService filePickerService, IClipboardService clipboardService,
+        IMediator mediator)
         : base(mediator)
     {
         _mapSettingsDataProvider = mapSettingsDataProvider;
         _symbolDataProvider = symbolDataProvider;
         _symbolImageComposer = symbolImageComposer;
+        _filePickerService = filePickerService;
         _clipboardService = clipboardService;
 
         MapPointColorItems = _symbolDataProvider.GetMapPointSymbolColorItems().ToObservableCollection();
@@ -78,7 +85,10 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     [RelayCommand]
     private async Task OnCoordinatesCopyButtonClicked() => await SaveLocationCoordinatesToClipboardAsync();
     [RelayCommand]
+    private async Task OnAddAttachmentButtonClicked() => await PickAttachmentAsync();
+    [RelayCommand]
     private async Task OnCreateButtonClicked() => await CreateMapPointAsync();
+    private void OnImageAttachmentDeleteClicked(object sender, EventArgs e) => RemoveAttachment(sender as ImageItemViewModel);
 
     // CORE
     public void Setup(Guid userId, string userName, Location location)
@@ -112,6 +122,23 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
         }
 
         await _clipboardService.SetAsync(coordinateString);
+    }
+
+    private async Task PickAttachmentAsync()
+    {
+        var fileResult = await _filePickerService.PickImageAsync();
+        if (fileResult == null) return;
+
+        var imageItem = new ImageItemViewModel(await fileResult.OpenReadAsync(), true);
+        imageItem.DeleteClicked += OnImageAttachmentDeleteClicked;
+        ImageAttachments.Add(imageItem);
+    }
+
+    private void RemoveAttachment(ImageItemViewModel image)
+    {
+        if (image == null) return;
+        image.DeleteClicked -= OnImageAttachmentDeleteClicked;
+        ImageAttachments.Remove(image);
     }
 
     private void RedrawSymbol()
