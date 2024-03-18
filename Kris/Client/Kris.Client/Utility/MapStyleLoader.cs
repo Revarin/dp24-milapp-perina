@@ -6,7 +6,7 @@ namespace Kris.Client.Utility;
 
 public static class MapStyleLoader
 {
-    public static async Task<KrisMapStyle> LoadStyleAsync(MapStyle mapStyle)
+    public static async Task<KrisMapStyle> LoadStyleAsync(KrisMapType mapStyle)
     {
         var assembly = Assembly.GetExecutingAssembly();
         Stream stream = null;
@@ -15,7 +15,7 @@ public static class MapStyleLoader
         {
             switch (mapStyle)
             {
-                case MapStyle.MilitaryDark:
+                case KrisMapType.StreetDark:
                 default:
                     stream = assembly.GetManifestResourceStream("Kris.Client.Resources.Styles.MapMilitaryDark.json");
                     break;

@@ -57,7 +57,8 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
                 },
                 MapSettings = user.Settings.IsMapSettingsNull() ? null : new MapSettingsModel
                 {
-                    CoordinateSystem = user.Settings.CoordinateSystem.GetValueOrDefault()
+                    CoordinateSystem = user.Settings.CoordinateSystem.GetValueOrDefault(),
+                    MapType = user.Settings.MapType.GetValueOrDefault()
                 }
             }
         };

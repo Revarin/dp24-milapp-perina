@@ -32,6 +32,7 @@ public sealed class StoreUserSettingsCommandHandler : UserHandler, IRequestHandl
         if (newSettings.MapSettings != null)
         {
             user.Settings.CoordinateSystem = newSettings.MapSettings.CoordinateSystem;
+            user.Settings.MapType = newSettings.MapSettings.MapType;
         }
 
         await _userRepository.UpdateAsync(cancellationToken);

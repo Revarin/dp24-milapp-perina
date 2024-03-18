@@ -20,13 +20,12 @@ using Kris.Client.Data.Providers;
 using Kris.Client.Utility;
 using Kris.Client.ViewModels.Popups;
 using Kris.Client.Views;
+using Kris.Common.Enums;
 using Kris.Common.Extensions;
 using MediatR;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 using System.Collections.ObjectModel;
-using System.Reflection;
 
 namespace Kris.Client.ViewModels.Views;
 
@@ -138,7 +137,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     {
         if (MapStyle == null)
         {
-            MapStyle = await MapStyleLoader.LoadStyleAsync(Kris.Common.Enums.MapStyle.MilitaryDark);
+            MapStyle = await MapStyleLoader.LoadStyleAsync(KrisMapType.StreetDark);
         }
     }
 
