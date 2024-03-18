@@ -7,4 +7,6 @@ public interface IMapSettingsDataProvider : ISettingsDataProvider<MapSettingsEnt
 {
     IEnumerable<CoordinateSystemItem> GetCoordinateSystemItems();
     CoordinateSystemItem GetCurrentCoordinateSystem();
+    IEnumerable<MapTypeItem> GetMapTypeItems();
+    MapTypeItem GetCurrentMapType();
 }

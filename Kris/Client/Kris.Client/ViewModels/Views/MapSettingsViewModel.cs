@@ -22,6 +22,10 @@ public sealed partial class MapSettingsViewModel : PageViewModelBase
     private ObservableCollection<CoordinateSystemItem> _coordinateSystemItems;
     [ObservableProperty]
     private CoordinateSystemItem _coordinateSystemSelectedItem;
+    [ObservableProperty]
+    private ObservableCollection<MapTypeItem> _mapTypeItems;
+    [ObservableProperty]
+    private MapTypeItem _mapTypeSelectedItem;
 
     public MapSettingsViewModel(IMapSettingsDataProvider mapSettingsDataProvider,
         IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
@@ -31,6 +35,8 @@ public sealed partial class MapSettingsViewModel : PageViewModelBase
 
         _coordinateSystemItems = _mapSettingsDataProvider.GetCoordinateSystemItems().ToObservableCollection();
         _coordinateSystemSelectedItem = _mapSettingsDataProvider.GetCurrentCoordinateSystem();
+        _mapTypeItems = _mapSettingsDataProvider.GetMapTypeItems().ToObservableCollection();
+        _mapTypeSelectedItem = _mapSettingsDataProvider.GetCurrentMapType();
     }
 
     // HANDLERS
@@ -45,7 +51,8 @@ public sealed partial class MapSettingsViewModel : PageViewModelBase
         {
             MapSettings = new MapSettingsEntity
             {
-                CoordinateSystem = CoordinateSystemSelectedItem.Value
+                CoordinateSystem = CoordinateSystemSelectedItem.Value,
+                MapType = MapTypeSelectedItem.Value
             }
         };
         var result = await _mediator.Send(command, ct);

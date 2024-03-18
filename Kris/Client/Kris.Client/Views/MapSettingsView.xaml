@@ -22,6 +22,19 @@
             </Picker>
         </StackLayout>
 
+
+        <StackLayout Orientation="Vertical">
+            <Label Text="Map type" />
+            <Picker Title="Map type"
+                    ItemsSource="{Binding MapTypeItems}"
+                    ItemDisplayBinding="{Binding Display}"
+                    SelectedItem="{Binding MapTypeSelectedItem}">
+                <Picker.Behaviors>
+                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding MapSettingsSelectedIndexChangedCommand}" />
+                </Picker.Behaviors>
+            </Picker>
+        </StackLayout>
+
         <StackLayout Orientation="Horizontal"
                      HorizontalOptions="FillAndExpand"
                      VerticalOptions="EndAndExpand">

@@ -31,7 +31,8 @@ public sealed class SettingsMapper : ISettingsMapper
     {
         return new MapSettingsEntity
         {
-            CoordinateSystem = model.CoordinateSystem
+            CoordinateSystem = model.CoordinateSystem,
+            MapType = model.MapType
         };
     }
 
@@ -39,7 +40,8 @@ public sealed class SettingsMapper : ISettingsMapper
     {
         return new MapSettingsModel
         {
-            CoordinateSystem = entity.CoordinateSystem.GetValueOrDefault()
+            CoordinateSystem = entity.CoordinateSystem.GetValueOrDefault(),
+            MapType = entity.MapType.GetValueOrDefault()
         };
     }
 }
