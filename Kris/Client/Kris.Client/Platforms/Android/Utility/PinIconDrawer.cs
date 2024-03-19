@@ -1,18 +1,20 @@
 ﻿using Android.Content;
 using Android.Graphics;
 
+using Color = Android.Graphics.Color;
+
 namespace Kris.Client.Platforms.Utility;
 
 public static class PinIconDrawer
 {
     // Source: https://stackoverflow.com/a/40192803
-    public static Bitmap DrawImageWithLabel(string imageName, string label, Context context)
+    public static Bitmap DrawImageWithLabel(string imageName, string label, Color textColor, Context context)
     {
         // Text
         var paint = new Android.Graphics.Paint
         {
             AntiAlias = true,
-            Color = Android.Graphics.Color.WhiteSmoke,
+            Color = textColor,
             TextSize = (context.Resources.DisplayMetrics.Density * 14f) + 0.5f,
             TextAlign = Android.Graphics.Paint.Align.Left
         };

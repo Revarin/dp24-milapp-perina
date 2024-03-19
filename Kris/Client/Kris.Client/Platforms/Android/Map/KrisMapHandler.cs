@@ -3,9 +3,12 @@ using Android.Gms.Maps.Model;
 using Kris.Client.Platforms.Callbacks;
 using Kris.Client.Platforms.Listeners;
 using Kris.Client.Platforms.Utility;
+using Kris.Common.Enums;
 using Microsoft.Maui.Maps;
 using Microsoft.Maui.Maps.Handlers;
 using Microsoft.Maui.Platform;
+
+using Color = Android.Graphics.Color;
 
 namespace Kris.Client.Components.Map;
 
@@ -53,14 +56,24 @@ public partial class KrisMapHandler
             mapHandler.Markers.ForEach(marker => marker.Remove());
             mapHandler.Markers.Clear();
 
-            mapHandler.AddPins(map.Pins);
+            mapHandler.AddPins(map.Pins, map.KrisMapStyle);
+        }
+    }
+
+    private static void MapKrisMapStyle(IKrisMapHandler handler, IKrisMap map)
+    {
+        if (handler is KrisMapHandler mapHandler)
+        {
+            mapHandler.SetStyle(map.KrisMapStyle);
         }
     }
 
     // Source: https://vladislavantonyuk.github.io/articles/Customize-map-pins-in-.NET-MAUI/
-    private void AddPins(IEnumerable<IMapPin> mapPins)
+    private void AddPins(IEnumerable<IMapPin> mapPins, KrisMapStyle style)
     {
         if (NativeMap is null || MauiContext is null) return;
+
+        var textColor = style.KrisMapType == KrisMapType.StreetLight ? Color.Black : Color.White;
 
         foreach (var pin in mapPins)
         {
@@ -70,7 +83,7 @@ public partial class KrisMapHandler
                 var markerOption = mapPinHandler.PlatformView;
                 if (pin is IKrisMapPin krisPin)
                 {
-                    var bitmap = PinIconDrawer.DrawImageWithLabel(krisPin.ImageName, krisPin.Label, Context);
+                    var bitmap = PinIconDrawer.DrawImageWithLabel(krisPin.ImageName, krisPin.Label, textColor, Context);
                     var bitmapDesc = BitmapDescriptorFactory.FromBitmap(bitmap);
                     markerOption.SetIcon(bitmapDesc);
 
@@ -82,12 +95,22 @@ public partial class KrisMapHandler
         }
     }
 
-    private static void MapKrisMapStyle(IKrisMapHandler handler, IKrisMap map)
+    private void SetStyle(KrisMapStyle style)
     {
-        if (handler.Map != null)
+        if (NativeMap is null || MauiContext is null) return;
+
+        if (style.KrisMapType == KrisMapType.Satelite)
         {
-            var mapStyleOptions = map.KrisMapStyle != null ? new MapStyleOptions(map.KrisMapStyle.JsonStyle) : null;
-            handler.Map.SetMapStyle(mapStyleOptions);
+            NativeMap.MapType = GoogleMap.MapTypeSatellite;
+        }
+        else if (style.KrisMapType == KrisMapType.Custom)
+        {
+            // TODO
+        }
+        else if (!string.IsNullOrEmpty(style.JsonStyle))
+        {
+            NativeMap.MapType = GoogleMap.MapTypeNormal;
+            NativeMap.SetMapStyle(new MapStyleOptions(style.JsonStyle));
         }
     }
 }

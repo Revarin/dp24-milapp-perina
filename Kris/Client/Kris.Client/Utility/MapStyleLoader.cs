@@ -15,6 +15,12 @@ public static class MapStyleLoader
         {
             switch (mapStyle)
             {
+                case KrisMapType.Satelite:
+                case KrisMapType.Custom:
+                    return new KrisMapStyle(mapStyle, null);
+                case KrisMapType.StreetLight:
+                    stream = assembly.GetManifestResourceStream("Kris.Client.Resources.Styles.MapMilitaryLight.json");
+                    break;
                 case KrisMapType.StreetDark:
                 default:
                     stream = assembly.GetManifestResourceStream("Kris.Client.Resources.Styles.MapMilitaryDark.json");
@@ -23,7 +29,7 @@ public static class MapStyleLoader
 
             using var streamReader = new StreamReader(stream);
             var jsonString = await streamReader.ReadToEndAsync();
-            return new KrisMapStyle(jsonString);
+            return new KrisMapStyle(mapStyle, jsonString);
         }
         finally
         {

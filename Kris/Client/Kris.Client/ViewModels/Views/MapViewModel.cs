@@ -45,15 +45,18 @@ public sealed partial class MapViewModel : PageViewModelBase
     [ObservableProperty]
     private MoveToRegionRequest _moveToRegion = new MoveToRegionRequest();
     [ObservableProperty]
-    private LocationCoordinates _currentPosition;
+    private LocationCoordinates _currentPosition = new LocationCoordinates();
 
     [ObservableProperty]
-    private KrisMapStyle _mapStyle = null;
+    private KrisMapStyle _krisMapStyle = null;
     [ObservableProperty]
     private ObservableCollection<KrisMapPinViewModel> _allMapPins = new ObservableCollection<KrisMapPinViewModel>();
 
     private CancellationTokenSource _backgroundLoopCTS;
     private Task _backgroundLoopTask;
+
+    private CoordinateSystem _coordinateSystem;
+    private KrisMapType _krisMapType;
 
     public MapViewModel(IMapSettingsDataProvider mapSettingsDataProvider,
         IPopupService popupService, IKrisMapObjectFactory krisMapObjectFactory, IBackgroundLoop backgroundLoop,
@@ -74,6 +77,7 @@ public sealed partial class MapViewModel : PageViewModelBase
         _messageService.Register<LogoutMessage>(this, OnLogout);
         _messageService.Register<CurrentSessionChangedMessage>(this, OnBackgroundContextChanged);
         _messageService.Register<ConnectionSettingsChangedMessage>(this, OnBackgroundContextChanged);
+        _messageService.Register<MapSettingsChangedMessage>(this, async (sender, msg) => await LoadMapSettingsAsync(true));
     }
 
     // HANDLERS
@@ -82,7 +86,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     {
         StartBackgroudListeners();
         await StartMessageListenerAsync();
-        await LoadMapStyle();
+        await LoadMapSettingsAsync(false);
     }
     [RelayCommand]
     private async Task OnMapLoaded() => await MoveToCurrentRegionAsync();
@@ -133,12 +137,18 @@ public sealed partial class MapViewModel : PageViewModelBase
         }
     }
 
-    private async Task LoadMapStyle()
+    private async Task LoadMapSettingsAsync(bool reloadMapStyle)
     {
-        if (MapStyle == null)
+        _coordinateSystem = _mapSettingsDataProvider.GetCurrentCoordinateSystem().Value;
+        _krisMapType = _mapSettingsDataProvider.GetCurrentMapType().Value;
+
+        if (reloadMapStyle || KrisMapStyle == null)
         {
-            MapStyle = await MapStyleLoader.LoadStyleAsync(KrisMapType.StreetDark);
+            KrisMapStyle = await MapStyleLoader.LoadStyleAsync(_krisMapType);
         }
+
+        CurrentPosition.CoordinateSystem = _coordinateSystem;
+        OnPropertyChanged(nameof(CurrentPosition));
     }
 
     private async Task MoveToCurrentRegionAsync()
@@ -297,11 +307,8 @@ public sealed partial class MapViewModel : PageViewModelBase
 
     private void AddCurrentUserPositionToMap(Guid userId, string userName, Location location)
     {
-        CurrentPosition = new LocationCoordinates
-        {
-            CoordinateSystem = _mapSettingsDataProvider.GetCurrentCoordinateSystem().Value,
-            Location = location
-        };
+        CurrentPosition.Location = location;
+        OnPropertyChanged(nameof(CurrentPosition));
 
         var userPin = _krisMapObjectFactory.CreateMyPositionPin(userId, userName, location);
         var oldUserPin = AllMapPins.FirstOrDefault(p => p.KrisPinType == KrisPinType.Self && p.Id == userId);
