@@ -9,4 +9,5 @@ public interface IMapSettingsDataProvider : ISettingsDataProvider<MapSettingsEnt
     CoordinateSystemItem GetCurrentCoordinateSystem();
     IEnumerable<MapTypeItem> GetMapTypeItems();
     MapTypeItem GetCurrentMapType();
+    string GetCurrentCustomMapTileSource();
 }

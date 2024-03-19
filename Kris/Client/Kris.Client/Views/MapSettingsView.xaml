@@ -17,7 +17,7 @@
                     ItemDisplayBinding="{Binding Display}"
                     SelectedItem="{Binding CoordinateSystemSelectedItem}">
                 <Picker.Behaviors>
-                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding MapSettingsSelectedIndexChangedCommand}" />
+                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding CoordinateSystemSelectedIndexChangedCommand}" />
                 </Picker.Behaviors>
             </Picker>
         </StackLayout>
@@ -30,9 +30,10 @@
                     ItemDisplayBinding="{Binding Display}"
                     SelectedItem="{Binding MapTypeSelectedItem}">
                 <Picker.Behaviors>
-                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding MapSettingsSelectedIndexChangedCommand}" />
+                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding MapTypeSelectedIndexChangedCommand}" />
                 </Picker.Behaviors>
             </Picker>
+            <Label Text="{Binding CustomMapTileSourcePath}" />
         </StackLayout>
 
         <StackLayout Orientation="Horizontal"

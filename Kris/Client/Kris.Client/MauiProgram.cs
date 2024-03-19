@@ -22,6 +22,7 @@ using Kris.Client.Utility;
 using Kris.Client.Connection.Hubs;
 using CoordinateSharp;
 using Kris.Client.Core.Image;
+using Kris.Client.Data.Database;
 
 namespace Kris.Client
 {
@@ -119,7 +120,9 @@ namespace Kris.Client
             builder.Services.AddSingleton<IIdentityStore, IdentityStore>();
             builder.Services.AddSingleton<ILocationStore, LocationStore>();
             builder.Services.AddSingleton<ISettingsStore, SettingsStore>();
-            builder.Services.AddSingleton<ISymbolImageCache, SymbolImageCache>();
+            builder.Services.AddSingleton<IFileStore, FileStore>();
+
+            builder.Services.AddSingleton<IRepositoryFactory, RepositoryFactory>();
 
             builder.Services.AddTransient<IConnectionSettingsDataProvider, ConnectionSettingsDataProvider>();
             builder.Services.AddTransient<IMapPointSymbolDataProvider, MapPointSymbolDataProvider>();

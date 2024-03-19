@@ -65,4 +65,10 @@ public sealed class MapSettingsDataProvider : IMapSettingsDataProvider
             MapType = _mapTypeItems.Get().First(i => i.Value == _defaultOptions.MapType).Value
         };
     }
+
+    public string GetCurrentCustomMapTileSource()
+    {
+        var settings = _settingsStore.GetMapSettings();
+        return settings.CustomMapTilesDatabasePath;
+    }
 }
