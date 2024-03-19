@@ -1,5 +1,4 @@
 ﻿using SQLite;
-using SQLitePCL;
 
 namespace Kris.Client.Data.Models.Database;
 
@@ -10,5 +9,5 @@ public sealed class TileEntity
     public int Y { get; set; }
     public int Z { get; set; }
     public int S { get; set; }
-    public sqlite3_blob Image { get; set; }
+    public byte[] Image { get; set; }
 }

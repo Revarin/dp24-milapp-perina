@@ -89,9 +89,9 @@ public sealed partial class MapSettingsViewModel : PageViewModelBase
             MapSettings = new MapSettingsEntity
             {
                 CoordinateSystem = CoordinateSystemSelectedItem.Value,
-                MapType = MapTypeSelectedItem.Value,
-                CustomMapTilesDatabasePath = CustomMapTileSourcePath
-            }
+                MapType = MapTypeSelectedItem.Value
+            },
+            CustomMapTilesDatabasePath = CustomMapTileSourcePath
         };
         var result = await _mediator.Send(command, ct);
 

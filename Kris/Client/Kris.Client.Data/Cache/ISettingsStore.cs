@@ -8,4 +8,6 @@ public interface ISettingsStore
     ConnectionSettingsEntity GetConnectionSettings();
     void StoreMapSettings(MapSettingsEntity settings);
     MapSettingsEntity GetMapSettings();
+    void StoreMapTilesSourcePath(string path);
+    string GetMapTilesSourcePath();
 }

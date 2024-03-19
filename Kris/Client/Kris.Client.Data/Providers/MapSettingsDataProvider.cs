@@ -68,7 +68,6 @@ public sealed class MapSettingsDataProvider : IMapSettingsDataProvider
 
     public string GetCurrentCustomMapTileSource()
     {
-        var settings = _settingsStore.GetMapSettings();
-        return settings.CustomMapTilesDatabasePath;
+        return _settingsStore.GetMapTilesSourcePath();
     }
 }

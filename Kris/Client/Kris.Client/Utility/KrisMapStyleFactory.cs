@@ -1,12 +1,13 @@
 ﻿using Kris.Client.Components.Map;
+using Kris.Client.Data.Models.Database;
 using Kris.Common.Enums;
 using System.Reflection;
 
 namespace Kris.Client.Utility;
 
-public static class MapStyleLoader
+public static class KrisMapStyleFactory
 {
-    public static async Task<KrisMapStyle> LoadStyleAsync(KrisMapType mapStyle)
+    public static async Task<KrisMapStyle> CreateStyleAsync(KrisMapType mapStyle, Func<int, int, int, TileEntity> tileSource = null)
     {
         var assembly = Assembly.GetExecutingAssembly();
         Stream stream = null;
@@ -16,8 +17,9 @@ public static class MapStyleLoader
             switch (mapStyle)
             {
                 case KrisMapType.Satelite:
+                    return new KrisMapStyle(mapStyle);
                 case KrisMapType.Custom:
-                    return new KrisMapStyle(mapStyle, null);
+                    return new KrisMapStyle(mapStyle, tileSource);
                 case KrisMapType.StreetLight:
                     stream = assembly.GetManifestResourceStream("Kris.Client.Resources.Styles.MapMilitaryLight.json");
                     break;

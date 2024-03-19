@@ -16,6 +16,7 @@ using Kris.Client.Core.Messages;
 using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
+using Kris.Client.Data.Database;
 using Kris.Client.Data.Providers;
 using Kris.Client.Utility;
 using Kris.Client.ViewModels.Popups;
@@ -32,6 +33,7 @@ namespace Kris.Client.ViewModels.Views;
 public sealed partial class MapViewModel : PageViewModelBase
 {
     private readonly IMapSettingsDataProvider _mapSettingsDataProvider;
+    private readonly IRepositoryFactory _repositoryFactory;
     private readonly IPopupService _popupService;
     private readonly IKrisMapObjectFactory _krisMapObjectFactory;
     private readonly IBackgroundLoop _backgroundLoop;
@@ -54,11 +56,12 @@ public sealed partial class MapViewModel : PageViewModelBase
 
     private CancellationTokenSource _backgroundLoopCTS;
     private Task _backgroundLoopTask;
+    private IMapTileRepository _mapTileRepository;
 
     private CoordinateSystem _coordinateSystem;
     private KrisMapType _krisMapType;
 
-    public MapViewModel(IMapSettingsDataProvider mapSettingsDataProvider,
+    public MapViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IRepositoryFactory repositoryFactory,
         IPopupService popupService, IKrisMapObjectFactory krisMapObjectFactory, IBackgroundLoop backgroundLoop,
         ICurrentPositionBackgroundHandler currentPositionBackgroundHandler, IUserPositionsBackgroundHandler userPositionsBackgroundHandler,
         IMapObjectsBackgroundHandler mapObjectsBackgroundHandler, IMessageReceiver messageReceiver,
@@ -66,6 +69,7 @@ public sealed partial class MapViewModel : PageViewModelBase
         : base(mediator, navigationService, messageService, alertService)
     {
         _mapSettingsDataProvider = mapSettingsDataProvider;
+        _repositoryFactory = repositoryFactory;
         _popupService = popupService;
         _krisMapObjectFactory = krisMapObjectFactory;
         _backgroundLoop = backgroundLoop;
@@ -144,7 +148,14 @@ public sealed partial class MapViewModel : PageViewModelBase
 
         if (reloadMapStyle || KrisMapStyle == null)
         {
-            KrisMapStyle = await MapStyleLoader.LoadStyleAsync(_krisMapType);
+            if (_krisMapType == KrisMapType.Custom)
+            {
+                _mapTileRepository = _repositoryFactory.CreateMapTileRepository(_mapSettingsDataProvider.GetCurrentCustomMapTileSource());
+            }
+
+            KrisMapStyle = _krisMapType == KrisMapType.Custom
+                ? await KrisMapStyleFactory.CreateStyleAsync(_krisMapType, _mapTileRepository.GetTile)
+                : await KrisMapStyleFactory.CreateStyleAsync(_krisMapType);
         }
 
         CurrentPosition.CoordinateSystem = _coordinateSystem;
@@ -388,6 +399,9 @@ public sealed partial class MapViewModel : PageViewModelBase
             _messageReceiver.MessageReceived -= OnMessageReceived;
             await _messageReceiver.Disconnect();
         }
+
+        KrisMapStyle.TileSource = null;
+        _mapTileRepository?.Dispose();
 
         AllMapPins.Clear();
     }

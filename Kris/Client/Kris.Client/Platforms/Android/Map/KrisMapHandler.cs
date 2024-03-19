@@ -2,6 +2,7 @@
 using Android.Gms.Maps.Model;
 using Kris.Client.Platforms.Callbacks;
 using Kris.Client.Platforms.Listeners;
+using Kris.Client.Platforms.Map;
 using Kris.Client.Platforms.Utility;
 using Kris.Common.Enums;
 using Microsoft.Maui.Maps;
@@ -73,7 +74,7 @@ public partial class KrisMapHandler
     {
         if (NativeMap is null || MauiContext is null) return;
 
-        var textColor = style.KrisMapType == KrisMapType.StreetLight ? Color.Black : Color.White;
+        var textColor = style.KrisMapType == KrisMapType.StreetLight || style.KrisMapType == KrisMapType.Custom ? Color.Black : Color.White;
 
         foreach (var pin in mapPins)
         {
@@ -99,13 +100,23 @@ public partial class KrisMapHandler
     {
         if (NativeMap is null || MauiContext is null) return;
 
+        //NativeMap.AddTileOverlay(null);
+        NativeMap.ResetMinMaxZoomPreference();
+
         if (style.KrisMapType == KrisMapType.Satelite)
         {
             NativeMap.MapType = GoogleMap.MapTypeSatellite;
         }
         else if (style.KrisMapType == KrisMapType.Custom)
         {
-            // TODO
+            NativeMap.MapType = GoogleMap.MapTypeNone;
+            var tileOverlayOptions = new TileOverlayOptions();
+            var tileProvider = new KrisTileProvider(style.TileSource);
+            tileOverlayOptions.InvokeTileProvider(tileProvider);
+            NativeMap.AddTileOverlay(tileOverlayOptions);
+
+            NativeMap.SetMaxZoomPreference(15.9f);
+            NativeMap.SetMinZoomPreference(15f);
         }
         else if (!string.IsNullOrEmpty(style.JsonStyle))
         {
