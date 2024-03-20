@@ -5,5 +5,5 @@ public enum KrisMapType
     StreetDark,
     StreetLight,
     Satelite,
-    Custom
+    Military
 }

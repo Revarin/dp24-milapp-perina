@@ -148,14 +148,15 @@ public sealed partial class MapViewModel : PageViewModelBase
 
         if (reloadMapStyle || KrisMapStyle == null)
         {
-            if (_krisMapType == KrisMapType.Custom)
+            if (_krisMapType == KrisMapType.Military)
             {
                 _mapTileRepository = _repositoryFactory.CreateMapTileRepository(_mapSettingsDataProvider.GetCurrentCustomMapTileSource());
+                KrisMapStyle = await KrisMapStyleFactory.CreateStyleAsync(_krisMapType, _mapTileRepository.GetTile);
             }
-
-            KrisMapStyle = _krisMapType == KrisMapType.Custom
-                ? await KrisMapStyleFactory.CreateStyleAsync(_krisMapType, _mapTileRepository.GetTile)
-                : await KrisMapStyleFactory.CreateStyleAsync(_krisMapType);
+            else
+            {
+                KrisMapStyle = await KrisMapStyleFactory.CreateStyleAsync(_krisMapType);
+            }
         }
 
         CurrentPosition.CoordinateSystem = _coordinateSystem;

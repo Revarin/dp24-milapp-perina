@@ -18,6 +18,7 @@ public partial class KrisMapHandler
     public List<Marker> Markers { get; } = new();
 
     private readonly MapLongClickListener _mapLongClickListener = new();
+    private TileOverlay _tileOverlay;
 
     protected GoogleMap NativeMap { get; private set; }
 
@@ -74,7 +75,7 @@ public partial class KrisMapHandler
     {
         if (NativeMap is null || MauiContext is null) return;
 
-        var textColor = style.KrisMapType == KrisMapType.StreetLight || style.KrisMapType == KrisMapType.Custom ? Color.Black : Color.White;
+        var lightMap = style.KrisMapType == KrisMapType.StreetLight || style.KrisMapType == KrisMapType.Military;
 
         foreach (var pin in mapPins)
         {
@@ -84,7 +85,7 @@ public partial class KrisMapHandler
                 var markerOption = mapPinHandler.PlatformView;
                 if (pin is IKrisMapPin krisPin)
                 {
-                    var bitmap = PinIconDrawer.DrawImageWithLabel(krisPin.ImageName, krisPin.Label, textColor, Context);
+                    var bitmap = PinIconDrawer.DrawImageWithLabel(krisPin.ImageName, krisPin.Label, lightMap, Context);
                     var bitmapDesc = BitmapDescriptorFactory.FromBitmap(bitmap);
                     markerOption.SetIcon(bitmapDesc);
 
@@ -100,20 +101,22 @@ public partial class KrisMapHandler
     {
         if (NativeMap is null || MauiContext is null) return;
 
-        //NativeMap.AddTileOverlay(null);
         NativeMap.ResetMinMaxZoomPreference();
+        if (_tileOverlay != null) _tileOverlay.Remove();
 
         if (style.KrisMapType == KrisMapType.Satelite)
         {
             NativeMap.MapType = GoogleMap.MapTypeSatellite;
         }
-        else if (style.KrisMapType == KrisMapType.Custom)
+        else if (style.KrisMapType == KrisMapType.Military)
         {
             NativeMap.MapType = GoogleMap.MapTypeNone;
+            NativeMap.SetMapStyle(new MapStyleOptions(style.JsonStyle));
+
             var tileOverlayOptions = new TileOverlayOptions();
-            var tileProvider = new KrisTileProvider(style.TileSource);
+            var tileProvider = new KrisMilitaryTileProvider(style.TileSource);
             tileOverlayOptions.InvokeTileProvider(tileProvider);
-            NativeMap.AddTileOverlay(tileOverlayOptions);
+            _tileOverlay = NativeMap.AddTileOverlay(tileOverlayOptions);
 
             NativeMap.SetMaxZoomPreference(15.9f);
             NativeMap.SetMinZoomPreference(15f);

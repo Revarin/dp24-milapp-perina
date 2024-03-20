@@ -68,7 +68,7 @@ public sealed partial class MapSettingsViewModel : PageViewModelBase
     {
         CustomMapTileSourcePath = null;
 
-        if (MapTypeSelectedItem.Value == KrisMapType.Custom)
+        if (MapTypeSelectedItem.Value == KrisMapType.Military)
         {
             CustomMapTileSourcePath = await PickMapTileDatabase();
             if (string.IsNullOrEmpty(CustomMapTileSourcePath))

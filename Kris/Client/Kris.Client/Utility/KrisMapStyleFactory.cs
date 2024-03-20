@@ -17,9 +17,10 @@ public static class KrisMapStyleFactory
             switch (mapStyle)
             {
                 case KrisMapType.Satelite:
-                    return new KrisMapStyle(mapStyle);
-                case KrisMapType.Custom:
-                    return new KrisMapStyle(mapStyle, tileSource);
+                    break;
+                case KrisMapType.Military:
+                    stream = assembly.GetManifestResourceStream("Kris.Client.Resources.Styles.MapMilitaryLight.json");
+                    break;
                 case KrisMapType.StreetLight:
                     stream = assembly.GetManifestResourceStream("Kris.Client.Resources.Styles.MapMilitaryLight.json");
                     break;
@@ -29,9 +30,16 @@ public static class KrisMapStyleFactory
                     break;
             }
 
+            if (stream == null) return new KrisMapStyle { KrisMapType = mapStyle };
+
             using var streamReader = new StreamReader(stream);
             var jsonString = await streamReader.ReadToEndAsync();
-            return new KrisMapStyle(mapStyle, jsonString);
+            return new KrisMapStyle
+            {
+                KrisMapType = mapStyle,
+                JsonStyle = jsonString,
+                TileSource = tileSource
+            };
         }
         finally
         {

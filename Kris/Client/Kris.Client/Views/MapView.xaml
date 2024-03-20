@@ -16,7 +16,6 @@
     
     <ContentPage.Resources>
         <conv:LocationToCoordinatesConverter x:Key="LocationToCoordinates" />
-        <conv:KrisMapStyleToTextColorConverter x:Key="StyleToTextColor" />
     </ContentPage.Resources>
 
     <StackLayout Orientation="Vertical"
@@ -63,13 +62,11 @@
                 </cmpMap:KrisMap.ItemTemplate>
             </cmpMap:KrisMap>
 
-            <StackLayout Orientation="Vertical"
-                         HorizontalOptions="Start"
-                         VerticalOptions="Start">
-                <Label Text="{Binding CurrentPosition, Converter={StaticResource LocationToCoordinates}}"
-                       TextColor="{Binding KrisMapStyle, Converter={StaticResource StyleToTextColor}}"
-                       FontSize="Medium" FontAttributes="Bold" />
-            </StackLayout>
+            <Label Text="{Binding CurrentPosition, Converter={StaticResource LocationToCoordinates}}"
+                   HorizontalOptions="FillAndExpand" VerticalOptions="Start"
+                   FontSize="Medium" FontAttributes="Bold"
+                   BackgroundColor="#AA000000" TextColor="White">
+            </Label>
         </Grid>
             
         <StackLayout Orientation="Horizontal"

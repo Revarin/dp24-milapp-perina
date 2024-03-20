@@ -10,7 +10,7 @@ public sealed class MapTypeDataSource : IStaticDataSource<MapTypeItem>
         new MapTypeItem { Value = KrisMapType.StreetDark, Display = "Dark" },
         new MapTypeItem { Value = KrisMapType.StreetLight, Display = "Light" },
         new MapTypeItem { Value = KrisMapType.Satelite, Display = "Satelite" },
-        new MapTypeItem { Value = KrisMapType.Custom, Display = "Custom" }
+        new MapTypeItem { Value = KrisMapType.Military, Display = "DMU 25" }
     };
 
     public IEnumerable<MapTypeItem> Get()

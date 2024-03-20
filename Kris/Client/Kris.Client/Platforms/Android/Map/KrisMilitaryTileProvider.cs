@@ -3,11 +3,11 @@ using Kris.Client.Data.Models.Database;
 
 namespace Kris.Client.Platforms.Map;
 
-public sealed class KrisTileProvider : Java.Lang.Object, ITileProvider
+public sealed class KrisMilitaryTileProvider : Java.Lang.Object, ITileProvider
 {
     private Func<int, int, int, TileEntity> _tileSource;
 
-    public KrisTileProvider(Func<int, int, int, TileEntity> tileSource)
+    public KrisMilitaryTileProvider(Func<int, int, int, TileEntity> tileSource)
     {
         _tileSource = tileSource;
     }
