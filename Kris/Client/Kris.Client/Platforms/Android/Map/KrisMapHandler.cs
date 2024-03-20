@@ -9,8 +9,6 @@ using Microsoft.Maui.Maps;
 using Microsoft.Maui.Maps.Handlers;
 using Microsoft.Maui.Platform;
 
-using Color = Android.Graphics.Color;
-
 namespace Kris.Client.Components.Map;
 
 public partial class KrisMapHandler
@@ -119,7 +117,7 @@ public partial class KrisMapHandler
             _tileOverlay = NativeMap.AddTileOverlay(tileOverlayOptions);
 
             NativeMap.SetMaxZoomPreference(15.9f);
-            NativeMap.SetMinZoomPreference(15f);
+            NativeMap.SetMinZoomPreference(13f);
         }
         else if (!string.IsNullOrEmpty(style.JsonStyle))
         {
