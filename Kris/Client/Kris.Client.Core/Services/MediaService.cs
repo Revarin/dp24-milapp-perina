@@ -9,6 +9,20 @@ public sealed class MediaService : IMediaService
         return result;
     }
 
+    public async Task<FileResult> PickMapTileDatabaseAsync()
+    {
+        var result = await FilePicker.Default.PickAsync(new PickOptions
+        {
+            FileTypes = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
+            {
+                { DevicePlatform.Android, new[] { "application/octet-stream" } },
+                { DevicePlatform.iOS, new[] { "" } },
+                { DevicePlatform.WinUI, new[] { "" } }
+            })
+        });
+        return result;
+    }
+
     public async Task<FileResult> TakePhotoAsync()
     {
         if (!MediaPicker.Default.IsCaptureSupported) return null;

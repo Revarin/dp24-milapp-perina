@@ -12,4 +12,5 @@ public sealed class DefaultPreferencesOptions : IOptions
     public int PositionDownloadFrequency { get; init; }
     public int MapObjectDownloadFrequency { get; init; }
     public CoordinateSystem CoordinateSystem { get; init; }
+    public KrisMapType MapType { get; init; }
 }

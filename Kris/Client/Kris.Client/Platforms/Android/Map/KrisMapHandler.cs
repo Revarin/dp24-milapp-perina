@@ -2,7 +2,9 @@
 using Android.Gms.Maps.Model;
 using Kris.Client.Platforms.Callbacks;
 using Kris.Client.Platforms.Listeners;
+using Kris.Client.Platforms.Map;
 using Kris.Client.Platforms.Utility;
+using Kris.Common.Enums;
 using Microsoft.Maui.Maps;
 using Microsoft.Maui.Maps.Handlers;
 using Microsoft.Maui.Platform;
@@ -14,6 +16,7 @@ public partial class KrisMapHandler
     public List<Marker> Markers { get; } = new();
 
     private readonly MapLongClickListener _mapLongClickListener = new();
+    private TileOverlay _tileOverlay;
 
     protected GoogleMap NativeMap { get; private set; }
 
@@ -53,14 +56,24 @@ public partial class KrisMapHandler
             mapHandler.Markers.ForEach(marker => marker.Remove());
             mapHandler.Markers.Clear();
 
-            mapHandler.AddPins(map.Pins);
+            mapHandler.AddPins(map.Pins, map.KrisMapStyle);
+        }
+    }
+
+    private static void MapKrisMapStyle(IKrisMapHandler handler, IKrisMap map)
+    {
+        if (handler is KrisMapHandler mapHandler)
+        {
+            mapHandler.SetStyle(map.KrisMapStyle);
         }
     }
 
     // Source: https://vladislavantonyuk.github.io/articles/Customize-map-pins-in-.NET-MAUI/
-    private void AddPins(IEnumerable<IMapPin> mapPins)
+    private void AddPins(IEnumerable<IMapPin> mapPins, KrisMapStyle style)
     {
         if (NativeMap is null || MauiContext is null) return;
+
+        var lightMap = style.KrisMapType == KrisMapType.StreetLight || style.KrisMapType == KrisMapType.Military;
 
         foreach (var pin in mapPins)
         {
@@ -70,7 +83,7 @@ public partial class KrisMapHandler
                 var markerOption = mapPinHandler.PlatformView;
                 if (pin is IKrisMapPin krisPin)
                 {
-                    var bitmap = PinIconDrawer.DrawImageWithLabel(krisPin.ImageName, krisPin.Label, Context);
+                    var bitmap = PinIconDrawer.DrawImageWithLabel(krisPin.ImageName, krisPin.Label, lightMap, Context);
                     var bitmapDesc = BitmapDescriptorFactory.FromBitmap(bitmap);
                     markerOption.SetIcon(bitmapDesc);
 
@@ -82,12 +95,34 @@ public partial class KrisMapHandler
         }
     }
 
-    private static void MapKrisMapStyle(IKrisMapHandler handler, IKrisMap map)
+    private void SetStyle(KrisMapStyle style)
     {
-        if (handler.Map != null)
+        if (NativeMap is null || MauiContext is null) return;
+
+        NativeMap.ResetMinMaxZoomPreference();
+        if (_tileOverlay != null) _tileOverlay.Remove();
+
+        if (style.KrisMapType == KrisMapType.Satelite)
         {
-            var mapStyleOptions = map.KrisMapStyle != null ? new MapStyleOptions(map.KrisMapStyle.JsonStyle) : null;
-            handler.Map.SetMapStyle(mapStyleOptions);
+            NativeMap.MapType = GoogleMap.MapTypeSatellite;
+        }
+        else if (style.KrisMapType == KrisMapType.Military)
+        {
+            NativeMap.MapType = GoogleMap.MapTypeNone;
+            NativeMap.SetMapStyle(new MapStyleOptions(style.JsonStyle));
+
+            var tileOverlayOptions = new TileOverlayOptions();
+            var tileProvider = new KrisMilitaryTileProvider(style.TileSource);
+            tileOverlayOptions.InvokeTileProvider(tileProvider);
+            _tileOverlay = NativeMap.AddTileOverlay(tileOverlayOptions);
+
+            NativeMap.SetMaxZoomPreference(15.9f);
+            NativeMap.SetMinZoomPreference(13f);
+        }
+        else if (!string.IsNullOrEmpty(style.JsonStyle))
+        {
+            NativeMap.MapType = GoogleMap.MapTypeNormal;
+            NativeMap.SetMapStyle(new MapStyleOptions(style.JsonStyle));
         }
     }
 }

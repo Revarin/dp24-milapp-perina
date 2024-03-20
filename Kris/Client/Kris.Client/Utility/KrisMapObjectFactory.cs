@@ -9,9 +9,9 @@ namespace Kris.Client.Utility;
 public sealed class KrisMapObjectFactory : IKrisMapObjectFactory
 {
     private readonly ISymbolImageComposer _symbolImageComposer;
-    private readonly ISymbolImageCache _symbolImageCache;
+    private readonly IFileStore _symbolImageCache;
 
-    public KrisMapObjectFactory(ISymbolImageComposer symbolImageComposer, ISymbolImageCache symbolImageCache)
+    public KrisMapObjectFactory(ISymbolImageComposer symbolImageComposer, IFileStore symbolImageCache)
     {
         _symbolImageComposer = symbolImageComposer;
         _symbolImageCache = symbolImageCache;
@@ -21,10 +21,10 @@ public sealed class KrisMapObjectFactory : IKrisMapObjectFactory
     {
         var symbolName = $"point_{MapPointSymbolShape.Circle}_{MapPointSymbolColor.Green}_{MapPointSymbolSign.None}.png";
 
-        if (!_symbolImageCache.Exists(symbolName))
+        if (!_symbolImageCache.CacheExists(symbolName))
         {
             var imageStream = _symbolImageComposer.ComposeMapPointSymbol(MapPointSymbolShape.Circle, MapPointSymbolColor.Green, MapPointSymbolSign.None);
-            _symbolImageCache.Save(symbolName, imageStream);
+            _symbolImageCache.SaveToCache(symbolName, imageStream);
         }
 
         var pin = new KrisMapPinViewModel
@@ -45,10 +45,10 @@ public sealed class KrisMapObjectFactory : IKrisMapObjectFactory
     {
         var symbolName = $"point_{MapPointSymbolShape.Circle}_{MapPointSymbolColor.Blue}_{MapPointSymbolSign.None}.png";
 
-        if (!_symbolImageCache.Exists(symbolName))
+        if (!_symbolImageCache.CacheExists(symbolName))
         {
             var imageStream = _symbolImageComposer.ComposeMapPointSymbol(MapPointSymbolShape.Circle, MapPointSymbolColor.Blue, MapPointSymbolSign.None);
-            _symbolImageCache.Save(symbolName, imageStream);
+            _symbolImageCache.SaveToCache(symbolName, imageStream);
         }
 
         var pin = new KrisMapPinViewModel
@@ -70,10 +70,10 @@ public sealed class KrisMapObjectFactory : IKrisMapObjectFactory
         var symbol = mapPoint.Symbol;
         var symbolName = $"point_{symbol.Shape}_{symbol.Color}_{symbol.Sign}.png";
 
-        if (!_symbolImageCache.Exists(symbolName))
+        if (!_symbolImageCache.CacheExists(symbolName))
         {
             var imageStream = _symbolImageComposer.ComposeMapPointSymbol(symbol.Shape, symbol.Color, symbol.Sign);
-            _symbolImageCache.Save(symbolName, imageStream);
+            _symbolImageCache.SaveToCache(symbolName, imageStream);
         }
 
         var pin = new KrisMapPinViewModel

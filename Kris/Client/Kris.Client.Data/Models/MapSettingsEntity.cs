@@ -5,4 +5,5 @@ namespace Kris.Client.Data.Models;
 public sealed class MapSettingsEntity
 {
     public CoordinateSystem? CoordinateSystem { get; set; }
+    public KrisMapType? MapType { get; set; }   
 }

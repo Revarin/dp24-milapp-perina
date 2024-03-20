@@ -9,6 +9,8 @@ public sealed class UserSettingsEntity : EntityBase
     public int? PositionDownloadFrequency { get; set; }
     public int? MapObjectDownloadFrequency { get; set; }
     public CoordinateSystem? CoordinateSystem { get; set; }
+    public KrisMapType? MapType { get; set; }
+
     public UserEntity? User { get; set; }
 
     public bool IsConnectionSettingsNull() => !(GpsRequestInterval.HasValue
@@ -16,5 +18,6 @@ public sealed class UserSettingsEntity : EntityBase
         || PositionDownloadFrequency.HasValue
         || MapObjectDownloadFrequency.HasValue);
 
-    public bool IsMapSettingsNull() => !CoordinateSystem.HasValue;
+    public bool IsMapSettingsNull() => !(CoordinateSystem.HasValue
+        || MapType.HasValue);
 }

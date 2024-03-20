@@ -6,6 +6,7 @@ public sealed class SettingsStore : StoreBase, ISettingsStore
 {
     private const string ConnectionSettingsKey = "kris-settings-connection";
     private const string MapSettingsKey = "kris-settings-map";
+    private const string MapTilesSourcePathKey = "kris-settings-map-tilesource";
 
     public ConnectionSettingsEntity GetConnectionSettings()
     {
@@ -17,6 +18,11 @@ public sealed class SettingsStore : StoreBase, ISettingsStore
         return Get<MapSettingsEntity>(MapSettingsKey);
     }
 
+    public string GetMapTilesSourcePath()
+    {
+        return Get<string>(MapTilesSourcePathKey);
+    }
+
     public void StoreConnectionSettings(ConnectionSettingsEntity settings)
     {
         Set(ConnectionSettingsKey, settings);
@@ -25,5 +31,10 @@ public sealed class SettingsStore : StoreBase, ISettingsStore
     public void StoreMapSettings(MapSettingsEntity settings)
     {
         Set(MapSettingsKey, settings);
+    }
+
+    public void StoreMapTilesSourcePath(string path)
+    {
+        Set(MapTilesSourcePathKey, path);
     }
 }
