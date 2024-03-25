@@ -12,6 +12,7 @@ using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.ViewModels.Items;
 using Kris.Client.ViewModels.Popups;
+using Kris.Client.ViewModels.Utility;
 using Kris.Common.Extensions;
 using MediatR;
 using System.Collections.ObjectModel;

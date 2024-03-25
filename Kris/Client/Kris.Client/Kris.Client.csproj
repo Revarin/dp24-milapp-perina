@@ -100,7 +100,7 @@
 	  <MauiXaml Update="Components\Items\SessionItem.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Components\Popups\ConfirmationPopup.xaml">
+	  <MauiXaml Update="Components\Utility\ConfirmationPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Components\Popups\CreateMapPointPopup.xaml">
@@ -115,13 +115,13 @@
 	  <MauiXaml Update="Components\Popups\EditSessionPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Components\Popups\ImagePopup.xaml">
+	  <MauiXaml Update="Components\Utility\ImagePopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Components\Popups\LoadingPopup.xaml">
+	  <MauiXaml Update="Components\Utility\LoadingPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Components\Popups\PasswordPopup.xaml">
+	  <MauiXaml Update="Components\Utility\PasswordPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\ChatView.xaml">

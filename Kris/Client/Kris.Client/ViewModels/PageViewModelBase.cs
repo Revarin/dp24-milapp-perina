@@ -5,7 +5,7 @@ using Kris.Client.Common.Utility;
 using Kris.Client.Core.Messages;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
-using Kris.Client.ViewModels.Popups;
+using Kris.Client.ViewModels.Utility;
 using Kris.Client.Views;
 using MediatR;
 
@@ -117,7 +117,7 @@ public abstract partial class PageViewModelBase : ObservableValidator
     protected async Task<T> MediatorSendLoadingAsync<T>(IRequest<T> request, CancellationToken ct)
     {
         Action closeLoadingPopup = null;
-        var loadingPopupTask = _popupService.ShowPopupAsync<LoadingPopupViewModel>(vm => closeLoadingPopup = vm.Finish);
+        var loadingPopupTask = _popupService.ShowPopupAsync<LoadingPopupViewModel>(vm => closeLoadingPopup = vm.Close);
         var result = await _mediator.Send(request, ct);
 
         closeLoadingPopup();

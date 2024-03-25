@@ -2,9 +2,9 @@
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Events;
 
-namespace Kris.Client.ViewModels.Popups;
+namespace Kris.Client.ViewModels.Utility;
 
-public sealed partial class ConfirmationPopupViewModel : ControllViewModelBase
+public sealed partial class ConfirmationPopupViewModel : ObservableObject
 {
     public event EventHandler<ConfirmationEventArgs> YesClosing;
     public event EventHandler<ConfirmationEventArgs> NoClosing;

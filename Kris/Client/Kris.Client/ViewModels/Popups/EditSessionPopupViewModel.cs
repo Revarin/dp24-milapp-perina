@@ -8,6 +8,7 @@ using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.Validations;
+using Kris.Client.ViewModels.Utility;
 using Kris.Common.Enums;
 using MediatR;
 using System.ComponentModel.DataAnnotations;

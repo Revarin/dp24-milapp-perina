@@ -20,6 +20,7 @@ using Kris.Client.Data.Database;
 using Kris.Client.Data.Providers;
 using Kris.Client.Utility;
 using Kris.Client.ViewModels.Popups;
+using Kris.Client.ViewModels.Utility;
 using Kris.Client.Views;
 using Kris.Common.Enums;
 using Kris.Common.Extensions;

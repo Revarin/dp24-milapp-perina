@@ -24,6 +24,7 @@ using CoordinateSharp;
 using Kris.Client.Core.Image;
 using Kris.Client.Data.Database;
 using Kris.Client.Components.Utility;
+using Kris.Client.ViewModels.Utility;
 
 namespace Kris.Client
 {

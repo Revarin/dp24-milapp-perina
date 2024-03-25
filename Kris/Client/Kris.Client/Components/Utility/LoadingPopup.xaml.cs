@@ -1,7 +1,7 @@
 using CommunityToolkit.Maui.Views;
-using Kris.Client.ViewModels.Popups;
+using Kris.Client.ViewModels.Utility;
 
-namespace Kris.Client.Components.Popups;
+namespace Kris.Client.Components.Utility;
 
 public partial class LoadingPopup : Popup
 {
@@ -9,7 +9,7 @@ public partial class LoadingPopup : Popup
 	{
 		BindingContext = vm;
 		InitializeComponent();
-		(BindingContext as LoadingPopupViewModel).FinishClosing += CancelClose;
+		(BindingContext as LoadingPopupViewModel).CancelClosing += CancelClose;
     }
 
     private async void CancelClose(object sender, EventArgs e) => await CloseAsync();

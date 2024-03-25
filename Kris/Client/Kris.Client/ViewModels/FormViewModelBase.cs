@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Kris.Client.ViewModels.Popups;
+using Kris.Client.ViewModels.Utility;
 using MediatR;
 
 namespace Kris.Client.ViewModels;
@@ -92,7 +92,7 @@ public abstract partial class FormViewModelBase : ObservableValidator
     protected async Task<T> MediatorSendLoadingAsync<T>(IRequest<T> request, CancellationToken ct)
     {
         Action closeLoadingPopup = null;
-        var loadingPopupTask = _popupService.ShowPopupAsync<LoadingPopupViewModel>(vm => closeLoadingPopup = vm.Finish);
+        var loadingPopupTask = _popupService.ShowPopupAsync<LoadingPopupViewModel>(vm => closeLoadingPopup = vm.Close);
         var result = await _mediator.Send(request, ct);
 
         closeLoadingPopup();

@@ -1,7 +1,7 @@
 using CommunityToolkit.Maui.Views;
-using Kris.Client.ViewModels.Popups;
+using Kris.Client.ViewModels.Utility;
 
-namespace Kris.Client.Components.Popups;
+namespace Kris.Client.Components.Utility;
 
 public partial class ConfirmationPopup : Popup
 {

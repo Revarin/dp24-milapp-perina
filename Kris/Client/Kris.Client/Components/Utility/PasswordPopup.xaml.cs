@@ -1,8 +1,8 @@
 using CommunityToolkit.Maui.Views;
 using Kris.Client.Components.Events;
-using Kris.Client.ViewModels.Popups;
+using Kris.Client.ViewModels.Utility;
 
-namespace Kris.Client.Components.Popups;
+namespace Kris.Client.Components.Utility;
 
 public partial class PasswordPopup : Popup
 {
@@ -12,7 +12,6 @@ public partial class PasswordPopup : Popup
 		InitializeComponent();
         (BindingContext as PasswordPopupViewModel).CancelClosing += CancelClose;
         (BindingContext as PasswordPopupViewModel).AcceptedClosing += ReturnClose;
-        (BindingContext as PasswordPopupViewModel).Init();
     }
 
     private async void CancelClose(object sender, EventArgs e) => await CloseAsync();

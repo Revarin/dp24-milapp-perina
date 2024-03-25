@@ -13,6 +13,7 @@ using Kris.Client.Data.Models.Picker;
 using Kris.Client.Data.Providers;
 using Kris.Client.Utility;
 using Kris.Client.ViewModels.Items;
+using Kris.Client.ViewModels.Utility;
 using Kris.Common.Enums;
 using MediatR;
 using System.Collections.ObjectModel;
@@ -103,7 +104,7 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
     private async Task OnSaveButtonClicked() => await UpdateMapPointAsync();
     [RelayCommand]
     private async Task OnDeleteButtonClicked() => await DeleteMapPointAsync();
-    private void OnImageAttachmentDeleteClicked(object sender, EventArgs e) => RemoveAttachment(sender as ImageItemViewModel);
+    private async void OnImageAttachmentDeleteClicked(object sender, EventArgs e) => await RemoveAttachmentAsync(sender as ImageItemViewModel);
 
     // CORE
     public void Setup(Guid pointId, Guid currentUserId, string currentUserName, UserType currentUserType)
@@ -173,7 +174,7 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
         AddImageAttachment(fileResult);
     }
 
-    private async Task RemoveAttachment(ImageItemViewModel image)
+    private async Task RemoveAttachmentAsync(ImageItemViewModel image)
     {
         var confirmation = await _popupService.ShowPopupAsync<ConfirmationPopupViewModel>(vm => vm.Message = "Remove attachment?") as ConfirmationEventArgs;
         if (confirmation == null || !confirmation.IsConfirmed) return;

@@ -11,7 +11,7 @@ using Kris.Client.Data.Models;
 using Kris.Client.Data.Models.Picker;
 using Kris.Client.Data.Providers;
 using Kris.Client.Validations;
-using Kris.Client.ViewModels.Popups;
+using Kris.Client.ViewModels.Utility;
 using Kris.Common.Extensions;
 using MediatR;
 using System.Collections.ObjectModel;
