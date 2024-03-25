@@ -4,12 +4,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Constants;
 using Kris.Client.Common.Errors;
+using Kris.Client.Common.Events;
 using Kris.Client.Connection.Hubs;
 using Kris.Client.Connection.Hubs.Events;
 using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.ViewModels.Items;
+using Kris.Client.ViewModels.Popups;
 using Kris.Common.Extensions;
 using MediatR;
 using System.Collections.ObjectModel;
@@ -121,6 +123,9 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
 
     private async Task DeleteConversationAsync()
     {
+        var confirmation = await _popupService.ShowPopupAsync<ConfirmationPopupViewModel>(vm => vm.Message = "Delete this conversation?") as ConfirmationEventArgs;
+        if (confirmation == null || !confirmation.IsConfirmed) return;
+
         var ct = new CancellationToken();
         var command = new DeleteConversationCommand { ConversationId = ConversationId };
         var result = await MediatorSendLoadingAsync(command, ct);

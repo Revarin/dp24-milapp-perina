@@ -100,6 +100,9 @@
 	  <MauiXaml Update="Components\Items\SessionItem.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Components\Popups\ConfirmationPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Components\Popups\CreateMapPointPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

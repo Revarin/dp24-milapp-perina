@@ -161,6 +161,9 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
 
     private async Task LeaveSessionAsync(Guid sessionId)
     {
+        var confirmation = await _popupService.ShowPopupAsync<ConfirmationPopupViewModel>(vm => vm.Message = "Leave session?") as ConfirmationEventArgs;
+        if (confirmation == null || !confirmation.IsConfirmed) return;
+
         var ct = new CancellationToken();
         var command = new LeaveSessionCommand { SessionId = sessionId };
         var result = await MediatorSendAsync(command, ct);
@@ -208,9 +211,9 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
         });
         if (resultArgs == null) return;
 
-        if (resultArgs is LoadResultEventArgs<SessionDetailModel>)
+        if (resultArgs is LoadResultEventArgs<SessionDetailModel> loadResult)
         {
-            var result = (resultArgs as LoadResultEventArgs<SessionDetailModel>).Result;
+            var result = loadResult.Result;
             if (result.IsFailed)
             {
                 if (result.HasError<UnauthorizedError>())
@@ -224,9 +227,9 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
                 }
             }
         }
-        else if (resultArgs is DeleteResultEventArgs)
+        else if (resultArgs is DeleteResultEventArgs deleteResult)
         {
-            var result = (resultArgs as DeleteResultEventArgs).Result;
+            var result = deleteResult.Result;
             if (result.IsFailed)
             {
                 if (result.HasError<UnauthorizedError>())
@@ -251,9 +254,9 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
                 await OnAppearing();
             }
         }
-        else if (resultArgs is UpdateResultEventArgs)
+        else if (resultArgs is UpdateResultEventArgs updateResult)
         {
-            var result = (resultArgs as UpdateResultEventArgs).Result;
+            var result = updateResult.Result;
             if (result.IsFailed)
             {
                 if (result.HasError<UnauthorizedError>())

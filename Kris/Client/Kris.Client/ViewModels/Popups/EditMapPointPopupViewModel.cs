@@ -173,8 +173,11 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
         AddImageAttachment(fileResult);
     }
 
-    private void RemoveAttachment(ImageItemViewModel image)
+    private async Task RemoveAttachment(ImageItemViewModel image)
     {
+        var confirmation = await _popupService.ShowPopupAsync<ConfirmationPopupViewModel>(vm => vm.Message = "Remove attachment?") as ConfirmationEventArgs;
+        if (confirmation == null || !confirmation.IsConfirmed) return;
+
         if (image == null) return;
         if (image.Id.HasValue) _attachmentsToDelete.Add(image.Id.Value);
 
@@ -207,6 +210,9 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
     private async Task UpdateMapPointAsync()
     {
         if (ValidateAllProperties()) return;
+
+        var confirmation = await _popupService.ShowPopupAsync<ConfirmationPopupViewModel>(vm => vm.Message = "Update point?") as ConfirmationEventArgs;
+        if (confirmation == null || !confirmation.IsConfirmed) return;
 
         var ct = new CancellationToken();
         var command = new EditMapPointCommand
@@ -249,6 +255,9 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
 
     private async Task DeleteMapPointAsync()
     {
+        var confirmation = await _popupService.ShowPopupAsync<ConfirmationPopupViewModel>(vm => vm.Message = "Delete point?") as ConfirmationEventArgs;
+        if (confirmation == null || !confirmation.IsConfirmed) return;
+
         var ct = new CancellationToken();
         var command = new DeleteMapPointCommand { Id = PointId };
         var result = await MediatorSendAsync(command, ct);

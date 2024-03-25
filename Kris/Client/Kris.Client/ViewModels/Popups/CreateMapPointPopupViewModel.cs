@@ -141,8 +141,11 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
         AddImageAttachment(fileResult);
     }
 
-    private void RemoveAttachment(ImageItemViewModel image)
+    private async Task RemoveAttachment(ImageItemViewModel image)
     {
+        var confirmation = await _popupService.ShowPopupAsync<ConfirmationPopupViewModel>(vm => vm.Message = "Remove attachment?") as ConfirmationEventArgs;
+        if (confirmation == null || !confirmation.IsConfirmed) return;
+
         if (image == null) return;
         image.DeleteClicked -= OnImageAttachmentDeleteClicked;
         ImageAttachments.Remove(image);

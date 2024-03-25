@@ -93,7 +93,12 @@ public sealed partial class MapViewModel : PageViewModelBase
     [RelayCommand]
     private async Task OnMapLoaded() => await MoveToCurrentRegionAsync();
     [RelayCommand]
-    private async Task OnLogoutButtonClicked() => await LogoutUser();
+    private async Task OnLogoutButtonClicked()
+    {
+        var confirmation = await _popupService.ShowPopupAsync<ConfirmationPopupViewModel>(vm => vm.Message = "Do you want to logout?") as ConfirmationEventArgs;
+        if (confirmation == null || !confirmation.IsConfirmed) return;
+        await LogoutUser();
+    }
     [RelayCommand]
     private async Task OnCurrentPositionButtonClicked() => await MoveToCurrentPositionAsync();
     [RelayCommand]
@@ -244,9 +249,9 @@ public sealed partial class MapViewModel : PageViewModelBase
         });
         if (resultArgs == null) return;
 
-        if (resultArgs is LoadResultEventArgs<MapPointDetailModel>)
+        if (resultArgs is LoadResultEventArgs<MapPointDetailModel> loadResult)
         {
-            var result = (resultArgs as LoadResultEventArgs<MapPointDetailModel>).Result;
+            var result = loadResult.Result;
             if (result.IsFailed)
             {
                 if (result.HasError<UnauthorizedError>())
@@ -260,9 +265,9 @@ public sealed partial class MapViewModel : PageViewModelBase
                 }
             }
         }
-        else if (resultArgs is UpdateResultEventArgs<MapPointListModel>)
+        else if (resultArgs is UpdateResultEventArgs<MapPointListModel> updateResult)
         {
-            var result = (resultArgs as UpdateResultEventArgs<MapPointListModel>).Result;
+            var result = updateResult.Result;
             if (result.IsFailed)
             {
                 if (result.HasError<UnauthorizedError>())
@@ -287,9 +292,9 @@ public sealed partial class MapViewModel : PageViewModelBase
                 AllMapPins.Add(_krisMapObjectFactory.CreateMapPoint(result.Value));
             }
         }
-        else if (resultArgs is DeleteResultEventArgs)
+        else if (resultArgs is DeleteResultEventArgs deleteResult)
         {
-            var result = (resultArgs as DeleteResultEventArgs).Result;
+            var result = deleteResult.Result;
             if (result.IsFailed)
             {
                 if (result.HasError<UnauthorizedError>())
