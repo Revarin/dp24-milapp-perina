@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui.Core.Extensions;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Constants;
@@ -21,8 +22,8 @@ public sealed partial class ContactsViewModel : PageViewModelBase
     [ObservableProperty]
     private ObservableCollection<ConversationItemViewModel> _directContacts;
 
-    public ContactsViewModel(IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
-        : base(mediator, navigationService, messageService, alertService)
+    public ContactsViewModel(IMediator mediator, IRouterService navigationService, IMessageService messageService, IPopupService popupService, IAlertService alertService)
+        : base(mediator, navigationService, messageService, popupService, alertService)
     {
     }
 
@@ -35,7 +36,7 @@ public sealed partial class ContactsViewModel : PageViewModelBase
     {
         var ct = new CancellationToken();
         var query = new GetConversationsQuery();
-        var result = await _mediator.Send(query, ct);
+        var result = await MediatorSendLoadingAsync(query, ct);
 
         if (result.IsFailed)
         {

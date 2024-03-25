@@ -50,6 +50,7 @@ public sealed partial class ImageItemViewModel : ControllViewModelBase
             vm.ImageSource = ImageSource;
         });
     }
+
     [RelayCommand]
     private void OnDeleteButtonClicked() => DeleteClicked?.Invoke(this, EventArgs.Empty);
 }

@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Components.Events;
 using MediatR;
@@ -14,7 +15,7 @@ public sealed partial class PasswordPopupViewModel : PopupViewModel
 
     public event EventHandler<PasswordEventArgs> AcceptedClosing;
 
-    public PasswordPopupViewModel(IMediator mediator) : base(mediator)
+    public PasswordPopupViewModel(IMediator mediator, IPopupService popupService) : base(mediator, popupService)
     {
     }
 

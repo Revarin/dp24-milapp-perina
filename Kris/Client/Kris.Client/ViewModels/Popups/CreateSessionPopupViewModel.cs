@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
@@ -24,8 +25,8 @@ public sealed partial class CreateSessionPopupViewModel : PopupViewModel
 
     public event EventHandler<ResultEventArgs> CreatedClosing;
 
-    public CreateSessionPopupViewModel(IMediator mediator)
-        : base(mediator)
+    public CreateSessionPopupViewModel(IMediator mediator, IPopupService popupService)
+        : base(mediator, popupService)
     {
     }
 
@@ -40,7 +41,7 @@ public sealed partial class CreateSessionPopupViewModel : PopupViewModel
 
         var ct = new CancellationToken();
         var command = new CreateSessionCommand { Name = Name, Password = Password };
-        var result = await _mediator.Send(command, ct);
+        var result = await MediatorSendAsync(command, ct);
 
         if (result.IsFailed && result.HasError<EntityExistsError>())
         {

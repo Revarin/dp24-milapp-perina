@@ -20,8 +20,6 @@ namespace Kris.Client.ViewModels.Views;
 
 public sealed partial class SessionSettingsViewModel : PageViewModelBase
 {
-    private readonly IPopupService _popupService;
-
     [ObservableProperty]
     private SessionItemViewModel _currentSession;
     [ObservableProperty]
@@ -29,11 +27,9 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
     [ObservableProperty]
     private ObservableCollection<SessionItemViewModel> _otherSessions;
 
-    public SessionSettingsViewModel(IPopupService popupService,
-        IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
-        : base(mediator, navigationService, messageService, alertService)
+    public SessionSettingsViewModel(IMediator mediator, IRouterService navigationService, IMessageService messageService, IPopupService popupService, IAlertService alertService)
+        : base(mediator, navigationService, messageService, popupService, alertService)
     {
-        _popupService = popupService;
     }
 
     // HANDLERS
@@ -50,7 +46,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
     {
         var ct = new CancellationToken();
         var query = new GetSessionsQuery();
-        var result = await _mediator.Send(query, ct);
+        var result = await MediatorSendLoadingAsync(query, ct);
 
         if (result.IsFailed)
         {
@@ -132,7 +128,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
 
         var ct = new CancellationToken();
         var command = new JoinSessionCommand { SessionId = sessionId, Password = ePassword.Password };
-        var result = await _mediator.Send(command, ct);
+        var result = await MediatorSendAsync(command, ct);
 
         if (result.IsFailed)
         {
@@ -167,7 +163,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
     {
         var ct = new CancellationToken();
         var command = new LeaveSessionCommand { SessionId = sessionId };
-        var result = await _mediator.Send(command, ct);
+        var result = await MediatorSendAsync(command, ct);
 
         if (result.IsFailed)
         {
@@ -197,7 +193,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
     private async Task ShowEditSessionPopupAsync(Guid sessionId)
     {
         var query = new GetCurrentUserQuery();
-        var currentUser = await _mediator.Send(query, CancellationToken.None);
+        var currentUser = await MediatorSendAsync(query, CancellationToken.None);
         if (currentUser == null || !currentUser.SessionId.HasValue || !currentUser.UserType.HasValue)
         {
             await _alertService.ShowToastAsync("Invalid user data");

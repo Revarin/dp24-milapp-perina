@@ -25,7 +25,6 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
 {
     private readonly IMapSettingsDataProvider _mapSettingsDataProvider;
     private readonly IMapPointSymbolDataProvider _symbolDataProvider;
-    private readonly IPopupService _popupService;
     private readonly ISymbolImageComposer _symbolImageComposer;
     private readonly IMediaService _filePickerService;
     private readonly IClipboardService _clipboardService;
@@ -66,13 +65,12 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     public event EventHandler<ResultEventArgs<MapPointListModel>> CreatedClosing;
 
     public CreateMapPointPopupViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IMapPointSymbolDataProvider symbolDataProvider,
-        IPopupService popupService, ISymbolImageComposer symbolImageComposer, IMediaService filePickerService,
-        IClipboardService clipboardService, IMediator mediator)
-        : base(mediator)
+        ISymbolImageComposer symbolImageComposer, IMediaService filePickerService, IClipboardService clipboardService,
+        IMediator mediator, IPopupService popupService)
+        : base(mediator, popupService)
     {
         _mapSettingsDataProvider = mapSettingsDataProvider;
         _symbolDataProvider = symbolDataProvider;
-        _popupService = popupService;
         _symbolImageComposer = symbolImageComposer;
         _filePickerService = filePickerService;
         _clipboardService = clipboardService;
@@ -184,7 +182,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
             Sign = MapPointSignSelectedItem.Value,
             Attachments = ImageAttachments.Select(attachment => attachment.FilePath).ToList(),
         };
-        var result = await _mediator.Send(command, ct);
+        var result = await MediatorSendAsync(command, ct);
 
         var returnResult = result.IsSuccess
             ? Result.Ok(new MapPointListModel

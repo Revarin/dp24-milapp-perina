@@ -1,9 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Utility;
 using Kris.Client.Core.Messages;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
+using Kris.Client.ViewModels.Popups;
 using Kris.Client.Views;
 using MediatR;
 
@@ -14,6 +16,7 @@ public abstract partial class PageViewModelBase : ObservableValidator
     protected readonly IMediator _mediator;
     protected readonly IRouterService _navigationService;
     protected readonly IMessageService _messageService;
+    protected readonly IPopupService _popupService;
     protected readonly IAlertService _alertService;
 
     public Task InitializationWork { get; private set; }
@@ -23,11 +26,13 @@ public abstract partial class PageViewModelBase : ObservableValidator
     [ObservableProperty]
     protected Dictionary<string, string> errorMessages = new Dictionary<string, string>();
 
-    public PageViewModelBase(IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
+    public PageViewModelBase(IMediator mediator, IRouterService navigationService, IMessageService messageService,
+        IPopupService popupService, IAlertService alertService)
     {
         _mediator = mediator;
         _navigationService = navigationService;
         _messageService = messageService;
+        _popupService = popupService;
         _alertService = alertService;
     }
 
@@ -107,5 +112,21 @@ public abstract partial class PageViewModelBase : ObservableValidator
             ErrorMessages[name] = $"{oldMessage}\n{message}";
         }
         OnPropertyChanged(nameof(ErrorMessages));
+    }
+
+    protected async Task<T> MediatorSendLoadingAsync<T>(IRequest<T> request, CancellationToken ct)
+    {
+        Action closeLoadingPopup = null;
+        var loadingPopupTask = _popupService.ShowPopupAsync<LoadingPopupViewModel>(vm => closeLoadingPopup = vm.Finish);
+        var result = await _mediator.Send(request, ct);
+
+        closeLoadingPopup();
+        await loadingPopupTask;
+        return result;
+    }
+
+    protected async Task<T> MediatorSendAsync<T>(IRequest<T> request, CancellationToken ct)
+    {
+        return await _mediator.Send(request, ct);
     }
 }

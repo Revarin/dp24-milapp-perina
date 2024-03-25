@@ -1,5 +1,4 @@
-﻿using FluentResults;
-using Kris.Client.Common.Events;
+﻿using Kris.Client.Common.Events;
 using Kris.Client.Common.Options;
 using Kris.Client.Connection.Hubs.Events;
 using Kris.Client.Data.Cache;
@@ -51,7 +50,7 @@ public sealed class MessageClient : IMessageHub, IMessageReceiver
 
     public async Task Disconnect()
     {
-        if (_hubConnection != null)
+        if (_hubConnection != null && _hubConnection.State != HubConnectionState.Disconnected)
         {
             await _hubConnection.StopAsync().ContinueWith(_ => IsConnected = false);
             await _hubConnection.DisposeAsync();

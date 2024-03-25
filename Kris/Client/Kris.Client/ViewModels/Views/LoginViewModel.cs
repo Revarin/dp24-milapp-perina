@@ -7,6 +7,7 @@ using Kris.Client.Core.Services;
 using Kris.Client.Views;
 using MediatR;
 using System.ComponentModel.DataAnnotations;
+using CommunityToolkit.Maui.Core;
 
 namespace Kris.Client.ViewModels.Views;
 
@@ -19,8 +20,8 @@ public sealed partial class LoginViewModel : PageViewModelBase
     [ObservableProperty]
     private string _password;
 
-    public LoginViewModel(IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
-        : base(mediator, navigationService, messageService, alertService)
+    public LoginViewModel(IMediator mediator, IRouterService navigationService, IMessageService messageService, IPopupService popupService, IAlertService alertService)
+        : base(mediator, navigationService, messageService, popupService, alertService)
     {
     }
 
@@ -36,7 +37,7 @@ public sealed partial class LoginViewModel : PageViewModelBase
     {
         var ct = new CancellationToken();
         var query = new GetCurrentUserQuery();
-        var result = await _mediator.Send(query, ct);
+        var result = await MediatorSendAsync(query, ct);
 
         if (result == null) return;
 
@@ -58,7 +59,7 @@ public sealed partial class LoginViewModel : PageViewModelBase
 
         var ct = new CancellationToken();
         var command = new LoginUserCommand { Login = Login, Password = Password };
-        var result = await _mediator.Send(command, ct);
+        var result = await MediatorSendLoadingAsync(command, ct);
 
         if (result.IsFailed)
         {

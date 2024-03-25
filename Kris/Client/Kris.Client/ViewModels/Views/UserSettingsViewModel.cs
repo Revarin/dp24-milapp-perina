@@ -21,7 +21,6 @@ namespace Kris.Client.ViewModels.Views;
 
 public sealed partial class UserSettingsViewModel : PageViewModelBase
 {
-    private readonly IPopupService _popupService;
     private readonly IConnectionSettingsDataProvider _settingsDataProvider;
 
     // Connection settings
@@ -54,11 +53,10 @@ public sealed partial class UserSettingsViewModel : PageViewModelBase
     [ObservableProperty]
     private string _passwordVerification;
 
-    public UserSettingsViewModel(IPopupService popupService, IConnectionSettingsDataProvider settingsDataProvider,
-        IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
-        : base(mediator, navigationService, messageService, alertService)
+    public UserSettingsViewModel(IConnectionSettingsDataProvider settingsDataProvider,
+        IMediator mediator, IRouterService navigationService, IMessageService messageService, IPopupService popupService, IAlertService alertService)
+        : base(mediator, navigationService, messageService, popupService, alertService)
     {
-        _popupService = popupService;
         _settingsDataProvider = settingsDataProvider;
 
         _gpsIntervalItems = _settingsDataProvider.GetGpsIntervalSettingsItems().ToObservableCollection();
@@ -91,7 +89,7 @@ public sealed partial class UserSettingsViewModel : PageViewModelBase
                 MapObjectDownloadInterval = MapObjectDownloadSelectedItem.Value
             }
         };
-        var result = await _mediator.Send(command, ct);
+        var result = await MediatorSendAsync(command, ct);
 
         if (result.IsFailed)
         {
@@ -120,7 +118,7 @@ public sealed partial class UserSettingsViewModel : PageViewModelBase
 
         var ct = new CancellationToken();
         var command = new EditUserCommand { NewLogin = Login, NewPassword = Password, Password = passwordPopup.Password };
-        var result = await _mediator.Send(command, ct);
+        var result = await MediatorSendLoadingAsync(command, ct);
 
         if (result.IsFailed)
         {

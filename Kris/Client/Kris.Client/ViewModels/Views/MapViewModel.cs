@@ -34,7 +34,6 @@ public sealed partial class MapViewModel : PageViewModelBase
 {
     private readonly IMapSettingsDataProvider _mapSettingsDataProvider;
     private readonly IRepositoryFactory _repositoryFactory;
-    private readonly IPopupService _popupService;
     private readonly IKrisMapObjectFactory _krisMapObjectFactory;
     private readonly IBackgroundLoop _backgroundLoop;
     private readonly ICurrentPositionBackgroundHandler _currentPositionBackgroundHandler;
@@ -62,15 +61,14 @@ public sealed partial class MapViewModel : PageViewModelBase
     private KrisMapType _krisMapType;
 
     public MapViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IRepositoryFactory repositoryFactory,
-        IPopupService popupService, IKrisMapObjectFactory krisMapObjectFactory, IBackgroundLoop backgroundLoop,
+        IKrisMapObjectFactory krisMapObjectFactory, IBackgroundLoop backgroundLoop,
         ICurrentPositionBackgroundHandler currentPositionBackgroundHandler, IUserPositionsBackgroundHandler userPositionsBackgroundHandler,
         IMapObjectsBackgroundHandler mapObjectsBackgroundHandler, IMessageReceiver messageReceiver,
-        IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
-        : base(mediator, navigationService, messageService, alertService)
+        IMediator mediator, IRouterService navigationService, IMessageService messageService, IPopupService popupService, IAlertService alertService)
+        : base(mediator, navigationService, messageService, popupService, alertService)
     {
         _mapSettingsDataProvider = mapSettingsDataProvider;
         _repositoryFactory = repositoryFactory;
-        _popupService = popupService;
         _krisMapObjectFactory = krisMapObjectFactory;
         _backgroundLoop = backgroundLoop;
         _currentPositionBackgroundHandler = currentPositionBackgroundHandler;
@@ -166,7 +164,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     private async Task MoveToCurrentRegionAsync()
     {
         var query = new GetCurrentRegionQuery();
-        var currentRegion = await _mediator.Send(query, CancellationToken.None);
+        var currentRegion = await MediatorSendAsync(query, CancellationToken.None);
 
         if (currentRegion != null)
         {
@@ -177,7 +175,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     private async Task MoveToCurrentPositionAsync()
     {
         var query = new GetCurrentPositionQuery();
-        var currentPosition = await _mediator.Send(query, CancellationToken.None);
+        var currentPosition = await MediatorSendAsync(query, CancellationToken.None);
 
         if (currentPosition == null)
         {
@@ -193,7 +191,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     private async Task ShowCreateMapPointPopupAsync(Location location)
     {
         var query = new GetCurrentUserQuery();
-        var currentUser = await _mediator.Send(query, CancellationToken.None);
+        var currentUser = await MediatorSendAsync(query, CancellationToken.None);
         if (currentUser == null || !currentUser.SessionId.HasValue || !currentUser.UserType.HasValue)
         {
             await _alertService.ShowToastAsync("Must join a session to create map objects");
@@ -232,7 +230,7 @@ public sealed partial class MapViewModel : PageViewModelBase
         if (pin.KrisType != KrisPinType.Point) return;
 
         var query = new GetCurrentUserQuery();
-        var currentUser = await _mediator.Send(query, CancellationToken.None);
+        var currentUser = await MediatorSendAsync(query, CancellationToken.None);
         if (currentUser == null || !currentUser.SessionId.HasValue || !currentUser.UserType.HasValue)
         {
             await _alertService.ShowToastAsync("Invalid user data");

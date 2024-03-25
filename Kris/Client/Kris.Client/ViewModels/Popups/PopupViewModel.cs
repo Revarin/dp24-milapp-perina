@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.Input;
 using MediatR;
 
 namespace Kris.Client.ViewModels.Popups;
@@ -7,7 +8,7 @@ public abstract partial class PopupViewModel : FormViewModelBase
 {
     public event EventHandler CancelClosing;
 
-    protected PopupViewModel(IMediator mediator) : base(mediator)
+    protected PopupViewModel(IMediator mediator, IPopupService popupService) : base(mediator, popupService)
     {
     }
 
