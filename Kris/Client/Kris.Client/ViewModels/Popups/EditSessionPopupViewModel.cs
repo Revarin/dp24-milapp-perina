@@ -8,6 +8,7 @@ using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.Validations;
+using Kris.Client.ViewModels.Utility;
 using Kris.Common.Enums;
 using MediatR;
 using System.ComponentModel.DataAnnotations;
@@ -16,7 +17,6 @@ namespace Kris.Client.ViewModels.Popups;
 
 public sealed partial class EditSessionPopupViewModel : PopupViewModel
 {
-    private readonly IPopupService _popupService;
     private readonly IAlertService _alertService;
 
     public Guid SessionId { get; set; }
@@ -37,10 +37,9 @@ public sealed partial class EditSessionPopupViewModel : PopupViewModel
     public event EventHandler<UpdateResultEventArgs> UpdatedClosing;
     public event EventHandler<DeleteResultEventArgs> DeletedClosing;
 
-    public EditSessionPopupViewModel(IPopupService popupService, IAlertService alertService, IMediator mediator)
-        : base(mediator)
+    public EditSessionPopupViewModel(IAlertService alertService, IMediator mediator, IPopupService popupService)
+        : base(mediator, popupService)
     {
-        _popupService = popupService;
         _alertService = alertService;
     }
 

@@ -6,19 +6,19 @@ public sealed class RouterService : IRouterService
 {
     public async Task GoBackAsync()
     {
-        await Shell.Current.GoToAsync("..");
+        await Shell.Current.GoToAsync("..", false);
     }
 
     public async Task GoToAsync(string route, RouterNavigationType type = RouterNavigationType.PushUpward)
     {
         var prefix = GetPrefix(type);
-        await Shell.Current.GoToAsync($"{prefix}{route}");
+        await Shell.Current.GoToAsync($"{prefix}{route}", false);
     }
 
     public async Task GoToAsync(string route, IDictionary<string, object> parameters, RouterNavigationType type = RouterNavigationType.PushUpward)
     {
         var prefix = GetPrefix(type);
-        await Shell.Current.GoToAsync($"{prefix}{route}", parameters);
+        await Shell.Current.GoToAsync($"{prefix}{route}", false, parameters);
     }
 
     private string GetPrefix(RouterNavigationType type)

@@ -24,7 +24,6 @@ public sealed class EditUserCommandHandler : UserHandler, IRequestHandler<EditUs
     {
         var httpRequest = new EditUserRequest
         {
-            NewLogin = request.NewLogin,
             NewPassword = request.NewPassword,
             Password = request.Password
         };

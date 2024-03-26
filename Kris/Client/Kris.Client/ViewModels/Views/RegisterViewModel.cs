@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Errors;
 using Kris.Client.Core.Requests;
@@ -23,8 +24,8 @@ public sealed partial class RegisterViewModel : PageViewModelBase
     [ObservableProperty]
     private string _passwordVerification;
 
-    public RegisterViewModel(IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
-        : base(mediator, navigationService, messageService, alertService)
+    public RegisterViewModel(IMediator mediator, IRouterService navigationService, IMessageService messageService, IPopupService popupService, IAlertService alertService)
+        : base(mediator, navigationService, messageService, popupService, alertService)
     {
     }
 
@@ -39,7 +40,7 @@ public sealed partial class RegisterViewModel : PageViewModelBase
 
         var ct = new CancellationToken();
         var command = new RegisterUserCommand { Login = Login, Password = Password };
-        var result = await _mediator.Send(command, ct);
+        var result = await MediatorSendLoadingAsync(command, ct);
 
         if (result.IsFailed)
         {

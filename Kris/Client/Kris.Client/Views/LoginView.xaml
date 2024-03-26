@@ -6,6 +6,11 @@
              x:Class="Kris.Client.Views.LoginView"
              x:DataType="vm:LoginViewModel"
              Title="LoginView">
+
+    <ContentPage.Behaviors>
+        <tk:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}" />
+    </ContentPage.Behaviors>
+    
     <StackLayout Orientation="Vertical">
         <StackLayout Orientation="Vertical">
             <Label Text="Login" />

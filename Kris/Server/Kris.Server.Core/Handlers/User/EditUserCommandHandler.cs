@@ -33,7 +33,6 @@ public sealed class EditUserCommandHandler : UserHandler, IRequestHandler<EditUs
         var passwordVerified = _passwordService.VerifyPassword(user.Password, request.EditUser.Password);
         if (!passwordVerified) return Result.Fail(new InvalidCredentialsError());
 
-        user.Login = request.EditUser.NewLogin;
         user.Password = _passwordService.HashPassword(request.EditUser.NewPassword);
         await _userRepository.UpdateAsync(cancellationToken);
 

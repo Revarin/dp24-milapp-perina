@@ -8,6 +8,5 @@ public partial class SessionSettingsView : ContentPage
 	{
 		BindingContext = vm;
 		InitializeComponent();
-		(BindingContext as SessionSettingsViewModel).Init();
 	}
 }

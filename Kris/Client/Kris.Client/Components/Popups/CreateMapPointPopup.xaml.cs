@@ -11,7 +11,6 @@ public partial class CreateMapPointPopup : Popup
 		InitializeComponent();
 		(BindingContext as CreateMapPointPopupViewModel).CancelClosing += CancelClose;
 		(BindingContext as CreateMapPointPopupViewModel).CreatedClosing += ReturnClose;
-		(BindingContext as CreateMapPointPopupViewModel).Init();
 	}
 
     private async void CancelClose(object sender, EventArgs e) => await CloseAsync();

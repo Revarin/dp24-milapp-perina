@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CoordinateSharp;
 using FluentResults;
-using Kris.Client.Common.Enums;
 using Kris.Client.Common.Events;
 using Kris.Client.Converters;
 using Kris.Client.Core.Models;
@@ -14,6 +13,7 @@ using Kris.Client.Data.Models.Picker;
 using Kris.Client.Data.Providers;
 using Kris.Client.Utility;
 using Kris.Client.ViewModels.Items;
+using Kris.Client.ViewModels.Utility;
 using Kris.Common.Enums;
 using MediatR;
 using System.Collections.ObjectModel;
@@ -25,7 +25,6 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
 {
     private readonly IMapSettingsDataProvider _mapSettingsDataProvider;
     private readonly IMapPointSymbolDataProvider _symbolDataProvider;
-    private readonly IPopupService _popupService;
     private readonly ISymbolImageComposer _symbolImageComposer;
     private readonly IMediaService _filePickerService;
     private readonly IClipboardService _clipboardService;
@@ -66,13 +65,12 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     public event EventHandler<ResultEventArgs<MapPointListModel>> CreatedClosing;
 
     public CreateMapPointPopupViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IMapPointSymbolDataProvider symbolDataProvider,
-        IPopupService popupService, ISymbolImageComposer symbolImageComposer, IMediaService filePickerService,
-        IClipboardService clipboardService, IMediator mediator)
-        : base(mediator)
+        ISymbolImageComposer symbolImageComposer, IMediaService filePickerService, IClipboardService clipboardService,
+        IMediator mediator, IPopupService popupService)
+        : base(mediator, popupService)
     {
         _mapSettingsDataProvider = mapSettingsDataProvider;
         _symbolDataProvider = symbolDataProvider;
-        _popupService = popupService;
         _symbolImageComposer = symbolImageComposer;
         _filePickerService = filePickerService;
         _clipboardService = clipboardService;
@@ -143,8 +141,11 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
         AddImageAttachment(fileResult);
     }
 
-    private void RemoveAttachment(ImageItemViewModel image)
+    private async Task RemoveAttachment(ImageItemViewModel image)
     {
+        var confirmation = await _popupService.ShowPopupAsync<ConfirmationPopupViewModel>(vm => vm.Message = "Remove attachment?") as ConfirmationEventArgs;
+        if (confirmation == null || !confirmation.IsConfirmed) return;
+
         if (image == null) return;
         image.DeleteClicked -= OnImageAttachmentDeleteClicked;
         ImageAttachments.Remove(image);
@@ -184,7 +185,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
             Sign = MapPointSignSelectedItem.Value,
             Attachments = ImageAttachments.Select(attachment => attachment.FilePath).ToList(),
         };
-        var result = await _mediator.Send(command, ct);
+        var result = await MediatorSendAsync(command, ct);
 
         var returnResult = result.IsSuccess
             ? Result.Ok(new MapPointListModel

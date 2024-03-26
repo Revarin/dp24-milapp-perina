@@ -58,16 +58,6 @@
         <Label Text="User settings" FontSize="Subtitle"/>
         <StackLayout Orientation="Vertical">
             <StackLayout Orientation="Vertical">
-                <Label Text="New login" />
-                <Entry Placeholder="Login"
-                       Text="{Binding Login}">
-                </Entry>
-                <Label Text="{Binding ErrorMessages[Login]}"
-                       IsVisible="{Binding ErrorMessages[Login]}"
-                       Style="{StaticResource errorMessageStyle}" />
-            </StackLayout>
-
-            <StackLayout Orientation="Vertical">
                 <Label Text="New password" />
                 <Entry IsPassword="True"
                        Text="{Binding Password}">

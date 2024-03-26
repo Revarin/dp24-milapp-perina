@@ -8,6 +8,5 @@ public partial class MenuView : ContentPage
 	{
 		BindingContext = vm;
 		InitializeComponent();
-		(BindingContext as MenuViewModel).Init();
 	}
 }

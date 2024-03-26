@@ -25,6 +25,8 @@ public class DataContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.UseCollation("SQL_Latin1_General_CP1_CS_AS");
+
         modelBuilder.Entity<UserEntity>().HasKey(e => e.Id);
         modelBuilder.Entity<SessionEntity>().HasKey(e => e.Id);
         modelBuilder.Entity<SessionUserEntity>().HasKey(e => e.Id);

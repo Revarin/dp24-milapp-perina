@@ -10,15 +10,15 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 
 		<!-- Display name -->
-		<ApplicationTitle>Kris v2.6.3</ApplicationTitle>
+		<ApplicationTitle>Kris v2.7.0</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>fit.dp.perina.kris</ApplicationId>
 		<ApplicationIdGuid>b9336060-ad5c-4c34-b406-7a96ba2a9ca3</ApplicationIdGuid>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>2.6.3</ApplicationDisplayVersion>
-		<ApplicationVersion>263</ApplicationVersion>
+		<ApplicationDisplayVersion>2.7.0</ApplicationDisplayVersion>
+		<ApplicationVersion>270</ApplicationVersion>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
@@ -100,6 +100,9 @@
 	  <MauiXaml Update="Components\Items\SessionItem.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Components\Utility\ConfirmationPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Components\Popups\CreateMapPointPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -112,10 +115,13 @@
 	  <MauiXaml Update="Components\Popups\EditSessionPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Components\Popups\ImagePopup.xaml">
+	  <MauiXaml Update="Components\Utility\ImagePopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Components\Popups\PasswordPopup.xaml">
+	  <MauiXaml Update="Components\Utility\LoadingPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Components\Utility\PasswordPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\ChatView.xaml">

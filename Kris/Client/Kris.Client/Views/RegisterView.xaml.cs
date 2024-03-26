@@ -8,6 +8,5 @@ public partial class RegisterView : ContentPage
 	{
 		BindingContext = vm;
 		InitializeComponent();
-		(BindingContext as RegisterViewModel).Init();
 	}
 }

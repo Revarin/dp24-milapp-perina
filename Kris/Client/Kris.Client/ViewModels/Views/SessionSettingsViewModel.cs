@@ -12,6 +12,7 @@ using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.ViewModels.Items;
 using Kris.Client.ViewModels.Popups;
+using Kris.Client.ViewModels.Utility;
 using Kris.Common.Extensions;
 using MediatR;
 using System.Collections.ObjectModel;
@@ -20,8 +21,6 @@ namespace Kris.Client.ViewModels.Views;
 
 public sealed partial class SessionSettingsViewModel : PageViewModelBase
 {
-    private readonly IPopupService _popupService;
-
     [ObservableProperty]
     private SessionItemViewModel _currentSession;
     [ObservableProperty]
@@ -29,11 +28,9 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
     [ObservableProperty]
     private ObservableCollection<SessionItemViewModel> _otherSessions;
 
-    public SessionSettingsViewModel(IPopupService popupService,
-        IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
-        : base(mediator, navigationService, messageService, alertService)
+    public SessionSettingsViewModel(IMediator mediator, IRouterService navigationService, IMessageService messageService, IPopupService popupService, IAlertService alertService)
+        : base(mediator, navigationService, messageService, popupService, alertService)
     {
-        _popupService = popupService;
     }
 
     // HANDLERS
@@ -50,7 +47,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
     {
         var ct = new CancellationToken();
         var query = new GetSessionsQuery();
-        var result = await _mediator.Send(query, ct);
+        var result = await MediatorSendLoadingAsync(query, ct);
 
         if (result.IsFailed)
         {
@@ -132,7 +129,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
 
         var ct = new CancellationToken();
         var command = new JoinSessionCommand { SessionId = sessionId, Password = ePassword.Password };
-        var result = await _mediator.Send(command, ct);
+        var result = await MediatorSendAsync(command, ct);
 
         if (result.IsFailed)
         {
@@ -165,9 +162,12 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
 
     private async Task LeaveSessionAsync(Guid sessionId)
     {
+        var confirmation = await _popupService.ShowPopupAsync<ConfirmationPopupViewModel>(vm => vm.Message = "Leave session?") as ConfirmationEventArgs;
+        if (confirmation == null || !confirmation.IsConfirmed) return;
+
         var ct = new CancellationToken();
         var command = new LeaveSessionCommand { SessionId = sessionId };
-        var result = await _mediator.Send(command, ct);
+        var result = await MediatorSendAsync(command, ct);
 
         if (result.IsFailed)
         {
@@ -197,7 +197,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
     private async Task ShowEditSessionPopupAsync(Guid sessionId)
     {
         var query = new GetCurrentUserQuery();
-        var currentUser = await _mediator.Send(query, CancellationToken.None);
+        var currentUser = await MediatorSendAsync(query, CancellationToken.None);
         if (currentUser == null || !currentUser.SessionId.HasValue || !currentUser.UserType.HasValue)
         {
             await _alertService.ShowToastAsync("Invalid user data");
@@ -212,9 +212,9 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
         });
         if (resultArgs == null) return;
 
-        if (resultArgs is LoadResultEventArgs<SessionDetailModel>)
+        if (resultArgs is LoadResultEventArgs<SessionDetailModel> loadResult)
         {
-            var result = (resultArgs as LoadResultEventArgs<SessionDetailModel>).Result;
+            var result = loadResult.Result;
             if (result.IsFailed)
             {
                 if (result.HasError<UnauthorizedError>())
@@ -228,9 +228,9 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
                 }
             }
         }
-        else if (resultArgs is DeleteResultEventArgs)
+        else if (resultArgs is DeleteResultEventArgs deleteResult)
         {
-            var result = (resultArgs as DeleteResultEventArgs).Result;
+            var result = deleteResult.Result;
             if (result.IsFailed)
             {
                 if (result.HasError<UnauthorizedError>())
@@ -255,9 +255,9 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
                 await OnAppearing();
             }
         }
-        else if (resultArgs is UpdateResultEventArgs)
+        else if (resultArgs is UpdateResultEventArgs updateResult)
         {
-            var result = (resultArgs as UpdateResultEventArgs).Result;
+            var result = updateResult.Result;
             if (result.IsFailed)
             {
                 if (result.HasError<UnauthorizedError>())

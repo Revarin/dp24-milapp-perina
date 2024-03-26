@@ -1,14 +1,17 @@
-﻿using CommunityToolkit.Maui.Core.Extensions;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Constants;
 using Kris.Client.Common.Errors;
+using Kris.Client.Common.Events;
 using Kris.Client.Connection.Hubs;
 using Kris.Client.Connection.Hubs.Events;
 using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.ViewModels.Items;
+using Kris.Client.ViewModels.Utility;
 using Kris.Common.Extensions;
 using MediatR;
 using System.Collections.ObjectModel;
@@ -30,8 +33,8 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
     private string _messageBody;
 
     public ChatViewModel(IMessageReceiver messageReceiver,
-        IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
-        : base(mediator, navigationService, messageService, alertService)
+        IMediator mediator, IRouterService navigationService, IMessageService messageService, IPopupService popupService, IAlertService alertService)
+        : base(mediator, navigationService, messageService, popupService, alertService)
     {
         _messageReceiver = messageReceiver;
     }
@@ -61,7 +64,7 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
     {
         var ct = new CancellationToken();
         var query = new GetMessagesQuery { ConversationId = ConversationId, Page = 0 };
-        var result = await _mediator.Send(query, ct);
+        var result = await MediatorSendLoadingAsync(query, ct);
 
         if (result.IsFailed)
         {
@@ -93,7 +96,7 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
     {
         var ct = new CancellationToken();
         var command = new SendMessageCommand { ConversationId = ConversationId, Body = MessageBody };
-        var result = await _mediator.Send(command, ct);
+        var result = await MediatorSendAsync(command, ct);
 
         if (result.IsFailed)
         {
@@ -120,9 +123,12 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
 
     private async Task DeleteConversationAsync()
     {
+        var confirmation = await _popupService.ShowPopupAsync<ConfirmationPopupViewModel>(vm => vm.Message = "Delete this conversation?") as ConfirmationEventArgs;
+        if (confirmation == null || !confirmation.IsConfirmed) return;
+
         var ct = new CancellationToken();
         var command = new DeleteConversationCommand { ConversationId = ConversationId };
-        var result = await _mediator.Send(command, ct);
+        var result = await MediatorSendLoadingAsync(command, ct);
 
         if (result.IsFailed)
         {

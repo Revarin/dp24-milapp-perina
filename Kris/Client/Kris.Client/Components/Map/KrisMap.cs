@@ -62,7 +62,7 @@ public sealed class KrisMap : MauiMap, IKrisMap
             if (DateTime.Now > _nextSave)
             {
                 _locationStore.StoreCurrentRegion(CurrentRegion);
-                _nextSave = _nextSave.AddSeconds(2);
+                _nextSave = DateTime.Now.AddSeconds(5);
             }
         }
 

@@ -11,7 +11,6 @@ public partial class CreateSessionPopup : Popup
 		InitializeComponent();
         (BindingContext as CreateSessionPopupViewModel).CancelClosing += CancelClose;
 		(BindingContext as CreateSessionPopupViewModel).CreatedClosing += ReturnClose;
-        (BindingContext as CreateSessionPopupViewModel).Init();
 	}
 
     private async void CancelClose(object sender, EventArgs e) => await CloseAsync();

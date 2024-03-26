@@ -11,7 +11,7 @@ using Kris.Client.Data.Models;
 using Kris.Client.Data.Models.Picker;
 using Kris.Client.Data.Providers;
 using Kris.Client.Validations;
-using Kris.Client.ViewModels.Popups;
+using Kris.Client.ViewModels.Utility;
 using Kris.Common.Extensions;
 using MediatR;
 using System.Collections.ObjectModel;
@@ -21,7 +21,6 @@ namespace Kris.Client.ViewModels.Views;
 
 public sealed partial class UserSettingsViewModel : PageViewModelBase
 {
-    private readonly IPopupService _popupService;
     private readonly IConnectionSettingsDataProvider _settingsDataProvider;
 
     // Connection settings
@@ -45,20 +44,16 @@ public sealed partial class UserSettingsViewModel : PageViewModelBase
     // User edit
     [Required]
     [ObservableProperty]
-    private string _login;
-    [Required]
-    [ObservableProperty]
     private string _password;
     [Required]
     [Match("Password", "Passwords do not match")]
     [ObservableProperty]
     private string _passwordVerification;
 
-    public UserSettingsViewModel(IPopupService popupService, IConnectionSettingsDataProvider settingsDataProvider,
-        IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
-        : base(mediator, navigationService, messageService, alertService)
+    public UserSettingsViewModel(IConnectionSettingsDataProvider settingsDataProvider,
+        IMediator mediator, IRouterService navigationService, IMessageService messageService, IPopupService popupService, IAlertService alertService)
+        : base(mediator, navigationService, messageService, popupService, alertService)
     {
-        _popupService = popupService;
         _settingsDataProvider = settingsDataProvider;
 
         _gpsIntervalItems = _settingsDataProvider.GetGpsIntervalSettingsItems().ToObservableCollection();
@@ -91,7 +86,7 @@ public sealed partial class UserSettingsViewModel : PageViewModelBase
                 MapObjectDownloadInterval = MapObjectDownloadSelectedItem.Value
             }
         };
-        var result = await _mediator.Send(command, ct);
+        var result = await MediatorSendAsync(command, ct);
 
         if (result.IsFailed)
         {
@@ -119,8 +114,8 @@ public sealed partial class UserSettingsViewModel : PageViewModelBase
         if (passwordPopup == null) return;
 
         var ct = new CancellationToken();
-        var command = new EditUserCommand { NewLogin = Login, NewPassword = Password, Password = passwordPopup.Password };
-        var result = await _mediator.Send(command, ct);
+        var command = new EditUserCommand { NewPassword = Password, Password = passwordPopup.Password };
+        var result = await MediatorSendLoadingAsync(command, ct);
 
         if (result.IsFailed)
         {
@@ -148,7 +143,6 @@ public sealed partial class UserSettingsViewModel : PageViewModelBase
     // MISC
     protected override void Cleanup()
     {
-        Login = string.Empty;
         Password = string.Empty;
         PasswordVerification = string.Empty;
 

@@ -8,6 +8,5 @@ public partial class ChatView : ContentPage
 	{
 		BindingContext = vm;
 		InitializeComponent();
-		(BindingContext as ChatViewModel).Init();
 	}
 }

@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Kris.Client.ViewModels.Utility;
 using MediatR;
 
 namespace Kris.Client.ViewModels;
@@ -6,41 +8,15 @@ namespace Kris.Client.ViewModels;
 public abstract partial class FormViewModelBase : ObservableValidator
 {
     protected readonly IMediator _mediator;
+    protected readonly IPopupService _popupService;
 
-    public Task InitializationWork { get; private set; }
-
-    [ObservableProperty]
-    protected bool _isLoading;
     [ObservableProperty]
     protected Dictionary<string, string> errorMessages = new Dictionary<string, string>();
 
-    protected FormViewModelBase(IMediator mediator)
+    protected FormViewModelBase(IMediator mediator, IPopupService popupService)
     {
         _mediator = mediator;
-    }
-
-    // Source: https://www.reddit.com/r/dotnetMAUI/comments/16b2uy7/async_data_loading_on_page_load/
-    public async void Init()
-    {
-        try
-        {
-            IsLoading = true;
-            InitializationWork = InitAsync();
-            await InitializationWork;
-        }
-        catch
-        {
-            throw;
-        }
-        finally
-        {
-            IsLoading = false;
-        }
-    }
-
-    protected virtual Task InitAsync()
-    {
-        return Task.CompletedTask;
+        _popupService = popupService;
     }
 
     protected virtual void Cleanup()
@@ -83,5 +59,21 @@ public abstract partial class FormViewModelBase : ObservableValidator
             ErrorMessages[name] = $"{oldMessage}\n{message}";
         }
         OnPropertyChanged(nameof(ErrorMessages));
+    }
+
+    protected async Task<T> MediatorSendLoadingAsync<T>(IRequest<T> request, CancellationToken ct)
+    {
+        Action closeLoadingPopup = null;
+        var loadingPopupTask = _popupService.ShowPopupAsync<LoadingPopupViewModel>(vm => closeLoadingPopup = vm.Close);
+        var result = await _mediator.Send(request, ct);
+
+        closeLoadingPopup();
+        await loadingPopupTask;
+        return result;
+    }
+
+    protected async Task<T> MediatorSendAsync<T>(IRequest<T> request, CancellationToken ct)
+    {
+        return await _mediator.Send(request, ct);
     }
 }

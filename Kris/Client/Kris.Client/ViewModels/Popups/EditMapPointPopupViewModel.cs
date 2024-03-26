@@ -13,6 +13,7 @@ using Kris.Client.Data.Models.Picker;
 using Kris.Client.Data.Providers;
 using Kris.Client.Utility;
 using Kris.Client.ViewModels.Items;
+using Kris.Client.ViewModels.Utility;
 using Kris.Common.Enums;
 using MediatR;
 using System.Collections.ObjectModel;
@@ -24,7 +25,6 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
 {
     private readonly IMapSettingsDataProvider _mapSettingsDataProvider;
     private readonly IMapPointSymbolDataProvider _symbolDataProvider;
-    private readonly IPopupService _popupService;
     private readonly ISymbolImageComposer _symbolImageComposer;
     private readonly IMediaService _filePickerService;
     private readonly IClipboardService _clipboardService;
@@ -75,14 +75,13 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
     private List<Guid> _attachmentsToDelete = new List<Guid>();
 
     public EditMapPointPopupViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IMapPointSymbolDataProvider mapPointSymbolDataProvider,
-        IPopupService popupService, ISymbolImageComposer symbolImageComposer, IMediaService filePickerService,
-        IClipboardService clipboardService, IMediator mediator)
-        : base(mediator)
+        ISymbolImageComposer symbolImageComposer, IMediaService filePickerService, IClipboardService clipboardService,
+        IMediator mediator, IPopupService popupService)
+        : base(mediator, popupService)
     {
         _mapSettingsDataProvider = mapSettingsDataProvider;
         _symbolDataProvider = mapPointSymbolDataProvider;
         _symbolImageComposer = symbolImageComposer;
-        _popupService = popupService;
         _filePickerService = filePickerService;
         _clipboardService = clipboardService;
 
@@ -105,7 +104,7 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
     private async Task OnSaveButtonClicked() => await UpdateMapPointAsync();
     [RelayCommand]
     private async Task OnDeleteButtonClicked() => await DeleteMapPointAsync();
-    private void OnImageAttachmentDeleteClicked(object sender, EventArgs e) => RemoveAttachment(sender as ImageItemViewModel);
+    private async void OnImageAttachmentDeleteClicked(object sender, EventArgs e) => await RemoveAttachmentAsync(sender as ImageItemViewModel);
 
     // CORE
     public void Setup(Guid pointId, Guid currentUserId, string currentUserName, UserType currentUserType)
@@ -120,7 +119,7 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
     {
         var ct = new CancellationToken();
         var query = new GetMapPointDetailQuery { PointId = PointId };
-        var result = await _mediator.Send(query, ct);
+        var result = await MediatorSendLoadingAsync(query, ct);
 
         if (result.IsFailed)
         {
@@ -175,8 +174,11 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
         AddImageAttachment(fileResult);
     }
 
-    private void RemoveAttachment(ImageItemViewModel image)
+    private async Task RemoveAttachmentAsync(ImageItemViewModel image)
     {
+        var confirmation = await _popupService.ShowPopupAsync<ConfirmationPopupViewModel>(vm => vm.Message = "Remove attachment?") as ConfirmationEventArgs;
+        if (confirmation == null || !confirmation.IsConfirmed) return;
+
         if (image == null) return;
         if (image.Id.HasValue) _attachmentsToDelete.Add(image.Id.Value);
 
@@ -210,6 +212,9 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
     {
         if (ValidateAllProperties()) return;
 
+        var confirmation = await _popupService.ShowPopupAsync<ConfirmationPopupViewModel>(vm => vm.Message = "Update point?") as ConfirmationEventArgs;
+        if (confirmation == null || !confirmation.IsConfirmed) return;
+
         var ct = new CancellationToken();
         var command = new EditMapPointCommand
         {
@@ -223,7 +228,7 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
             DeletedAttachments = _attachmentsToDelete,
             NewAttachments = ImageAttachments.Where(attachment => !attachment.Id.HasValue).Select(attachment => attachment.FilePath).ToList()
         };
-        var result = await _mediator.Send(command, ct);
+        var result = await MediatorSendAsync(command, ct);
 
         var returnResult = result.IsSuccess
             ? Result.Ok(new MapPointListModel
@@ -251,9 +256,12 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
 
     private async Task DeleteMapPointAsync()
     {
+        var confirmation = await _popupService.ShowPopupAsync<ConfirmationPopupViewModel>(vm => vm.Message = "Delete point?") as ConfirmationEventArgs;
+        if (confirmation == null || !confirmation.IsConfirmed) return;
+
         var ct = new CancellationToken();
         var command = new DeleteMapPointCommand { Id = PointId };
-        var result = await _mediator.Send(command, ct);
+        var result = await MediatorSendAsync(command, ct);
 
         DeletedClosing?.Invoke(this, new DeleteResultEventArgs(result));
     }

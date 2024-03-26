@@ -8,6 +8,5 @@ public partial class ContactsView : ContentPage
 	{
 		BindingContext = vm;
 		InitializeComponent();
-        (BindingContext as ContactsViewModel).Init();
     }
 }

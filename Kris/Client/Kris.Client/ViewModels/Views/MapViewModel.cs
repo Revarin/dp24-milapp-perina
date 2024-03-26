@@ -20,6 +20,7 @@ using Kris.Client.Data.Database;
 using Kris.Client.Data.Providers;
 using Kris.Client.Utility;
 using Kris.Client.ViewModels.Popups;
+using Kris.Client.ViewModels.Utility;
 using Kris.Client.Views;
 using Kris.Common.Enums;
 using Kris.Common.Extensions;
@@ -34,7 +35,6 @@ public sealed partial class MapViewModel : PageViewModelBase
 {
     private readonly IMapSettingsDataProvider _mapSettingsDataProvider;
     private readonly IRepositoryFactory _repositoryFactory;
-    private readonly IPopupService _popupService;
     private readonly IKrisMapObjectFactory _krisMapObjectFactory;
     private readonly IBackgroundLoop _backgroundLoop;
     private readonly ICurrentPositionBackgroundHandler _currentPositionBackgroundHandler;
@@ -62,15 +62,14 @@ public sealed partial class MapViewModel : PageViewModelBase
     private KrisMapType _krisMapType;
 
     public MapViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IRepositoryFactory repositoryFactory,
-        IPopupService popupService, IKrisMapObjectFactory krisMapObjectFactory, IBackgroundLoop backgroundLoop,
+        IKrisMapObjectFactory krisMapObjectFactory, IBackgroundLoop backgroundLoop,
         ICurrentPositionBackgroundHandler currentPositionBackgroundHandler, IUserPositionsBackgroundHandler userPositionsBackgroundHandler,
         IMapObjectsBackgroundHandler mapObjectsBackgroundHandler, IMessageReceiver messageReceiver,
-        IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
-        : base(mediator, navigationService, messageService, alertService)
+        IMediator mediator, IRouterService navigationService, IMessageService messageService, IPopupService popupService, IAlertService alertService)
+        : base(mediator, navigationService, messageService, popupService, alertService)
     {
         _mapSettingsDataProvider = mapSettingsDataProvider;
         _repositoryFactory = repositoryFactory;
-        _popupService = popupService;
         _krisMapObjectFactory = krisMapObjectFactory;
         _backgroundLoop = backgroundLoop;
         _currentPositionBackgroundHandler = currentPositionBackgroundHandler;
@@ -95,7 +94,12 @@ public sealed partial class MapViewModel : PageViewModelBase
     [RelayCommand]
     private async Task OnMapLoaded() => await MoveToCurrentRegionAsync();
     [RelayCommand]
-    private async Task OnLogoutButtonClicked() => await LogoutUser();
+    private async Task OnLogoutButtonClicked()
+    {
+        var confirmation = await _popupService.ShowPopupAsync<ConfirmationPopupViewModel>(vm => vm.Message = "Do you want to logout?") as ConfirmationEventArgs;
+        if (confirmation == null || !confirmation.IsConfirmed) return;
+        await LogoutUser();
+    }
     [RelayCommand]
     private async Task OnCurrentPositionButtonClicked() => await MoveToCurrentPositionAsync();
     [RelayCommand]
@@ -166,7 +170,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     private async Task MoveToCurrentRegionAsync()
     {
         var query = new GetCurrentRegionQuery();
-        var currentRegion = await _mediator.Send(query, CancellationToken.None);
+        var currentRegion = await MediatorSendAsync(query, CancellationToken.None);
 
         if (currentRegion != null)
         {
@@ -177,7 +181,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     private async Task MoveToCurrentPositionAsync()
     {
         var query = new GetCurrentPositionQuery();
-        var currentPosition = await _mediator.Send(query, CancellationToken.None);
+        var currentPosition = await MediatorSendAsync(query, CancellationToken.None);
 
         if (currentPosition == null)
         {
@@ -193,7 +197,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     private async Task ShowCreateMapPointPopupAsync(Location location)
     {
         var query = new GetCurrentUserQuery();
-        var currentUser = await _mediator.Send(query, CancellationToken.None);
+        var currentUser = await MediatorSendAsync(query, CancellationToken.None);
         if (currentUser == null || !currentUser.SessionId.HasValue || !currentUser.UserType.HasValue)
         {
             await _alertService.ShowToastAsync("Must join a session to create map objects");
@@ -232,7 +236,7 @@ public sealed partial class MapViewModel : PageViewModelBase
         if (pin.KrisType != KrisPinType.Point) return;
 
         var query = new GetCurrentUserQuery();
-        var currentUser = await _mediator.Send(query, CancellationToken.None);
+        var currentUser = await MediatorSendAsync(query, CancellationToken.None);
         if (currentUser == null || !currentUser.SessionId.HasValue || !currentUser.UserType.HasValue)
         {
             await _alertService.ShowToastAsync("Invalid user data");
@@ -246,9 +250,9 @@ public sealed partial class MapViewModel : PageViewModelBase
         });
         if (resultArgs == null) return;
 
-        if (resultArgs is LoadResultEventArgs<MapPointDetailModel>)
+        if (resultArgs is LoadResultEventArgs<MapPointDetailModel> loadResult)
         {
-            var result = (resultArgs as LoadResultEventArgs<MapPointDetailModel>).Result;
+            var result = loadResult.Result;
             if (result.IsFailed)
             {
                 if (result.HasError<UnauthorizedError>())
@@ -262,9 +266,9 @@ public sealed partial class MapViewModel : PageViewModelBase
                 }
             }
         }
-        else if (resultArgs is UpdateResultEventArgs<MapPointListModel>)
+        else if (resultArgs is UpdateResultEventArgs<MapPointListModel> updateResult)
         {
-            var result = (resultArgs as UpdateResultEventArgs<MapPointListModel>).Result;
+            var result = updateResult.Result;
             if (result.IsFailed)
             {
                 if (result.HasError<UnauthorizedError>())
@@ -289,9 +293,9 @@ public sealed partial class MapViewModel : PageViewModelBase
                 AllMapPins.Add(_krisMapObjectFactory.CreateMapPoint(result.Value));
             }
         }
-        else if (resultArgs is DeleteResultEventArgs)
+        else if (resultArgs is DeleteResultEventArgs deleteResult)
         {
-            var result = (resultArgs as DeleteResultEventArgs).Result;
+            var result = deleteResult.Result;
             if (result.IsFailed)
             {
                 if (result.HasError<UnauthorizedError>())
@@ -401,7 +405,7 @@ public sealed partial class MapViewModel : PageViewModelBase
             await _messageReceiver.Disconnect();
         }
 
-        KrisMapStyle.TileSource = null;
+        KrisMapStyle = null;
         _mapTileRepository?.Dispose();
 
         AllMapPins.Clear();

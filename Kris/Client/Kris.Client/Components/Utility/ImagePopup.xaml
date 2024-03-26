@@ -2,9 +2,9 @@
 <tk:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
           xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-          xmlns:vm="clr-namespace:Kris.Client.ViewModels.Popups"
+          xmlns:vm="clr-namespace:Kris.Client.ViewModels.Utility"
           xmlns:util="clr-namespace:Kris.Client.Components.Utility"
-          x:Class="Kris.Client.Components.Popups.ImagePopup"
+          x:Class="Kris.Client.Components.Utility.ImagePopup"
           x:DataType="vm:ImagePopupViewModel"
           VerticalOptions="Fill"
           HorizontalOptions="Fill">

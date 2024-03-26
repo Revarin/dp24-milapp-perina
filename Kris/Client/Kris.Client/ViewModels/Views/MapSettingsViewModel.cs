@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui.Core.Extensions;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Errors;
@@ -35,10 +36,9 @@ public sealed partial class MapSettingsViewModel : PageViewModelBase
     [ObservableProperty]
     private string _customMapTileSourcePath;
 
-    public MapSettingsViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IMediaService mediaService,
-        IFileStore fileStore, IRepositoryFactory repositoryFactory,
-        IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
-        : base(mediator, navigationService, messageService, alertService)
+    public MapSettingsViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IMediaService mediaService, IFileStore fileStore, IRepositoryFactory repositoryFactory,
+        IMediator mediator, IRouterService navigationService, IMessageService messageService, IPopupService popupService, IAlertService alertService)
+        : base(mediator, navigationService, messageService, popupService, alertService)
     {
         _mapSettingsDataProvider = mapSettingsDataProvider;
         _mediaService = mediaService;
@@ -93,7 +93,7 @@ public sealed partial class MapSettingsViewModel : PageViewModelBase
             },
             CustomMapTilesDatabasePath = CustomMapTileSourcePath
         };
-        var result = await _mediator.Send(command, ct);
+        var result = await MediatorSendAsync(command, ct);
 
         if (result.IsFailed)
         {

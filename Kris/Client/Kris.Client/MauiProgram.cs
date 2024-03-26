@@ -24,6 +24,7 @@ using CoordinateSharp;
 using Kris.Client.Core.Image;
 using Kris.Client.Data.Database;
 using Kris.Client.Components.Utility;
+using Kris.Client.ViewModels.Utility;
 
 namespace Kris.Client
 {
@@ -92,6 +93,8 @@ namespace Kris.Client
             builder.Services.AddTransientPopup<CreateMapPointPopup, CreateMapPointPopupViewModel>();
             builder.Services.AddTransientPopup<EditMapPointPopup, EditMapPointPopupViewModel>();
             builder.Services.AddTransientPopup<ImagePopup, ImagePopupViewModel>();
+            builder.Services.AddTransientPopup<LoadingPopup, LoadingPopupViewModel>();
+            builder.Services.AddTransientPopup<ConfirmationPopup, ConfirmationPopupViewModel>();
 
             builder.Services.AddSingleton<ISymbolImageComposer, SymbolImageComposer>();
             builder.Services.AddSingleton<IKrisMapObjectFactory, KrisMapObjectFactory>();

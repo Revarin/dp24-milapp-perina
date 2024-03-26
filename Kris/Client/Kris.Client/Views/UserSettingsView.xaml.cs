@@ -8,6 +8,5 @@ public partial class UserSettingsView : ContentPage
 	{
 		BindingContext = vm;
 		InitializeComponent();
-		(BindingContext as UserSettingsViewModel).Init();
 	}
 }

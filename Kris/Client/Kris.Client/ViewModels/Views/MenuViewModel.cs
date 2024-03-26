@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Utility;
 using Kris.Client.Core.Requests;
@@ -13,8 +14,8 @@ public sealed partial class MenuViewModel : PageViewModelBase
     [ObservableProperty]
     private bool _inSession;
 
-    public MenuViewModel(IMediator mediator, IRouterService navigationService, IMessageService messageService, IAlertService alertService)
-        : base(mediator, navigationService, messageService, alertService)
+    public MenuViewModel(IMediator mediator, IRouterService navigationService, IMessageService messageService, IPopupService popupService, IAlertService alertService)
+        : base(mediator, navigationService, messageService, popupService, alertService)
     {
     }
 
@@ -33,9 +34,8 @@ public sealed partial class MenuViewModel : PageViewModelBase
     // CORE
     private async Task GetCurrentSessionAsync()
     {
-        var ct = new CancellationToken();
         var query = new GetCurrentUserQuery();
-        var result = await _mediator.Send(query, ct);
+        var result = await MediatorSendAsync(query, CancellationToken.None);
 
         InSession = result.SessionId.HasValue;
     }

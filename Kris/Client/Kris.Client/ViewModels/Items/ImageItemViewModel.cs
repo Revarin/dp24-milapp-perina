@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.ViewModels.Popups;
+using Kris.Client.ViewModels.Utility;
 
 namespace Kris.Client.ViewModels.Items;
 
@@ -50,6 +51,7 @@ public sealed partial class ImageItemViewModel : ControllViewModelBase
             vm.ImageSource = ImageSource;
         });
     }
+
     [RelayCommand]
     private void OnDeleteButtonClicked() => DeleteClicked?.Invoke(this, EventArgs.Empty);
 }

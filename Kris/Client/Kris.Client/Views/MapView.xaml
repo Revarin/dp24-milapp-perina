@@ -38,7 +38,6 @@
 
         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
             <cmpMap:KrisMap VerticalOptions="FillAndExpand"
-                            MapType="Street" IsZoomEnabled="True"
                             KrisMapStyle="{Binding KrisMapStyle}"
                             ItemsSource="{Binding AllMapPins}"
                             CurrentRegion="{Binding CurrentRegion}"
