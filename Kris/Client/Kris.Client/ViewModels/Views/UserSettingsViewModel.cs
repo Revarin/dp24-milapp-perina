@@ -44,9 +44,6 @@ public sealed partial class UserSettingsViewModel : PageViewModelBase
     // User edit
     [Required]
     [ObservableProperty]
-    private string _login;
-    [Required]
-    [ObservableProperty]
     private string _password;
     [Required]
     [Match("Password", "Passwords do not match")]
@@ -117,7 +114,7 @@ public sealed partial class UserSettingsViewModel : PageViewModelBase
         if (passwordPopup == null) return;
 
         var ct = new CancellationToken();
-        var command = new EditUserCommand { NewLogin = Login, NewPassword = Password, Password = passwordPopup.Password };
+        var command = new EditUserCommand { NewPassword = Password, Password = passwordPopup.Password };
         var result = await MediatorSendLoadingAsync(command, ct);
 
         if (result.IsFailed)
