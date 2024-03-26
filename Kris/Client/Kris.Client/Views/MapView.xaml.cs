@@ -9,7 +9,6 @@ public partial class MapView : ContentPage
 	{
 		BindingContext = vm;
 		InitializeComponent();
-		(BindingContext as MapViewModel).Init();
 	}
 
     private async void KrisMapPin_MarkerClicked(object sender, Microsoft.Maui.Controls.Maps.PinClickedEventArgs e)

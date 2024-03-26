@@ -13,7 +13,6 @@ public partial class EditMapPointPopup : Popup
 		(BindingContext as EditMapPointPopupViewModel).LoadErrorClosing += ReturnClose;
 		(BindingContext as EditMapPointPopupViewModel).DeletedClosing += ReturnClose;
 		(BindingContext as EditMapPointPopupViewModel).UpdatedClosing += ReturnClose;
-        (BindingContext as EditMapPointPopupViewModel).Init();
 	}
 
     private async void CancelClose(object sender, EventArgs e) => await CloseAsync();

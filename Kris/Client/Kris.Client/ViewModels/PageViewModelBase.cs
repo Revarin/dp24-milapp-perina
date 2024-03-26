@@ -19,10 +19,6 @@ public abstract partial class PageViewModelBase : ObservableValidator
     protected readonly IPopupService _popupService;
     protected readonly IAlertService _alertService;
 
-    public Task InitializationWork { get; private set; }
-
-    [ObservableProperty]
-    protected bool _isLoading;
     [ObservableProperty]
     protected Dictionary<string, string> errorMessages = new Dictionary<string, string>();
 
@@ -34,30 +30,6 @@ public abstract partial class PageViewModelBase : ObservableValidator
         _messageService = messageService;
         _popupService = popupService;
         _alertService = alertService;
-    }
-
-    // Source: https://www.reddit.com/r/dotnetMAUI/comments/16b2uy7/async_data_loading_on_page_load/
-    public async void Init()
-    {
-        try
-        {
-            IsLoading = true;
-            InitializationWork = InitAsync();
-            await InitializationWork;
-        }
-        catch
-        {
-            throw;
-        }
-        finally
-        {
-            IsLoading = false;
-        }
-    }
-
-    protected virtual Task InitAsync()
-    {
-        return Task.CompletedTask;
     }
 
     [RelayCommand]

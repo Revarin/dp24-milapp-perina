@@ -143,7 +143,6 @@ public sealed partial class UserSettingsViewModel : PageViewModelBase
     // MISC
     protected override void Cleanup()
     {
-        Login = string.Empty;
         Password = string.Empty;
         PasswordVerification = string.Empty;
 

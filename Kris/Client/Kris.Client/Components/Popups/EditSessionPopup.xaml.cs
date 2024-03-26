@@ -13,7 +13,6 @@ public partial class EditSessionPopup : Popup
         (BindingContext as EditSessionPopupViewModel).LoadErrorClosing += ReturnClose;
         (BindingContext as EditSessionPopupViewModel).UpdatedClosing += ReturnClose;
         (BindingContext as EditSessionPopupViewModel).DeletedClosing += ReturnClose;
-        (BindingContext as EditSessionPopupViewModel).Init();
     }
 
     private async void CancelClose(object sender, EventArgs e) => await CloseAsync();

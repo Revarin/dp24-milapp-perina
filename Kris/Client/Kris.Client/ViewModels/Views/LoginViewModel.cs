@@ -26,7 +26,8 @@ public sealed partial class LoginViewModel : PageViewModelBase
     }
 
     // HANDLERS
-    protected override async Task InitAsync() => await GetCurrentUserAsync();
+    [RelayCommand]
+    private async Task OnAppearing() => await GetCurrentUserAsync();
     [RelayCommand]
     private async Task OnRegisterButtonClicked() => await _navigationService.GoToAsync(nameof(RegisterView), RouterNavigationType.PushUpward);
     [RelayCommand]

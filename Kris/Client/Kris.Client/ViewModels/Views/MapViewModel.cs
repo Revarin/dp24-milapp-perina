@@ -405,7 +405,7 @@ public sealed partial class MapViewModel : PageViewModelBase
             await _messageReceiver.Disconnect();
         }
 
-        KrisMapStyle.TileSource = null;
+        KrisMapStyle = null;
         _mapTileRepository?.Dispose();
 
         AllMapPins.Clear();

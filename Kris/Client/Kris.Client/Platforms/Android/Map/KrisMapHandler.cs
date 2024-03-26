@@ -73,7 +73,9 @@ public partial class KrisMapHandler
     {
         if (NativeMap is null || MauiContext is null) return;
 
-        var lightMap = style.KrisMapType == KrisMapType.StreetLight || style.KrisMapType == KrisMapType.Military;
+        var lightMap = style != null
+            ? style.KrisMapType == KrisMapType.StreetLight || style.KrisMapType == KrisMapType.Military
+            : true;
 
         foreach (var pin in mapPins)
         {
@@ -97,7 +99,7 @@ public partial class KrisMapHandler
 
     private void SetStyle(KrisMapStyle style)
     {
-        if (NativeMap is null || MauiContext is null) return;
+        if (NativeMap is null || MauiContext is null || style is null) return;
 
         NativeMap.ResetMinMaxZoomPreference();
         if (_tileOverlay != null) _tileOverlay.Remove();

@@ -10,10 +10,6 @@ public abstract partial class FormViewModelBase : ObservableValidator
     protected readonly IMediator _mediator;
     protected readonly IPopupService _popupService;
 
-    public Task InitializationWork { get; private set; }
-
-    [ObservableProperty]
-    protected bool _isLoading;
     [ObservableProperty]
     protected Dictionary<string, string> errorMessages = new Dictionary<string, string>();
 
@@ -21,30 +17,6 @@ public abstract partial class FormViewModelBase : ObservableValidator
     {
         _mediator = mediator;
         _popupService = popupService;
-    }
-
-    // Source: https://www.reddit.com/r/dotnetMAUI/comments/16b2uy7/async_data_loading_on_page_load/
-    public async void Init()
-    {
-        try
-        {
-            IsLoading = true;
-            InitializationWork = InitAsync();
-            await InitializationWork;
-        }
-        catch
-        {
-            throw;
-        }
-        finally
-        {
-            IsLoading = false;
-        }
-    }
-
-    protected virtual Task InitAsync()
-    {
-        return Task.CompletedTask;
     }
 
     protected virtual void Cleanup()
