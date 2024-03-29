@@ -44,7 +44,9 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
             {
                 Id = user.CurrentSession.SessionId,
                 Name = user.CurrentSession.Session.Name,
-                UserType = user.CurrentSession.UserType
+                UserType = user.CurrentSession.UserType,
+                Nickname = user.CurrentSession.Nickname,
+                Symbol = user.CurrentSession.Symbol
             },
             Settings = new LoginResponse.UserSettings
             {

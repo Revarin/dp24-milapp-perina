@@ -11,7 +11,7 @@ public class MessageMapper : IMessageMapper
         {
             Id = entity.Id,
             SenderId = entity.SenderId,
-            SenderName = entity.Sender?.User?.Login,
+            SenderName = entity.Sender?.Nickname,
             Body = entity.Body,
             TimeStamp = entity.TimeStamp
         };
