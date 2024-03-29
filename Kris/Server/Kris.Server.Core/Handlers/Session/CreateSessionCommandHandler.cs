@@ -48,7 +48,8 @@ public sealed class CreateSessionCommandHandler : SessionHandler, IRequestHandle
             SessionId = session.Id,
             UserId = user.Id,
             UserType = UserType.SuperAdmin,
-            Joined = DateTime.UtcNow
+            Joined = DateTime.UtcNow,
+            Nickname = user.Login
         };
         var globalConversation = new ConversationEntity
         {

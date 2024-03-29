@@ -11,7 +11,6 @@ using Kris.Server.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static Kris.Interface.Responses.IdentityResponse;
 
 namespace Kris.Server.Controllers;
 

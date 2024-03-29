@@ -47,6 +47,7 @@ public class DataContext : DbContext
             .WithMany(e => e.Users)
             .HasForeignKey(e => e.SessionId)
             .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<SessionUserEntity>().OwnsOne(e => e.Symbol);
 
         modelBuilder.Entity<UserEntity>()
             .HasOne(e => e.CurrentSession)
