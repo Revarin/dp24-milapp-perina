@@ -8,6 +8,7 @@ public interface ISessionController
 {
     Task<IdentityResponse?> CreateSession(CreateSessionRequest request, CancellationToken ct);
     Task<Response?> EditSession(EditSessionRequest request, CancellationToken ct);
+    Task<IdentityResponse?> EditSessionUser(EditSessionUserRequest request, CancellationToken ct);
     Task<Response?> EndSession(PasswordRequest request, CancellationToken ct);
     Task<IdentityResponse?> JoinSession(JoinSessionRequest request, CancellationToken ct);
     Task<IdentityResponse?> LeaveSession(Guid sessionId, CancellationToken ct);

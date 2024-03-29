@@ -70,6 +70,29 @@ public sealed class SessionController : KrisController, ISessionController
         return Response.Ok();
     }
 
+    [HttpPut("User")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IdentityResponse?> EditSessionUser(EditSessionUserRequest request, CancellationToken ct)
+    {
+        // Edit in CURRENT session only
+        var user = CurrentUser();
+        if (user == null) return Response.Unauthorized<IdentityResponse>();
+
+        var command = new EditSessionUserCommand { EditSessionUser = request, User = user };
+        var result = await _mediator.Send(command, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<IdentityResponse>(result.Errors.FirstMessage());
+            else return Response.InternalError<IdentityResponse>();
+        }
+
+        return Response.Ok(result.Value);
+    }
+
     [HttpDelete]
     [AuthorizeRoles(UserType.SuperAdmin)]
     [ProducesResponseType(StatusCodes.Status200OK)]
