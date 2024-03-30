@@ -17,23 +17,90 @@
             </tk:EnumToBoolConverter>
         </ResourceDictionary>
     </tk:Popup.Resources>
-    
+        
     <StackLayout Orientation="Vertical"
                  VerticalOptions="FillAndExpand">
 
-        <Label Text="TODO" />
+        <StackLayout Orientation="Vertical"
+                     VerticalOptions="FillAndExpand">
+
+            <StackLayout Orientation="Vertical">
+                <Label Text="Nickname" />
+                <Entry Text="{Binding UserName}">
+                </Entry>
+                <Label Text="{Binding ErrorMessages[UserName]}"
+                       IsVisible="{Binding ErrorMessages[UserName]}"
+                       Style="{StaticResource errorMessageStyle}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal"
+                         HorizontalOptions="FillAndExpand">
+
+                <StackLayout Orientation="Vertical"
+                             VerticalOptions="FillAndExpand">
+                    <Label Text="Map symbol" />
+                    <Label Text="{Binding ErrorMessages[MapSymbol]}"
+                           IsVisible="{Binding ErrorMessages[MapSymbol]}"
+                           Style="{StaticResource errorMessageStyle}" />
+                    <StackLayout Orientation="Vertical">
+                        <Label Text="Shape" />
+                        <Picker Title="Symbol's shape"
+                                ItemsSource="{Binding MapPointShapeItems}"
+                                ItemDisplayBinding="{Binding Display}"
+                                SelectedItem="{Binding MapPointShapeSelectedItem}">
+                            <Picker.Behaviors>
+                                <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
+                            </Picker.Behaviors>
+                        </Picker>
+                    </StackLayout>
+                    <StackLayout Orientation="Vertical">
+                        <Label Text="Color" />
+                        <Picker Title="Symbol's color"
+                                ItemsSource="{Binding MapPointColorItems}"
+                                ItemDisplayBinding="{Binding Display}"
+                                SelectedItem="{Binding MapPointColorSelectedItem}">
+                            <Picker.Behaviors>
+                                <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
+                            </Picker.Behaviors>
+                        </Picker>
+                    </StackLayout>
+                    <StackLayout Orientation="Vertical">
+                        <Label Text="Sign" />
+                        <Picker Title="Symbol's sign"
+                                ItemsSource="{Binding MapPointSignItems}"
+                                ItemDisplayBinding="{Binding Display}"
+                                SelectedItem="{Binding MapPointSignSelectedItem}">
+                            <Picker.Behaviors>
+                                <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
+                            </Picker.Behaviors>
+                        </Picker>
+                    </StackLayout>
+                </StackLayout>
+                <Image HorizontalOptions="EndAndExpand"
+                       VerticalOptions="Center"
+                       WidthRequest="100"
+                       Source="{Binding Image}">
+                </Image>
+            </StackLayout>
+
+            <Button Text="Save changes">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SaveButtonClickedCommand}" />
+                </Button.Behaviors>
+            </Button>
+        </StackLayout>
 
         <StackLayout Orientation="Vertical"
                      VerticalOptions="FillAndExpand"
                      IsVisible="{Binding UserType, Converter={StaticResource UserTypeAdminConverter}}">
 
             <StackLayout Orientation="Vertical">
-                <Label Text="New name" />
-                <Entry Placeholder="Name"
-                       Text="{Binding Name}">
+                <Label Text="New session name" />
+                <Entry Placeholder="Session name"
+                       Text="{Binding SessionName}">
                 </Entry>
-                <Label Text="{Binding ErrorMessages[Name]}"
-                       IsVisible="{Binding ErrorMessages[Name]}"
+                <Label Text="{Binding ErrorMessages[SessionName]}"
+                       IsVisible="{Binding ErrorMessages[SessionName]}"
                        Style="{StaticResource errorMessageStyle}" />
             </StackLayout>
 
@@ -65,14 +132,16 @@
 
             <StackLayout Orientation="Horizontal"
                          HorizontalOptions="FillAndExpand">
-                <Button Text="Cancel">
+                <Button Text="Cancel"
+                        HorizontalOptions="FillAndExpand">
                     <Button.Behaviors>
                         <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CancelButtonClickedCommand}" />
                     </Button.Behaviors>
                 </Button>
-                <Button Text="Save changes">
+                <Button Text="Save changes"
+                        HorizontalOptions="FillAndExpand">
                     <Button.Behaviors>
-                        <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SaveButtonClickedCommand}" />
+                        <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding AdminSaveButtonClickedCommand}" />
                     </Button.Behaviors>
                 </Button>
             </StackLayout>

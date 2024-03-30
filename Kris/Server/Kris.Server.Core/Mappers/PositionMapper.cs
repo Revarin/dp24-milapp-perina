@@ -1,4 +1,5 @@
-﻿using Kris.Interface.Models;
+﻿using Kris.Common.Models;
+using Kris.Interface.Models;
 using Kris.Server.Data.Models;
 
 namespace Kris.Server.Core.Mappers;
@@ -9,15 +10,16 @@ public sealed class PositionMapper : IPositionMapper
     {
         return new UserPositionModel
         {
-            UserId = entity.SessionUser!.User!.Id,
-            UserName = entity.SessionUser!.User!.Login,
+            UserId = entity.SessionUser!.UserId,
+            UserName = entity.SessionUser!.Nickname,
             Updated = entity.Updated,
-            Positions = new List<Kris.Common.Models.GeoSpatialPosition?>
+            Positions = new List<GeoSpatialPosition?>
             {
                 entity.Position_0,
                 entity.Position_1,
                 entity.Position_2
-            }
+            },
+            Symbol = entity.SessionUser!.Symbol
         };
     }
 }

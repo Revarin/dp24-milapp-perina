@@ -48,7 +48,8 @@ public sealed class JoinSessionCommandHandler : SessionHandler, IRequestHandler<
                 UserId = user.Id,
                 SessionId = session.Id,
                 Joined = DateTime.Now,
-                UserType = UserType.Basic
+                UserType = UserType.Basic,
+                Nickname = user.Login
             };
             user.AllSessions.Add(sessionUser);
         }

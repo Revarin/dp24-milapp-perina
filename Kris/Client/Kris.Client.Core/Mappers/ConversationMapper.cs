@@ -8,10 +8,10 @@ public sealed class ConversationMapper : IConversationMapper
         return new Models.ConversationModel
         {
             Id = model.Id,
-            Name = model.Name,
             ConversationType = model.ConversationType,
             MessageCount = model.MessageCount,
-            LastMessage = model.LastMessage
+            LastMessage = model.LastMessage,
+            Name = model.Name
         };
     }
 }

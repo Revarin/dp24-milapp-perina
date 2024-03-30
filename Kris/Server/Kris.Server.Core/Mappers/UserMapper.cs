@@ -35,7 +35,9 @@ public sealed class UserMapper : IUserMapper
                 {
                     Id = entity.CurrentSession.SessionId,
                     Name = entity.CurrentSession.Session.Name,
-                    UserType = entity.CurrentSession.UserType
+                    UserType = entity.CurrentSession.UserType,
+                    Nickname = entity.CurrentSession.Nickname,
+                    Symbol = entity.CurrentSession.Symbol
                 }
         };
     }

@@ -4,6 +4,7 @@
              xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
              xmlns:vm="clr-namespace:Kris.Client.ViewModels.Views"
+             xmlns:items="clr-namespace:Kris.Client.ViewModels.Items"
              xmlns:conv="clr-namespace:Kris.Client.Converters"
              xmlns:cmpMap="clr-namespace:Kris.Client.Components.Map"
              xmlns:cmpEvent="clr-namespace:Kris.Client.Components.Events"
@@ -49,7 +50,7 @@
                 </cmpMap:KrisMap.Behaviors>
                 <cmpMap:KrisMap.ItemTemplate>
                     <DataTemplate x:DataType="{x:Type cmpMap:KrisMapPin}">
-                        <cmpMap:KrisMapPin x:DataType="vm:KrisMapPinViewModel"
+                        <cmpMap:KrisMapPin x:DataType="items:KrisMapPinViewModel"
                                            Label="{Binding Name}"
                                            Location="{Binding Location}"
                                            KrisId="{Binding Id}"

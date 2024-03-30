@@ -9,14 +9,28 @@ public sealed class SessionMapper : ISessionMapper
     {
     }
 
-    public SessionModel Map(SessionEntity entity)
+    public SessionDetailModel MapDetail(SessionEntity entity, Guid userId)
     {
-        return new SessionModel
+        var sessionUser = entity.Users.First(sessionUser => sessionUser.UserId == userId);
+
+        return new SessionDetailModel
         {
             Id = entity.Id,
             Name = entity.Name,
             Created = entity.Created,
-            UserCount = entity.Users.Count()
+            UserName = sessionUser.Nickname,
+            UserSymbol = sessionUser.Symbol
+        };
+    }
+
+    public SessionListModel MapList(SessionEntity entity)
+    {
+        return new SessionListModel
+        {
+            Id = entity.Id,
+            Name = entity.Name,
+            Created = entity.Created,
+            UserCount = entity.Users.Count(),
         };
     }
 }

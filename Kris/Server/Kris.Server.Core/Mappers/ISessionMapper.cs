@@ -5,5 +5,6 @@ namespace Kris.Server.Core.Mappers;
 
 public interface ISessionMapper
 {
-    SessionModel Map(SessionEntity entity);
+    SessionListModel MapList(SessionEntity entity);
+    SessionDetailModel MapDetail(SessionEntity entity, Guid userId);
 }

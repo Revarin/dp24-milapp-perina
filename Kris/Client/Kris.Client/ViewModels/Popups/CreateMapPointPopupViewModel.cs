@@ -91,7 +91,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     private async Task OnTakeImageAttachmentButtonClicked() => await TakeImageAsync();
     [RelayCommand]
     private async Task OnCreateButtonClicked() => await CreateMapPointAsync();
-    private void OnImageAttachmentDeleteClicked(object sender, EventArgs e) => RemoveAttachment(sender as ImageItemViewModel);
+    private async void OnImageAttachmentDeleteClicked(object sender, EventArgs e) => await RemoveAttachmentAsync(sender as ImageItemViewModel);
 
     // CORE
     public void Setup(Guid userId, string userName, Location location)
@@ -141,7 +141,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
         AddImageAttachment(fileResult);
     }
 
-    private async Task RemoveAttachment(ImageItemViewModel image)
+    private async Task RemoveAttachmentAsync(ImageItemViewModel image)
     {
         var confirmation = await _popupService.ShowPopupAsync<ConfirmationPopupViewModel>(vm => vm.Message = "Remove attachment?") as ConfirmationEventArgs;
         if (confirmation == null || !confirmation.IsConfirmed) return;

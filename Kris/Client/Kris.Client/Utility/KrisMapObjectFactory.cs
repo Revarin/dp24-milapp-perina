@@ -1,8 +1,7 @@
 ﻿using Kris.Client.Common.Enums;
 using Kris.Client.Core.Models;
 using Kris.Client.Data.Cache;
-using Kris.Client.ViewModels.Views;
-using Kris.Common.Enums;
+using Kris.Client.ViewModels.Items;
 
 namespace Kris.Client.Utility;
 
@@ -17,37 +16,14 @@ public sealed class KrisMapObjectFactory : IKrisMapObjectFactory
         _symbolImageCache = symbolImageCache;
     }
 
-    public KrisMapPinViewModel CreateMyPositionPin(Guid userId, string userName, Location location)
+    public KrisMapPinViewModel CreateUserPositionPin(UserPositionModel userPosition, KrisPinType krisPinType)
     {
-        var symbolName = $"point_{MapPointSymbolShape.Circle}_{MapPointSymbolColor.Green}_{MapPointSymbolSign.None}.png";
+        var symbol = userPosition.Symbol;
+        var symbolName = $"point_{symbol.Shape}_{symbol.Color}_{symbol.Sign}.png";
 
         if (!_symbolImageCache.CacheExists(symbolName))
         {
-            var imageStream = _symbolImageComposer.ComposeMapPointSymbol(MapPointSymbolShape.Circle, MapPointSymbolColor.Green, MapPointSymbolSign.None);
-            _symbolImageCache.SaveToCache(symbolName, imageStream);
-        }
-
-        var pin = new KrisMapPinViewModel
-        {
-            Id = userId,
-            Name = userName,
-            CreatorId = userId,
-            CreatorName = userName,
-            TimeStamp = DateTime.Now,
-            Location = location,
-            KrisPinType = KrisPinType.Self,
-            ImageName = symbolName
-        };
-        return pin;
-    }
-
-    public KrisMapPinViewModel CreateUserPositionPin(UserPositionModel userPosition)
-    {
-        var symbolName = $"point_{MapPointSymbolShape.Circle}_{MapPointSymbolColor.Blue}_{MapPointSymbolSign.None}.png";
-
-        if (!_symbolImageCache.CacheExists(symbolName))
-        {
-            var imageStream = _symbolImageComposer.ComposeMapPointSymbol(MapPointSymbolShape.Circle, MapPointSymbolColor.Blue, MapPointSymbolSign.None);
+            var imageStream = _symbolImageComposer.ComposeMapPointSymbol(symbol.Shape, symbol.Color, symbol.Sign);
             _symbolImageCache.SaveToCache(symbolName, imageStream);
         }
 
@@ -59,7 +35,7 @@ public sealed class KrisMapObjectFactory : IKrisMapObjectFactory
             CreatorName = userPosition.UserName,
             TimeStamp = userPosition.Updated,
             Location = userPosition.Positions.First(),
-            KrisPinType = KrisPinType.User,
+            KrisPinType = krisPinType,
             ImageName = symbolName
         };
         return pin;

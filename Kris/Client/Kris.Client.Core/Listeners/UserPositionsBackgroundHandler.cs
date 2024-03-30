@@ -26,7 +26,7 @@ public sealed class UserPositionsBackgroundHandler : BackgroundHandler, IUserPos
     public override async Task ExecuteAsync(ConnectionSettingsEntity connectionSettings, UserIdentityEntity userIdentity, uint iteration, CancellationToken ct)
     {
         if (iteration % (uint)connectionSettings.PositionDownloadInterval.TotalSeconds != 0) return;
-        if (!userIdentity.SessionId.HasValue) return;
+        if (userIdentity.CurrentSession == null) return;
 
         var response = await _positionClient.GetPositions(_lastUpdate, ct);
 

@@ -19,6 +19,7 @@ using Kris.Client.Core.Services;
 using Kris.Client.Data.Database;
 using Kris.Client.Data.Providers;
 using Kris.Client.Utility;
+using Kris.Client.ViewModels.Items;
 using Kris.Client.ViewModels.Popups;
 using Kris.Client.ViewModels.Utility;
 using Kris.Client.Views;
@@ -110,7 +111,7 @@ public sealed partial class MapViewModel : PageViewModelBase
         await ShowEditMapPointPopupAsync(sender);
     }
 
-    private void OnCurrentPositionChanged(object sender, LocationEventArgs e) => AddCurrentUserPositionToMap(e.UserId, e.UserName, e.Location);
+    private void OnCurrentPositionChanged(object sender, UserPositionEventArgs e) => AddCurrentUserPositionToMap(e.Position);
     private void OnUserPositionsChanged(object sender, UserPositionsEventArgs e) => AddOtherUserPositionsToMap(e.Positions);
     private void OnMapObjectsChanged(object sender, MapObjectsEventArgs e) => AddMapObjectsToMap(e.MapPoints);
     private async void OnMessageReceived(object sender, MessageReceivedEventArgs e) => await ShowMessageNotification(e.SenderName, e.Body);
@@ -321,20 +322,20 @@ public sealed partial class MapViewModel : PageViewModelBase
         }
     }
 
-    private void AddCurrentUserPositionToMap(Guid userId, string userName, Location location)
+    private void AddCurrentUserPositionToMap(UserPositionModel userPosition)
     {
-        CurrentPosition.Location = location;
+        CurrentPosition.Location = userPosition.Positions.First();
         OnPropertyChanged(nameof(CurrentPosition));
 
-        var userPin = _krisMapObjectFactory.CreateMyPositionPin(userId, userName, location);
-        var oldUserPin = AllMapPins.FirstOrDefault(p => p.KrisPinType == KrisPinType.Self && p.Id == userId);
+        var userPin = _krisMapObjectFactory.CreateUserPositionPin(userPosition, KrisPinType.Self);
+        var oldUserPin = AllMapPins.FirstOrDefault(p => p.KrisPinType == KrisPinType.Self && p.Id == userPosition.UserId);
         AllMapPins.Remove(oldUserPin);
         AllMapPins.Add(userPin);
     }
     
     private void AddOtherUserPositionsToMap(IEnumerable<UserPositionModel> userPositions)
     {
-        var userPins = userPositions.Select(_krisMapObjectFactory.CreateUserPositionPin);
+        var userPins = userPositions.Select(p => _krisMapObjectFactory.CreateUserPositionPin(p, KrisPinType.User));
         AllMapPins = userPins.UnionBy(AllMapPins, pin => new { pin.Id, pin.KrisPinType }).ToObservableCollection();
     }
 

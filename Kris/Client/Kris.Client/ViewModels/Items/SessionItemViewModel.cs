@@ -32,7 +32,7 @@ public sealed partial class SessionItemViewModel : ControllViewModelBase
         Created = model.Created;
         UserCount = model.UserCount;
         ItemType = type;
-        CanEdit = type == SessionItemType.Current && userType >= UserType.Admin;
+        CanEdit = type == SessionItemType.Current;
     }
 
     [RelayCommand]
