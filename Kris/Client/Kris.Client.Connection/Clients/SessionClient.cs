@@ -39,18 +39,18 @@ public sealed class SessionClient : ClientBase, ISessionController
         return await DeleteAsync<PasswordRequest, Response>(httpClient, string.Empty, request, ct);
     }
 
-    public async Task<GetOneResponse<SessionModel>> GetSession(Guid sessionId, CancellationToken ct)
+    public async Task<GetOneResponse<SessionDetailModel>> GetSession(Guid sessionId, CancellationToken ct)
     {
         var jwt = _identityStore.GetJwtToken();
         using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
-        return await GetAsync<GetOneResponse<SessionModel>>(httpClient, sessionId.ToString(), ct);
+        return await GetAsync<GetOneResponse<SessionDetailModel>>(httpClient, sessionId.ToString(), ct);
     }
 
-    public async Task<GetManyResponse<SessionModel>> GetSessions(CancellationToken ct)
+    public async Task<GetManyResponse<SessionListModel>> GetSessions(CancellationToken ct)
     {
         var jwt = _identityStore.GetJwtToken();
         using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
-        return await GetAsync<GetManyResponse<SessionModel>>(httpClient, string.Empty, ct);
+        return await GetAsync<GetManyResponse<SessionListModel>>(httpClient, string.Empty, ct);
     }
 
     public async Task<IdentityResponse> JoinSession(JoinSessionRequest request, CancellationToken ct)

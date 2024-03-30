@@ -32,7 +32,8 @@ public sealed class GetSessionDetailQueryHandler : SessionHandler, IRequestHandl
             Id = response.Value.Id,
             Name = response.Value.Name,
             Created = response.Value.Created,
-            UserCount = response.Value.UserCount
+            UserName = response.Value.UserName,
+            UserSymbol = response.Value.UserSymbol
         });
     }
 }

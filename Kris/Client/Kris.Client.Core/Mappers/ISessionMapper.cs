@@ -1,9 +1,9 @@
-﻿using Kris.Client.Core.Models;
-using Kris.Interface.Models;
+﻿using ClientSessionListModel = Kris.Client.Core.Models.SessionListModel;
+using InterfaceSessionListModel = Kris.Interface.Models.SessionListModel;
 
 namespace Kris.Client.Core.Mappers;
 
 public interface ISessionMapper
 {
-    SessionListModel Map(SessionModel model);
+    ClientSessionListModel Map(InterfaceSessionListModel model);
 }

@@ -1,13 +1,10 @@
-﻿using Kris.Client.Core.Models;
-using Kris.Interface.Models;
-
-namespace Kris.Client.Core.Mappers;
+﻿namespace Kris.Client.Core.Mappers;
 
 public sealed class SessionMapper : ISessionMapper
 {
-    public SessionListModel Map(SessionModel model)
+    public Models.SessionListModel Map(Interface.Models.SessionListModel model)
     {
-        return new SessionListModel
+        return new Models.SessionListModel
         {
             Id = model.Id,
             Name = model.Name,
