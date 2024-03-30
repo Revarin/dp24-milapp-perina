@@ -19,6 +19,7 @@ using Kris.Client.Core.Services;
 using Kris.Client.Data.Database;
 using Kris.Client.Data.Providers;
 using Kris.Client.Utility;
+using Kris.Client.ViewModels.Items;
 using Kris.Client.ViewModels.Popups;
 using Kris.Client.ViewModels.Utility;
 using Kris.Client.Views;

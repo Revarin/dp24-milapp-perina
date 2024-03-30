@@ -1,6 +1,6 @@
 ﻿using Kris.Client.Common.Enums;
 
-namespace Kris.Client.ViewModels.Views;
+namespace Kris.Client.ViewModels.Items;
 
 public sealed class KrisMapPinViewModel
 {

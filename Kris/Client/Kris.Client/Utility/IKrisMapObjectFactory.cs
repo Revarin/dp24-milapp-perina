@@ -1,6 +1,6 @@
 ﻿using Kris.Client.Common.Enums;
 using Kris.Client.Core.Models;
-using Kris.Client.ViewModels.Views;
+using Kris.Client.ViewModels.Items;
 
 namespace Kris.Client.Utility;
 
