@@ -18,7 +18,8 @@ public sealed class PositionMapper : IPositionMapper
                 entity.Position_0,
                 entity.Position_1,
                 entity.Position_2
-            }
+            },
+            Symbol = entity.SessionUser!.Symbol
         };
     }
 }
