@@ -52,7 +52,7 @@ public sealed class CurrentPositionBackgroundHandler : BackgroundHandler, ICurre
         {
             OnLocationRead(userIdentity.UserId, userIdentity.Login, location);
 
-            if (!userIdentity.SessionId.HasValue) return;
+            if (userIdentity.CurrentSession == null) return;
             if (iteration % (uint)connectionSettings.GpsInterval.TotalSeconds != 0) return;
 
             var httpRequest = new SavePositionRequest

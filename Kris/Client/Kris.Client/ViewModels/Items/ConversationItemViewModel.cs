@@ -20,7 +20,7 @@ public sealed partial class ConversationItemViewModel : ControllViewModelBase
     public ConversationItemViewModel(ConversationModel model)
     {
         Id = model.Id;
-        Name = model.Name;
+        Name = "TODO: CHAT NAME";
         MessageCount = model.MessageCount;
         LastMessage = model.LastMessage;
     }

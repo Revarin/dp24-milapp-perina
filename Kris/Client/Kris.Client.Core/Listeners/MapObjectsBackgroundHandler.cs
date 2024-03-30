@@ -26,7 +26,7 @@ public sealed class MapObjectsBackgroundHandler : BackgroundHandler, IMapObjects
     public override async Task ExecuteAsync(ConnectionSettingsEntity connectionSettings, UserIdentityEntity userIdentity, uint iteration, CancellationToken ct)
     {
         if (iteration % (uint)connectionSettings.PositionDownloadInterval.TotalSeconds != 0) return;
-        if (!userIdentity.SessionId.HasValue) return;
+        if (userIdentity.CurrentSession == null) return;
 
         var response = await _mapObjectClient.GetMapObjects(_lastUpdate, ct);
 

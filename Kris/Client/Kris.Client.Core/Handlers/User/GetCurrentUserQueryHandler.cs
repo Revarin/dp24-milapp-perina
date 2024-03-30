@@ -30,8 +30,8 @@ public sealed class GetCurrentUserQueryHandler : UserHandler, IRequestHandler<Ge
             Id = identity.UserId,
             Login = identity.Login,
             LoginExpiration = expiration,
-            SessionId = identity.SessionId,
-            UserType = identity.UserType
+            SessionId = identity.CurrentSession?.Id,
+            UserType = identity.CurrentSession?.UserType
         });
     }
 }

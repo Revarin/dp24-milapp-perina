@@ -12,9 +12,16 @@ public sealed class UserMapper : IUserMapper
             UserId = response.UserId,
             Login = response.Login,
             Token = response.Token,
-            SessionId = response.CurrentSession?.Id,
-            SessionName = response.CurrentSession?.Name,
-            UserType = response.CurrentSession?.UserType,
+            CurrentSession = response.CurrentSession == null
+                ? null
+                : new UserIdentityEntity.Session
+                {
+                    Id = response.CurrentSession.Id,
+                    Name = response.CurrentSession.Name,
+                    UserType = response.CurrentSession.UserType,
+                    Nickname = response.CurrentSession.Nickname,
+                    Symbol = response.CurrentSession.Symbol
+                },
             JoinedSessions = response.JoinedSessions
         };
     }
