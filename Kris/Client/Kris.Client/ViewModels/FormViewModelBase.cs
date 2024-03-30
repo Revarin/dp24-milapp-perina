@@ -30,6 +30,14 @@ public abstract partial class FormViewModelBase : ObservableValidator
         ErrorMessages.Clear();
         base.ValidateAllProperties();
 
+        AddErrors();
+
+        OnPropertyChanged(nameof(ErrorMessages));
+        return HasErrors;
+    }
+
+    protected void AddErrors()
+    {
         if (HasErrors)
         {
             foreach (var error in GetErrors())
@@ -45,9 +53,6 @@ public abstract partial class FormViewModelBase : ObservableValidator
                 }
             }
         }
-
-        OnPropertyChanged(nameof(ErrorMessages));
-        return HasErrors;
     }
 
     protected void AddCustomError(string name, string message)

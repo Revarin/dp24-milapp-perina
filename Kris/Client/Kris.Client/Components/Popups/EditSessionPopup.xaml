@@ -26,10 +26,10 @@
 
             <StackLayout Orientation="Vertical">
                 <Label Text="Nickname" />
-                <Entry Text="{Binding UserNickname}">
+                <Entry Text="{Binding UserName}">
                 </Entry>
-                <Label Text="{Binding ErrorMessages[UserNickname]}"
-                       IsVisible="{Binding ErrorMessages[UserNickname]}"
+                <Label Text="{Binding ErrorMessages[UserName]}"
+                       IsVisible="{Binding ErrorMessages[UserName]}"
                        Style="{StaticResource errorMessageStyle}" />
             </StackLayout>
 
@@ -95,12 +95,12 @@
                      IsVisible="{Binding UserType, Converter={StaticResource UserTypeAdminConverter}}">
 
             <StackLayout Orientation="Vertical">
-                <Label Text="New name" />
-                <Entry Placeholder="Name"
-                       Text="{Binding Name}">
+                <Label Text="New session name" />
+                <Entry Placeholder="Session name"
+                       Text="{Binding SessionName}">
                 </Entry>
-                <Label Text="{Binding ErrorMessages[Name]}"
-                       IsVisible="{Binding ErrorMessages[Name]}"
+                <Label Text="{Binding ErrorMessages[SessionName]}"
+                       IsVisible="{Binding ErrorMessages[SessionName]}"
                        Style="{StaticResource errorMessageStyle}" />
             </StackLayout>
 

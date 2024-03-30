@@ -27,9 +27,11 @@ public sealed class SessionClient : ClientBase, ISessionController
         return await PutAsync<EditSessionRequest, Response>(httpClient, string.Empty, request, ct);
     }
 
-    public Task<IdentityResponse> EditSessionUser(EditSessionUserRequest request, CancellationToken ct)
+    public async Task<IdentityResponse> EditSessionUser(EditSessionUserRequest request, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var jwt = _identityStore.GetJwtToken();
+        using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await PutAsync<EditSessionUserRequest, IdentityResponse>(httpClient, "User", request, ct);
     }
 
     public async Task<Response> EndSession(PasswordRequest request, CancellationToken ct)

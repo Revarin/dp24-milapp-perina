@@ -14,6 +14,7 @@ using Kris.Client.Utility;
 using Kris.Client.Validations;
 using Kris.Client.ViewModels.Utility;
 using Kris.Common.Enums;
+using Kris.Common.Models;
 using MediatR;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -34,8 +35,9 @@ public sealed partial class EditSessionPopupViewModel : PopupViewModel
     [ObservableProperty]
     private UserType _userType;
 
+    [Required]
     [ObservableProperty]
-    private string _userNickname;
+    private string _userName;
     [ObservableProperty]
     private ObservableCollection<MapPointSymbolColorItem> _mapPointColorItems;
     [Required]
@@ -54,7 +56,7 @@ public sealed partial class EditSessionPopupViewModel : PopupViewModel
 
     [Required]
     [ObservableProperty]
-    private string _name;
+    private string _sessionName;
     [ObservableProperty]
     private string _password;
     [Match("Password", "Passwords do not match")]
@@ -99,8 +101,8 @@ public sealed partial class EditSessionPopupViewModel : PopupViewModel
             LoadErrorClosing?.Invoke(this, new LoadResultEventArgs<SessionDetailModel>(result));
         }
 
-        Name = result.Value.Name;
-        UserNickname = result.Value.UserName;
+        SessionName = result.Value.Name;
+        UserName = result.Value.UserName;
         MapPointShapeSelectedItem = MapPointShapeItems.First(shape => shape.Value == result.Value.UserSymbol.Shape);
         MapPointColorSelectedItem = MapPointColorItems.First(color => color.Value == result.Value.UserSymbol.Color);
         MapPointSignSelectedItem = MapPointSignItems.First(sign => sign.Value == result.Value.UserSymbol.Sign);
@@ -108,18 +110,33 @@ public sealed partial class EditSessionPopupViewModel : PopupViewModel
 
     private async Task UpdateSessionUserAsync()
     {
-        throw new NotImplementedException();
+        if (ValidateUserProperties()) return;
+
+        var ct = new CancellationToken();
+        var command = new EditSessionUserCommand
+        {
+            UserName = UserName,
+            UserSymbol = new MapPointSymbol
+            {
+                Shape = MapPointShapeSelectedItem.Value,
+                Color = MapPointColorSelectedItem.Value,
+                Sign = MapPointSignSelectedItem.Value
+            }
+        };
+        var result = await _mediator.Send(command, ct);
+
+        UpdatedClosing?.Invoke(this, new UpdateResultEventArgs(result));
     }
 
     private async Task UpdateSessionAsync()
     {
-        if (ValidateAllProperties()) return;
+        if (ValidateAdminProperties()) return;
 
         var passwordPopup = await _popupService.ShowPopupAsync<PasswordPopupViewModel>() as PasswordEventArgs;
         if (passwordPopup == null) return;
 
         var ct = new CancellationToken();
-        var command = new EditSessionCommand { NewName = Name, NewPassword = Password, Password = passwordPopup.Password };
+        var command = new EditSessionCommand { NewName = SessionName, NewPassword = Password, Password = passwordPopup.Password };
         var result = await _mediator.Send(command, ct);
 
         if (result.IsFailed && result.HasError<ForbiddenError>())
@@ -149,6 +166,7 @@ public sealed partial class EditSessionPopupViewModel : PopupViewModel
         DeletedClosing?.Invoke(this, new DeleteResultEventArgs(result));
     }
 
+    // MISC
     private void RedrawSymbol()
     {
         var pointShape = MapPointShapeSelectedItem?.Value;
@@ -157,5 +175,32 @@ public sealed partial class EditSessionPopupViewModel : PopupViewModel
 
         var imageStream = _symbolImageComposer.ComposeMapPointSymbol(pointShape, pointColor, pointSign);
         Image = ImageSource.FromStream(() => imageStream);
+    }
+
+    private bool ValidateAdminProperties()
+    {
+        ErrorMessages.Clear();
+        ValidateProperty(SessionName, nameof(SessionName));
+        ValidateProperty(Password, nameof(Password));
+        ValidateProperty(PasswordVerification, nameof(PasswordVerification));
+
+        AddErrors();
+
+        OnPropertyChanged(nameof(ErrorMessages));
+        return HasErrors;
+    }
+
+    private bool ValidateUserProperties()
+    {
+        ErrorMessages.Clear();
+        ValidateProperty(UserName, nameof(UserName));
+        ValidateProperty(MapPointShapeSelectedItem, nameof(MapPointShapeSelectedItem));
+        ValidateProperty(MapPointColorSelectedItem, nameof(MapPointColorSelectedItem));
+        ValidateProperty(MapPointSignSelectedItem, nameof(MapPointSignSelectedItem));
+
+        AddErrors();
+
+        OnPropertyChanged(nameof(ErrorMessages));
+        return HasErrors;
     }
 }
