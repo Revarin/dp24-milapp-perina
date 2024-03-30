@@ -1,4 +1,6 @@
-﻿namespace Kris.Client.Core.Models;
+﻿using Kris.Common.Models;
+
+namespace Kris.Client.Core.Models;
 
 public sealed class UserPositionModel
 {
@@ -6,4 +8,5 @@ public sealed class UserPositionModel
     public string? UserName { get; set; }
     public DateTime Updated { get; set; }
     public List<Location> Positions { get; set; }
+    public MapPointSymbol Symbol { get; set; }
 }

@@ -1,8 +1,0 @@
-﻿namespace Kris.Client.Core.Listeners.Events;
-
-public sealed class LocationEventArgs : EventArgs
-{
-    public Guid UserId { get; init; }
-    public string UserName { get; init; }
-    public Location Location { get; init; }
-}

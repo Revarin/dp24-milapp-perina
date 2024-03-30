@@ -4,5 +4,5 @@ namespace Kris.Client.Core.Listeners;
 
 public interface ICurrentPositionBackgroundHandler : IBackgroundHandler
 {
-    public event EventHandler<LocationEventArgs> CurrentPositionChanged;
+    public event EventHandler<UserPositionEventArgs> CurrentPositionChanged;
 }

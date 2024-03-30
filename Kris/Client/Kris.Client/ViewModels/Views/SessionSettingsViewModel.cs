@@ -273,6 +273,7 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
             else
             {
                 await _alertService.ShowToastAsync("Session updated");
+                _messageService.Send(new CurrentSessionChangedMessage());
                 await OnAppearing();
             }
         }

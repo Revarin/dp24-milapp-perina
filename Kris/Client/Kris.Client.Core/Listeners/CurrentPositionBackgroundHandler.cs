@@ -2,8 +2,11 @@
 using Kris.Client.Common.Errors;
 using Kris.Client.Core.Listeners.Events;
 using Kris.Client.Core.Mappers;
+using Kris.Client.Core.Models;
 using Kris.Client.Core.Services;
 using Kris.Client.Data.Models;
+using Kris.Common.Enums;
+using Kris.Common.Models;
 using Kris.Interface.Controllers;
 using Kris.Interface.Requests;
 
@@ -16,7 +19,7 @@ public sealed class CurrentPositionBackgroundHandler : BackgroundHandler, ICurre
     private readonly IPositionController _positionClient;
     private readonly IPositionMapper _positionMapper;
 
-    public event EventHandler<LocationEventArgs> CurrentPositionChanged;
+    public event EventHandler<UserPositionEventArgs> CurrentPositionChanged;
 
     private PermissionStatus _permissionStatus = PermissionStatus.Unknown;
 
@@ -50,8 +53,21 @@ public sealed class CurrentPositionBackgroundHandler : BackgroundHandler, ICurre
 
         if (location != null)
         {
-            OnLocationRead(userIdentity.UserId, userIdentity.Login, location);
+            OnLocationRead(new UserPositionModel
+            {
+                UserId = userIdentity.UserId,
+                UserName = userIdentity.CurrentSession?.Nickname ?? userIdentity.Login,
+                Positions = new List<Location> { location },
+                Symbol = userIdentity.CurrentSession?.Symbol ?? new MapPointSymbol
+                {
+                    Shape = MapPointSymbolShape.Circle,
+                    Color = MapPointSymbolColor.Blue,
+                    Sign = MapPointSymbolSign.None
+                },
+                Updated = DateTime.Now
+            });
 
+            // If not in session end here
             if (userIdentity.CurrentSession == null) return;
             if (iteration % (uint)connectionSettings.GpsInterval.TotalSeconds != 0) return;
 
@@ -83,13 +99,8 @@ public sealed class CurrentPositionBackgroundHandler : BackgroundHandler, ICurre
         }
     }
 
-    private void OnLocationRead(Guid userId, string userName, Location location)
+    private void OnLocationRead(UserPositionModel userPosition)
     {
-        Application.Current.Dispatcher.Dispatch(() => CurrentPositionChanged?.Invoke(this, new LocationEventArgs
-        {
-            UserId = userId,
-            UserName = userName,
-            Location = location
-        }));
+        Application.Current.Dispatcher.Dispatch(() => CurrentPositionChanged?.Invoke(this, new UserPositionEventArgs(userPosition)));
     }
 }

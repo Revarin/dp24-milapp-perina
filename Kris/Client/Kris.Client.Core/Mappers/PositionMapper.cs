@@ -30,7 +30,8 @@ public sealed class PositionMapper : IPositionMapper
             UserId = position.UserId,
             UserName = position.UserName,
             Positions = position.Positions.Select(Map).ToList(),
-            Updated = position.Updated
+            Updated = position.Updated,
+            Symbol = position.Symbol
         };
     }
 }
