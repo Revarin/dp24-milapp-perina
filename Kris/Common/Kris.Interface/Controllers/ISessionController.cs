@@ -13,6 +13,6 @@ public interface ISessionController
     Task<IdentityResponse?> JoinSession(JoinSessionRequest request, CancellationToken ct);
     Task<IdentityResponse?> LeaveSession(Guid sessionId, CancellationToken ct);
     Task<Response?> KickFromSession(Guid userId, CancellationToken ct);
-    Task<GetOneResponse<SessionModel>?> GetSession(Guid sessionId, CancellationToken ct);
-    Task<GetManyResponse<SessionModel>?> GetSessions(CancellationToken ct);
+    Task<GetOneResponse<SessionDetailModel>?> GetSession(Guid sessionId, CancellationToken ct);
+    Task<GetManyResponse<SessionListModel>?> GetSessions(CancellationToken ct);
 }

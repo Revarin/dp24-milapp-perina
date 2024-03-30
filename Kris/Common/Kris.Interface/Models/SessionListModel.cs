@@ -1,6 +1,6 @@
 ﻿namespace Kris.Interface.Models;
 
-public class SessionModel
+public class SessionListModel
 {
     public required Guid Id { get; set; }
     public required string Name { get; set; }

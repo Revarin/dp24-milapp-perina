@@ -229,21 +229,21 @@ public sealed class SessionController : KrisController, ISessionController
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<GetOneResponse<SessionModel>?> GetSession(Guid sessionId, CancellationToken ct)
+    public async Task<GetOneResponse<SessionDetailModel>?> GetSession(Guid sessionId, CancellationToken ct)
     {
         var user = CurrentUser();
-        if (user == null) return Response.Unauthorized<GetOneResponse<SessionModel>>();
+        if (user == null) return Response.Unauthorized<GetOneResponse<SessionDetailModel>>();
 
-        var query = new GetSessionQuery { SessionId = sessionId };
+        var query = new GetSessionQuery { User = user, SessionId = sessionId };
         var result = await _mediator.Send(query, ct);
 
         if (result.IsFailed)
         {
-            if (result.HasError<EntityNotFoundError>()) return Response.NotFound<GetOneResponse<SessionModel>>(result.Errors.FirstMessage());
-            else return Response.InternalError<GetOneResponse<SessionModel>>();
+            if (result.HasError<EntityNotFoundError>()) return Response.NotFound<GetOneResponse<SessionDetailModel>>(result.Errors.FirstMessage());
+            else return Response.InternalError<GetOneResponse<SessionDetailModel>>();
         }
 
-        return Response.Ok(new GetOneResponse<SessionModel> { Value = result.Value });
+        return Response.Ok(new GetOneResponse<SessionDetailModel> { Value = result.Value });
     }
 
     [HttpGet]
@@ -251,16 +251,16 @@ public sealed class SessionController : KrisController, ISessionController
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<GetManyResponse<SessionModel>?> GetSessions(CancellationToken ct)
+    public async Task<GetManyResponse<SessionListModel>?> GetSessions(CancellationToken ct)
     {
         var user = CurrentUser();
-        if (user == null) return Response.Unauthorized<GetManyResponse<SessionModel>>();
+        if (user == null) return Response.Unauthorized<GetManyResponse<SessionListModel>>();
 
         var query = new GetSessionsQuery();
         var result = await _mediator.Send(query, ct);
 
-        if (result.IsFailed) return Response.InternalError<GetManyResponse<SessionModel>>();
+        if (result.IsFailed) return Response.InternalError<GetManyResponse<SessionListModel>>();
 
-        return Response.Ok(new GetManyResponse<SessionModel>(result.Value));
+        return Response.Ok(new GetManyResponse<SessionListModel>(result.Value));
     }
 }
