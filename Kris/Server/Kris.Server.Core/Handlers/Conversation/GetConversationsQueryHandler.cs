@@ -1,7 +1,7 @@
 ﻿using FluentResults;
+using Kris.Common.Enums;
 using Kris.Interface.Models;
 using Kris.Server.Common.Errors;
-using Kris.Server.Core.Mappers;
 using Kris.Server.Core.Requests;
 using Kris.Server.Core.Services;
 using Kris.Server.Data.Repositories;
@@ -11,13 +11,9 @@ namespace Kris.Server.Core.Handlers.Conversation;
 
 public sealed class GetConversationsQueryHandler : ConversationHandler, IRequestHandler<GetConversationsQuery, Result<IEnumerable<ConversationListModel>>>
 {
-    private readonly IConversationMapper _conversationMapper;
-
-    public GetConversationsQueryHandler(IConversationMapper conversationMapper,
-        IConversationRepository conversationRepository, IAuthorizationService authorizationService)
+    public GetConversationsQueryHandler(IConversationRepository conversationRepository, IAuthorizationService authorizationService)
         : base(conversationRepository, authorizationService)
     {
-        _conversationMapper = conversationMapper;
     }
 
     public async Task<Result<IEnumerable<ConversationListModel>>> Handle(GetConversationsQuery request, CancellationToken cancellationToken)
@@ -29,6 +25,24 @@ public sealed class GetConversationsQueryHandler : ConversationHandler, IRequest
 
         var conversations = await _conversationRepository.GetByUserAsync(user.UserId, user.SessionId.Value, cancellationToken);
 
-        return Result.Ok(conversations.Select(_conversationMapper.Map));
+        return Result.Ok(conversations.Select(conversation => new ConversationListModel
+        {
+            Id = conversation.Id,
+            ConversationType = conversation.ConversationType,
+            Name = conversation.ConversationType switch
+            {
+                ConversationType.Global => "Global Chat",
+                ConversationType.Group => "Group Chat",
+                ConversationType.Direct => conversation.Users.FirstOrDefault(u => u.UserId != user.UserId)?.Nickname ?? "Abandoned Chat",
+                _ => throw new ArgumentException("Invalid value")
+            },
+            Users = conversation.Users.Select(user => new UserModel
+            {
+                Id = user.UserId,
+                Name = user.Nickname
+            }).ToList(),
+            MessageCount = conversation.Messages.Count,
+            LastMessage = conversation.Messages.FirstOrDefault()?.TimeStamp
+        }));
     }
 }
