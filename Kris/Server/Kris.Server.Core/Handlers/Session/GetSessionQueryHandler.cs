@@ -1,4 +1,5 @@
 ﻿using FluentResults;
+using Kris.Common.Enums;
 using Kris.Interface.Models;
 using Kris.Server.Common.Errors;
 using Kris.Server.Core.Mappers;
@@ -22,6 +23,13 @@ public sealed class GetSessionQueryHandler : SessionHandler, IRequestHandler<Get
         if (entity == null) return Result.Fail(new EntityNotFoundError("Session", request.SessionId));
 
         var session = _sessionMapper.MapDetail(entity, request.User.UserId);
+        if (request.User.UserType > UserType.Basic) session.Users = entity.Users.Select(user => new UserModel
+        {
+            Id = user.Id,
+            Login = user.User!.Login,
+            Nickname = user.Nickname
+        });
+
         return Result.Ok(session);
     }
 }

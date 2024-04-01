@@ -3,5 +3,6 @@
 public class UserModel
 {
     public required Guid Id { get; set; }
-    public string? Name { get; set; }
+    public string? Login { get; set; }
+    public string? Nickname { get; set; }
 }

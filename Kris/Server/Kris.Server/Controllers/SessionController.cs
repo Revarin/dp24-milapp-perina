@@ -93,6 +93,33 @@ public sealed class SessionController : KrisController, ISessionController
         return Response.Ok(result.Value);
     }
 
+    [HttpPut("Role")]
+    [AuthorizeRoles(UserType.Admin, UserType.SuperAdmin)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<Response?> EditSessionUserRole(EditSessionUserRoleRequest request, CancellationToken ct)
+    {
+        // Edit in CURRENT session only
+        var user = CurrentUser();
+        if (user == null) return Response.Unauthorized<Response>();
+
+        var command = new EditSessionUserRoleCommand { EditSessionUserRole = request, User = user };
+        var result = await _mediator.Send(command, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<Response>(result.Errors.FirstMessage());
+            else if (result.HasError<EntityNotFoundError>()) return Response.NotFound<Response>(result.Errors.FirstMessage());
+            else if (result.HasError<InvalidOperationError>()) return Response.BadRequest<Response>(result.Errors.FirstMessage());
+            else return Response.InternalError<IdentityResponse>();
+        }
+
+        return Response.Ok();
+    }
+
     [HttpDelete]
     [AuthorizeRoles(UserType.SuperAdmin)]
     [ProducesResponseType(StatusCodes.Status200OK)]

@@ -39,7 +39,7 @@ public sealed class GetConversationsQueryHandler : ConversationHandler, IRequest
             Users = conversation.Users.Select(user => new UserModel
             {
                 Id = user.UserId,
-                Name = user.Nickname
+                Nickname = user.Nickname
             }).ToList(),
             MessageCount = conversation.Messages.Count,
             LastMessage = conversation.Messages.FirstOrDefault()?.TimeStamp

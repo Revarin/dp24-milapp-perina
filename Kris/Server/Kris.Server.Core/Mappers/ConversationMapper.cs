@@ -16,7 +16,7 @@ public sealed class ConversationMapper : IConversationMapper
             Users = entity.Users.Select(user => new UserModel
             {
                 Id = user.UserId,
-                Name = user.Nickname
+                Nickname = user.Nickname
             }).ToList()
         };
     }
