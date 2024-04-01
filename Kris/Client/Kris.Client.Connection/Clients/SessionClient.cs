@@ -34,6 +34,13 @@ public sealed class SessionClient : ClientBase, ISessionController
         return await PutAsync<EditSessionUserRequest, IdentityResponse>(httpClient, "User", request, ct);
     }
 
+    public async Task<Response> EditSessionUserRole(EditSessionUserRoleRequest request, CancellationToken ct)
+    {
+        var jwt = _identityStore.GetJwtToken();
+        using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await PutAsync<EditSessionUserRoleRequest, Response>(httpClient, "Role", request, ct);
+    }
+
     public async Task<Response> EndSession(PasswordRequest request, CancellationToken ct)
     {
         var jwt = _identityStore.GetJwtToken();
@@ -62,9 +69,11 @@ public sealed class SessionClient : ClientBase, ISessionController
         return await PutAsync<JoinSessionRequest, IdentityResponse>(httpClient, "Join", request, ct);
     }
 
-    public Task<Response> KickFromSession(Guid userId, CancellationToken ct)
+    public async Task<Response> KickFromSession(Guid userId, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var jwt = _identityStore.GetJwtToken();
+        using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        return await PutAsync<Response>(httpClient, $"Kick/{userId}", ct);
     }
 
     public async Task<IdentityResponse> LeaveSession(Guid sessionId, CancellationToken ct)

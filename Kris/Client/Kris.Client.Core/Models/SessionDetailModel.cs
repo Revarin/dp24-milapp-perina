@@ -9,4 +9,5 @@ public sealed class SessionDetailModel
     public DateTime Created { get; set; }
     public string UserName { get; set; }
     public MapPointSymbol UserSymbol { get; set; }
+    public IEnumerable<SessionUserModel> Users { get; set; } = new List<SessionUserModel>();
 }

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:vm="clr-namespace:Kris.Client.ViewModels.Items"
+             xmlns:enum="clr-namespace:Kris.Common.Enums;assembly=Kris.Common"
+             x:Class="Kris.Client.Components.Items.SessionUserItem"
+             x:DataType="vm:SessionUserItemViewModel"
+             BackgroundColor="DimGrey">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <tk:EnumToBoolConverter x:Key="AdminConverter">
+                <tk:EnumToBoolConverter.TrueValues>
+                    <enum:UserType>Admin</enum:UserType>
+                    <enum:UserType>SuperAdmin</enum:UserType>
+                </tk:EnumToBoolConverter.TrueValues>
+            </tk:EnumToBoolConverter>
+            <tk:EnumToBoolConverter x:Key="SuperAdminConverter">
+                <tk:EnumToBoolConverter.TrueValues>
+                    <enum:UserType>SuperAdmin</enum:UserType>
+                </tk:EnumToBoolConverter.TrueValues>
+            </tk:EnumToBoolConverter>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <StackLayout Orientation="Horizontal"
+                 HorizontalOptions="FillAndExpand">
+        
+        <StackLayout Orientation="Vertical"
+                     HorizontalOptions="FillAndExpand">
+            <Label Text="{Binding Nickname}"
+                   HorizontalOptions="StartAndExpand" />
+            <Label Text="{Binding Login}"
+                   FontSize="Small"
+                   HorizontalOptions="StartAndExpand" />
+        </StackLayout>
+        
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="EndAndExpand">
+            <Label Text="Admin" />
+            <Switch IsToggled="{Binding UserType, Converter={StaticResource AdminConverter}}"
+                    IsEnabled="{Binding UserType, Converter={StaticResource SuperAdminConverter}}">
+                <Switch.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Toggled" Command="{Binding UserAdminToggledCommand}" />
+                </Switch.Behaviors>
+            </Switch>
+        </StackLayout>
+
+        <Button Text="Kick">
+            <Button.Behaviors>
+                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding KickUserClickedCommand}" />
+            </Button.Behaviors>
+        </Button>
+    </StackLayout>
+</ContentView>

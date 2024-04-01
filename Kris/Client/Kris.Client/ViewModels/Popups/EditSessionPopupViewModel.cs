@@ -12,6 +12,7 @@ using Kris.Client.Data.Models.Picker;
 using Kris.Client.Data.Providers;
 using Kris.Client.Utility;
 using Kris.Client.Validations;
+using Kris.Client.ViewModels.Items;
 using Kris.Client.ViewModels.Utility;
 using Kris.Common.Enums;
 using Kris.Common.Models;
@@ -32,9 +33,9 @@ public sealed partial class EditSessionPopupViewModel : PopupViewModel
     public event EventHandler<DeleteResultEventArgs> DeletedClosing;
 
     public Guid SessionId { get; set; }
+
     [ObservableProperty]
     private UserType _userType;
-
     [Required]
     [ObservableProperty]
     private string _userName;
@@ -53,6 +54,9 @@ public sealed partial class EditSessionPopupViewModel : PopupViewModel
     [Required]
     [ObservableProperty]
     private MapPointSymbolSignItem _mapPointSignSelectedItem;
+
+    [ObservableProperty]
+    private ObservableCollection<SessionUserItemViewModel> _sessionUsers;
 
     [Required]
     [ObservableProperty]
@@ -88,6 +92,20 @@ public sealed partial class EditSessionPopupViewModel : PopupViewModel
     private async Task OnAdminSaveButtonClicked() => await UpdateSessionAsync();
     [RelayCommand]
     private async Task OnDeleteButtonClicked() => await DeleteSessionAsync();
+    private async void OnUserRoleChanging(object sender, EventArgs e)
+    {
+        if (sender is SessionUserItemViewModel sessionUser)
+        {
+            await UpdateSessionUserRole(sessionUser.Id, sessionUser.UserType);
+        }
+    }
+    private async void OnUserKicking(object sender, EventArgs e)
+    {
+        if (sender is SessionUserItemViewModel sessionUser)
+        {
+            await KickUserAsync(sessionUser.Id);
+        }
+    }
 
     // CORE
     public async Task LoadSessionDetailAsync()
@@ -106,6 +124,13 @@ public sealed partial class EditSessionPopupViewModel : PopupViewModel
         MapPointShapeSelectedItem = MapPointShapeItems.First(shape => shape.Value == result.Value.UserSymbol.Shape);
         MapPointColorSelectedItem = MapPointColorItems.First(color => color.Value == result.Value.UserSymbol.Color);
         MapPointSignSelectedItem = MapPointSignItems.First(sign => sign.Value == result.Value.UserSymbol.Sign);
+
+        SessionUsers = result.Value.Users.Select(user => new SessionUserItemViewModel(user)).ToObservableCollection();
+        foreach (var sessionUser in SessionUsers)
+        {
+            sessionUser.UserRoleChanging += OnUserRoleChanging;
+            sessionUser.UserKicking += OnUserKicking;
+        }
     }
 
     private async Task UpdateSessionUserAsync()
@@ -164,6 +189,54 @@ public sealed partial class EditSessionPopupViewModel : PopupViewModel
         }
 
         DeletedClosing?.Invoke(this, new DeleteResultEventArgs(result));
+    }
+
+    private async Task UpdateSessionUserRole(Guid userId, UserType newRole)
+    {
+        var ct = new CancellationToken();
+        var command = new EditSessionUserRoleCommand { UserId = userId, NewRole = newRole };
+        var result = await MediatorSendAsync(command, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<ForbiddenError>())
+            {
+                await _alertService.ShowToastAsync("Cannot change role of this user");
+                SessionUsers.FirstOrDefault(su => su.Id == userId)?.RevertUserType(newRole);
+            }
+            else
+            {
+                UpdatedClosing?.Invoke(this, new UpdateResultEventArgs(result));
+            }
+
+        }
+    }
+
+    private async Task KickUserAsync(Guid userId)
+    {
+        var confirmation = await _popupService.ShowPopupAsync<ConfirmationPopupViewModel>(vm => vm.Message = "Kick user?") as ConfirmationEventArgs;
+        if (confirmation == null || !confirmation.IsConfirmed) return;
+
+        var ct = new CancellationToken();
+        var command = new KickSessionUserCommand { UserId = userId };
+        var result = await MediatorSendAsync(command, ct);
+
+        if (result.IsFailed)
+        {
+            if (result.HasError<ForbiddenError>())
+            {
+                await _alertService.ShowToastAsync("Cannot kick this user");
+            }
+            else
+            {
+                UpdatedClosing?.Invoke(this, new UpdateResultEventArgs(result));
+            }
+        }
+        else
+        {
+            var sessionUser = SessionUsers.FirstOrDefault(su => su.Id == userId);
+            SessionUsers.Remove(sessionUser);
+        }
     }
 
     // MISC

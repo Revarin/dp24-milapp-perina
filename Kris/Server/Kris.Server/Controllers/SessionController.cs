@@ -96,8 +96,8 @@ public sealed class SessionController : KrisController, ISessionController
     [HttpPut("Role")]
     [AuthorizeRoles(UserType.Admin, UserType.SuperAdmin)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<Response?> EditSessionUserRole(EditSessionUserRoleRequest request, CancellationToken ct)
@@ -113,7 +113,7 @@ public sealed class SessionController : KrisController, ISessionController
         {
             if (result.HasError<UnauthorizedError>()) return Response.Unauthorized<Response>(result.Errors.FirstMessage());
             else if (result.HasError<EntityNotFoundError>()) return Response.NotFound<Response>(result.Errors.FirstMessage());
-            else if (result.HasError<InvalidOperationError>()) return Response.BadRequest<Response>(result.Errors.FirstMessage());
+            else if (result.HasError<InvalidOperationError>()) return Response.Forbidden<Response>(result.Errors.FirstMessage());
             else return Response.InternalError<IdentityResponse>();
         }
 
@@ -220,7 +220,6 @@ public sealed class SessionController : KrisController, ISessionController
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<Response?> KickFromSession(Guid userId, CancellationToken ct)
     {
@@ -233,9 +232,9 @@ public sealed class SessionController : KrisController, ISessionController
 
         if (kickResult.IsFailed)
         {
-            if (kickResult.HasError<UnauthorizedError>()) return Response.Forbidden<Response>(kickResult.Errors.FirstMessage());
+            if (kickResult.HasError<UnauthorizedError>()) return Response.Unauthorized<Response>(kickResult.Errors.FirstMessage());
             else if (kickResult.HasError<UserNotInSessionError>()) return Response.NotFound<Response>(kickResult.Errors.FirstMessage());
-            else if (kickResult.HasError<InvalidOperationError>()) return Response.BadRequest<Response>(kickResult.Errors.FirstMessage());
+            else if (kickResult.HasError<InvalidOperationError>()) return Response.Forbidden<Response>(kickResult.Errors.FirstMessage());
             else return Response.InternalError<Response>();
         }
 
