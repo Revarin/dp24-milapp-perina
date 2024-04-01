@@ -23,11 +23,13 @@ public sealed class GetSessionQueryHandler : SessionHandler, IRequestHandler<Get
         if (entity == null) return Result.Fail(new EntityNotFoundError("Session", request.SessionId));
 
         var session = _sessionMapper.MapDetail(entity, request.User.UserId);
-        if (request.User.UserType > UserType.Basic) session.Users = entity.Users.Select(user => new UserModel
+        if (request.User.UserType > UserType.Basic) session.Users = entity.Users.Select(user => new SessionUserModel
         {
             Id = user.Id,
             Login = user.User!.Login,
-            Nickname = user.Nickname
+            Nickname = user.Nickname,
+            UserType = user.UserType,
+            Joined = user.Joined
         });
 
         return Result.Ok(session);

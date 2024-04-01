@@ -19,7 +19,7 @@ public sealed class MapObjectMapper : IMapObjectMapper
             User = new UserModel
             {
                 Id = entity.SessionUser!.UserId,
-                Nickname = entity.SessionUser!.Nickname
+                Name = entity.SessionUser!.Nickname
             },
             Attachments = entity.Attachments.Select(attachment => new MapPointAttachmentModel
             {
@@ -44,7 +44,7 @@ public sealed class MapObjectMapper : IMapObjectMapper
             User = new UserModel
             {
                 Id = entity.SessionUser!.UserId,
-                Nickname = entity.SessionUser!.Nickname
+                Name = entity.SessionUser!.Nickname
             }
         };
     }
