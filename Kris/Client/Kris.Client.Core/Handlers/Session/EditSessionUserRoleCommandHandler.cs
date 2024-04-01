@@ -27,9 +27,9 @@ public sealed class EditSessionUserRoleCommandHandler : SessionHandler, IRequest
 
         if (!response.IsSuccess())
         {
-            if (response.IsUnauthorized()) return Result.Fail(new UnauthorizedError());
-            else if (response.IsNotFound()) return Result.Fail(new EntityNotFoundError());
-            else if (response.IsForbidden()) return Result.Fail(new ForbiddenError());
+            if (response.IsUnauthorized()) return Result.Fail(new UnauthorizedError(response.Message));
+            else if (response.IsNotFound()) return Result.Fail(new EntityNotFoundError(response.Message));
+            else if (response.IsForbidden()) return Result.Fail(new ForbiddenError(response.Message));
             else return Result.Fail(new ServerError(response.Message));
         }
 

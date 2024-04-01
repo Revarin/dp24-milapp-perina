@@ -21,9 +21,9 @@ public sealed class KickSessionUserCommandHandler : SessionHandler, IRequestHand
 
         if (!response.IsSuccess())
         {
-            if (response.IsUnauthorized()) return Result.Fail(new UnauthorizedError());
-            else if (response.IsForbidden()) return Result.Fail(new ForbiddenError());
-            else if (response.IsNotFound()) return Result.Fail(new EntityNotFoundError());
+            if (response.IsUnauthorized()) return Result.Fail(new UnauthorizedError(response.Message));
+            else if (response.IsForbidden()) return Result.Fail(new ForbiddenError(response.Message));
+            else if (response.IsNotFound()) return Result.Fail(new EntityNotFoundError(response.Message));
             else return Result.Fail(new ServerError(response.Message));
         }
 
