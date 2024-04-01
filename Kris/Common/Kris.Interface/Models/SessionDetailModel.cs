@@ -10,4 +10,6 @@ public sealed class SessionDetailModel
 
     public required string UserName { get; set; }
     public required MapPointSymbol UserSymbol { get; set; }
+
+    public IEnumerable<SessionUserModel> Users { get; set; } = new List<SessionUserModel>();
 }

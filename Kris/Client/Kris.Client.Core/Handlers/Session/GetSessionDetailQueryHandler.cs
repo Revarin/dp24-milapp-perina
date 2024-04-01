@@ -27,13 +27,22 @@ public sealed class GetSessionDetailQueryHandler : SessionHandler, IRequestHandl
             else return Result.Fail(new ServerError(response.Message));
         }
 
+        // Maybe do this in mapper?
         return Result.Ok(new SessionDetailModel
         {
             Id = response.Value.Id,
             Name = response.Value.Name,
             Created = response.Value.Created,
             UserName = response.Value.UserName,
-            UserSymbol = response.Value.UserSymbol
+            UserSymbol = response.Value.UserSymbol,
+            Users = response.Value.Users.Select(user => new SessionUserModel
+            {
+                Id = user.Id,
+                Login = user.Login,
+                Nickname = user.Nickname,
+                UserType = user.UserType,
+                Joined = user.Joined
+            })
         });
     }
 }
