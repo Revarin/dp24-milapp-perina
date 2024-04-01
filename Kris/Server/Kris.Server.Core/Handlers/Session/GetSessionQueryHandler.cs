@@ -25,7 +25,7 @@ public sealed class GetSessionQueryHandler : SessionHandler, IRequestHandler<Get
         var session = _sessionMapper.MapDetail(entity, request.User.UserId);
         if (request.User.UserType > UserType.Basic) session.Users = entity.Users.Select(user => new SessionUserModel
         {
-            Id = user.Id,
+            Id = user.UserId,
             Login = user.User!.Login,
             Nickname = user.Nickname,
             UserType = user.UserType,
