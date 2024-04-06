@@ -6,41 +6,52 @@
              x:Class="Kris.Client.Views.RegisterView"
              x:DataType="vm:RegisterViewModel"
              Title="RegisterView">
-    <StackLayout Orientation="Vertical">
+    
+    <StackLayout Orientation="Vertical"
+                 Style="{StaticResource MainStack}">
         <StackLayout Orientation="Vertical">
-            <Label Text="Login" />
-            <Entry Placeholder="Login"
+            <Label Text="Login"
+                   Style="{StaticResource TitleLabel}"/>
+            <Entry Placeholder="Login..."
                    Text="{Binding Login}">
             </Entry>
             <Label Text="{Binding ErrorMessages[Login]}"
                    IsVisible="{Binding ErrorMessages[Login]}"
-                   Style="{StaticResource errorMessageStyle}" />
+                   Style="{StaticResource ErrorLabel}" />
         </StackLayout>
         
         <StackLayout Orientation="Vertical">
-            <Label Text="Password" />
+            <Label Text="Password"
+                   Style="{StaticResource TitleLabel}"/>
             <Entry IsPassword="True"
+                   Placeholder="Password..."
                    Text="{Binding Password}">
             </Entry>
             <Label Text="{Binding ErrorMessages[Password]}"
                    IsVisible="{Binding ErrorMessages[Password]}"
-                   Style="{StaticResource errorMessageStyle}" />
+                   Style="{StaticResource ErrorLabel}" />
         </StackLayout>
         
         <StackLayout Orientation="Vertical">
-            <Label Text="Confirm password" />
+            <Label Text="Confirm password"
+                   Style="{StaticResource TitleLabel}"/>
             <Entry IsPassword="True"
+                   Placeholder="Confirm password..."
                    Text="{Binding PasswordVerification}">
             </Entry>
             <Label Text="{Binding ErrorMessages[PasswordVerification]}"
                    IsVisible="{Binding ErrorMessages[PasswordVerification]}"
-                   Style="{StaticResource errorMessageStyle}" />
+                   Style="{StaticResource ErrorLabel}" />
         </StackLayout>
-        
-        <Button Text="Register">
-            <Button.Behaviors>
-                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding RegisterButtonClickedCommand}" />
-            </Button.Behaviors>
-        </Button>
+
+        <StackLayout Orientation="Vertical"
+                     Style="{StaticResource SecondaryStack}">
+            <Button Text="Register"
+                    Style="{StaticResource BigButton}">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding RegisterButtonClickedCommand}" />
+                </Button.Behaviors>
+            </Button>
+        </StackLayout>
     </StackLayout>
 </ContentPage>

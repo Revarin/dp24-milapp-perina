@@ -8,12 +8,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+                <ResourceDictionary Source="Resources/Styles/KrisStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
-            <Style x:Key="errorMessageStyle"
-                   TargetType="Label">
-                <Setter Property="TextColor" Value="Red" />
-            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

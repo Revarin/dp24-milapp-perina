@@ -127,6 +127,9 @@
 	  <MauiXaml Update="Components\Utility\PasswordPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Resources\Styles\KrisStyles.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\ChatView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
