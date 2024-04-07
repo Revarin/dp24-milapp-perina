@@ -5,7 +5,7 @@
              xmlns:vm="clr-namespace:Kris.Client.ViewModels.Views"
              x:Class="Kris.Client.Views.RegisterView"
              x:DataType="vm:RegisterViewModel"
-             Title="RegisterView">
+             Title="Registration">
     
     <StackLayout Orientation="Vertical"
                  Style="{StaticResource MainStack}">

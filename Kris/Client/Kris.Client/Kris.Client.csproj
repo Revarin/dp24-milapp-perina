@@ -34,8 +34,8 @@
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
 
 		<!-- Images -->
-		<MauiImages Include="Resources\Images\*" />
 		<EmbeddedResource Include="Resources\Images\Point\*" />
+		<MauiImage Include="Resources\Images\Icons\location.png" />
 
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />

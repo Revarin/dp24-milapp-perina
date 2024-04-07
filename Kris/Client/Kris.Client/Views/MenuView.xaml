@@ -5,7 +5,7 @@
              xmlns:vm="clr-namespace:Kris.Client.ViewModels.Views"
              x:Class="Kris.Client.Views.MenuView"
              x:DataType="vm:MenuViewModel"
-             Title="MenuView">
+             Title="Main Menu">
 
     <ContentPage.Behaviors>
         <tk:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}" />
@@ -13,9 +13,8 @@
     
     <StackLayout Orientation="Vertical"
                  VerticalOptions="FillAndExpand">
-        <Grid Margin="20,20,20,20"
-              RowSpacing="5" ColumnSpacing="5"
-              VerticalOptions="StartAndExpand">
+        <Grid VerticalOptions="StartAndExpand"
+              Style="{StaticResource MainMenuGrid}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
@@ -27,35 +26,41 @@
             </Grid.ColumnDefinitions>
             
             <Button Grid.Row="0" Grid.Column="0"
-                    Text="Sessions settings">
+                    Text="Sessions"
+                    Style="{StaticResource BigButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SessionSettingsButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
-            <Button Grid.Row="0" Grid.Column="1"
-                    Text="User settings">
+            <Button Grid.Row="1" Grid.Column="0"
+                    Text="User"
+                    Style="{StaticResource BigButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding UserSettingsButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
-            <Button Grid.Row="1" Grid.Column="0"
+            <Button Grid.Row="0" Grid.Column="1"
                     Text="Contacts"
-                    IsEnabled="{Binding InSession}">
+                    IsEnabled="{Binding InSession}"
+                    Style="{StaticResource BigButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding ContactsButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
             <Button Grid.Row="1" Grid.Column="1"
-                    Text="Map settings">
+                    Text="Map"
+                    Style="{StaticResource BigButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MapSettingsButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
             <Button Grid.Row="2" Grid.Column="0"
-                    Text="E">
-            </Button>
-            <Button Grid.Row="2" Grid.Column="1"
-                    Text="F">
+                    Grid.ColumnSpan="2"
+                    Text="Logout"
+                    Style="{StaticResource BigButton}">
+                <Button.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding LogoutButtonClickedCommand}" />
+                </Button.Behaviors>
             </Button>
         </Grid>
         
@@ -63,13 +68,15 @@
                     HorizontalOptions="FillAndExpand"
                     VerticalOptions="EndAndExpand">
             <Button Text="Map"
-                    HorizontalOptions="FillAndExpand">
+                    HorizontalOptions="FillAndExpand"
+                    Style="{StaticResource NavigationButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MapButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
             <Button Text="Menu"
-                    HorizontalOptions="FillAndExpand">
+                    HorizontalOptions="FillAndExpand"
+                    Style="{StaticResource NavigationButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MenuButtonClickedCommand}" />
                 </Button.Behaviors>
