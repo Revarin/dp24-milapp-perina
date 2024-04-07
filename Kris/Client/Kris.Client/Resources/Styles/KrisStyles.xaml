@@ -8,7 +8,7 @@
     <Color x:Key="Tertiary">#989898</Color>
 
     <Color x:Key="Background">#151515</Color>
-    <Color x:Key="Text">#F5F5F5</Color>
+    <Color x:Key="Text">#EFEFEF</Color>
     <Color x:Key="Error">#C65555</Color>
 
     <Color x:Key="Disabled">#8E9D94</Color>
@@ -35,11 +35,12 @@
     <Style TargetType="StackLayout"
            x:Key="MainStack">
         <Setter Property="Padding" Value="10" />
-        <Setter Property="Spacing" Value="5" />
+        <Setter Property="Spacing" Value="15" />
     </Style>
     <Style TargetType="StackLayout"
            x:Key="SecondaryStack">
-        <Setter Property="Spacing" Value="10" />
+        <Setter Property="Spacing" Value="5" />
+        <Setter Property="Margin" Value="5,0" />
     </Style>
     <Style TargetType="StackLayout"
            x:Key="CoordinateOverlayStack">
@@ -142,6 +143,25 @@
                         <VisualState.Setters>
                             <Setter Property="TextColor" Value="{StaticResource Text}" />
                             <Setter Property="BackgroundColor" Value="{StaticResource Tertiary}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Picker">
+        <Setter Property="TextColor" Value="{StaticResource Text}" />
+        <Setter Property="TitleColor" Value="{StaticResource Text}" />
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="TextColor" Value="{StaticResource Text}" />
+                            <Setter Property="TitleColor" Value="{StaticResource Tertiary}" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>

@@ -5,96 +5,131 @@
              xmlns:vm="clr-namespace:Kris.Client.ViewModels.Views"
              x:Class="Kris.Client.Views.UserSettingsView"
              x:DataType="vm:UserSettingsViewModel"
-             Title="UserSettingsView">
+             Title="User settings">
 
     <StackLayout Orientation="Vertical"
                  VerticalOptions="FillAndExpand">
-        <Label Text="Connection settings" FontSize="Subtitle"/>
-        <StackLayout Orientation="Vertical">
-            <Label Text="GPS request interval" />
-            <Picker Title="GPS interval"
-                    ItemsSource="{Binding GpsIntervalItems}"
-                    ItemDisplayBinding="{Binding Display}"
-                    SelectedItem="{Binding GpsIntervalSelectedItem}">
-                <Picker.Behaviors>
-                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ConnectionSettingsSelectedIndexChangedCommand}" />
-                </Picker.Behaviors>
-            </Picker>
-        </StackLayout>
-        <StackLayout Orientation="Vertical">
-            <Label Text="Position upload frequency"/>
-            <Picker Title="Position upload"
-                    ItemsSource="{Binding PositionUploadItems}"
-                    ItemDisplayBinding="{Binding Display}"
-                    SelectedItem="{Binding PositionUploadSelectedItem}">
-                <Picker.Behaviors>
-                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ConnectionSettingsSelectedIndexChangedCommand}" />
-                </Picker.Behaviors>
-            </Picker>
-        </StackLayout>
-        <StackLayout Orientation="Vertical">
-            <Label Text="Position download frequency" />
-            <Picker Title="Position download"
-                    ItemsSource="{Binding PositionDownloadItems}"
-                    ItemDisplayBinding="{Binding Display}"
-                    SelectedItem="{Binding PositionDownloadSelectedItem}">
-                <Picker.Behaviors>
-                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ConnectionSettingsSelectedIndexChangedCommand}" />
-                </Picker.Behaviors>
-            </Picker>
-        </StackLayout>
-        <StackLayout Orientation="Vertical">
-            <Label Text="Map objects download frequency" />
-            <Picker Title="Map objects download"
-                    ItemsSource="{Binding MapObjectDownloadItems}"
-                    ItemDisplayBinding="{Binding Display}"
-                    SelectedItem="{Binding MapObjectDownloadSelectedItem}">
-                <Picker.Behaviors>
-                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ConnectionSettingsSelectedIndexChangedCommand}" />
-                </Picker.Behaviors>
-            </Picker>
-        </StackLayout>
+        <ScrollView Orientation="Vertical"
+                    VerticalOptions="FillAndExpand">
+            <StackLayout Orientation="Vertical"
+                         VerticalOptions="FillAndExpand"
+                         Style="{StaticResource MainStack}">
 
-        <Label Text="User settings" FontSize="Subtitle"/>
-        <StackLayout Orientation="Vertical">
-            <StackLayout Orientation="Vertical">
-                <Label Text="New password" />
-                <Entry IsPassword="True"
-                       Text="{Binding Password}">
-                </Entry>
-                <Label Text="{Binding ErrorMessages[Password]}"
-                       IsVisible="{Binding ErrorMessages[Password]}"
-                       Style="{StaticResource errorMessageStyle}" />
+                <StackLayout Orientation="Vertical"
+                             VerticalOptions="FillAndExpand"
+                             Style="{StaticResource SecondaryStack}">
+                    <Label Text="Connection settings"
+                           Style="{StaticResource SectionLabel}" />
+
+                    <StackLayout Orientation="Vertical"
+                                 Style="{StaticResource SecondaryStack}">
+                        <Label Text="GPS request interval"
+                               Style="{StaticResource TitleLabel}" />
+                        <Picker Title="GPS interval"
+                                ItemsSource="{Binding GpsIntervalItems}"
+                                ItemDisplayBinding="{Binding Display}"
+                                SelectedItem="{Binding GpsIntervalSelectedItem}">
+                            <Picker.Behaviors>
+                                <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ConnectionSettingsSelectedIndexChangedCommand}" />
+                            </Picker.Behaviors>
+                        </Picker>
+                    </StackLayout>
+                    
+                    <StackLayout Orientation="Vertical"
+                                 Style="{StaticResource SecondaryStack}">
+                        <Label Text="Position upload frequency"
+                               Style="{StaticResource TitleLabel}" />
+                        <Picker Title="Position upload"
+                                ItemsSource="{Binding PositionUploadItems}"
+                                ItemDisplayBinding="{Binding Display}"
+                                SelectedItem="{Binding PositionUploadSelectedItem}">
+                            <Picker.Behaviors>
+                                <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ConnectionSettingsSelectedIndexChangedCommand}" />
+                            </Picker.Behaviors>
+                        </Picker>
+                    </StackLayout>
+                    
+                    <StackLayout Orientation="Vertical"
+                                 Style="{StaticResource SecondaryStack}">
+                        <Label Text="Position download frequency"
+                               Style="{StaticResource TitleLabel}"/>
+                        <Picker Title="Position download"
+                                ItemsSource="{Binding PositionDownloadItems}"
+                                ItemDisplayBinding="{Binding Display}"
+                                SelectedItem="{Binding PositionDownloadSelectedItem}">
+                            <Picker.Behaviors>
+                                <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ConnectionSettingsSelectedIndexChangedCommand}" />
+                            </Picker.Behaviors>
+                        </Picker>
+                    </StackLayout>
+                    
+                    <StackLayout Orientation="Vertical"
+                                 Style="{StaticResource SecondaryStack}">
+                        <Label Text="Map objects download frequency"
+                               Style="{StaticResource TitleLabel}"/>
+                        <Picker Title="Map objects download"
+                                ItemsSource="{Binding MapObjectDownloadItems}"
+                                ItemDisplayBinding="{Binding Display}"
+                                SelectedItem="{Binding MapObjectDownloadSelectedItem}">
+                            <Picker.Behaviors>
+                                <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ConnectionSettingsSelectedIndexChangedCommand}" />
+                            </Picker.Behaviors>
+                        </Picker>
+                    </StackLayout>
+                </StackLayout>
+
+                <StackLayout Orientation="Vertical"
+                             VerticalOptions="FillAndExpand"
+                             Style="{StaticResource SecondaryStack}">
+                    <Label Text="User settings"
+                           Style="{StaticResource SectionLabel}"/>
+                    
+                    <StackLayout Orientation="Vertical"
+                                 Style="{StaticResource SecondaryStack}">
+                        <Label Text="New password"
+                               Style="{StaticResource TitleLabel}"/>
+                        <Entry IsPassword="True"
+                               Text="{Binding Password}">
+                        </Entry>
+                        <Label Text="{Binding ErrorMessages[Password]}"
+                               IsVisible="{Binding ErrorMessages[Password]}"
+                               Style="{StaticResource ErrorLabel}" />
+                    </StackLayout>
+
+                    <StackLayout Orientation="Vertical"
+                                 Style="{StaticResource SecondaryStack}">
+                        <Label Text="Confirm new password"
+                               Style="{StaticResource TitleLabel}"/>
+                        <Entry IsPassword="True"
+                               Text="{Binding PasswordVerification}">
+                        </Entry>
+                        <Label Text="{Binding ErrorMessages[PasswordVerification]}"
+                               IsVisible="{Binding ErrorMessages[PasswordVerification]}"
+                               Style="{StaticResource ErrorLabel}" />
+                    </StackLayout>
+
+                    <Button Text="Save user changes">
+                        <Button.Behaviors>
+                            <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding EditUserButtonClickedCommand}" />
+                        </Button.Behaviors>
+                    </Button>
+                </StackLayout>
             </StackLayout>
-
-            <StackLayout Orientation="Vertical">
-                <Label Text="Confirm new password" />
-                <Entry IsPassword="True"
-                       Text="{Binding PasswordVerification}">
-                </Entry>
-                <Label Text="{Binding ErrorMessages[PasswordVerification]}"
-                       IsVisible="{Binding ErrorMessages[PasswordVerification]}"
-                       Style="{StaticResource errorMessageStyle}" />
-            </StackLayout>
-
-            <Button Text="Save user changes">
-                <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding EditUserButtonClickedCommand}" />
-                </Button.Behaviors>
-            </Button>
-        </StackLayout>
+        </ScrollView>
 
         <StackLayout Orientation="Horizontal"
                      HorizontalOptions="FillAndExpand"
-                     VerticalOptions="EndAndExpand">
+                     VerticalOptions="End">
             <Button Text="Map"
-                    HorizontalOptions="FillAndExpand">
+                    HorizontalOptions="FillAndExpand"
+                    Style="{StaticResource NavigationButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MapButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
             <Button Text="Menu"
-                    HorizontalOptions="FillAndExpand">
+                    HorizontalOptions="FillAndExpand"
+                    Style="{StaticResource NavigationButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MenuButtonClickedCommand}" />
                 </Button.Behaviors>

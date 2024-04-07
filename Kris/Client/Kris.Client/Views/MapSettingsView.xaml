@@ -5,48 +5,60 @@
              xmlns:vm="clr-namespace:Kris.Client.ViewModels.Views"
              x:Class="Kris.Client.Views.MapSettingsView"
              x:DataType="vm:MapSettingsViewModel"
-             Title="MapSettingsView">
+             Title="Map settings">
 
     <StackLayout Orientation="Vertical"
                  VerticalOptions="FillAndExpand">
+        <ScrollView Orientation="Vertical"
+                    VerticalOptions="FillAndExpand">
+            <StackLayout Orientation="Vertical"
+                         VerticalOptions="FillAndExpand"
+                         Style="{StaticResource MainStack}">
+                
+                <StackLayout Orientation="Vertical"
+                             Style="{StaticResource SecondaryStack}">
+                    <Label Text="Coordinate system"
+                           Style="{StaticResource TitleLabel}" />
+                    <Picker Title="Coordinate system"
+                            ItemsSource="{Binding CoordinateSystemItems}"
+                            ItemDisplayBinding="{Binding Display}"
+                            SelectedItem="{Binding CoordinateSystemSelectedItem}">
+                        <Picker.Behaviors>
+                            <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding CoordinateSystemSelectedIndexChangedCommand}" />
+                        </Picker.Behaviors>
+                    </Picker>
+                </StackLayout>
 
-        <StackLayout Orientation="Vertical">
-            <Label Text="Coordinate system" />
-            <Picker Title="Coordinate system"
-                    ItemsSource="{Binding CoordinateSystemItems}"
-                    ItemDisplayBinding="{Binding Display}"
-                    SelectedItem="{Binding CoordinateSystemSelectedItem}">
-                <Picker.Behaviors>
-                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding CoordinateSystemSelectedIndexChangedCommand}" />
-                </Picker.Behaviors>
-            </Picker>
-        </StackLayout>
-
-
-        <StackLayout Orientation="Vertical">
-            <Label Text="Map type" />
-            <Picker Title="Map type"
-                    ItemsSource="{Binding MapTypeItems}"
-                    ItemDisplayBinding="{Binding Display}"
-                    SelectedItem="{Binding MapTypeSelectedItem}">
-                <Picker.Behaviors>
-                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding MapTypeSelectedIndexChangedCommand}" />
-                </Picker.Behaviors>
-            </Picker>
-            <Label Text="{Binding CustomMapTileSourcePath}" />
-        </StackLayout>
+                <StackLayout Orientation="Vertical"
+                             Style="{StaticResource SecondaryStack}">
+                    <Label Text="Map type"
+                           Style="{StaticResource TitleLabel}" />
+                    <Picker Title="Map type"
+                            ItemsSource="{Binding MapTypeItems}"
+                            ItemDisplayBinding="{Binding Display}"
+                            SelectedItem="{Binding MapTypeSelectedItem}">
+                        <Picker.Behaviors>
+                            <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding MapTypeSelectedIndexChangedCommand}" />
+                        </Picker.Behaviors>
+                    </Picker>
+                    <Label Text="{Binding CustomMapTileSourcePath}" />
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
 
         <StackLayout Orientation="Horizontal"
                      HorizontalOptions="FillAndExpand"
-                     VerticalOptions="EndAndExpand">
+                     VerticalOptions="End">
             <Button Text="Map"
-                    HorizontalOptions="FillAndExpand">
+                    HorizontalOptions="FillAndExpand"
+                    Style="{StaticResource NavigationButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MapButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
             <Button Text="Menu"
-                    HorizontalOptions="FillAndExpand">
+                    HorizontalOptions="FillAndExpand"
+                    Style="{StaticResource NavigationButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MenuButtonClickedCommand}" />
                 </Button.Behaviors>
