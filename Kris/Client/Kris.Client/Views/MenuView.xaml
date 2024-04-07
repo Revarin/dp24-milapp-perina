@@ -10,77 +10,80 @@
     <ContentPage.Behaviors>
         <tk:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}" />
     </ContentPage.Behaviors>
-    
-    <StackLayout Orientation="Vertical"
-                 VerticalOptions="FillAndExpand">
-        <Grid VerticalOptions="StartAndExpand"
-              Style="{StaticResource MainMenuGrid}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            
-            <Button Grid.Row="0" Grid.Column="0"
-                    Text="Sessions"
-                    Style="{StaticResource BigButton}">
-                <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SessionSettingsButtonClickedCommand}" />
-                </Button.Behaviors>
-            </Button>
-            <Button Grid.Row="1" Grid.Column="0"
-                    Text="User"
-                    Style="{StaticResource BigButton}">
-                <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding UserSettingsButtonClickedCommand}" />
-                </Button.Behaviors>
-            </Button>
-            <Button Grid.Row="0" Grid.Column="1"
-                    Text="Contacts"
-                    IsEnabled="{Binding InSession}"
-                    Style="{StaticResource BigButton}">
-                <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding ContactsButtonClickedCommand}" />
-                </Button.Behaviors>
-            </Button>
-            <Button Grid.Row="1" Grid.Column="1"
-                    Text="Map"
-                    Style="{StaticResource BigButton}">
-                <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MapSettingsButtonClickedCommand}" />
-                </Button.Behaviors>
-            </Button>
-            <Button Grid.Row="2" Grid.Column="0"
-                    Grid.ColumnSpan="2"
-                    Text="Logout"
-                    Style="{StaticResource BigButton}">
-                <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding LogoutButtonClickedCommand}" />
-                </Button.Behaviors>
-            </Button>
-        </Grid>
-        
-        <StackLayout Orientation="Horizontal"
-                    HorizontalOptions="FillAndExpand"
-                    VerticalOptions="EndAndExpand">
-            <Button Text="Map"
-                    HorizontalOptions="FillAndExpand"
-                    Style="{StaticResource NavigationButton}">
-                <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MapButtonClickedCommand}" />
-                </Button.Behaviors>
-            </Button>
-            <Button Text="Menu"
-                    HorizontalOptions="FillAndExpand"
-                    Style="{StaticResource NavigationButton}">
-                <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MenuButtonClickedCommand}" />
-                </Button.Behaviors>
-            </Button>
+
+    <ScrollView Orientation="Vertical"
+                VerticalOptions="FillAndExpand">
+        <StackLayout Orientation="Vertical"
+                     VerticalOptions="FillAndExpand">
+            <Grid VerticalOptions="StartAndExpand"
+                  Style="{StaticResource MainMenuGrid}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Row="0" Grid.Column="0"
+                        Text="Sessions"
+                        Style="{StaticResource BigButton}">
+                    <Button.Behaviors>
+                        <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SessionSettingsButtonClickedCommand}" />
+                    </Button.Behaviors>
+                </Button>
+                <Button Grid.Row="1" Grid.Column="0"
+                        Text="User"
+                        Style="{StaticResource BigButton}">
+                    <Button.Behaviors>
+                        <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding UserSettingsButtonClickedCommand}" />
+                    </Button.Behaviors>
+                </Button>
+                <Button Grid.Row="0" Grid.Column="1"
+                        Text="Contacts"
+                        IsEnabled="{Binding InSession}"
+                        Style="{StaticResource BigButton}">
+                    <Button.Behaviors>
+                        <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding ContactsButtonClickedCommand}" />
+                    </Button.Behaviors>
+                </Button>
+                <Button Grid.Row="1" Grid.Column="1"
+                        Text="Map"
+                        Style="{StaticResource BigButton}">
+                    <Button.Behaviors>
+                        <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MapSettingsButtonClickedCommand}" />
+                    </Button.Behaviors>
+                </Button>
+                <Button Grid.Row="2" Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Text="Logout"
+                        Style="{StaticResource BigButton}">
+                    <Button.Behaviors>
+                        <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding LogoutButtonClickedCommand}" />
+                    </Button.Behaviors>
+                </Button>
+            </Grid>
+
+            <StackLayout Orientation="Horizontal"
+                        HorizontalOptions="FillAndExpand"
+                        VerticalOptions="EndAndExpand">
+                <Button Text="Map"
+                        HorizontalOptions="FillAndExpand"
+                        Style="{StaticResource NavigationButton}">
+                    <Button.Behaviors>
+                        <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MapButtonClickedCommand}" />
+                    </Button.Behaviors>
+                </Button>
+                <Button Text="Menu"
+                        HorizontalOptions="FillAndExpand"
+                        Style="{StaticResource NavigationButton}">
+                    <Button.Behaviors>
+                        <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MenuButtonClickedCommand}" />
+                    </Button.Behaviors>
+                </Button>
+            </StackLayout>
         </StackLayout>
-    </StackLayout>
+    </ScrollView>
 </ContentPage>

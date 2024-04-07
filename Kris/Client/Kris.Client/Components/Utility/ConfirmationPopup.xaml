@@ -5,11 +5,16 @@
           xmlns:vm="clr-namespace:Kris.Client.ViewModels.Utility"
           x:Class="Kris.Client.Components.Utility.ConfirmationPopup"
           x:DataType="vm:ConfirmationPopupViewModel">
-    <StackLayout Orientation="Vertical">
+    
+    <StackLayout Orientation="Vertical"
+                 BackgroundColor="{StaticResource Secondary}"
+                 Style="{StaticResource PopupMainStack}">
+        
         <Label Text="{Binding Message}" />
-
+        
         <StackLayout Orientation="Horizontal"
-                     HorizontalOptions="FillAndExpand">
+                     HorizontalOptions="FillAndExpand"
+                     Style="{StaticResource SecondaryStack}">
             <Button Text="No"
                     HorizontalOptions="FillAndExpand">
                 <Button.Behaviors>
