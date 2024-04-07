@@ -6,7 +6,7 @@
              xmlns:item="clr-namespace:Kris.Client.Components.Items"
              x:Class="Kris.Client.Views.SessionSettingsView"
              x:DataType="vm:SessionSettingsViewModel"
-             Title="SessionSettingsView">
+             Title="Session settings">
 
     <ContentPage.Behaviors>
         <tk:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}" />
@@ -15,58 +15,77 @@
     <StackLayout Orientation="Vertical"
                  VerticalOptions="FillAndExpand">
 
-        <StackLayout Orientation="Vertical">
-            <Label Text="Current session" FontSize="Subtitle" />
-            <Border IsVisible="{Binding CurrentSession, Converter={tk:IsNotNullConverter}}">
-                <item:SessionItem BindingContext="{Binding CurrentSession}" />
-            </Border>
-            <Label Text="No current session"
-                   IsVisible="{Binding CurrentSession, Converter={tk:IsNullConverter}}" />
-        </StackLayout>
-
-        <StackLayout Orientation="Vertical"
-                     IsVisible="{Binding JoinedSessions.Count}">
-            <Label Text="Joined sessions" FontSize="Subtitle" />
-            <CollectionView ItemsSource="{Binding JoinedSessions}"
-                            SelectionMode="None">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <item:SessionItem BindingContext="{Binding .}" />
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </StackLayout>
-
-        <StackLayout Orientation="Vertical"
-                     IsVisible="{Binding OtherSessions.Count}">
-            <Label Text="Other sessions" FontSize="Subtitle" />
-            <CollectionView ItemsSource="{Binding OtherSessions}"
-                            SelectionMode="None">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <item:SessionItem BindingContext="{Binding .}" />
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </StackLayout>
-
-        <Button Text="Create session">
+        <Button Text="Create session"
+                Margin="10">
             <Button.Behaviors>
                 <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CreateSessionButtonClickedCommand}" />
             </Button.Behaviors>
         </Button>
-        
+
+        <ScrollView Orientation="Vertical"
+                    VerticalOptions="FillAndExpand">
+            <StackLayout Orientation="Vertical"
+                         VerticalOptions="FillAndExpand"
+                         Style="{StaticResource MainStack}">
+
+                <StackLayout Orientation="Vertical"
+                             Style="{StaticResource SecondaryStack}">
+                    <Label Text="Current session"
+                           Style="{StaticResource SectionLabel}"/>
+                    <Border IsVisible="{Binding CurrentSession, Converter={tk:IsNotNullConverter}}">
+                        <item:SessionItem BindingContext="{Binding CurrentSession}" />
+                    </Border>
+                    <Label Text="No current session"
+                           IsVisible="{Binding CurrentSession, Converter={tk:IsNullConverter}}" />
+                </StackLayout>
+
+                <StackLayout Orientation="Vertical"
+                             IsVisible="{Binding JoinedSessions.Count}"
+                             Style="{StaticResource SecondaryStack}">
+                    <Label Text="Joined sessions"
+                           Style="{StaticResource SectionLabel}"/>
+                    <CollectionView ItemsSource="{Binding JoinedSessions}"
+                                    SelectionMode="None"
+                                    VerticalScrollBarVisibility="Never">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <item:SessionItem BindingContext="{Binding .}" />
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+
+                <StackLayout Orientation="Vertical"
+                             IsVisible="{Binding OtherSessions.Count}"
+                             Style="{StaticResource SecondaryStack}">
+                    <Label Text="Other sessions"
+                           Style="{StaticResource SectionLabel}"/>
+                    <CollectionView ItemsSource="{Binding OtherSessions}"
+                                    SelectionMode="None"
+                                    VerticalScrollBarVisibility="Never">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <item:SessionItem BindingContext="{Binding .}" />
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+
         <StackLayout Orientation="Horizontal"
                      HorizontalOptions="FillAndExpand"
-                     VerticalOptions="EndAndExpand">
+                     VerticalOptions="End">
             <Button Text="Map"
-                    HorizontalOptions="FillAndExpand">
+                    HorizontalOptions="FillAndExpand"
+                    Style="{StaticResource NavigationButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MapButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
             <Button Text="Menu"
-                    HorizontalOptions="FillAndExpand">
+                    HorizontalOptions="FillAndExpand"
+                    Style="{StaticResource NavigationButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MenuButtonClickedCommand}" />
                 </Button.Behaviors>

@@ -1,1 +1,4 @@
 location - https://www.freepik.com/icon/location_535239#fromView=keyword&page=1&position=1&uuid=4d9ea6df-678a-4609-ad90-c50e32ffb597
+join - https://www.freepik.com/icon/edit_3856989#fromView=search&page=1&position=43&uuid=72aabb89-3e2b-4b5f-a462-d6b5dc69d84c
+leave - https://www.freepik.com/icon/arrow_10522088#fromView=search&page=1&position=7&uuid=d5368b82-ea77-4fc6-9191-3243a810c7c9
+join - https://www.freepik.com/icon/add-group_1387940#fromView=search&page=1&position=48&uuid=cf6ead48-92e1-401f-a8b5-589d7401fcf1

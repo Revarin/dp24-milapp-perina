@@ -36,6 +36,9 @@
 		<!-- Images -->
 		<EmbeddedResource Include="Resources\Images\Point\*" />
 		<MauiImage Include="Resources\Images\Icons\location.png" />
+		<MauiImage Include="Resources\Images\Icons\join.png" />
+		<MauiImage Include="Resources\Images\Icons\leave.png" />
+		<MauiImage Include="Resources\Images\Icons\edit.png" />
 
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />

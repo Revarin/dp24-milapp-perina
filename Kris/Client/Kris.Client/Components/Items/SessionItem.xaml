@@ -6,7 +6,8 @@
              xmlns:enum="clr-namespace:Kris.Client.Common.Enums;assembly=Kris.Client.Common"
              x:Class="Kris.Client.Components.Items.SessionItem"
              x:DataType="vm:SessionItemViewModel"
-             BackgroundColor="DimGrey">
+             Style="{StaticResource ItemContentView}">
+    
     <ContentView.Resources>
         <ResourceDictionary>
             <tk:EnumToBoolConverter x:Key="JoinableSessionConverter">
@@ -25,33 +26,52 @@
     </ContentView.Resources>
     
     <StackLayout Orientation="Horizontal"
-                 HorizontalOptions="FillAndExpand">
+                 HorizontalOptions="FillAndExpand"
+                 Style="{StaticResource SecondaryStack}">
         <StackLayout Orientation="Vertical"
-                     HorizontalOptions="StartAndExpand">
-            <Label Text="{Binding Name}"
-                   HorizontalOptions="StartAndExpand"/>
-            <Label Text="{Binding Created}"
-                   HorizontalOptions="StartAndExpand" />
+                     HorizontalOptions="StartAndExpand"
+                     Style="{StaticResource TertiaryStack}">
+            <StackLayout Orientation="Horizontal"
+                         HorizontalOptions="StartAndExpand"
+                         Style="{StaticResource TertiaryStack}">
+                <Label Text="{Binding Name}"
+                       Style="{StaticResource ItemTitleLabel}" />
+                <Label Text="{Binding UserCount, StringFormat='({0} users)'}"
+                       VerticalOptions="End"/>
+            </StackLayout>
+            <StackLayout Orientation="Horizontal"
+                         HorizontalOptions="StartAndExpand"
+                         Style="{StaticResource SecondaryStack}">
+                <Label Text="{Binding Created, StringFormat='Created {0:dd.MM.yyyy, H:mm}'}" />
+            </StackLayout>
         </StackLayout>
-        <Label Text="{Binding UserCount}" />
 
-        <Button Text="Edit"
-                IsVisible="{Binding CanEdit}">
-            <Button.Behaviors>
-                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding EditClickedCommand}" />
-            </Button.Behaviors>
-        </Button>
-        <Button Text="Join"
-                IsVisible="{Binding ItemType, Converter={StaticResource JoinableSessionConverter}}">
-            <Button.Behaviors>
-                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding JoinClickedCommand}" />
-            </Button.Behaviors>
-        </Button>
-        <Button Text="Leave"
-                IsVisible="{Binding ItemType, Converter={StaticResource LeavableSessionConverter}}">
-            <Button.Behaviors>
-                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding LeaveClickedCommand}" />
-            </Button.Behaviors>
-        </Button>
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="EndAndExpand"
+                     Style="{StaticResource TertiaryStack}">
+            <ImageButton Source="edit.png"
+                         IsVisible="{Binding CanEdit}"
+                         Style="{StaticResource SmallImageButton}">
+                <ImageButton.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding EditClickedCommand}" />
+                </ImageButton.Behaviors>
+            </ImageButton>
+            
+            <ImageButton Source="join.png"
+                         IsVisible="{Binding ItemType, Converter={StaticResource JoinableSessionConverter}}"
+                         Style="{StaticResource SmallImageButton}">
+                <ImageButton.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding JoinClickedCommand}" />
+                </ImageButton.Behaviors>
+            </ImageButton>
+            
+            <ImageButton Source="leave.png"
+                         IsVisible="{Binding ItemType, Converter={StaticResource LeavableSessionConverter}}"
+                         Style="{StaticResource SmallImageButton}">
+                <ImageButton.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding LeaveClickedCommand}" />
+                </ImageButton.Behaviors>
+            </ImageButton>
+        </StackLayout>
     </StackLayout>
 </ContentView>
