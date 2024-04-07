@@ -5,30 +5,26 @@
              xmlns:vm="clr-namespace:Kris.Client.ViewModels.Items"
              x:Class="Kris.Client.Components.Items.ConversationItem"
              x:DataType="vm:ConversationItemViewModel"
-             BackgroundColor="DimGrey">
+             Style="{StaticResource BigContentView}">
 
     <ContentView.GestureRecognizers>
         <TapGestureRecognizer Command="{Binding ClickedCommand}" />
     </ContentView.GestureRecognizers>
 
     <StackLayout Orientation="Horizontal"
-                 HorizontalOptions="FillAndExpand">
-        <Label Text="{Binding Name}" FontSize="Title" 
+                 HorizontalOptions="FillAndExpand"
+                 Style="{StaticResource SecondaryStack}">
+        <Label Text="{Binding Name}"
+               Style="{StaticResource SectionLabel}"
                HorizontalOptions="StartAndExpand" />
 
         <StackLayout Orientation="Vertical"
-                     HorizontalOptions="End"
-                     VerticalOptions="FillAndExpand">
-            
-            <StackLayout Orientation="Horizontal">
-                <Label Text="{Binding MessageCount}" />
-                <Label Text=" messages" />
-            </StackLayout>
-            
-            <StackLayout Orientation="Horizontal">
-                <Label Text="Last message: " />
-                <Label Text="{Binding LastMessage}" />
-            </StackLayout>
+                     HorizontalOptions="End">
+            <Label Text="{Binding MessageCount, StringFormat='{0} messages'}"
+                   HorizontalOptions="End"/>
+            <Label Text="{Binding LastMessage, StringFormat='{0:dd.MM.yy, H:mm}'}"
+                   IsVisible="{Binding LastMessage, Converter={tk:IsNotNullConverter}}"
+                   HorizontalOptions="End"/>
         </StackLayout>
     </StackLayout>
 </ContentView>

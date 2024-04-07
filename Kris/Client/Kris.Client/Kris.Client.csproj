@@ -39,6 +39,8 @@
 		<MauiImage Include="Resources\Images\Icons\join.png" />
 		<MauiImage Include="Resources\Images\Icons\leave.png" />
 		<MauiImage Include="Resources\Images\Icons\edit.png" />
+		<MauiImage Include="Resources\Images\Icons\send.png" />
+		<MauiImage Include="Resources\Images\Icons\delete.png" />
 
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />

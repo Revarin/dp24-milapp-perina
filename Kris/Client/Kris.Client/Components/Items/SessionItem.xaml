@@ -6,7 +6,7 @@
              xmlns:enum="clr-namespace:Kris.Client.Common.Enums;assembly=Kris.Client.Common"
              x:Class="Kris.Client.Components.Items.SessionItem"
              x:DataType="vm:SessionItemViewModel"
-             Style="{StaticResource ItemContentView}">
+             Style="{StaticResource SmallContentView}">
     
     <ContentView.Resources>
         <ResourceDictionary>
@@ -50,24 +50,21 @@
                      HorizontalOptions="EndAndExpand"
                      Style="{StaticResource TertiaryStack}">
             <ImageButton Source="edit.png"
-                         IsVisible="{Binding CanEdit}"
-                         Style="{StaticResource SmallImageButton}">
+                         IsVisible="{Binding CanEdit}">
                 <ImageButton.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding EditClickedCommand}" />
                 </ImageButton.Behaviors>
             </ImageButton>
             
             <ImageButton Source="join.png"
-                         IsVisible="{Binding ItemType, Converter={StaticResource JoinableSessionConverter}}"
-                         Style="{StaticResource SmallImageButton}">
+                         IsVisible="{Binding ItemType, Converter={StaticResource JoinableSessionConverter}}">
                 <ImageButton.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding JoinClickedCommand}" />
                 </ImageButton.Behaviors>
             </ImageButton>
             
             <ImageButton Source="leave.png"
-                         IsVisible="{Binding ItemType, Converter={StaticResource LeavableSessionConverter}}"
-                         Style="{StaticResource SmallImageButton}">
+                         IsVisible="{Binding ItemType, Converter={StaticResource LeavableSessionConverter}}">
                 <ImageButton.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding LeaveClickedCommand}" />
                 </ImageButton.Behaviors>

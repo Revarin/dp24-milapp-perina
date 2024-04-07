@@ -2,3 +2,5 @@ location - https://www.freepik.com/icon/location_535239#fromView=keyword&page=1&
 join - https://www.freepik.com/icon/edit_3856989#fromView=search&page=1&position=43&uuid=72aabb89-3e2b-4b5f-a462-d6b5dc69d84c
 leave - https://www.freepik.com/icon/arrow_10522088#fromView=search&page=1&position=7&uuid=d5368b82-ea77-4fc6-9191-3243a810c7c9
 join - https://www.freepik.com/icon/add-group_1387940#fromView=search&page=1&position=48&uuid=cf6ead48-92e1-401f-a8b5-589d7401fcf1
+send - https://www.freepik.com/icon/send_11908146#fromView=search&page=1&position=2&uuid=e80471a0-53ec-4988-874f-9b4ad411a30e
+delete - https://www.freepik.com/icon/bin_7606196#fromView=search&page=1&position=17&uuid=9b1dcc2c-552d-4fca-a01d-35a83109eb92
