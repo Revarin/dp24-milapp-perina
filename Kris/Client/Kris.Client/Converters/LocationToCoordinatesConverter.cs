@@ -1,6 +1,7 @@
 ﻿using CoordinateSharp;
 using Kris.Common.Enums;
 using System.Globalization;
+using System.Text;
 
 namespace Kris.Client.Converters;
 
@@ -12,9 +13,24 @@ public sealed class LocationToCoordinatesConverter : IValueConverter
         {
             var coordinate = new Coordinate(lc.Location.Latitude, lc.Location.Longitude);
 
-            if (lc.CoordinateSystem == CoordinateSystem.LatLong) return coordinate.ToString();
-            else if (lc.CoordinateSystem == CoordinateSystem.UTM) return coordinate.UTM.ToString();
-            else if (lc.CoordinateSystem == CoordinateSystem.MGRS) return coordinate.MGRS.ToString();
+            if (lc.CoordinateSystem == CoordinateSystem.LatLong)
+            {
+                var latLongString = coordinate.ToString();
+                var chars = latLongString.ToCharArray();
+                chars[latLongString.IndexOf('"') + 1] = '\n';
+                return new string(chars);
+            }
+            else if (lc.CoordinateSystem == CoordinateSystem.UTM)
+            {
+                var utmString = coordinate.UTM.ToString();
+                utmString = utmString.Replace("m", string.Empty);
+                return utmString;
+            }
+            else if (lc.CoordinateSystem == CoordinateSystem.MGRS)
+            {
+                var mgrsString = coordinate.MGRS.ToString();
+                return mgrsString;
+            }
             else return coordinate.MGRS.ToString();
         }
 

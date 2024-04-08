@@ -95,13 +95,6 @@ public sealed partial class MapViewModel : PageViewModelBase
     [RelayCommand]
     private async Task OnMapLoaded() => await MoveToCurrentRegionAsync();
     [RelayCommand]
-    private async Task OnLogoutButtonClicked()
-    {
-        var confirmation = await _popupService.ShowPopupAsync<ConfirmationPopupViewModel>(vm => vm.Message = "Do you want to logout?") as ConfirmationEventArgs;
-        if (confirmation == null || !confirmation.IsConfirmed) return;
-        await LogoutUser();
-    }
-    [RelayCommand]
     private async Task OnCurrentPositionButtonClicked() => await MoveToCurrentPositionAsync();
     [RelayCommand]
     private async Task OnMapLongClicked(MapLongClickedEventArgs e) => await ShowCreateMapPointPopupAsync(e.Location);

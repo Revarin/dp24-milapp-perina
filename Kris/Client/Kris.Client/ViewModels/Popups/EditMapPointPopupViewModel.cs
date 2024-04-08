@@ -28,6 +28,7 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
     private readonly ISymbolImageComposer _symbolImageComposer;
     private readonly IMediaService _filePickerService;
     private readonly IClipboardService _clipboardService;
+    private readonly IAlertService _alertService;
 
     public Guid PointId { get; set; }
     public Guid CurrentUserId { get; set; }
@@ -75,7 +76,7 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
     private List<Guid> _attachmentsToDelete = new List<Guid>();
 
     public EditMapPointPopupViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IMapPointSymbolDataProvider mapPointSymbolDataProvider,
-        ISymbolImageComposer symbolImageComposer, IMediaService filePickerService, IClipboardService clipboardService,
+        ISymbolImageComposer symbolImageComposer, IMediaService filePickerService, IClipboardService clipboardService, IAlertService alertService,
         IMediator mediator, IPopupService popupService)
         : base(mediator, popupService)
     {
@@ -84,6 +85,7 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
         _symbolImageComposer = symbolImageComposer;
         _filePickerService = filePickerService;
         _clipboardService = clipboardService;
+        _alertService = alertService;
 
         _mapPointColorItems = _symbolDataProvider.GetMapPointSymbolColorItems().ToObservableCollection();
         _mapPointShapeItems = _symbolDataProvider.GetMapPointSymbolShapeItems().ToObservableCollection();
@@ -206,6 +208,7 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
         }
 
         await _clipboardService.SetAsync(coordinateString);
+        await _alertService.ShowToastAsync("Coordinates copied to clipboard");
     }
 
     private async Task UpdateMapPointAsync()

@@ -7,125 +7,152 @@
           xmlns:item="clr-namespace:Kris.Client.Components.Items"
           x:Class="Kris.Client.Components.Popups.CreateMapPointPopup"
           x:DataType="vm:CreateMapPointPopupViewModel"
-          CanBeDismissedByTappingOutsideOfPopup="False">
+          Style="{StaticResource FullScreenPopup}">
 
     <tk:Popup.Resources>
         <conv:LocationToCoordinatesConverter x:Key="LocationToCoordinates" />
     </tk:Popup.Resources>
-    
+
     <StackLayout Orientation="Vertical"
-                 VerticalOptions="FillAndExpand">
+                 VerticalOptions="FillAndExpand"
+                 HorizontalOptions="FillAndExpand"
+                 BackgroundColor="{StaticResource TransparentBackground}"
+                 Style="{StaticResource PopupMainStack}">
 
-        <StackLayout Orientation="Vertical">
-            <Label Text="Name" />
-            <Entry Placeholder="Name"
-                   Text="{Binding PointName}" />
-            <Label Text="{Binding ErrorMessages[PointName]}"
-                   IsVisible="{Binding ErrorMessages[PointName]}"
-                   Style="{StaticResource errorMessageStyle}" />
-        </StackLayout>
-
-        <StackLayout Orientation="Horizontal"
-                     HorizontalOptions="FillAndExpand">
-            <Label Text="{Binding LocationCoordinates, Converter={StaticResource LocationToCoordinates}}"
-                   HorizontalOptions="FillAndExpand"
-                   FontAttributes="Bold" />
-            <Button Text="C"
-                    HorizontalOptions="End">
-                <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CoordinatesCopyButtonClickedCommand}" />
-                </Button.Behaviors>
-            </Button>
-        </StackLayout>
-        
-        <StackLayout Orientation="Horizontal"
-                     HorizontalOptions="FillAndExpand">
-
+        <ScrollView Orientation="Vertical"
+                    VerticalOptions="FillAndExpand"
+                    HorizontalOptions="FillAndExpand">
             <StackLayout Orientation="Vertical"
-                         VerticalOptions="FillAndExpand">
-                <Label Text="Map symbol" />
-                <Label Text="{Binding ErrorMessages[MapSymbol]}"
-                       IsVisible="{Binding ErrorMessages[MapSymbol]}"
-                       Style="{StaticResource errorMessageStyle}" />
-                <StackLayout Orientation="Vertical">
-                    <Label Text="Shape" />
-                    <Picker Title="Symbol's shape"
-                            ItemsSource="{Binding MapPointShapeItems}"
-                            ItemDisplayBinding="{Binding Display}"
-                            SelectedItem="{Binding MapPointShapeSelectedItem}">
-                        <Picker.Behaviors>
-                            <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
-                        </Picker.Behaviors>
-                    </Picker>
+                         VerticalOptions="FillAndExpand"
+                         HorizontalOptions="FillAndExpand">
+
+                <StackLayout Orientation="Horizontal"
+                             Style="{StaticResource SecondaryStack}"
+                             HorizontalOptions="FillAndExpand">
+                    <Label Text="{Binding LocationCoordinates, Converter={StaticResource LocationToCoordinates}}"
+                           Style="{StaticResource SectionLabel}"/>
+                    <ImageButton Source="copy.png"
+                                 HorizontalOptions="EndAndExpand">
+                        <ImageButton.Behaviors>
+                            <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CoordinatesCopyButtonClickedCommand}" />
+                        </ImageButton.Behaviors>
+                    </ImageButton>
                 </StackLayout>
-                <StackLayout Orientation="Vertical">
-                    <Label Text="Color" />
-                    <Picker Title="Symbol's color"
-                            ItemsSource="{Binding MapPointColorItems}"
-                            ItemDisplayBinding="{Binding Display}"
-                            SelectedItem="{Binding MapPointColorSelectedItem}">
-                        <Picker.Behaviors>
-                            <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
-                        </Picker.Behaviors>
-                    </Picker>
+
+                <StackLayout Orientation="Vertical"
+                             Style="{StaticResource SecondaryStack}">
+                    <Label Text="Name"
+                           Style="{StaticResource TitleLabel}"/>
+                    <Entry Placeholder="Name"
+                           Text="{Binding PointName}" />
+                    <Label Text="{Binding ErrorMessages[PointName]}"
+                           IsVisible="{Binding ErrorMessages[PointName]}"
+                           Style="{StaticResource ErrorLabel}" />
                 </StackLayout>
-                <StackLayout Orientation="Vertical">
-                    <Label Text="Sign" />
-                    <Picker Title="Symbol's sign"
-                            ItemsSource="{Binding MapPointSignItems}"
-                            ItemDisplayBinding="{Binding Display}"
-                            SelectedItem="{Binding MapPointSignSelectedItem}">
-                        <Picker.Behaviors>
-                            <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
-                        </Picker.Behaviors>
-                    </Picker>
+
+                <StackLayout Orientation="Vertical"
+                             Style="{StaticResource SecondaryStack}">
+                    <Label Text="Description"
+                           Style="{StaticResource TitleLabel}"/>
+                    <Editor Placeholder="Description..." Keyboard="Text"
+                            Text="{Binding Description}" />
+                    <Label Text="{Binding ErrorMessages[Description]}"
+                           IsVisible="{Binding ErrorMessages[Description]}"
+                           Style="{StaticResource ErrorLabel}" />
                 </StackLayout>
+
+                <StackLayout Orientation="Vertical"
+                             HorizontalOptions="FillAndExpand">
+
+                    <Label Text="Map symbol"
+                           Style="{StaticResource TitleLabel}"/>
+                    <Label Text="{Binding ErrorMessages[MapSymbol]}"
+                           IsVisible="{Binding ErrorMessages[MapSymbol]}"
+                           Style="{StaticResource ErrorLabel}" />
+
+                    <StackLayout Orientation="Horizontal"
+                                 HorizontalOptions="FillAndExpand"
+                                 Style="{StaticResource SecondaryStack}">
+
+                        <StackLayout Orientation="Vertical"
+                                     Style="{StaticResource TertiaryStack}">
+
+                            <Picker Title="Symbol's shape"
+                                    ItemsSource="{Binding MapPointShapeItems}"
+                                    ItemDisplayBinding="{Binding Display}"
+                                    SelectedItem="{Binding MapPointShapeSelectedItem}">
+                                <Picker.Behaviors>
+                                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
+                                </Picker.Behaviors>
+                            </Picker>
+
+                            <Picker Title="Symbol's color"
+                                    ItemsSource="{Binding MapPointColorItems}"
+                                    ItemDisplayBinding="{Binding Display}"
+                                    SelectedItem="{Binding MapPointColorSelectedItem}">
+                                <Picker.Behaviors>
+                                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
+                                </Picker.Behaviors>
+                            </Picker>
+
+                            <Picker Title="Symbol's sign"
+                                    ItemsSource="{Binding MapPointSignItems}"
+                                    ItemDisplayBinding="{Binding Display}"
+                                    SelectedItem="{Binding MapPointSignSelectedItem}">
+                                <Picker.Behaviors>
+                                    <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
+                                </Picker.Behaviors>
+                            </Picker>
+                        </StackLayout>
+
+                        <Image HorizontalOptions="CenterAndExpand"
+                               VerticalOptions="Center"
+                               WidthRequest="96" HeightRequest="96"
+                               Source="{Binding Image}">
+                        </Image>
+                    </StackLayout>
+                </StackLayout>
+
+                <StackLayout Orientation="Horizontal"
+                             HorizontalOptions="FillAndExpand"
+                             Style="{StaticResource SecondaryStack}">
+                    <ImageButton Source="image.png"
+                                 HorizontalOptions="EndAndExpand"
+                                 Style="{StaticResource BigImageButton}">
+                        <ImageButton.Behaviors>
+                            <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding PickImageAttachmentButtonClickedCommand}" />
+                        </ImageButton.Behaviors>
+                    </ImageButton>
+                    <ImageButton Source="photo.png"
+                                 HorizontalOptions="End"
+                                 Style="{StaticResource BigImageButton}">
+                        <ImageButton.Behaviors>
+                            <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding TakeImageAttachmentButtonClickedCommand}" />
+                        </ImageButton.Behaviors>
+                    </ImageButton>
+                </StackLayout>
+
+                <CollectionView ItemsSource="{Binding ImageAttachments}"
+                                SelectionMode="None">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical"
+                                         Span="3"
+                                         VerticalItemSpacing="3"
+                                         HorizontalItemSpacing="3" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <item:ImageItem BindingContext="{Binding .}" />
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
             </StackLayout>
-            <Image HorizontalOptions="EndAndExpand"
-                   VerticalOptions="Center"
-                   WidthRequest="100"
-                   Source="{Binding Image}">
-            </Image>
-        </StackLayout>
-
-        <StackLayout Orientation="Vertical">
-            <Label Text="Description" />
-            <Editor Placeholder="Description..." Keyboard="Text"
-                    Text="{Binding Description}" />
-            <Label Text="{Binding ErrorMessages[Description]}"
-                   IsVisible="{Binding ErrorMessages[Description]}"
-                   Style="{StaticResource errorMessageStyle}" />
-        </StackLayout>
+        </ScrollView>
 
         <StackLayout Orientation="Horizontal"
-                     HorizontalOptions="FillAndExpand">
-            <Button Text="Add attachment"
-                    HorizontalOptions="FillAndExpand">
-                <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding PickImageAttachmentButtonClickedCommand}" />
-                </Button.Behaviors>
-            </Button>
-            <Button Text="Photo"
-                    HorizontalOptions="FillAndExpand">
-                <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding TakeImageAttachmentButtonClickedCommand}" />
-                </Button.Behaviors>
-            </Button>
-        </StackLayout>
-
-        <CollectionView ItemsSource="{Binding ImageAttachments}"
-                        ItemsLayout="VerticalGrid, 3"
-                        SelectionMode="None">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <item:ImageItem BindingContext="{Binding .}" />
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-
-        <StackLayout Orientation="Horizontal"
-                     HorizontalOptions="FillAndExpand">
-            <Button Text="Cancel"
+                     HorizontalOptions="FillAndExpand"
+                     Style="{StaticResource SecondaryStack}">
+            <Button Text="Close"
                     HorizontalOptions="FillAndExpand">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CancelButtonClickedCommand}" />

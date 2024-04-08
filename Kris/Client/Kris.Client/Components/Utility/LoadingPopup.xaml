@@ -6,11 +6,11 @@
           x:Class="Kris.Client.Components.Utility.LoadingPopup"
           x:DataType="vm:LoadingPopupViewModel"
           CanBeDismissedByTappingOutsideOfPopup="False">
+    
     <StackLayout Orientation="Vertical"
-                 BackgroundColor="DarkGrey"
-                 Padding="10">
+                 BackgroundColor="{StaticResource Background}"
+                 Style="{StaticResource PopupMainStack}">
         <Label Text="Loading..."
-               FontSize="Medium"
                VerticalOptions="Center" 
                HorizontalOptions="Center" />
     </StackLayout>

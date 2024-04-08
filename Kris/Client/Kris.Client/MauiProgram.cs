@@ -130,7 +130,7 @@ namespace Kris.Client
 
             builder.Services.AddTransient<IConnectionSettingsDataProvider, ConnectionSettingsDataProvider>();
             builder.Services.AddTransient<IMapPointSymbolDataProvider, MapPointSymbolDataProvider>();
-            builder.Services.AddTransient<IMapSettingsDataProvider,  MapSettingsDataProvider>();
+            builder.Services.AddTransient<IMapSettingsDataProvider, MapSettingsDataProvider>();
 
             builder.Services.AddSingleton<IHttpClientFactory, HttpClientFactory>();
             builder.Services.AddTransient<IUserController, UserClient>();

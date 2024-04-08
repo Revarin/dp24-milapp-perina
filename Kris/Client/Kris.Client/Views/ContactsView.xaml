@@ -14,43 +14,65 @@
 
     <StackLayout Orientation="Vertical"
                  VerticalOptions="FillAndExpand">
+        <ScrollView Orientation="Vertical"
+                    VerticalOptions="FillAndExpand">
+            <StackLayout Orientation="Vertical"
+                         VerticalOptions="FillAndExpand"
+                         Style="{StaticResource MainStack}">
 
-        <StackLayout Orientation="Vertical">
-            <CollectionView ItemsSource="{Binding SpecialContacts}"
-                            SelectionMode="None">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <item:ConversationItem BindingContext="{Binding .}" />
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </StackLayout>
+                <StackLayout Orientation="Vertical"
+                             Style="{StaticResource SecondaryStack}">
+                    <Label Text="Special contacts"
+                           Style="{StaticResource SectionLabel}" />
+                    <CollectionView ItemsSource="{Binding SpecialContacts}"
+                                    SelectionMode="None"
+                                    VerticalScrollBarVisibility="Never">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Vertical"
+                                               ItemSpacing="3" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <item:ConversationItem BindingContext="{Binding .}" />
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
 
-        <Line HorizontalOptions="FillAndExpand" />
-        <Label Text="------------------------------------------------------------------" />
-
-        <StackLayout Orientation="Vertical">
-            <CollectionView ItemsSource="{Binding DirectContacts}"
-                            SelectionMode="None">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <item:ConversationItem BindingContext="{Binding .}" />
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </StackLayout>
+                <StackLayout Orientation="Vertical"
+                             Style="{StaticResource SecondaryStack}">
+                    <Label Text="Direct contacts"
+                           Style="{StaticResource SectionLabel}" />
+                    <CollectionView ItemsSource="{Binding DirectContacts}"
+                                    SelectionMode="None"
+                                    VerticalScrollBarVisibility="Never">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Vertical"
+                                               ItemSpacing="3" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <item:ConversationItem BindingContext="{Binding .}" />
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
 
         <StackLayout Orientation="Horizontal"
                     HorizontalOptions="FillAndExpand"
-                    VerticalOptions="EndAndExpand">
+                    VerticalOptions="End">
             <Button Text="Map"
-                    HorizontalOptions="FillAndExpand">
+                    HorizontalOptions="FillAndExpand"
+                    Style="{StaticResource NavigationButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MapButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
             <Button Text="Menu"
-                    HorizontalOptions="FillAndExpand">
+                    HorizontalOptions="FillAndExpand"
+                    Style="{StaticResource NavigationButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MenuButtonClickedCommand}" />
                 </Button.Behaviors>

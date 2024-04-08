@@ -14,60 +14,81 @@
     <Shell.BackButtonBehavior>
         <BackButtonBehavior Command="{Binding BackButtonClickedCommand}" />
     </Shell.BackButtonBehavior>
-    
+
     <StackLayout Orientation="Vertical"
                  VerticalOptions="FillAndExpand">
 
-        <Button Text="Delete"
-                HorizontalOptions="End">
-            <Button.Behaviors>
+        <ImageButton Source="delete.png"
+                     HorizontalOptions="End"
+                     Style="{StaticResource BigImageButton}">
+            <ImageButton.Behaviors>
                 <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding DeleteButtonClickedCommand}" />
-            </Button.Behaviors>
-        </Button>
-        
-        <StackLayout Orientation="Vertical"
-                     VerticalOptions="FillAndExpand"
-                     HorizontalOptions="FillAndExpand">
-            <CollectionView ItemsSource="{Binding Messages}"
-                            VerticalOptions="EndAndExpand"
-                            HorizontalOptions="FillAndExpand"
-                            SelectionMode="None"
-                            ItemsUpdatingScrollMode="KeepLastItemInView">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <item:MessageItem BindingContext="{Binding .}" />
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </StackLayout>
+            </ImageButton.Behaviors>
+        </ImageButton>
 
-        <StackLayout Orientation="Horizontal"
-                     HorizontalOptions="FillAndExpand"
-                     VerticalOptions="End">
-            <Entry HorizontalOptions="FillAndExpand"
-                   Placeholder="Send message..."
-                   Keyboard="Chat"
-                   Text="{Binding MessageBody}">
-            </Entry>
-            <Button Text="Send"
-                    HorizontalOptions="End">
-                <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SendButtonClickedCommand}" />
-                </Button.Behaviors>
-            </Button>
-        </StackLayout>
+        <ScrollView Orientation="Vertical"
+                    VerticalOptions="FillAndExpand">
+            <StackLayout Orientation="Vertical"
+                         VerticalOptions="FillAndExpand"
+                         Style="{StaticResource MainStack}">
+
+                <StackLayout Orientation="Vertical"
+                             VerticalOptions="FillAndExpand"
+                             HorizontalOptions="FillAndExpand"
+                             Style="{StaticResource SecondaryStack}">
+                    <CollectionView ItemsSource="{Binding Messages}"
+                                    VerticalOptions="EndAndExpand"
+                                    HorizontalOptions="FillAndExpand"
+                                    SelectionMode="None"
+                                    ItemsUpdatingScrollMode="KeepLastItemInView"
+                                    VerticalScrollBarVisibility="Never">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Vertical"
+                                               ItemSpacing="3" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <item:MessageItem BindingContext="{Binding .}" />
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+
+                <StackLayout Orientation="Horizontal"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="End"
+                             Style="{StaticResource TertiaryStack}">
+                    
+                    <Entry HorizontalOptions="FillAndExpand"
+                           Placeholder="Send message..."
+                           Keyboard="Chat"
+                           Text="{Binding MessageBody}">
+                    </Entry>
+                    
+                    <ImageButton Source="send.png"
+                                 HorizontalOptions="End"
+                                 Style="{StaticResource BigImageButton}">
+                        <ImageButton.Behaviors>
+                            <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SendButtonClickedCommand}" />
+                        </ImageButton.Behaviors>
+                    </ImageButton>
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
 
         <StackLayout Orientation="Horizontal"
                      HorizontalOptions="FillAndExpand"
                      VerticalOptions="End">
             <Button Text="Map"
-                    HorizontalOptions="FillAndExpand">
+                    HorizontalOptions="FillAndExpand"
+                    Style="{StaticResource NavigationButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MapButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
             <Button Text="Menu"
-                    HorizontalOptions="FillAndExpand">
+                    HorizontalOptions="FillAndExpand"
+                    Style="{StaticResource NavigationButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MenuButtonClickedCommand}" />
                 </Button.Behaviors>

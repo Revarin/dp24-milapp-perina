@@ -10,7 +10,7 @@
              xmlns:cmpEvent="clr-namespace:Kris.Client.Components.Events"
              x:Class="Kris.Client.Views.MapView"
              x:DataType="vm:MapViewModel"
-             Title="MapView">
+             Title="Map">
     <ContentPage.Behaviors>
         <tk:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}" />
     </ContentPage.Behaviors>
@@ -21,21 +21,6 @@
 
     <StackLayout Orientation="Vertical"
                  VerticalOptions="FillAndExpand">
-        <StackLayout Orientation="Horizontal"
-                     VerticalOptions="Start">
-            <Button Text="Logout"
-                    HorizontalOptions="FillAndExpand">
-                <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding LogoutButtonClickedCommand}" />
-                </Button.Behaviors>
-            </Button>
-            <Button Text="Current position"
-                    HorizontalOptions="FillAndExpand">
-                <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CurrentPositionButtonClickedCommand}" />
-                </Button.Behaviors>
-            </Button>
-        </StackLayout>
 
         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
             <cmpMap:KrisMap VerticalOptions="FillAndExpand"
@@ -62,24 +47,35 @@
                 </cmpMap:KrisMap.ItemTemplate>
             </cmpMap:KrisMap>
 
-            <Label Text="{Binding CurrentPosition, Converter={StaticResource LocationToCoordinates}}"
-                   HorizontalOptions="FillAndExpand" VerticalOptions="Start"
-                   FontSize="Medium" FontAttributes="Bold"
-                   BackgroundColor="#AA000000" TextColor="White">
-            </Label>
+            <StackLayout Orientation="Horizontal"
+                         HorizontalOptions="FillAndExpand"
+                         VerticalOptions="Start"
+                         Style="{StaticResource CoordinateOverlayStack}">
+                <Label Text="{Binding CurrentPosition, Converter={StaticResource LocationToCoordinates}}"
+                       Style="{StaticResource CoordinateLabel}">
+                </Label>
+                <ImageButton Source="location.png"
+                             HorizontalOptions="EndAndExpand">
+                    <ImageButton.Behaviors>
+                        <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CurrentPositionButtonClickedCommand}" />
+                    </ImageButton.Behaviors>
+                </ImageButton>
+            </StackLayout>
         </Grid>
             
         <StackLayout Orientation="Horizontal"
                      HorizontalOptions="FillAndExpand"
                      VerticalOptions="End">
             <Button Text="Map"
-                    HorizontalOptions="FillAndExpand">
+                    HorizontalOptions="FillAndExpand"
+                    Style="{StaticResource NavigationButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MapButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
             <Button Text="Menu"
-                    HorizontalOptions="FillAndExpand">
+                    HorizontalOptions="FillAndExpand"
+                    Style="{StaticResource NavigationButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MenuButtonClickedCommand}" />
                 </Button.Behaviors>

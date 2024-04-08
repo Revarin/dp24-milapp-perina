@@ -1,0 +1,276 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                    x:Class="Kris.Client.Resources.Styles.KrisStyles">
+
+    <Color x:Key="Primary">#303030</Color>
+    <Color x:Key="Secondary">#646464</Color>
+    <Color x:Key="Tertiary">#989898</Color>
+
+    <Color x:Key="Background">#151515</Color>
+    <Color x:Key="TransparentBackground">#BB151515</Color>
+    <Color x:Key="Text">#EFEFEF</Color>
+    <Color x:Key="Error">#C65555</Color>
+
+    <Color x:Key="Disabled">#8E9D94</Color>
+    <Color x:Key="DisabledText">#C1C6C2</Color>
+
+    <Style TargetType="Page" ApplyToDerivedTypes="True">
+        <Setter Property="BackgroundColor" Value="{StaticResource Background}" />
+    </Style>
+    <Style TargetType="Shell" ApplyToDerivedTypes="True">
+        <Setter Property="Shell.BackgroundColor" Value="{StaticResource Primary}" />
+        <Setter Property="Shell.ForegroundColor" Value="{StaticResource Text}" />
+        <Setter Property="Shell.TitleColor" Value="{StaticResource Text}" />
+    </Style>
+    <Style TargetType="NavigationPage">
+        <Setter Property="BarBackgroundColor" Value="{StaticResource Primary}" />
+        <Setter Property="BarTextColor" Value="{StaticResource Text}" />
+        <Setter Property="IconColor" Value="{StaticResource Text}" />
+    </Style>
+    <Style TargetType="TabbedPage">
+        <Setter Property="BarBackgroundColor" Value="{StaticResource Primary}" />
+        <Setter Property="BarTextColor" Value="{StaticResource Text}" />
+    </Style>
+
+    <Style TargetType="StackLayout"
+           x:Key="MainStack">
+        <Setter Property="Padding" Value="10" />
+        <Setter Property="Spacing" Value="15" />
+    </Style>
+    <Style TargetType="StackLayout"
+           x:Key="SecondaryStack">
+        <Setter Property="Spacing" Value="5" />
+    </Style>
+    <Style TargetType="StackLayout"
+           x:Key="TertiaryStack">
+        <Setter Property="Spacing" Value="3" />
+    </Style>
+    <Style TargetType="StackLayout"
+           x:Key="CoordinateOverlayStack">
+        <Setter Property="Background" Value="{StaticResource TransparentBackground}" />
+        <Setter Property="Padding" Value="10,5" />
+    </Style>
+    <Style TargetType="StackLayout"
+           x:Key="PopupMainStack">
+        <Setter Property="Padding" Value="20, 15" />
+        <Setter Property="Spacing" Value="15" />
+    </Style>
+
+    <Style TargetType="Grid"
+           x:Key="MainMenuGrid">
+        <Setter Property="Padding" Value="10" />
+        <Setter Property="RowSpacing" Value="10" />
+        <Setter Property="ColumnSpacing" Value="10" />
+    </Style>
+
+    <Style TargetType="Button">
+        <Setter Property="TextColor" Value="{StaticResource Text}" />
+        <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+        <Setter Property="FontSize" Value="22"/>
+        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="Padding" Value="22,16"/>
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="TextColor" Value="{StaticResource Text}" />
+                            <Setter Property="BackgroundColor" Value="{StaticResource Tertiary}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+    <Style TargetType="Button"
+           x:Key="BigButton">
+        <Setter Property="FontSize" Value="26"/>
+        <Setter Property="Padding" Value="28,24"/>
+        <Setter Property="FontAttributes" Value="Bold" />
+    </Style>
+    <Style TargetType="Button"
+           x:Key="NavigationButton">
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="Padding" Value="24,18"/>
+    </Style>
+    <Style TargetType="Button"
+           x:Key="SmallButton">
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="Padding" Value="16,10"/>
+    </Style>
+
+    <Style TargetType="ImageButton">
+        <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="Padding" Value="8"/>
+        <Setter Property="Margin" Value="-6" />
+        <Setter Property="Aspect" Value="AspectFill" />
+        <Setter Property="HeightRequest" Value="64" />
+        <Setter Property="WidthRequest" Value="64" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Tertiary}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+    <Style TargetType="ImageButton"
+           x:Key="BigImageButton">
+        <Setter Property="Padding" Value="10"/>
+        <Setter Property="Margin" Value="-8" />
+        <Setter Property="HeightRequest" Value="80" />
+        <Setter Property="WidthRequest" Value="80" />
+    </Style>
+
+    <Style TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource Text}" />
+        <Setter Property="FontSize" Value="16" />
+    </Style>
+    <Style TargetType="Label"
+           x:Key="ErrorLabel">
+        <Setter Property="TextColor" Value="{StaticResource Error}" />
+    </Style>
+    <Style TargetType="Label"
+           x:Key="TitleLabel">
+        <Setter Property="FontAttributes" Value="Bold" />
+    </Style>
+    <Style TargetType="Label"
+           x:Key="SectionLabel">
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="20" />
+    </Style>
+    <Style TargetType="Label"
+           x:Key="CoordinateLabel">
+        <Setter Property="FontSize" Value="24" />
+    </Style>
+    <Style TargetType="Label"
+           x:Key="ItemTitleLabel">
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="18" />
+    </Style>
+
+    <Style TargetType="Entry">
+        <Setter Property="TextColor" Value="{StaticResource Text}" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource Tertiary}" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="TextColor" Value="{StaticResource Text}" />
+                            <Setter Property="BackgroundColor" Value="{StaticResource Tertiary}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Editor">
+        <Setter Property="TextColor" Value="{StaticResource Text}" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource Tertiary}" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="TextColor" Value="{StaticResource Text}" />
+                            <Setter Property="BackgroundColor" Value="{StaticResource Tertiary}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Picker">
+        <Setter Property="TextColor" Value="{StaticResource Text}" />
+        <Setter Property="TitleColor" Value="{StaticResource Text}" />
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="TextColor" Value="{StaticResource Text}" />
+                            <Setter Property="TitleColor" Value="{StaticResource Tertiary}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <Style TargetType="ContentView"
+           x:Key="SmallContentView">
+        <Setter Property="BackgroundColor" Value="{StaticResource Secondary}" />
+        <Setter Property="Padding" Value="6,4" />
+    </Style>
+    <Style TargetType="ContentView"
+           x:Key="BigContentView">
+        <Setter Property="BackgroundColor" Value="{StaticResource Secondary}" />
+        <Setter Property="Padding" Value="10,12" />
+    </Style>
+
+    <Style TargetType="tk:Popup"
+           ApplyToDerivedTypes="True">
+    </Style>
+    <Style TargetType="tk:Popup"
+           x:Key="FullScreenPopup">
+        <Setter Property="CanBeDismissedByTappingOutsideOfPopup" Value="False" />
+        <Setter Property="VerticalOptions" Value="Fill" />
+        <Setter Property="HorizontalOptions" Value="Fill" />
+        <Setter Property="Color" Value="Transparent" />
+    </Style>
+
+    <Style TargetType="Switch">
+        <Setter Property="OnColor" Value="{StaticResource Primary}" />
+        <Setter Property="ThumbColor" Value="{StaticResource Text}" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal">
+                        <VisualState.Setters>
+                            <Setter Property="OnColor" Value="{StaticResource Primary}" />
+                            <Setter Property="ThumbColor" Value="{StaticResource Text}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="OnColor" Value="{StaticResource Tertiary}" />
+                            <Setter Property="ThumbColor" Value="{StaticResource Tertiary}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="On">
+                        <VisualState.Setters>
+                            <Setter Property="OnColor" Value="{StaticResource Primary}" />
+                            <Setter Property="ThumbColor" Value="{StaticResource Text}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Off">
+                        <VisualState.Setters>
+                            <Setter Property="OnColor" Value="{StaticResource Primary}" />
+                            <Setter Property="ThumbColor" Value="{StaticResource Text}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
+    

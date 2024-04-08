@@ -10,15 +10,15 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 
 		<!-- Display name -->
-		<ApplicationTitle>Kris v2.7.2</ApplicationTitle>
+		<ApplicationTitle>Kris v2.8.0</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>fit.dp.perina.kris</ApplicationId>
 		<ApplicationIdGuid>b9336060-ad5c-4c34-b406-7a96ba2a9ca3</ApplicationIdGuid>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>2.7.2</ApplicationDisplayVersion>
-		<ApplicationVersion>272</ApplicationVersion>
+		<ApplicationDisplayVersion>2.8.0</ApplicationDisplayVersion>
+		<ApplicationVersion>280</ApplicationVersion>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
@@ -34,8 +34,17 @@
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
 
 		<!-- Images -->
-		<MauiImages Include="Resources\Images\*" />
 		<EmbeddedResource Include="Resources\Images\Point\*" />
+		<MauiImage Include="Resources\Images\Icons\location.png" />
+		<MauiImage Include="Resources\Images\Icons\join.png" />
+		<MauiImage Include="Resources\Images\Icons\leave.png" />
+		<MauiImage Include="Resources\Images\Icons\edit.png" />
+		<MauiImage Include="Resources\Images\Icons\send.png" />
+		<MauiImage Include="Resources\Images\Icons\delete.png" />
+		<MauiImage Include="Resources\Images\Icons\copy.png" />
+		<MauiImage Include="Resources\Images\Icons\photo.png" />
+		<MauiImage Include="Resources\Images\Icons\image.png" />
+		<MauiImage Include="Resources\Images\Icons\close.png" />
 
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
@@ -125,6 +134,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Components\Utility\PasswordPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Styles\KrisStyles.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\ChatView.xaml">

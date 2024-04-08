@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Kris.Client.Common.Events;
 using Kris.Client.Common.Utility;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
+using Kris.Client.ViewModels.Utility;
 using Kris.Client.Views;
 using MediatR;
 
@@ -30,6 +32,13 @@ public sealed partial class MenuViewModel : PageViewModelBase
     private async Task OnContactsButtonClicked() => await _navigationService.GoToAsync(nameof(ContactsView), RouterNavigationType.PushUpward);
     [RelayCommand]
     private async Task OnMapSettingsButtonClicked() => await _navigationService.GoToAsync(nameof(MapSettingsView), RouterNavigationType.PushUpward);
+    [RelayCommand]
+    private async Task OnLogoutButtonClicked()
+    {
+        var confirmation = await _popupService.ShowPopupAsync<ConfirmationPopupViewModel>(vm => vm.Message = "Do you want to logout?") as ConfirmationEventArgs;
+        if (confirmation == null || !confirmation.IsConfirmed) return;
+        await LogoutUser();
+    }
 
     // CORE
     private async Task GetCurrentSessionAsync()

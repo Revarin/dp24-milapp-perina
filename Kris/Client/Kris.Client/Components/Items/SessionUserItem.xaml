@@ -6,7 +6,7 @@
              xmlns:enum="clr-namespace:Kris.Common.Enums;assembly=Kris.Common"
              x:Class="Kris.Client.Components.Items.SessionUserItem"
              x:DataType="vm:SessionUserItemViewModel"
-             BackgroundColor="DimGrey">
+             Style="{StaticResource SmallContentView}">
 
     <ContentView.Resources>
         <ResourceDictionary>
@@ -26,20 +26,24 @@
     </ContentView.Resources>
 
     <StackLayout Orientation="Horizontal"
-                 HorizontalOptions="FillAndExpand">
+                 HorizontalOptions="FillAndExpand"
+                 Style="{StaticResource SecondaryStack}">
         
         <StackLayout Orientation="Vertical"
-                     HorizontalOptions="FillAndExpand">
+                     HorizontalOptions="FillAndExpand"
+                     Style="{StaticResource SecondaryStack}">
             <Label Text="{Binding Nickname}"
-                   HorizontalOptions="StartAndExpand" />
+                   HorizontalOptions="StartAndExpand" 
+                   Style="{StaticResource SectionLabel}"/>
             <Label Text="{Binding Login}"
-                   FontSize="Small"
                    HorizontalOptions="StartAndExpand" />
         </StackLayout>
         
         <StackLayout Orientation="Vertical"
-                     HorizontalOptions="EndAndExpand">
-            <Label Text="Admin" />
+                     HorizontalOptions="End"
+                     Style="{StaticResource SecondaryStack}">
+            <Label Text="Admin"
+                   Style="{StaticResource TitleLabel}"/>
             <Switch IsToggled="{Binding UserType, Converter={StaticResource UserTypeAdminConverter}, Mode=OneWay}"
                     IsEnabled="{Binding UserType, Converter={StaticResource UserTypeNotSuperAdminConverter}}">
                 <Switch.Behaviors>
@@ -49,11 +53,11 @@
             </Switch>
         </StackLayout>
 
-        <Button Text="Kick"
-                IsEnabled="{Binding UserType, Converter={StaticResource UserTypeNotSuperAdminConverter}}">
-            <Button.Behaviors>
+        <ImageButton Source="leave.png"
+                     IsEnabled="{Binding UserType, Converter={StaticResource UserTypeNotSuperAdminConverter}}">
+            <ImageButton.Behaviors>
                 <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding KickUserClickedCommand}" />
-            </Button.Behaviors>
-        </Button>
+            </ImageButton.Behaviors>
+        </ImageButton>
     </StackLayout>
 </ContentView>

@@ -6,20 +6,21 @@
           xmlns:util="clr-namespace:Kris.Client.Components.Utility"
           x:Class="Kris.Client.Components.Utility.ImagePopup"
           x:DataType="vm:ImagePopupViewModel"
-          VerticalOptions="Fill"
-          HorizontalOptions="Fill">
+          Style="{StaticResource FullScreenPopup}">
     
     <Grid HorizontalOptions="FillAndExpand"
-          VerticalOptions="FillAndExpand">
+          VerticalOptions="FillAndExpand"
+          BackgroundColor="{StaticResource TransparentBackground}">
         <util:PanZoomContainer>
             <Image Source="{Binding ImageSource}" />
         </util:PanZoomContainer>
-        <Button Text="X"
-                VerticalOptions="Start"
-                HorizontalOptions="End">
-            <Button.Behaviors>
+        <ImageButton Source="close.png"
+                     VerticalOptions="Start"
+                     HorizontalOptions="End"
+                     Style="{StaticResource BigImageButton}">
+            <ImageButton.Behaviors>
                 <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CancelButtonClickedCommand}" />
-            </Button.Behaviors>
-        </Button>
+            </ImageButton.Behaviors>
+        </ImageButton>
     </Grid>
 </tk:Popup>

@@ -5,18 +5,21 @@
              xmlns:vm="clr-namespace:Kris.Client.ViewModels.Items"
              x:Class="Kris.Client.Components.Items.MessageItem"
              x:DataType="vm:MessageItemViewModel"
-             BackgroundColor="DimGrey">
+             Style="{StaticResource SmallContentView}"
+             BackgroundColor="{StaticResource Background}">
     
     <StackLayout Orientation="Horizontal"
                  HorizontalOptions="FillAndExpand">
         <StackLayout Orientation="Vertical"
-                     HorizontalOptions="FillAndExpand">
+                     HorizontalOptions="FillAndExpand"
+                     Style="{StaticResource SecondaryStack}">
             <StackLayout Orientation="Horizontal"
                          HorizontalOptions="FillAndExpand">
-                <Label Text="{Binding SenderName}" FontSize="Small" FontAttributes="Bold" />
-                <Label Text="{Binding Sent}" FontSize="Small" />
+                <Label Text="{Binding SenderName}"
+                       Style="{StaticResource TitleLabel}" />
+                <Label Text="{Binding Sent, StringFormat='({0:dd.MM.yyyy, H:mm:ss})'}"
+                       HorizontalOptions="End" />
             </StackLayout>
-
             <Label Text="{Binding Body}" />
         </StackLayout>
     </StackLayout>
