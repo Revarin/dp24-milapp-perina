@@ -40,12 +40,18 @@
 
                 <StackLayout Orientation="Vertical"
                              IsVisible="{Binding JoinedSessions.Count}"
+                             HorizontalOptions="FillAndExpand"
                              Style="{StaticResource SecondaryStack}">
                     <Label Text="Joined sessions"
                            Style="{StaticResource SectionLabel}"/>
                     <CollectionView ItemsSource="{Binding JoinedSessions}"
                                     SelectionMode="None"
+                                    HorizontalOptions="FillAndExpand"
                                     VerticalScrollBarVisibility="Never">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Vertical"
+                                               ItemSpacing="3" />
+                        </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <item:SessionItem BindingContext="{Binding .}" />
@@ -56,12 +62,18 @@
 
                 <StackLayout Orientation="Vertical"
                              IsVisible="{Binding OtherSessions.Count}"
+                             HorizontalOptions="FillAndExpand"
                              Style="{StaticResource SecondaryStack}">
                     <Label Text="Other sessions"
                            Style="{StaticResource SectionLabel}"/>
                     <CollectionView ItemsSource="{Binding OtherSessions}"
                                     SelectionMode="None"
+                                    HorizontalOptions="FillAndExpand"
                                     VerticalScrollBarVisibility="Never">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Vertical"
+                                               ItemSpacing="3" />
+                        </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <item:SessionItem BindingContext="{Binding .}" />

@@ -42,6 +42,10 @@
                                     SelectionMode="None"
                                     ItemsUpdatingScrollMode="KeepLastItemInView"
                                     VerticalScrollBarVisibility="Never">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Vertical"
+                                               ItemSpacing="3" />
+                        </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <item:MessageItem BindingContext="{Binding .}" />

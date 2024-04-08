@@ -6,7 +6,8 @@
           xmlns:item="clr-namespace:Kris.Client.Components.Items"
           xmlns:enum="clr-namespace:Kris.Common.Enums;assembly=Kris.Common"
           x:Class="Kris.Client.Components.Popups.EditSessionPopup"
-          x:DataType="vm:EditSessionPopupViewModel">
+          x:DataType="vm:EditSessionPopupViewModel"
+          Style="{StaticResource FullScreenPopup}">
 
     <tk:Popup.Resources>
         <ResourceDictionary>
@@ -20,144 +21,185 @@
     </tk:Popup.Resources>
         
     <StackLayout Orientation="Vertical"
-                 VerticalOptions="FillAndExpand">
+                 VerticalOptions="FillAndExpand"
+                 HorizontalOptions="FillAndExpand"
+                 BackgroundColor="{StaticResource Background}"
+                 Style="{StaticResource PopupMainStack}">
 
-        <StackLayout Orientation="Vertical"
-                     VerticalOptions="FillAndExpand">
-
-            <StackLayout Orientation="Vertical">
-                <Label Text="Nickname" />
-                <Entry Text="{Binding UserName}">
-                </Entry>
-                <Label Text="{Binding ErrorMessages[UserName]}"
-                       IsVisible="{Binding ErrorMessages[UserName]}"
-                       Style="{StaticResource errorMessageStyle}" />
-            </StackLayout>
-
-            <StackLayout Orientation="Horizontal"
-                         HorizontalOptions="FillAndExpand">
+        <ScrollView Orientation="Vertical"
+                    VerticalOptions="FillAndExpand"
+                    HorizontalOptions="FillAndExpand">
+            <StackLayout Orientation="Vertical"
+                         VerticalOptions="FillAndExpand"
+                         HorizontalOptions="FillAndExpand"
+                         Style="{StaticResource MainStack}">
 
                 <StackLayout Orientation="Vertical"
-                             VerticalOptions="FillAndExpand">
-                    <Label Text="Map symbol" />
-                    <Label Text="{Binding ErrorMessages[MapSymbol]}"
-                           IsVisible="{Binding ErrorMessages[MapSymbol]}"
-                           Style="{StaticResource errorMessageStyle}" />
-                    <StackLayout Orientation="Vertical">
-                        <Label Text="Shape" />
-                        <Picker Title="Symbol's shape"
-                                ItemsSource="{Binding MapPointShapeItems}"
-                                ItemDisplayBinding="{Binding Display}"
-                                SelectedItem="{Binding MapPointShapeSelectedItem}">
-                            <Picker.Behaviors>
-                                <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
-                            </Picker.Behaviors>
-                        </Picker>
+                             VerticalOptions="FillAndExpand"
+                             HorizontalOptions="FillAndExpand"
+                             Style="{StaticResource TertiaryStack}">
+
+                    <StackLayout Orientation="Vertical"
+                                 Style="{StaticResource SecondaryStack}">
+                        <Label Text="Nickname"
+                               Style="{StaticResource TitleLabel}"/>
+                        <Entry Text="{Binding UserName}">
+                        </Entry>
+                        <Label Text="{Binding ErrorMessages[UserName]}"
+                               IsVisible="{Binding ErrorMessages[UserName]}"
+                               Style="{StaticResource ErrorLabel}" />
                     </StackLayout>
-                    <StackLayout Orientation="Vertical">
-                        <Label Text="Color" />
-                        <Picker Title="Symbol's color"
-                                ItemsSource="{Binding MapPointColorItems}"
-                                ItemDisplayBinding="{Binding Display}"
-                                SelectedItem="{Binding MapPointColorSelectedItem}">
-                            <Picker.Behaviors>
-                                <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
-                            </Picker.Behaviors>
-                        </Picker>
+
+                    <StackLayout Orientation="Vertical"
+                                 HorizontalOptions="FillAndExpand">
+
+                        <Label Text="Map symbol"
+                               Style="{StaticResource TitleLabel}"/>
+                        <Label Text="{Binding ErrorMessages[MapSymbol]}"
+                               IsVisible="{Binding ErrorMessages[MapSymbol]}"
+                               Style="{StaticResource ErrorLabel}" />
+
+                        <StackLayout Orientation="Horizontal"
+                                     HorizontalOptions="FillAndExpand"
+                                     Style="{StaticResource SecondaryStack}">
+                            <StackLayout Orientation="Vertical"
+                                         Style="{StaticResource TertiaryStack}">
+
+                                <Picker Title="Symbol's shape"
+                                        ItemsSource="{Binding MapPointShapeItems}"
+                                        ItemDisplayBinding="{Binding Display}"
+                                        SelectedItem="{Binding MapPointShapeSelectedItem}">
+                                    <Picker.Behaviors>
+                                        <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
+                                    </Picker.Behaviors>
+                                </Picker>
+
+                                <Picker Title="Symbol's color"
+                                        ItemsSource="{Binding MapPointColorItems}"
+                                        ItemDisplayBinding="{Binding Display}"
+                                        SelectedItem="{Binding MapPointColorSelectedItem}">
+                                    <Picker.Behaviors>
+                                        <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
+                                    </Picker.Behaviors>
+                                </Picker>
+
+                                <Picker Title="Symbol's sign"
+                                        ItemsSource="{Binding MapPointSignItems}"
+                                        ItemDisplayBinding="{Binding Display}"
+                                        SelectedItem="{Binding MapPointSignSelectedItem}">
+                                    <Picker.Behaviors>
+                                        <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
+                                    </Picker.Behaviors>
+                                </Picker>
+                            </StackLayout>
+
+                            <Image HorizontalOptions="CenterAndExpand"
+                                   VerticalOptions="Center"
+                                   WidthRequest="96" HeightRequest="96"
+                                   Source="{Binding Image}">
+                            </Image>
+                        </StackLayout>
                     </StackLayout>
-                    <StackLayout Orientation="Vertical">
-                        <Label Text="Sign" />
-                        <Picker Title="Symbol's sign"
-                                ItemsSource="{Binding MapPointSignItems}"
-                                ItemDisplayBinding="{Binding Display}"
-                                SelectedItem="{Binding MapPointSignSelectedItem}">
-                            <Picker.Behaviors>
-                                <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
-                            </Picker.Behaviors>
-                        </Picker>
-                    </StackLayout>
+
+                    <Button Text="Save changes">
+                        <Button.Behaviors>
+                            <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SaveButtonClickedCommand}" />
+                        </Button.Behaviors>
+                    </Button>
                 </StackLayout>
-                <Image HorizontalOptions="EndAndExpand"
-                       VerticalOptions="Center"
-                       WidthRequest="100"
-                       Source="{Binding Image}">
-                </Image>
-            </StackLayout>
 
-            <Button Text="Save changes">
+                <StackLayout Orientation="Vertical"
+                             VerticalOptions="FillAndExpand"
+                             HorizontalOptions="FillAndExpand"
+                             IsVisible="{Binding UserType, Converter={StaticResource UserTypeAdminConverter}}"
+                             Style="{StaticResource TertiaryStack}">
+
+                    <Label Text="Admin area"
+                           Style="{StaticResource SectionLabel}" />
+                    
+                    <StackLayout Orientation="Vertical"
+                                 HorizontalOptions="FillAndExpand"
+                                 Style="{StaticResource SecondaryStack}">
+                        <Label Text="Users"
+                               Style="{StaticResource TitleLabel}"/>
+                        <CollectionView ItemsSource="{Binding SessionUsers}"
+                                        SelectionMode="None"
+                                        HorizontalOptions="FillAndExpand">
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout Orientation="Vertical"
+                                                   ItemSpacing="3" />
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <item:SessionUserItem BindingContext="{Binding .}" VerticalOptions="FillAndExpand" />
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </StackLayout>
+
+                    <StackLayout Orientation="Vertical"
+                                 HorizontalOptions="FillAndExpand"
+                                 Style="{StaticResource SecondaryStack}">
+                        <Label Text="New session name"
+                               Style="{StaticResource TitleLabel}"/>
+                        <Entry Placeholder="Session name..."
+                               Text="{Binding SessionName}">
+                        </Entry>
+                        <Label Text="{Binding ErrorMessages[SessionName]}"
+                               IsVisible="{Binding ErrorMessages[SessionName]}"
+                               Style="{StaticResource ErrorLabel}" />
+                    </StackLayout>
+
+                    <StackLayout Orientation="Vertical"
+                                 Style="{StaticResource SecondaryStack}">
+                        <Label Text="New password"
+                               Style="{StaticResource TitleLabel}"/>
+                        <Entry IsPassword="True"
+                               Placeholder="Password..."
+                               Text="{Binding Password}">
+                        </Entry>
+                        <Label Text="{Binding ErrorMessages[Password]}"
+                               IsVisible="{Binding ErrorMessages[Password]}"
+                               Style="{StaticResource ErrorLabel}" />
+                    </StackLayout>
+
+                    <StackLayout Orientation="Vertical"
+                                 Style="{StaticResource SecondaryStack}">
+                        <Label Text="Confirm new password"
+                               Style="{StaticResource TitleLabel}"/>
+                        <Entry IsPassword="True"
+                               Placeholder="Confirm password..."
+                               Text="{Binding PasswordVerification}">
+                        </Entry>
+                        <Label Text="{Binding ErrorMessages[PasswordVerification]}"
+                               IsVisible="{Binding ErrorMessages[PasswordVerification]}"
+                               Style="{StaticResource ErrorLabel}" />
+                    </StackLayout>
+
+                    <Button Text="Delete session">
+                        <Button.Behaviors>
+                            <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding DeleteButtonClickedCommand}" />
+                        </Button.Behaviors>
+                    </Button>
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand"
+                     Style="{StaticResource SecondaryStack}">
+            <Button Text="Close"
+                    HorizontalOptions="FillAndExpand">
                 <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SaveButtonClickedCommand}" />
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CancelButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
-        </StackLayout>
-
-        <StackLayout Orientation="Vertical"
-                     VerticalOptions="FillAndExpand"
-                     IsVisible="{Binding UserType, Converter={StaticResource UserTypeAdminConverter}}">
-
-            <StackLayout Orientation="Vertical">
-                <Label Text="Users" FontSize="Subtitle" />
-                <CollectionView ItemsSource="{Binding SessionUsers}"
-                                SelectionMode="None">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <item:SessionUserItem BindingContext="{Binding .}" />
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </StackLayout>
-
-            <StackLayout Orientation="Vertical">
-                <Label Text="New session name" />
-                <Entry Placeholder="Session name"
-                       Text="{Binding SessionName}">
-                </Entry>
-                <Label Text="{Binding ErrorMessages[SessionName]}"
-                       IsVisible="{Binding ErrorMessages[SessionName]}"
-                       Style="{StaticResource errorMessageStyle}" />
-            </StackLayout>
-
-            <StackLayout Orientation="Vertical">
-                <Label Text="New password" />
-                <Entry IsPassword="True"
-                       Text="{Binding Password}">
-                </Entry>
-                <Label Text="{Binding ErrorMessages[Password]}"
-                       IsVisible="{Binding ErrorMessages[Password]}"
-                       Style="{StaticResource errorMessageStyle}" />
-            </StackLayout>
-
-            <StackLayout Orientation="Vertical">
-                <Label Text="Confirm new password" />
-                <Entry IsPassword="True"
-                       Text="{Binding PasswordVerification}">
-                </Entry>
-                <Label Text="{Binding ErrorMessages[PasswordVerification]}"
-                       IsVisible="{Binding ErrorMessages[PasswordVerification]}"
-                       Style="{StaticResource errorMessageStyle}" />
-            </StackLayout>
-
-            <Button Text="Delete session">
+            <Button Text="Save changes"
+                    HorizontalOptions="FillAndExpand">
                 <Button.Behaviors>
-                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding DeleteButtonClickedCommand}" />
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding AdminSaveButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
-
-            <StackLayout Orientation="Horizontal"
-                         HorizontalOptions="FillAndExpand">
-                <Button Text="Cancel"
-                        HorizontalOptions="FillAndExpand">
-                    <Button.Behaviors>
-                        <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CancelButtonClickedCommand}" />
-                    </Button.Behaviors>
-                </Button>
-                <Button Text="Save changes"
-                        HorizontalOptions="FillAndExpand">
-                    <Button.Behaviors>
-                        <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding AdminSaveButtonClickedCommand}" />
-                    </Button.Behaviors>
-                </Button>
-            </StackLayout>
         </StackLayout>
     </StackLayout>
 </tk:Popup>

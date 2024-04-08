@@ -237,5 +237,40 @@
         <Setter Property="Color" Value="Transparent" />
     </Style>
 
+    <Style TargetType="Switch">
+        <Setter Property="OnColor" Value="{StaticResource Primary}" />
+        <Setter Property="ThumbColor" Value="{StaticResource Text}" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal">
+                        <VisualState.Setters>
+                            <Setter Property="OnColor" Value="{StaticResource Primary}" />
+                            <Setter Property="ThumbColor" Value="{StaticResource Text}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="OnColor" Value="{StaticResource Tertiary}" />
+                            <Setter Property="ThumbColor" Value="{StaticResource Tertiary}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="On">
+                        <VisualState.Setters>
+                            <Setter Property="OnColor" Value="{StaticResource Primary}" />
+                            <Setter Property="ThumbColor" Value="{StaticResource Text}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Off">
+                        <VisualState.Setters>
+                            <Setter Property="OnColor" Value="{StaticResource Primary}" />
+                            <Setter Property="ThumbColor" Value="{StaticResource Text}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>
     

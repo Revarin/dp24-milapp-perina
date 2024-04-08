@@ -5,7 +5,8 @@
              xmlns:vm="clr-namespace:Kris.Client.ViewModels.Items"
              x:Class="Kris.Client.Components.Items.MessageItem"
              x:DataType="vm:MessageItemViewModel"
-             Style="{StaticResource SmallContentView}">
+             Style="{StaticResource SmallContentView}"
+             BackgroundColor="{StaticResource Background}">
     
     <StackLayout Orientation="Horizontal"
                  HorizontalOptions="FillAndExpand">

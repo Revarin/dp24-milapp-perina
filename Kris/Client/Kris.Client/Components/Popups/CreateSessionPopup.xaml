@@ -5,45 +5,72 @@
           xmlns:vm="clr-namespace:Kris.Client.ViewModels.Popups"
           x:Class="Kris.Client.Components.Popups.CreateSessionPopup"
           x:DataType="vm:CreateSessionPopupViewModel"
-          CanBeDismissedByTappingOutsideOfPopup="False">
-    <StackLayout Orientation="Vertical">
-        <StackLayout Orientation="Vertical">
-            <Label Text="Name" />
-            <Entry Placeholder="Name"
-                   Text="{Binding Name}">
-            </Entry>
-            <Label Text="{Binding ErrorMessages[Name]}"
-                   IsVisible="{Binding ErrorMessages[Name]}"
-                   Style="{StaticResource errorMessageStyle}" />
-        </StackLayout>
+          Style="{StaticResource FullScreenPopup}">
+    
+    <StackLayout Orientation="Vertical"
+                 VerticalOptions="FillAndExpand"
+                 HorizontalOptions="FillAndExpand"
+                 Background="{StaticResource Background}"
+                 Style="{StaticResource PopupMainStack}">
 
-        <StackLayout Orientation="Vertical">
-            <Label Text="Password" />
-            <Entry IsPassword="True"
-                   Text="{Binding Password}">
-            </Entry>
-            <Label Text="{Binding ErrorMessages[Password]}"
-                   IsVisible="{Binding ErrorMessages[Password]}"
-                   Style="{StaticResource errorMessageStyle}" />
-        </StackLayout>
+        <ScrollView Orientation="Vertical"
+                    VerticalOptions="FillAndExpand"
+                    HorizontalOptions="FillAndExpand">
+            <StackLayout Orientation="Vertical"
+                         VerticalOptions="FillAndExpand"
+                         HorizontalOptions="FillAndExpand">
 
-        <StackLayout Orientation="Vertical">
-            <Label Text="Confirm password" />
-            <Entry IsPassword="True"
-                   Text="{Binding PasswordVerification}">
-            </Entry>
-            <Label Text="{Binding ErrorMessages[PasswordVerification]}"
-                   IsVisible="{Binding ErrorMessages[PasswordVerification]}"
-                   Style="{StaticResource errorMessageStyle}" />
-        </StackLayout>
+                <StackLayout Orientation="Vertical"
+                             Style="{StaticResource SecondaryStack}">
+                    <Label Text="Name"
+                           Style="{StaticResource TitleLabel}"/>
+                    <Entry Placeholder="Name..."
+                           Text="{Binding Name}">
+                    </Entry>
+                    <Label Text="{Binding ErrorMessages[Name]}"
+                           IsVisible="{Binding ErrorMessages[Name]}"
+                           Style="{StaticResource ErrorLabel}" />
+                </StackLayout>
 
-        <StackLayout Orientation="Horizontal">
-            <Button Text="Cancel">
+                <StackLayout Orientation="Vertical"
+                             Style="{StaticResource SecondaryStack}">
+                    <Label Text="Password"
+                           Style="{StaticResource TitleLabel}"/>
+                    <Entry IsPassword="True"
+                           Placeholder="Password..."
+                           Text="{Binding Password}">
+                    </Entry>
+                    <Label Text="{Binding ErrorMessages[Password]}"
+                           IsVisible="{Binding ErrorMessages[Password]}"
+                           Style="{StaticResource ErrorLabel}" />
+                </StackLayout>
+
+                <StackLayout Orientation="Vertical"
+                             Style="{StaticResource SecondaryStack}">
+                    <Label Text="Confirm password"
+                           Style="{StaticResource TitleLabel}"/>
+                    <Entry IsPassword="True"
+                           Placeholder="Confirm password..."
+                           Text="{Binding PasswordVerification}">
+                    </Entry>
+                    <Label Text="{Binding ErrorMessages[PasswordVerification]}"
+                           IsVisible="{Binding ErrorMessages[PasswordVerification]}"
+                           Style="{StaticResource ErrorLabel}" />
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+        
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand"
+                     Style="{StaticResource SecondaryStack}">
+            <Button Text="Close"
+                    HorizontalOptions="FillAndExpand">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CancelButtonClickedCommand}" />
                 </Button.Behaviors>
             </Button>
-            <Button Text="Create">
+            <Button Text="Create"
+                    HorizontalOptions="FillAndExpand">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CreateButtonClickedCommand}" />
                 </Button.Behaviors>
