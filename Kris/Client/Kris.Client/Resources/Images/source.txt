@@ -4,3 +4,7 @@ leave - https://www.freepik.com/icon/arrow_10522088#fromView=search&page=1&posit
 join - https://www.freepik.com/icon/add-group_1387940#fromView=search&page=1&position=48&uuid=cf6ead48-92e1-401f-a8b5-589d7401fcf1
 send - https://www.freepik.com/icon/send_11908146#fromView=search&page=1&position=2&uuid=e80471a0-53ec-4988-874f-9b4ad411a30e
 delete - https://www.freepik.com/icon/bin_7606196#fromView=search&page=1&position=17&uuid=9b1dcc2c-552d-4fca-a01d-35a83109eb92
+copy - https://www.freepik.com/icon/copy_1621635#fromView=search&page=1&position=4&uuid=4eef6785-9ac4-46d8-a433-50b9409778b9
+photo - https://www.freepik.com/icon/photo-camera_7022715#fromView=search&page=1&position=12&uuid=7ce1460a-6368-4dbc-bef4-3616ca7a1704
+image - https://www.freepik.com/icon/social_15049667#fromView=search&page=1&position=4&uuid=5839f105-c010-4d11-ba37-322b991611fe
+close - https://www.freepik.com/icon/close_2976286#fromView=search&page=1&position=0&uuid=2dfdde9c-6c19-4b05-bafa-c49aaa7667f9

@@ -28,6 +28,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     private readonly ISymbolImageComposer _symbolImageComposer;
     private readonly IMediaService _filePickerService;
     private readonly IClipboardService _clipboardService;
+    private readonly IAlertService _alertService;
 
     public Guid CurrentUserId { get; set; }
     public string CurrentUserName { get; set; }
@@ -65,7 +66,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     public event EventHandler<ResultEventArgs<MapPointListModel>> CreatedClosing;
 
     public CreateMapPointPopupViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IMapPointSymbolDataProvider symbolDataProvider,
-        ISymbolImageComposer symbolImageComposer, IMediaService filePickerService, IClipboardService clipboardService,
+        ISymbolImageComposer symbolImageComposer, IMediaService filePickerService, IClipboardService clipboardService, IAlertService alertService,
         IMediator mediator, IPopupService popupService)
         : base(mediator, popupService)
     {
@@ -74,6 +75,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
         _symbolImageComposer = symbolImageComposer;
         _filePickerService = filePickerService;
         _clipboardService = clipboardService;
+        _alertService = alertService;
 
         MapPointColorItems = _symbolDataProvider.GetMapPointSymbolColorItems().ToObservableCollection();
         MapPointShapeItems = _symbolDataProvider.GetMapPointSymbolShapeItems().ToObservableCollection();
@@ -125,6 +127,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
         }
 
         await _clipboardService.SetAsync(coordinateString);
+        await _alertService.ShowToastAsync("Coordinates copied to clipboard");
     }
 
     private async Task PickImageAsync()
