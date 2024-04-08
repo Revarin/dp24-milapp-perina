@@ -7,7 +7,7 @@
           x:DataType="vm:ConfirmationPopupViewModel">
     
     <StackLayout Orientation="Vertical"
-                 BackgroundColor="{StaticResource Secondary}"
+                 BackgroundColor="{StaticResource Background}"
                  Style="{StaticResource PopupMainStack}">
         
         <Label Text="{Binding Message}" />
