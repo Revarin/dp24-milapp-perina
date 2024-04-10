@@ -31,8 +31,12 @@ public sealed class GetConversationsQueryHandler : ConversationHandler, IRequest
 
         var conversations = new AvailableConversationsModel
         {
-            SpecialConversations = response.Values.Where(conversation => conversation.ConversationType != ConversationType.Direct).Select(_conversationMapper.Map),
-            DirectConversations = response.Values.Where(conversation => conversation.ConversationType == ConversationType.Direct).Select(_conversationMapper.Map)
+            SpecialConversations = response.Values.Where(conversation => conversation.ConversationType != ConversationType.Direct)
+                .Select(_conversationMapper.Map)
+                .OrderByDescending(c => c.LastMessage),
+            DirectConversations = response.Values.Where(conversation => conversation.ConversationType == ConversationType.Direct)
+                .Select(_conversationMapper.Map)
+                .OrderByDescending(c => c.LastMessage)
         };
         return Result.Ok(conversations);
     }

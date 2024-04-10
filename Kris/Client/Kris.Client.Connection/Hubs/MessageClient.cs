@@ -45,17 +45,23 @@ public sealed class MessageClient : IMessageHub, IMessageReceiver
         _hubConnection.KeepAliveInterval = TimeSpan.FromSeconds(_connectionOptions.HubKeepAliveSeconds);
         _hubConnection.On<MessageModel>(nameof(ReceiveMessage), ReceiveMessage);
 
-        await _hubConnection.StartAsync().ContinueWith(_ => IsConnected = true);
+        await _hubConnection.StartAsync();
+        IsConnected = true;
     }
 
     public async Task Disconnect()
     {
-        if (_hubConnection != null && _hubConnection.State != HubConnectionState.Disconnected)
+        if (_hubConnection != null)
         {
-            await _hubConnection.StopAsync().ContinueWith(_ => IsConnected = false);
+            if (_hubConnection.State != HubConnectionState.Disconnected)
+            {
+                await _hubConnection.StopAsync();
+            }
             await _hubConnection.DisposeAsync();
             _hubConnection = null;
         }
+
+        IsConnected = false;
     }
 
     public async Task<Response> SendMessage(SendMessageRequest request)

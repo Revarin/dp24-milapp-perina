@@ -393,11 +393,8 @@ public sealed partial class MapViewModel : PageViewModelBase
             }
         }
 
-        if (_messageReceiver.IsConnected)
-        {
-            _messageReceiver.MessageReceived -= OnMessageReceived;
-            await _messageReceiver.Disconnect();
-        }
+        _messageReceiver.MessageReceived -= OnMessageReceived;
+        await _messageReceiver.Disconnect();
 
         KrisMapStyle = null;
         _mapTileRepository?.Dispose();
