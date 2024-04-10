@@ -9,7 +9,7 @@ public sealed class SymbolImageComposer : ISymbolImageComposer
 
     public Stream ComposeMapPointSymbol(MapPointSymbolShape? pointShape, MapPointSymbolColor? pointColor, MapPointSymbolSign? pointSign)
     {
-        if (!pointShape.HasValue || pointShape.Value == MapPointSymbolShape.None) return null;
+        if (!pointShape.HasValue) return null;
 
         var shape = pointShape.Value;
         var shapeImageStream = typeof(App).Assembly.GetManifestResourceStream($"{ImageResourcePath}.{PointShapeFileName(shape)}");
@@ -35,7 +35,7 @@ public sealed class SymbolImageComposer : ISymbolImageComposer
             var signImageStream = typeof(App).Assembly.GetManifestResourceStream($"{ImageResourcePath}.{PointSignFileName(sign)}");
             var signImage = SKBitmap.Decode(signImageStream);
 
-            DrawAdd(canvas, signImage);
+            DrawAlphaMultiply(canvas, signImage);
         }
 
         var resultImageStream = new MemoryStream();
