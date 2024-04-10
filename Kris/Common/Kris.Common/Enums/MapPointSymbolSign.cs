@@ -4,8 +4,12 @@
 public enum MapPointSymbolSign
 {
     None = 0,
-    Plus,
-    Minus,
-    Cross,
-    Circle
+    Dome,
+    Ammo,
+    Roof,
+    Elipse,
+    Ball,
+    Blades,
+    Screw,
+    Bridge
 }
