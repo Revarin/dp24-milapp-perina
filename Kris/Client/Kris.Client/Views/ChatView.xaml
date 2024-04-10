@@ -4,6 +4,7 @@
              xmlns:tk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:vm="clr-namespace:Kris.Client.ViewModels.Views"
              xmlns:item="clr-namespace:Kris.Client.Components.Items"
+             xmlns:behaviors="clr-namespace:Kris.Client.Behaviors"
              x:Class="Kris.Client.Views.ChatView"
              x:DataType="vm:ChatViewModel"
              Title="{Binding ConversationName}">
@@ -26,55 +27,54 @@
             </ImageButton.Behaviors>
         </ImageButton>
 
-        <ScrollView Orientation="Vertical"
-                    VerticalOptions="FillAndExpand">
-            <StackLayout Orientation="Vertical"
-                         VerticalOptions="FillAndExpand"
-                         Style="{StaticResource MainStack}">
+        <StackLayout Orientation="Vertical"
+                     VerticalOptions="FillAndExpand"
+                     Style="{StaticResource MainStack}">
 
-                <StackLayout Orientation="Vertical"
-                             VerticalOptions="FillAndExpand"
-                             HorizontalOptions="FillAndExpand"
-                             Style="{StaticResource SecondaryStack}">
-                    <CollectionView ItemsSource="{Binding Messages}"
-                                    VerticalOptions="EndAndExpand"
-                                    HorizontalOptions="FillAndExpand"
-                                    SelectionMode="None"
-                                    ItemsUpdatingScrollMode="KeepLastItemInView"
-                                    VerticalScrollBarVisibility="Never">
-                        <CollectionView.ItemsLayout>
-                            <LinearItemsLayout Orientation="Vertical"
-                                               ItemSpacing="3" />
-                        </CollectionView.ItemsLayout>
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <item:MessageItem BindingContext="{Binding .}" />
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </StackLayout>
+            <CollectionView ItemsSource="{Binding Messages}"
+                            VerticalOptions="EndAndExpand"
+                            HorizontalOptions="FillAndExpand"
+                            SelectionMode="None"
+                            Rotation="180"
+                            VerticalScrollBarVisibility="Always"
+                            RemainingItemsThreshold="{Binding MessageThreshold}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical"
+                                       ItemSpacing="3"
+                                       SnapPointsType="None"
+                                       SnapPointsAlignment="Center"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <item:MessageItem BindingContext="{Binding .}" Rotation="180" />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.Behaviors>
+                    <behaviors:CollectionViewScrollToBehavior Request="{Binding ScrollTo}" />
+                    <tk:EventToCommandBehavior EventName="RemainingItemsThresholdReached" Command="{Binding CollectionItemsThresholdReachedCommand}" />
+                </CollectionView.Behaviors>
+            </CollectionView>
 
-                <StackLayout Orientation="Horizontal"
-                             HorizontalOptions="FillAndExpand"
-                             VerticalOptions="End"
-                             Style="{StaticResource TertiaryStack}">
-                    
-                    <Entry HorizontalOptions="FillAndExpand"
-                           Placeholder="Send message..."
-                           Keyboard="Chat"
-                           Text="{Binding MessageBody}">
-                    </Entry>
-                    
-                    <ImageButton Source="send.png"
-                                 HorizontalOptions="End"
-                                 Style="{StaticResource BigImageButton}">
-                        <ImageButton.Behaviors>
-                            <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SendButtonClickedCommand}" />
-                        </ImageButton.Behaviors>
-                    </ImageButton>
-                </StackLayout>
+            <StackLayout Orientation="Horizontal"
+                         HorizontalOptions="FillAndExpand"
+                         VerticalOptions="End"
+                         Style="{StaticResource TertiaryStack}">
+
+                <Entry HorizontalOptions="FillAndExpand"
+                       Placeholder="Send message..."
+                       Keyboard="Chat"
+                       Text="{Binding MessageBody}">
+                </Entry>
+
+                <ImageButton Source="send.png"
+                             HorizontalOptions="End"
+                             Style="{StaticResource BigImageButton}">
+                    <ImageButton.Behaviors>
+                        <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SendButtonClickedCommand}" />
+                    </ImageButton.Behaviors>
+                </ImageButton>
             </StackLayout>
-        </ScrollView>
+        </StackLayout>
 
         <StackLayout Orientation="Horizontal"
                      HorizontalOptions="FillAndExpand"

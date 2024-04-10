@@ -16,9 +16,11 @@
             <StackLayout Orientation="Horizontal"
                          HorizontalOptions="FillAndExpand">
                 <Label Text="{Binding SenderName}"
-                       Style="{StaticResource TitleLabel}" />
+                       Style="{StaticResource TitleLabel}"
+                       HorizontalOptions="StartAndExpand" />
                 <Label Text="{Binding Sent, StringFormat='({0:dd.MM.yyyy, H:mm:ss})'}"
-                       HorizontalOptions="End" />
+                       HorizontalOptions="End"
+                       Style="{StaticResource SmallLabel}" />
             </StackLayout>
             <Label Text="{Binding Body}" />
         </StackLayout>

@@ -5,37 +5,47 @@ using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Constants;
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
+using Kris.Client.Common.Options;
 using Kris.Client.Connection.Hubs;
 using Kris.Client.Connection.Hubs.Events;
 using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
+using Kris.Client.Utility;
 using Kris.Client.ViewModels.Items;
 using Kris.Client.ViewModels.Utility;
 using Kris.Common.Extensions;
 using MediatR;
+using Microsoft.Extensions.Options;
 using System.Collections.ObjectModel;
 
 namespace Kris.Client.ViewModels.Views;
 
 public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributable
 {
+    private readonly SettingsOptions _settingsOptions;
     private readonly IMessageReceiver _messageReceiver;
+
+    [ObservableProperty]
+    private IViewRequest<int> _scrollTo = new Client.Utility.ScrollToRequest();
 
     [ObservableProperty]
     private Guid _conversationId;
     [ObservableProperty]
     private string _conversationName;
     [ObservableProperty]
-    private ObservableCollection<MessageItemViewModel> _messages;
+    private ObservableCollection<MessageItemViewModel> _messages = new ObservableCollection<MessageItemViewModel>();
+    [ObservableProperty]
+    private int _messageThreshold = -1;
 
     [ObservableProperty]
     private string _messageBody;
 
-    public ChatViewModel(IMessageReceiver messageReceiver,
+    public ChatViewModel(IOptions<SettingsOptions> options, IMessageReceiver messageReceiver,
         IMediator mediator, IRouterService navigationService, IMessageService messageService, IPopupService popupService, IAlertService alertService)
         : base(mediator, navigationService, messageService, popupService, alertService)
     {
+        _settingsOptions = options.Value;
         _messageReceiver = messageReceiver;
     }
 
@@ -50,7 +60,14 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
     private async Task OnAppearing()
     {
         _messageReceiver.MessageReceived += OnMessageReceived;
-        await LoadMessagesAsync();
+        await LoadMessagesAsync(0);
+        await Task.Delay(1000).ContinueWith(_ =>
+        {
+            if (Messages.Count == _settingsOptions.ChatMessagesPageSize)
+            {
+                MessageThreshold = 5;
+            }
+        });
     }
     [RelayCommand]
     private async Task OnBackButtonClicked() => await GoToContactsAsync();
@@ -58,13 +75,20 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
     private async Task OnSendButtonClicked() => await SendMessageAsync();
     [RelayCommand]
     private async Task OnDeleteButtonClicked() => await DeleteConversationAsync();
+    [RelayCommand]
+    private async Task OnCollectionItemsThresholdReached()
+    {
+        var lastMessage = Messages.Count - 1;
+        await LoadMessagesAsync(Messages.Count / _settingsOptions.ChatMessagesPageSize);
+        ScrollTo.Execute(lastMessage);
+    }
 
     // CORE
-    private async Task LoadMessagesAsync()
+    private async Task LoadMessagesAsync(int page)
     {
         var ct = new CancellationToken();
-        var query = new GetMessagesQuery { ConversationId = ConversationId, Page = 0 };
-        var result = await MediatorSendLoadingAsync(query, ct);
+        var query = new GetMessagesQuery { ConversationId = ConversationId, Page = page };
+        var result = await MediatorSendAsync(query, ct);
 
         if (result.IsFailed)
         {
@@ -85,10 +109,15 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
         }
         else
         {
-            Messages = result.Value
-                .OrderBy(m => m.TimeStamp)
-                .Select(m => new MessageItemViewModel(m))
+            Messages = Messages.Concat(result.Value
+                .OrderByDescending(m => m.TimeStamp)
+                .Select(m => new MessageItemViewModel(m)))
                 .ToObservableCollection();
+
+            if (result.Value.Count() < _settingsOptions.ChatMessagesPageSize)
+            {
+                MessageThreshold = -1;
+            }
         }
     }
 
@@ -168,7 +197,8 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
             Body = e.Body,
             TimeStamp = e.TimeStamp
         };
-        Messages.Add(new MessageItemViewModel(message));
+        Messages.Insert(0, new MessageItemViewModel(message));
+        ScrollTo.Execute(0);
     }
 
     // MISC
