@@ -19,7 +19,10 @@ public sealed class UpdateMapSettingsCommandHandler : SettingsHandler, IRequestH
     public async Task<Result> Handle(UpdateMapSettingsCommand request, CancellationToken cancellationToken)
     {
         _settingsStore.StoreMapSettings(request.MapSettings);
-        _settingsStore.StoreMapTilesSourcePath(request.CustomMapTilesDatabasePath);
+        if (request.CustomMapTilesDatabasePath != null)
+        {
+            _settingsStore.StoreMapTilesSourcePath(request.CustomMapTilesDatabasePath);
+        }
 
         var httpRequest = new StoreUserSettingsRequest
         {

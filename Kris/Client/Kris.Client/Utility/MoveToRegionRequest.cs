@@ -3,7 +3,7 @@ using Microsoft.Maui.Maps;
 
 namespace Kris.Client.Utility;
 
-public sealed class MoveToRegionRequest
+public sealed class MoveToRegionRequest : IViewRequest<MapSpan>
 {
     public event EventHandler<MoveToRegionEventArgs> MoveToRegionRequested;
 

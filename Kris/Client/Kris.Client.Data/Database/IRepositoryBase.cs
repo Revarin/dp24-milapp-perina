@@ -2,5 +2,4 @@
 
 public interface IRepositoryBase : IDisposable
 {
-    bool IsDbSchemaValid();
 }

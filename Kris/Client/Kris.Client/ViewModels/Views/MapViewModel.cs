@@ -46,7 +46,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     [ObservableProperty]
     private MapSpan _currentRegion;
     [ObservableProperty]
-    private MoveToRegionRequest _moveToRegion = new MoveToRegionRequest();
+    private IViewRequest<MapSpan> _moveToRegion = new MoveToRegionRequest();
     [ObservableProperty]
     private LocationCoordinates _currentPosition = new LocationCoordinates();
 
@@ -393,11 +393,8 @@ public sealed partial class MapViewModel : PageViewModelBase
             }
         }
 
-        if (_messageReceiver.IsConnected)
-        {
-            _messageReceiver.MessageReceived -= OnMessageReceived;
-            await _messageReceiver.Disconnect();
-        }
+        _messageReceiver.MessageReceived -= OnMessageReceived;
+        await _messageReceiver.Disconnect();
 
         KrisMapStyle = null;
         _mapTileRepository?.Dispose();
