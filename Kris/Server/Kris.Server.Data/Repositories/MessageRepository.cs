@@ -24,6 +24,7 @@ public sealed class MessageRepository : RepositoryBase<MessageEntity>, IMessageR
             .Include(message => message.Sender)
             .ThenInclude(sessionUser => sessionUser!.User)
             .Where(message => message.ConversationId == conversationId)
+            .OrderByDescending(message => message.TimeStamp)
             .Take(count)
             .ToListAsync(ct);
     }
@@ -34,6 +35,7 @@ public sealed class MessageRepository : RepositoryBase<MessageEntity>, IMessageR
             .Include(message => message.Sender)
             .ThenInclude(sessionUser => sessionUser!.User)
             .Where(message => message.ConversationId == conversationId)
+            .OrderByDescending(message => message.TimeStamp)
             .Skip(from)
             .Take(count)
             .ToListAsync(ct);
