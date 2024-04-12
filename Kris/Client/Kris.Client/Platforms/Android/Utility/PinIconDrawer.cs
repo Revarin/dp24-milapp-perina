@@ -44,11 +44,12 @@ public static class PinIconDrawer
         var finalHeight = textHeight + (int)(imageBitmap.Height * Scale) + StrokeWidth;
         var finalWidth = System.Math.Max(textWidth, (int)(imageBitmap.Width * Scale)) + StrokeWidth;
         var imageLeft = (finalWidth / 2) - ((int)(imageBitmap.Width * Scale) / 2);
+        var textLeft = (finalWidth / 2) - (textWidth / 2);
         var finalBitmap = Bitmap.CreateBitmap(finalWidth, finalHeight, Bitmap.Config.Argb8888);
         var canvas = new Canvas(finalBitmap);
 
-        canvas.DrawText(label, 0, baseline + StrokeWidth, strokePaint);
-        canvas.DrawText(label, 0, baseline + StrokeWidth, fillPaint);
+        canvas.DrawText(label, textLeft, baseline + StrokeWidth, strokePaint);
+        canvas.DrawText(label, textLeft, baseline + StrokeWidth, fillPaint);
 
         var matrix = new Matrix();
         matrix.PostScale(Scale, Scale);
