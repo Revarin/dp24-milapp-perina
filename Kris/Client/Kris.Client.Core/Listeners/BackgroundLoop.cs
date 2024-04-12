@@ -1,4 +1,5 @@
 ﻿using Kris.Client.Data.Cache;
+using Kris.Client.Data.Models;
 
 namespace Kris.Client.Core.Listeners;
 
@@ -29,7 +30,11 @@ public sealed class BackgroundLoop : IBackgroundLoop
 
     private bool _reloadSettings;
     private readonly TimeSpan _delay = TimeSpan.FromSeconds(1);
-    private List<IBackgroundHandler> handlers = new List<IBackgroundHandler>();
+    private List<IBackgroundHandler> _handlers = new List<IBackgroundHandler>();
+
+    private ConnectionSettingsEntity _connectionSetting;
+    private UserIdentityEntity _userIdentity;
+    private uint _iteration = 0;
 
     public BackgroundLoop(ISettingsStore settingsStore, IIdentityStore identityStore)
     {
@@ -39,33 +44,32 @@ public sealed class BackgroundLoop : IBackgroundLoop
 
     public void RegisterHandler(IBackgroundHandler handler)
     {
-        handlers.Add(handler);
+        _handlers.Add(handler);
     }
 
     public void UnregisterHandler(IBackgroundHandler handler)
     {
         handler.ResetLastUpdate();
-        handlers.Remove(handler);
+        _handlers.Remove(handler);
     }
 
     public void ClearHandlers()
     {
-        handlers.ForEach(h => h.ResetLastUpdate());
-        handlers.Clear();
+        _handlers.ForEach(h => h.ResetLastUpdate());
+        _handlers.Clear();
     }
 
     public void ResetHandlers()
     {
-        handlers.ForEach(h => h.ResetLastUpdate());
+        _handlers.ForEach(h => h.ResetLastUpdate());
     }
 
-    public Task Start(CancellationToken ct)
+    public Task StartAsync(CancellationToken ct)
     {
         return Task.Run(async () =>
         {
-            var connectionSettings = _settingsStore.GetConnectionSettings();
-            var userIdentity = _identityStore.GetIdentity();
-            uint iter = 0;
+            _connectionSetting = _settingsStore.GetConnectionSettings();
+            _userIdentity = _identityStore.GetIdentity();
 
             try
             {
@@ -75,17 +79,17 @@ public sealed class BackgroundLoop : IBackgroundLoop
                 {
                     if (ReloadSettings)
                     {
-                        connectionSettings = _settingsStore.GetConnectionSettings();
-                        userIdentity = _identityStore.GetIdentity();
+                        _connectionSetting = _settingsStore.GetConnectionSettings();
+                        _userIdentity = _identityStore.GetIdentity();
                         ReloadSettings = false;
                     }
 
-                    foreach (var handler in handlers)
+                    foreach (var handler in _handlers)
                     {
-                        await handler.ExecuteAsync(connectionSettings, userIdentity, iter, ct);
+                        await handler.ExecuteAsync(_connectionSetting, _userIdentity, _iteration, ct);
                     }
 
-                    iter++;
+                    _iteration++;
                     await Task.Delay(_delay, ct);
                 }
             }
@@ -94,5 +98,22 @@ public sealed class BackgroundLoop : IBackgroundLoop
                 IsRunning = false;
             }
         }, ct);
+    }
+
+    public async Task ExecuteAsync(CancellationToken ct)
+    {
+        if (ReloadSettings || _connectionSetting == null || _userIdentity == null)
+        {
+            _connectionSetting = _settingsStore.GetConnectionSettings();
+            _userIdentity = _identityStore.GetIdentity();
+            ReloadSettings = false;
+        }
+
+        foreach (var handler in _handlers)
+        {
+            await handler.ExecuteAsync(_connectionSetting, _userIdentity, _iteration, ct);
+        }
+
+        _iteration++;
     }
 }

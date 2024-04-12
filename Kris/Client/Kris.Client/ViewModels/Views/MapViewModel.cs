@@ -18,10 +18,10 @@ using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.Data.Database;
 using Kris.Client.Data.Providers;
+using Kris.Client.Platforms.Background;
 using Kris.Client.Utility;
 using Kris.Client.ViewModels.Items;
 using Kris.Client.ViewModels.Popups;
-using Kris.Client.ViewModels.Utility;
 using Kris.Client.Views;
 using Kris.Common.Enums;
 using Kris.Common.Extensions;
@@ -43,6 +43,8 @@ public sealed partial class MapViewModel : PageViewModelBase
     private readonly IMapObjectsBackgroundHandler _mapObjectsBackgroundHandler;
     private readonly IMessageReceiver _messageReceiver;
 
+    private readonly Core.Background.ICurrentPositionBackgroundHandler _cpbh;
+
     [ObservableProperty]
     private MapSpan _currentRegion;
     [ObservableProperty]
@@ -62,7 +64,8 @@ public sealed partial class MapViewModel : PageViewModelBase
     private CoordinateSystem _coordinateSystem;
     private KrisMapType _krisMapType;
 
-    public MapViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IRepositoryFactory repositoryFactory,
+    public MapViewModel(Core.Background.ICurrentPositionBackgroundHandler cpbh,
+        IMapSettingsDataProvider mapSettingsDataProvider, IRepositoryFactory repositoryFactory,
         IKrisMapObjectFactory krisMapObjectFactory, IBackgroundLoop backgroundLoop,
         ICurrentPositionBackgroundHandler currentPositionBackgroundHandler, IUserPositionsBackgroundHandler userPositionsBackgroundHandler,
         IMapObjectsBackgroundHandler mapObjectsBackgroundHandler, IMessageReceiver messageReceiver,
@@ -77,6 +80,8 @@ public sealed partial class MapViewModel : PageViewModelBase
         _userPositionsBackgroundHandler = userPositionsBackgroundHandler;
         _mapObjectsBackgroundHandler = mapObjectsBackgroundHandler;
         _messageReceiver = messageReceiver;
+
+        _cpbh = cpbh;
 
         _messageService.Register<LogoutMessage>(this, OnLogout);
         _messageService.Register<CurrentSessionChangedMessage>(this, OnBackgroundContextChanged);
@@ -114,19 +119,24 @@ public sealed partial class MapViewModel : PageViewModelBase
     {
         if (!_backgroundLoop.IsRunning)
         {
-            _currentPositionBackgroundHandler.CurrentPositionChanged += OnCurrentPositionChanged;
+            //_currentPositionBackgroundHandler.CurrentPositionChanged += OnCurrentPositionChanged;
             _userPositionsBackgroundHandler.UserPositionsChanged += OnUserPositionsChanged;
             _mapObjectsBackgroundHandler.MapObjectsChanged += OnMapObjectsChanged;
-            _currentPositionBackgroundHandler.ErrorOccured += OnBackgroundHandlerErrorOccured;
+            //_currentPositionBackgroundHandler.ErrorOccured += OnBackgroundHandlerErrorOccured;
             _userPositionsBackgroundHandler.ErrorOccured += OnBackgroundHandlerErrorOccured;
             _mapObjectsBackgroundHandler.ErrorOccured += OnBackgroundHandlerErrorOccured;
 
-            _backgroundLoop.RegisterHandler(_currentPositionBackgroundHandler);
+            _cpbh.CurrentPositionChanged += OnCurrentPositionChanged;
+            _cpbh.ErrorOccured += OnBackgroundHandlerErrorOccured;
+
+            //_backgroundLoop.RegisterHandler(_currentPositionBackgroundHandler);
             _backgroundLoop.RegisterHandler(_userPositionsBackgroundHandler);
             _backgroundLoop.RegisterHandler(_mapObjectsBackgroundHandler);
 
             _backgroundLoopCTS = new CancellationTokenSource();
-            _backgroundLoopTask = _backgroundLoop.Start(_backgroundLoopCTS.Token);
+            _backgroundLoopTask = _backgroundLoop.StartAsync(_backgroundLoopCTS.Token);
+
+            CurrentPositionBackgroundService.StartService();
         }
     }
 
@@ -381,10 +391,10 @@ public sealed partial class MapViewModel : PageViewModelBase
             catch (TaskCanceledException) { }
             finally
             {
-                _currentPositionBackgroundHandler.CurrentPositionChanged -= OnCurrentPositionChanged;
+                //_currentPositionBackgroundHandler.CurrentPositionChanged -= OnCurrentPositionChanged;
                 _userPositionsBackgroundHandler.UserPositionsChanged -= OnUserPositionsChanged;
                 _mapObjectsBackgroundHandler.MapObjectsChanged -= OnMapObjectsChanged;
-                _currentPositionBackgroundHandler.ErrorOccured -= OnBackgroundHandlerErrorOccured;
+                //_currentPositionBackgroundHandler.ErrorOccured -= OnBackgroundHandlerErrorOccured;
                 _userPositionsBackgroundHandler.ErrorOccured -= OnBackgroundHandlerErrorOccured;
                 _mapObjectsBackgroundHandler.ErrorOccured -= OnBackgroundHandlerErrorOccured;
 
@@ -392,6 +402,10 @@ public sealed partial class MapViewModel : PageViewModelBase
                 _backgroundLoopCTS.Dispose();
             }
         }
+
+        _cpbh.CurrentPositionChanged -= OnCurrentPositionChanged;
+        _cpbh.ErrorOccured -= OnBackgroundHandlerErrorOccured;
+        CurrentPositionBackgroundService.StopService();
 
         _messageReceiver.MessageReceived -= OnMessageReceived;
         await _messageReceiver.Disconnect();
@@ -404,8 +418,8 @@ public sealed partial class MapViewModel : PageViewModelBase
 
     private async void OnBackgroundContextChanged(object sender, MessageBase message)
     {
-        // TODO: Rename a move
         _backgroundLoop.ReloadSettings = true;
+        _cpbh.ReloadSettings = true;
 
         if (message is CurrentSessionChangedMessage)
         {

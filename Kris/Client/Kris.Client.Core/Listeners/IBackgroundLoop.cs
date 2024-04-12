@@ -9,5 +9,6 @@ public interface IBackgroundLoop
     void UnregisterHandler(IBackgroundHandler handler);
     void ClearHandlers();
     void ResetHandlers();
-    Task Start(CancellationToken ct);
+    Task StartAsync(CancellationToken ct);
+    Task ExecuteAsync(CancellationToken ct);
 }

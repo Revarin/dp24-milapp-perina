@@ -25,6 +25,7 @@ using Kris.Client.Core.Image;
 using Kris.Client.Data.Database;
 using Kris.Client.Components.Utility;
 using Kris.Client.ViewModels.Utility;
+using Kris.Client.Core.Background;
 
 namespace Kris.Client
 {
@@ -109,9 +110,11 @@ namespace Kris.Client
             builder.Services.AddSingleton<IMessageMapper, MessageMapper>();
 
             builder.Services.AddSingleton<IBackgroundLoop, BackgroundLoop>();
-            builder.Services.AddSingleton<ICurrentPositionBackgroundHandler, CurrentPositionBackgroundHandler>();
+            builder.Services.AddSingleton<Core.Listeners.ICurrentPositionBackgroundHandler, Core.Listeners.CurrentPositionBackgroundHandler>();
             builder.Services.AddSingleton<IUserPositionsBackgroundHandler, UserPositionsBackgroundHandler>();
             builder.Services.AddSingleton<IMapObjectsBackgroundHandler, MapObjectsBackgroundHandler>();
+
+            builder.Services.AddSingleton<Core.Background.ICurrentPositionBackgroundHandler, Core.Background.CurrentPositionBackgroundHandler>();
 
             builder.Services.AddSingleton<IRouterService, RouterService>();
             builder.Services.AddSingleton<IAlertService, AlertService>();
