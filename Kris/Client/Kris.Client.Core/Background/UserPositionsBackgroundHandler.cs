@@ -1,12 +1,12 @@
 ﻿using FluentResults;
 using Kris.Client.Common.Errors;
-using Kris.Client.Core.Listeners.Events;
+using Kris.Client.Core.Background.Events;
 using Kris.Client.Core.Mappers;
 using Kris.Client.Core.Models;
-using Kris.Client.Data.Models;
+using Kris.Client.Data.Cache;
 using Kris.Interface.Controllers;
 
-namespace Kris.Client.Core.Listeners;
+namespace Kris.Client.Core.Background;
 
 public sealed class UserPositionsBackgroundHandler : BackgroundHandler, IUserPositionsBackgroundHandler
 {
@@ -17,16 +17,19 @@ public sealed class UserPositionsBackgroundHandler : BackgroundHandler, IUserPos
 
     private DateTime _lastUpdate = DateTime.MinValue;
 
-    public UserPositionsBackgroundHandler(IPositionController positionClient, IPositionMapper positionMapper)
+    public UserPositionsBackgroundHandler(IPositionController positionClient, IPositionMapper positionMapper,
+        ISettingsStore settingsStore, IIdentityStore identityStore)
+        : base(settingsStore, identityStore)
     {
         _positionClient = positionClient;
         _positionMapper = positionMapper;
     }
 
-    public override async Task ExecuteAsync(ConnectionSettingsEntity connectionSettings, UserIdentityEntity userIdentity, uint iteration, CancellationToken ct)
+
+    public override async Task ExecuteAsync(CancellationToken ct)
     {
-        if (iteration % (uint)connectionSettings.PositionDownloadInterval.TotalSeconds != 0) return;
-        if (userIdentity.CurrentSession == null) return;
+        if (ReloadSettings) LoadSettings();
+        if (_userIdentity.CurrentSession == null) return;
 
         var response = await _positionClient.GetPositions(_lastUpdate, ct);
 
@@ -39,8 +42,13 @@ public sealed class UserPositionsBackgroundHandler : BackgroundHandler, IUserPos
         OnUserPositionsChanged(response.UserPositions.Select(_positionMapper.Map), response.Resolved);
         _lastUpdate = response.Resolved;
     }
-    public override void ResetLastUpdate()
+
+    protected override void LoadSettings()
     {
+        _connectionSettings = _settingsStore.GetConnectionSettings();
+        _userIdentity = _identityStore.GetIdentity();
+        Interval = _connectionSettings.PositionDownloadInterval;
+        ReloadSettings = false;
         _lastUpdate = DateTime.MinValue;
     }
 

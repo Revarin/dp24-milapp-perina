@@ -1,11 +1,10 @@
 ﻿using FluentResults;
 using Kris.Client.Common.Errors;
-using Kris.Client.Core.Listeners.Events;
+using Kris.Client.Core.Background.Events;
 using Kris.Client.Core.Mappers;
 using Kris.Client.Core.Models;
 using Kris.Client.Core.Services;
 using Kris.Client.Data.Cache;
-using Kris.Client.Data.Models;
 using Kris.Common.Enums;
 using Kris.Common.Models;
 using Kris.Interface.Controllers;
@@ -22,10 +21,9 @@ public sealed class CurrentPositionBackgroundHandler : BackgroundHandler, ICurre
 
     public event EventHandler<UserPositionEventArgs> CurrentPositionChanged;
 
+    public new bool IsRunning { get; set; }
+
     private PermissionStatus _permissionStatus = PermissionStatus.Unknown;
-    private ConnectionSettingsEntity _connectionSettings;
-    private UserIdentityEntity _userIdentity;
-    private uint _iteration = 0;
 
     public CurrentPositionBackgroundHandler(IGpsService gpsService, IPermissionService permissionService,
         IPositionController positionClient, IPositionMapper positionMapper,
@@ -36,15 +34,13 @@ public sealed class CurrentPositionBackgroundHandler : BackgroundHandler, ICurre
         _permissionService = permissionService;
         _positionClient = positionClient;
         _positionMapper = positionMapper;
-
-        LoadSettings();
     }
 
     public override async Task ExecuteAsync(CancellationToken ct)
     {
+        if (ReloadSettings) LoadSettings();
         if (_permissionStatus == PermissionStatus.Denied || _permissionStatus == PermissionStatus.Disabled) return;
         if (_permissionStatus == PermissionStatus.Unknown) await AskForGpsPermissionAsync();
-        if (ReloadSettings) LoadSettings();
 
         Location location = null;
 
@@ -92,8 +88,14 @@ public sealed class CurrentPositionBackgroundHandler : BackgroundHandler, ICurre
                 else OnErrorOccured(Result.Fail(new ServerError(response.Message)));
             }
         }
+    }
 
-        await Task.Delay(_connectionSettings.GpsInterval, ct);
+    protected override void LoadSettings()
+    {
+        _connectionSettings = _settingsStore.GetConnectionSettings();
+        _userIdentity = _identityStore.GetIdentity();
+        Interval = _connectionSettings.GpsInterval;
+        ReloadSettings = false;
     }
 
     private async Task AskForGpsPermissionAsync()
@@ -104,14 +106,6 @@ public sealed class CurrentPositionBackgroundHandler : BackgroundHandler, ICurre
             _permissionStatus = await _permissionService.CheckAndRequestPermissionAsync<Permissions.LocationAlways>();
             if (_permissionStatus != PermissionStatus.Granted) return;
         }
-    }
-
-    private void LoadSettings()
-    {
-        _connectionSettings = _settingsStore.GetConnectionSettings();
-        _userIdentity = _identityStore.GetIdentity();
-        Interval = _connectionSettings.GpsInterval;
-        ReloadSettings = false;
     }
 
     private void OnLocationRead(UserPositionModel userPosition)

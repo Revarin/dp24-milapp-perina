@@ -80,6 +80,13 @@ public sealed class CurrentPositionBackgroundService : Service
 
     private async void Execute(object state)
     {
+        if (!_handler.IsRunning)
+        {
+            _timer.Dispose();
+            _timer = null;
+            return;
+        }
+
         await _handler.ExecuteAsync(CancellationToken.None);
         _timer.Change(_handler.Interval, _handler.Interval);
     }

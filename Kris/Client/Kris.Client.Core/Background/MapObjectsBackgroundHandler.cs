@@ -1,12 +1,12 @@
 ﻿using FluentResults;
 using Kris.Client.Common.Errors;
-using Kris.Client.Core.Listeners.Events;
+using Kris.Client.Core.Background.Events;
 using Kris.Client.Core.Mappers;
-using Kris.Client.Data.Models;
 using Kris.Client.Core.Models;
+using Kris.Client.Data.Cache;
 using Kris.Interface.Controllers;
 
-namespace Kris.Client.Core.Listeners;
+namespace Kris.Client.Core.Background;
 
 public sealed class MapObjectsBackgroundHandler : BackgroundHandler, IMapObjectsBackgroundHandler
 {
@@ -17,16 +17,18 @@ public sealed class MapObjectsBackgroundHandler : BackgroundHandler, IMapObjects
 
     private DateTime _lastUpdate = DateTime.MinValue;
 
-    public MapObjectsBackgroundHandler(IMapObjectController mapObjectClient, IMapObjectsMapper mapObjectsMapper)
+    public MapObjectsBackgroundHandler(IMapObjectController mapObjectClient, IMapObjectsMapper mapObjectsMapper,
+        ISettingsStore settingsStore, IIdentityStore identityStore)
+        : base(settingsStore, identityStore)
     {
         _mapObjectClient = mapObjectClient;
         _mapObjectsMapper = mapObjectsMapper;
     }
 
-    public override async Task ExecuteAsync(ConnectionSettingsEntity connectionSettings, UserIdentityEntity userIdentity, uint iteration, CancellationToken ct)
+    public override async Task ExecuteAsync(CancellationToken ct)
     {
-        if (iteration % (uint)connectionSettings.PositionDownloadInterval.TotalSeconds != 0) return;
-        if (userIdentity.CurrentSession == null) return;
+        if (ReloadSettings) LoadSettings();
+        if (_userIdentity.CurrentSession == null) return;
 
         var response = await _mapObjectClient.GetMapObjects(_lastUpdate, ct);
 
@@ -39,8 +41,13 @@ public sealed class MapObjectsBackgroundHandler : BackgroundHandler, IMapObjects
         OnMapObjectsChanged(response.MapPoints.Select(_mapObjectsMapper.MapPoint), response.Resolved);
         _lastUpdate = response.Resolved;
     }
-    public override void ResetLastUpdate()
+
+    protected override void LoadSettings()
     {
+        _connectionSettings = _settingsStore.GetConnectionSettings();
+        _userIdentity = _identityStore.GetIdentity();
+        Interval = _connectionSettings.MapObjectDownloadInterval;
+        ReloadSettings = false;
         _lastUpdate = DateTime.MinValue;
     }
 
@@ -48,5 +55,4 @@ public sealed class MapObjectsBackgroundHandler : BackgroundHandler, IMapObjects
     {
         Application.Current.Dispatcher.Dispatch(() => MapObjectsChanged?.Invoke(this, new MapObjectsEventArgs(mapPoints, loaded)));
     }
-
 }

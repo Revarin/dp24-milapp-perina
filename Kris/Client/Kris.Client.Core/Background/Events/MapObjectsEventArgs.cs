@@ -1,6 +1,6 @@
 ﻿using Kris.Client.Core.Models;
 
-namespace Kris.Client.Core.Listeners.Events;
+namespace Kris.Client.Core.Background.Events;
 
 public sealed class MapObjectsEventArgs : EventArgs
 {

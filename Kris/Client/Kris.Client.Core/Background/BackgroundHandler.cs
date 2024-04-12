@@ -1,6 +1,7 @@
 ﻿using FluentResults;
 using Kris.Client.Common.Events;
 using Kris.Client.Data.Cache;
+using Kris.Client.Data.Models;
 
 namespace Kris.Client.Core.Background;
 
@@ -11,6 +12,7 @@ public abstract class BackgroundHandler : IBackgroundHandler
 
     public event EventHandler<ResultEventArgs> ErrorOccured;
 
+    public TimeSpan Interval { get; set; }
     public bool IsRunning { get; private set; }
     public bool ReloadSettings
     {
@@ -29,18 +31,23 @@ public abstract class BackgroundHandler : IBackgroundHandler
             }
         }
     }
-    public TimeSpan Interval { get; set; }
 
     protected readonly object reloadSettingsLock = new object();
     protected bool _reloadSettings;
+
+    protected ConnectionSettingsEntity _connectionSettings;
+    protected UserIdentityEntity _userIdentity;
+    protected uint _iteration = 0;
 
     public BackgroundHandler(ISettingsStore settingsStore, IIdentityStore identityStore)
     {
         _settingsStore = settingsStore;
         _identityStore = identityStore;
+        LoadSettings();
     }
 
     public abstract Task ExecuteAsync(CancellationToken ct);
+    protected abstract void LoadSettings();
 
     public Task StartLoopAsync(CancellationToken ct)
     {
@@ -53,6 +60,7 @@ public abstract class BackgroundHandler : IBackgroundHandler
                 while (!ct.IsCancellationRequested)
                 {
                     await ExecuteAsync(ct);
+                    await Task.Delay(Interval, ct);
                 }
             }
             finally
