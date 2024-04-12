@@ -91,10 +91,10 @@ public sealed class CurrentPositionBackgroundHandler : BackgroundHandler, ICurre
 
     private async Task AskForGpsPermissionAsync()
     {
-        _permissionStatus = await _permissionService.CheckPermissionAsync<Permissions.LocationWhenInUse>();
+        _permissionStatus = await _permissionService.CheckPermissionAsync<Permissions.LocationAlways>();
         if (_permissionStatus != PermissionStatus.Granted)
         {
-            _permissionStatus = await _permissionService.CheckAndRequestPermissionAsync<Permissions.LocationWhenInUse>();
+            _permissionStatus = await _permissionService.CheckAndRequestPermissionAsync<Permissions.LocationAlways>();
             if (_permissionStatus != PermissionStatus.Granted) return;
         }
     }

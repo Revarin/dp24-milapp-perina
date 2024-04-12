@@ -35,7 +35,7 @@ public sealed class SymbolImageComposer : ISymbolImageComposer
             var signImageStream = typeof(App).Assembly.GetManifestResourceStream($"{ImageResourcePath}.{PointSignFileName(sign)}");
             var signImage = SKBitmap.Decode(signImageStream);
 
-            DrawAlphaMultiply(canvas, signImage);
+            DrawAdd(canvas, signImage);
         }
 
         var resultImageStream = new MemoryStream();
