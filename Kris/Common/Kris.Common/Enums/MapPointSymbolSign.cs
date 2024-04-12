@@ -11,5 +11,18 @@ public enum MapPointSymbolSign
     Ball,
     Blades,
     Screw,
-    Bridge
+    Bridge,
+    CSS,
+    CMA,
+    Engineer,
+    ElectronicRanging,
+    ElectronicWarfare,
+    EOD,
+    Fuel,
+    Hospital,
+    HQ,
+    Infantry,
+    Medic,
+    Maintenance,
+    MET
 }
