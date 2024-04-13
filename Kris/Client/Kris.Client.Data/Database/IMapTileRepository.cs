@@ -6,4 +6,5 @@ public interface IMapTileRepository : IRepositoryBase
 {
     TileEntity GetTile(int x, int y, int z);
     InfoEntity GetInfo();
+    bool IsDbSchemaValid();
 }

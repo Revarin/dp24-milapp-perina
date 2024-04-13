@@ -28,11 +28,15 @@ public sealed class GetConversationsQueryHandler : ConversationHandler, IRequest
         return Result.Ok(conversations.Select(conversation => new ConversationListModel
         {
             Id = conversation.Id,
-            ConversationType = conversation.ConversationType,
+            ConversationType = conversation.ConversationType == ConversationType.Direct
+                && conversation.Users.FirstOrDefault(u => u.UserId != user.UserId)?.UserType >= UserType.Admin
+                ? ConversationType.AdminDirect
+                : conversation.ConversationType,
             Name = conversation.ConversationType switch
             {
                 ConversationType.Global => "Global Chat",
                 ConversationType.Group => "Group Chat",
+                ConversationType.AdminDirect => conversation.Users.FirstOrDefault(u => u.UserId != user.UserId)?.Nickname ?? "Abandoned Chat",
                 ConversationType.Direct => conversation.Users.FirstOrDefault(u => u.UserId != user.UserId)?.Nickname ?? "Abandoned Chat",
                 _ => throw new ArgumentException("Invalid value")
             },

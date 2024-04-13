@@ -10,18 +10,18 @@ using Kris.Client.Components.Map;
 using Kris.Client.Connection.Hubs;
 using Kris.Client.Connection.Hubs.Events;
 using Kris.Client.Converters;
-using Kris.Client.Core.Listeners;
-using Kris.Client.Core.Listeners.Events;
+using Kris.Client.Core.Background;
+using Kris.Client.Core.Background.Events;
 using Kris.Client.Core.Messages;
 using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Client.Core.Services;
 using Kris.Client.Data.Database;
 using Kris.Client.Data.Providers;
+using Kris.Client.Platforms.Background;
 using Kris.Client.Utility;
 using Kris.Client.ViewModels.Items;
 using Kris.Client.ViewModels.Popups;
-using Kris.Client.ViewModels.Utility;
 using Kris.Client.Views;
 using Kris.Common.Enums;
 using Kris.Common.Extensions;
@@ -37,7 +37,6 @@ public sealed partial class MapViewModel : PageViewModelBase
     private readonly IMapSettingsDataProvider _mapSettingsDataProvider;
     private readonly IRepositoryFactory _repositoryFactory;
     private readonly IKrisMapObjectFactory _krisMapObjectFactory;
-    private readonly IBackgroundLoop _backgroundLoop;
     private readonly ICurrentPositionBackgroundHandler _currentPositionBackgroundHandler;
     private readonly IUserPositionsBackgroundHandler _userPositionsBackgroundHandler;
     private readonly IMapObjectsBackgroundHandler _mapObjectsBackgroundHandler;
@@ -46,7 +45,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     [ObservableProperty]
     private MapSpan _currentRegion;
     [ObservableProperty]
-    private MoveToRegionRequest _moveToRegion = new MoveToRegionRequest();
+    private IViewRequest<MapSpan> _moveToRegion = new MoveToRegionRequest();
     [ObservableProperty]
     private LocationCoordinates _currentPosition = new LocationCoordinates();
 
@@ -55,15 +54,15 @@ public sealed partial class MapViewModel : PageViewModelBase
     [ObservableProperty]
     private ObservableCollection<KrisMapPinViewModel> _allMapPins = new ObservableCollection<KrisMapPinViewModel>();
 
-    private CancellationTokenSource _backgroundLoopCTS;
-    private Task _backgroundLoopTask;
-    private IMapTileRepository _mapTileRepository;
+    private CancellationTokenSource _backgroundHandlersCTS;
+    private Task _userPositionsBackgroundTask;
+    private Task _mapObjectsBackgroundTask;
 
+    private IMapTileRepository _mapTileRepository;
     private CoordinateSystem _coordinateSystem;
     private KrisMapType _krisMapType;
 
-    public MapViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IRepositoryFactory repositoryFactory,
-        IKrisMapObjectFactory krisMapObjectFactory, IBackgroundLoop backgroundLoop,
+    public MapViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IRepositoryFactory repositoryFactory, IKrisMapObjectFactory krisMapObjectFactory,
         ICurrentPositionBackgroundHandler currentPositionBackgroundHandler, IUserPositionsBackgroundHandler userPositionsBackgroundHandler,
         IMapObjectsBackgroundHandler mapObjectsBackgroundHandler, IMessageReceiver messageReceiver,
         IMediator mediator, IRouterService navigationService, IMessageService messageService, IPopupService popupService, IAlertService alertService)
@@ -72,7 +71,6 @@ public sealed partial class MapViewModel : PageViewModelBase
         _mapSettingsDataProvider = mapSettingsDataProvider;
         _repositoryFactory = repositoryFactory;
         _krisMapObjectFactory = krisMapObjectFactory;
-        _backgroundLoop = backgroundLoop;
         _currentPositionBackgroundHandler = currentPositionBackgroundHandler;
         _userPositionsBackgroundHandler = userPositionsBackgroundHandler;
         _mapObjectsBackgroundHandler = mapObjectsBackgroundHandler;
@@ -112,21 +110,32 @@ public sealed partial class MapViewModel : PageViewModelBase
     // CORE
     private void StartBackgroudListeners()
     {
-        if (!_backgroundLoop.IsRunning)
+        if (_backgroundHandlersCTS == null)
         {
+            _backgroundHandlersCTS = new CancellationTokenSource();
+        }
+
+        if (!_currentPositionBackgroundHandler.IsRunning)
+        {
+            _currentPositionBackgroundHandler.ReloadSettings = true;
             _currentPositionBackgroundHandler.CurrentPositionChanged += OnCurrentPositionChanged;
-            _userPositionsBackgroundHandler.UserPositionsChanged += OnUserPositionsChanged;
-            _mapObjectsBackgroundHandler.MapObjectsChanged += OnMapObjectsChanged;
             _currentPositionBackgroundHandler.ErrorOccured += OnBackgroundHandlerErrorOccured;
+            CurrentPositionBackgroundService.StartService();
+            _currentPositionBackgroundHandler.IsRunning = true;
+        }
+        if (!_userPositionsBackgroundHandler.IsRunning)
+        {
+            _userPositionsBackgroundHandler.ReloadSettings = true;
+            _userPositionsBackgroundHandler.UserPositionsChanged += OnUserPositionsChanged;
             _userPositionsBackgroundHandler.ErrorOccured += OnBackgroundHandlerErrorOccured;
+            _userPositionsBackgroundTask = _userPositionsBackgroundHandler.StartLoopAsync(_backgroundHandlersCTS.Token);
+        }
+        if (!_mapObjectsBackgroundHandler.IsRunning)
+        {
+            _mapObjectsBackgroundHandler.ReloadSettings = true;
+            _mapObjectsBackgroundHandler.MapObjectsChanged += OnMapObjectsChanged;
             _mapObjectsBackgroundHandler.ErrorOccured += OnBackgroundHandlerErrorOccured;
-
-            _backgroundLoop.RegisterHandler(_currentPositionBackgroundHandler);
-            _backgroundLoop.RegisterHandler(_userPositionsBackgroundHandler);
-            _backgroundLoop.RegisterHandler(_mapObjectsBackgroundHandler);
-
-            _backgroundLoopCTS = new CancellationTokenSource();
-            _backgroundLoopTask = _backgroundLoop.Start(_backgroundLoopCTS.Token);
+            _mapObjectsBackgroundTask = _mapObjectsBackgroundHandler.StartLoopAsync(_backgroundHandlersCTS.Token);
         }
     }
 
@@ -370,34 +379,40 @@ public sealed partial class MapViewModel : PageViewModelBase
 
     private async void OnLogout(object sender, LogoutMessage message)
     {
-        if (_backgroundLoop.IsRunning)
+        _backgroundHandlersCTS.Cancel();
+
+        try
         {
-            _backgroundLoopCTS.Cancel();
-
-            try
-            {
-                await _backgroundLoopTask;
-            }
-            catch (TaskCanceledException) { }
-            finally
-            {
-                _currentPositionBackgroundHandler.CurrentPositionChanged -= OnCurrentPositionChanged;
-                _userPositionsBackgroundHandler.UserPositionsChanged -= OnUserPositionsChanged;
-                _mapObjectsBackgroundHandler.MapObjectsChanged -= OnMapObjectsChanged;
-                _currentPositionBackgroundHandler.ErrorOccured -= OnBackgroundHandlerErrorOccured;
-                _userPositionsBackgroundHandler.ErrorOccured -= OnBackgroundHandlerErrorOccured;
-                _mapObjectsBackgroundHandler.ErrorOccured -= OnBackgroundHandlerErrorOccured;
-
-                _backgroundLoop.ClearHandlers();
-                _backgroundLoopCTS.Dispose();
-            }
+            await _userPositionsBackgroundTask;
+        }
+        catch (TaskCanceledException) { }
+        finally
+        {
+            _userPositionsBackgroundHandler.UserPositionsChanged -= OnUserPositionsChanged;
+            _userPositionsBackgroundHandler.ErrorOccured -= OnBackgroundHandlerErrorOccured;
         }
 
-        if (_messageReceiver.IsConnected)
+        try
         {
-            _messageReceiver.MessageReceived -= OnMessageReceived;
-            await _messageReceiver.Disconnect();
+            await _mapObjectsBackgroundTask;
         }
+        catch (TaskCanceledException) { }
+        finally
+        {
+            _mapObjectsBackgroundHandler.MapObjectsChanged -= OnMapObjectsChanged;
+            _mapObjectsBackgroundHandler.ErrorOccured -= OnBackgroundHandlerErrorOccured;
+        }
+
+        _currentPositionBackgroundHandler.CurrentPositionChanged -= OnCurrentPositionChanged;
+        _currentPositionBackgroundHandler.ErrorOccured -= OnBackgroundHandlerErrorOccured;
+        CurrentPositionBackgroundService.StopService();
+        _currentPositionBackgroundHandler.IsRunning = false;
+
+        _backgroundHandlersCTS.Dispose();
+        _backgroundHandlersCTS = null;
+
+        _messageReceiver.MessageReceived -= OnMessageReceived;
+        await _messageReceiver.Disconnect();
 
         KrisMapStyle = null;
         _mapTileRepository?.Dispose();
@@ -407,13 +422,13 @@ public sealed partial class MapViewModel : PageViewModelBase
 
     private async void OnBackgroundContextChanged(object sender, MessageBase message)
     {
-        // TODO: Rename a move
-        _backgroundLoop.ReloadSettings = true;
+        _currentPositionBackgroundHandler.ReloadSettings = true;
+        _userPositionsBackgroundHandler.ReloadSettings = true;
+        _mapObjectsBackgroundHandler.ReloadSettings = true;
 
         if (message is CurrentSessionChangedMessage)
         {
             AllMapPins.Clear();
-            _backgroundLoop.ResetHandlers();
 
             await _messageReceiver.Disconnect();
             await _messageReceiver.Connect();

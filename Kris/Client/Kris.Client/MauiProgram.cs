@@ -4,7 +4,6 @@ using Kris.Client.Components.Popups;
 using Kris.Client.Connection;
 using Kris.Client.Connection.Clients;
 using Kris.Client.Core.Handlers;
-using Kris.Client.Core.Listeners;
 using Kris.Client.Core.Mappers;
 using Kris.Client.Core.Services;
 using Kris.Client.Data.Cache;
@@ -25,6 +24,7 @@ using Kris.Client.Core.Image;
 using Kris.Client.Data.Database;
 using Kris.Client.Components.Utility;
 using Kris.Client.ViewModels.Utility;
+using Kris.Client.Core.Background;
 
 namespace Kris.Client
 {
@@ -108,7 +108,6 @@ namespace Kris.Client
             builder.Services.AddSingleton<IConversationMapper, ConversationMapper>();
             builder.Services.AddSingleton<IMessageMapper, MessageMapper>();
 
-            builder.Services.AddSingleton<IBackgroundLoop, BackgroundLoop>();
             builder.Services.AddSingleton<ICurrentPositionBackgroundHandler, CurrentPositionBackgroundHandler>();
             builder.Services.AddSingleton<IUserPositionsBackgroundHandler, UserPositionsBackgroundHandler>();
             builder.Services.AddSingleton<IMapObjectsBackgroundHandler, MapObjectsBackgroundHandler>();

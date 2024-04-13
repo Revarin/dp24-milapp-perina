@@ -157,6 +157,11 @@
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="FontSize" Value="18" />
     </Style>
+    <Style TargetType="Label"
+           x:Key="SmallLabel">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="TextColor" Value="{StaticResource Tertiary}" />
+    </Style>
 
     <Style TargetType="Entry">
         <Setter Property="TextColor" Value="{StaticResource Text}" />

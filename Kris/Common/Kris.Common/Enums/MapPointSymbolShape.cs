@@ -3,8 +3,9 @@
 // TODO
 public enum MapPointSymbolShape
 {
-    None = 0,
     Circle,
+    Rectangle,
+    Rhomb,
     Square,
-    Rhomb, // <>
+    Clover
 }

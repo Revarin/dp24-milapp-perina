@@ -4,5 +4,6 @@ public enum ConversationType
 {
     Direct,
     Global,
-    Group
+    Group,
+    AdminDirect
 }

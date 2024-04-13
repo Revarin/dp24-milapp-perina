@@ -9,7 +9,7 @@ public sealed class SymbolImageComposer : ISymbolImageComposer
 
     public Stream ComposeMapPointSymbol(MapPointSymbolShape? pointShape, MapPointSymbolColor? pointColor, MapPointSymbolSign? pointSign)
     {
-        if (!pointShape.HasValue || pointShape.Value == MapPointSymbolShape.None) return null;
+        if (!pointShape.HasValue) return null;
 
         var shape = pointShape.Value;
         var shapeImageStream = typeof(App).Assembly.GetManifestResourceStream($"{ImageResourcePath}.{PointShapeFileName(shape)}");
@@ -18,7 +18,7 @@ public sealed class SymbolImageComposer : ISymbolImageComposer
         var resultImage = new SKBitmap(shapeImage.Width, shapeImage.Height);
         using var canvas = new SKCanvas(resultImage);
 
-        DrawAdd(canvas, shapeImage);
+        Draw(canvas, shapeImage);
 
         if (pointColor.HasValue && pointColor.Value != MapPointSymbolColor.None)
         {
@@ -35,7 +35,7 @@ public sealed class SymbolImageComposer : ISymbolImageComposer
             var signImageStream = typeof(App).Assembly.GetManifestResourceStream($"{ImageResourcePath}.{PointSignFileName(sign)}");
             var signImage = SKBitmap.Decode(signImageStream);
 
-            DrawAdd(canvas, signImage);
+            DrawOnTop(canvas, signImage);
         }
 
         var resultImageStream = new MemoryStream();
@@ -49,9 +49,15 @@ public sealed class SymbolImageComposer : ISymbolImageComposer
     private string PointColorFileName(MapPointSymbolColor color) => $"point_color_{color.ToString().ToLower()}.png";
     private string PointSignFileName(MapPointSymbolSign sign) => $"point_sign_{sign.ToString().ToLower()}.png";
 
-    private void DrawAdd(SKCanvas canvas, SKBitmap source)
+    private void Draw(SKCanvas canvas, SKBitmap source)
     {
         canvas.DrawBitmap(source, 0, 0);
+    }
+
+    private void DrawOnTop(SKCanvas canvas, SKBitmap source)
+    {
+        var paint = new SKPaint { BlendMode = SKBlendMode.SrcATop };
+        canvas.DrawBitmap(source, 0, 0, paint);
     }
 
     private void DrawAlphaMultiply(SKCanvas canvas, SKBitmap source)

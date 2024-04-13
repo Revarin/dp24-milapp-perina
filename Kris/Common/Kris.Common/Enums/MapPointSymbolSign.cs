@@ -1,11 +1,43 @@
 ﻿namespace Kris.Common.Enums;
 
-// TODO
 public enum MapPointSymbolSign
 {
     None = 0,
-    Plus,
-    Minus,
-    Cross,
-    Circle
+    AirDef,
+    Ammo,
+    AntiTank,
+    Armour,
+    Artillery,
+    RotaryAvi,
+    FixedAvi,
+    Bridge,
+    CSS,
+    CMA,
+    Engineer,
+    ElectronicRanging,
+    ElectronicWarfare,
+    EOD,
+    Fuel,
+    Hospital,
+    HQ,
+    Infantry,
+    Medic,
+    Maintenance,
+    MET,
+    Missile,
+    Mortar,
+    MP,
+    Navy,
+    CBRN,
+    Ordnance,
+    Radar,
+    Psycho,
+    Recon,
+    Signals,
+    SF,
+    SOF,
+    Supply,
+    Topograph,
+    Transport,
+    UAV
 }

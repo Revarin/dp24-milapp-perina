@@ -115,8 +115,17 @@ public sealed partial class MapSettingsViewModel : PageViewModelBase
 
     private async Task<string> PickMapTileDatabase()
     {
-        // TODO: Two DB copy: shared file -> cache -> appdata
-        // Direct copy or shared file access require platform code
+        var currentTileDb = _mapSettingsDataProvider.GetCurrentCustomMapTileSource();
+        if (currentTileDb != null)
+        {
+            if (_fileStore.DataExists(currentTileDb))
+            {
+                using var currentTilesRepository = _repositoryFactory.CreateMapTileRepository(currentTileDb);
+                var currentDbValid = currentTilesRepository.IsDbSchemaValid();
+                if (currentDbValid) return currentTileDb;
+            }
+        }
+
         var fileResult = await _mediaService.PickMapTileDatabaseAsync();
         if (fileResult == null) return string.Empty;
 
