@@ -1,6 +1,5 @@
 ﻿namespace Kris.Common.Enums;
 
-// TODO
 public enum MapPointSymbolSign
 {
     None = 0,
@@ -24,5 +23,21 @@ public enum MapPointSymbolSign
     Infantry,
     Medic,
     Maintenance,
-    MET
+    MET,
+    Missile,
+    Mortar,
+    MP,
+    Anchor,
+    CBRN,
+    Ordnance,
+    Radar,
+    Psycho,
+    Recon,
+    Signals,
+    SF,
+    SOF,
+    Supply,
+    Topograph,
+    Transport,
+    UAV
 }
