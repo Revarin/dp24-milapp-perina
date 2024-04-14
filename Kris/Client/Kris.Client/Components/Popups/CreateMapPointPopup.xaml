@@ -80,7 +80,8 @@
                             <Picker Title="Symbol's shape"
                                     ItemsSource="{Binding MapPointShapeItems}"
                                     ItemDisplayBinding="{Binding Display}"
-                                    SelectedItem="{Binding MapPointShapeSelectedItem}">
+                                    SelectedItem="{Binding MapPointShapeSelectedItem}"
+                                    TitleColor="Gray">
                                 <Picker.Behaviors>
                                     <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
                                 </Picker.Behaviors>
@@ -89,7 +90,8 @@
                             <Picker Title="Symbol's color"
                                     ItemsSource="{Binding MapPointColorItems}"
                                     ItemDisplayBinding="{Binding Display}"
-                                    SelectedItem="{Binding MapPointColorSelectedItem}">
+                                    SelectedItem="{Binding MapPointColorSelectedItem}"
+                                    TitleColor="Gray">
                                 <Picker.Behaviors>
                                     <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
                                 </Picker.Behaviors>
@@ -98,7 +100,8 @@
                             <Picker Title="Symbol's sign"
                                     ItemsSource="{Binding MapPointSignItems}"
                                     ItemDisplayBinding="{Binding Display}"
-                                    SelectedItem="{Binding MapPointSignSelectedItem}">
+                                    SelectedItem="{Binding MapPointSignSelectedItem}"
+                                    TitleColor="Gray">
                                 <Picker.Behaviors>
                                     <tk:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SymbolComponentChangedCommand}" />
                                 </Picker.Behaviors>
