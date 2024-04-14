@@ -58,6 +58,8 @@ public class Program
             options.RegisterServicesFromAssemblyContaining<BaseHandler>();
         });
 
+        builder.Services.AddDataProtection();
+
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<ISessionRepository, SessionRepository>();
         builder.Services.AddScoped<ISessionUserRepository, SessionUserRepository>();
