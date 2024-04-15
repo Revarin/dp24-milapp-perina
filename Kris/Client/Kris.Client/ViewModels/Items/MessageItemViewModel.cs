@@ -20,8 +20,8 @@ public sealed partial class MessageItemViewModel : ControllViewModelBase
     {
         Id = model.Id;
         SenderId = model.SenderId;
-        SenderName = model.SenderName;
-        Sent = model.TimeStamp;
+        SenderName = string.IsNullOrEmpty(model.SenderName) ? "[Unknown]" : model.SenderName;
+        Sent = TimeZoneInfo.ConvertTimeFromUtc(model.TimeStamp, TimeZoneInfo.Local);
         Body = model.Body;
     }
 }

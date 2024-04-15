@@ -29,7 +29,7 @@ public sealed partial class SessionItemViewModel : ControllViewModelBase
     {
         Id = model.Id;
         Name = model.Name;
-        Created = model.Created;
+        Created = TimeZoneInfo.ConvertTimeFromUtc(model.Created, TimeZoneInfo.Local);
         UserCount = model.UserCount;
         ItemType = type;
         CanEdit = type == SessionItemType.Current;
