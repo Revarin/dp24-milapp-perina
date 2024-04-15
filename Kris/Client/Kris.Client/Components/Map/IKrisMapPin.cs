@@ -8,4 +8,5 @@ public interface IKrisMapPin : IMapPin
     Guid KrisId { get; set; }
     KrisPinType KrisType { get; set; }
     string ImageName { get; set; }
+    bool Updated { get; set; }
 }

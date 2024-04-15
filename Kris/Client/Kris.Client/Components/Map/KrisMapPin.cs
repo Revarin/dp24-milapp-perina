@@ -14,7 +14,6 @@ public sealed class KrisMapPin : Pin, IKrisMapPin
     public static readonly BindableProperty ImageNameProperty = BindableProperty.Create(
         "ImageName", typeof(string), typeof(KrisMapPin));
 
-
     public Guid KrisId
     {
         get { return (Guid)GetValue(KrisIdProperty); }
@@ -32,4 +31,6 @@ public sealed class KrisMapPin : Pin, IKrisMapPin
         get { return (string)GetValue(ImageNameProperty); }
         set { SetValue(ImageNameProperty, value); }
     }
+
+    public bool Updated { get; set; } = true;
 }

@@ -1,5 +1,6 @@
 ﻿using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
+using Java.Lang;
 using Kris.Client.Platforms.Callbacks;
 using Kris.Client.Platforms.Listeners;
 using Kris.Client.Platforms.Map;
@@ -52,11 +53,7 @@ public partial class KrisMapHandler
     {
         if (handler is KrisMapHandler mapHandler)
         {
-            // TODO: Rework, keep removing and adding pin
-            mapHandler.Markers.ForEach(marker => marker.Remove());
-            mapHandler.Markers.Clear();
-
-            mapHandler.AddPins(map.Pins, map.KrisMapStyle);
+            mapHandler.UpdatePins(map.Pins, map.KrisMapStyle);
         }
     }
 
@@ -68,7 +65,48 @@ public partial class KrisMapHandler
         }
     }
 
-    // Source: https://vladislavantonyuk.github.io/articles/Customize-map-pins-in-.NET-MAUI/
+    private void UpdatePins(IEnumerable<IMapPin> mapPins, KrisMapStyle style)
+    {
+        if (NativeMap is null || MauiContext is null) return;
+
+        var confirmedMarkers = new List<string>();
+
+        foreach (var pin in mapPins)
+        {
+            var pinHandler = pin.ToHandler(MauiContext);
+            if (pinHandler is IMapPinHandler mapPinHandler)
+            {
+                if (pin is IKrisMapPin krisPin)
+                {
+                    if (!krisPin.Updated)
+                    {
+                        confirmedMarkers.Add(krisPin.MarkerId as string);
+                    }
+                    else
+                    {
+                        var markerOption = mapPinHandler.PlatformView;
+                        var bitmap = PinIconDrawer.DrawImageWithLabel(krisPin.ImageName, krisPin.Label, false, Context);
+                        var bitmapDesc = BitmapDescriptorFactory.FromBitmap(bitmap);
+                        markerOption.SetIcon(bitmapDesc);
+
+                        var marker = NativeMap.AddMarker(markerOption);
+                        krisPin.MarkerId = marker.Id;
+                        krisPin.Updated = false;
+                        confirmedMarkers.Add(krisPin.MarkerId as string);
+                        Markers.Add(marker);
+                    }
+                }
+            }
+        }
+
+        var deletedMarkers = Markers.ExceptBy(confirmedMarkers, m => m.Id);
+        foreach (var dm in deletedMarkers)
+        {
+            dm.Remove();
+        }
+    }
+
+    [Deprecated]
     private void AddPins(IEnumerable<IMapPin> mapPins, KrisMapStyle style)
     {
         if (NativeMap is null || MauiContext is null) return;
@@ -90,7 +128,7 @@ public partial class KrisMapHandler
                     markerOption.SetIcon(bitmapDesc);
 
                     var marker = NativeMap.AddMarker(markerOption);
-                    pin.MarkerId = marker.Id;
+                    krisPin.MarkerId = marker.Id;
                     Markers.Add(marker);
                 }
             }
