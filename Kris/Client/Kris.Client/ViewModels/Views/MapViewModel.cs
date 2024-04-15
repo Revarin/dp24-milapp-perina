@@ -105,7 +105,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     private void OnCurrentPositionChanged(object sender, UserPositionEventArgs e) => AddCurrentUserPositionToMap(e.Position);
     private void OnUserPositionsChanged(object sender, UserPositionsEventArgs e) => AddOtherUserPositionsToMap(e.Positions);
     private void OnMapObjectsChanged(object sender, MapObjectsEventArgs e) => AddMapObjectsToMap(e.MapPoints);
-    private async void OnMessageReceived(object sender, MessageReceivedEventArgs e) => await ShowMessageNotification(e.SenderName, e.Body);
+    private async void OnMessageReceived(object sender, MessageReceivedEventArgs e) => await ShowMessageNotification(e.Id, e.SenderName, e.Body);
 
     // CORE
     private void StartBackgroudListeners()
@@ -347,11 +347,11 @@ public sealed partial class MapViewModel : PageViewModelBase
         AllMapPins = pointPins.UnionBy(AllMapPins, pin => new { pin.Id, pin.KrisPinType }).ToObservableCollection();
     }
 
-    private async Task ShowMessageNotification(string sender, string message)
+    private async Task ShowMessageNotification(Guid id, string sender, string message)
     {
         // TODO: Better notification
         if (Shell.Current.CurrentPage is ChatView) return;
-        await _alertService.ShowToastAsync($"{sender}: {message}");
+        await _alertService.ShowNotificationAsync(id.GetHashCode(), sender, string.Empty, message);
     }
 
     // MISC

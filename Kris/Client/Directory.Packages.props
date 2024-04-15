@@ -15,6 +15,7 @@
     <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Maui.Controls.Maps" Version="7.0.101" />
+    <PackageVersion Include="Plugin.LocalNotification" Version="10.1.8" />
     <PackageVersion Include="SkiaSharp" Version="2.88.7" />
     <PackageVersion Include="SkiaSharp.Views.Maui.Controls" Version="2.88.7" />
     <PackageVersion Include="SQLite" Version="3.13.0" />

@@ -24,6 +24,7 @@
 	  <PackageReference Include="CommunityToolkit.Mvvm" />
 	  <PackageReference Include="FluentResults" />
 	  <PackageReference Include="MediatR" />
+	  <PackageReference Include="Plugin.LocalNotification" />
 	  <PackageReference Include="SkiaSharp" />
 	</ItemGroup>
 

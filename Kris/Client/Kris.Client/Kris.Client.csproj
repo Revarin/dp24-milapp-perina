@@ -69,6 +69,7 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
 		<PackageReference Include="Microsoft.Maui.Controls.Maps" />
+		<PackageReference Include="Plugin.LocalNotification" />
 		<PackageReference Include="SkiaSharp" />
 		<PackageReference Include="SkiaSharp.Views.Maui.Controls" />
 	</ItemGroup>
