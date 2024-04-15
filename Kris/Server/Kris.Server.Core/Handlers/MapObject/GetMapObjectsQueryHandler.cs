@@ -36,7 +36,8 @@ public sealed class GetMapObjectsQueryHandler : MapObjectHandler, IRequestHandle
         var response = new GetMapObjectsResponse
         {
             Resolved = DateTime.UtcNow,
-            MapPoints = mapPoints.Select(_mapObjectMapper.MapPointList).ToList()
+            MapPoints = mapPoints.Where(mapPoint => !mapPoint.Deleted).Select(_mapObjectMapper.MapPointList).ToList(),
+            DeletedMapPoints = mapPoints.Where(mapPoint => mapPoint.Deleted).Select(mapPoint => mapPoint.Id).ToList()
         };
         return Result.Ok(response);
     }
