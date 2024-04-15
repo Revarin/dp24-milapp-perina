@@ -40,9 +40,11 @@ public sealed class MessageClient : IMessageHub, IMessageReceiver
                 options.Headers.Add(Constants.ApiKeyHeader, _connectionOptions.ApiKey);
                 options.AccessTokenProvider = () => Task.FromResult(jwt.Token);
             })
+            .WithAutomaticReconnect()
             .Build();
 
-        _hubConnection.KeepAliveInterval = TimeSpan.FromSeconds(_connectionOptions.HubKeepAliveSeconds);
+        //_hubConnection.KeepAliveInterval = TimeSpan.FromSeconds(_connectionOptions.HubKeepAliveSeconds);
+        //_hubConnection.ServerTimeout = TimeSpan.FromSeconds(_connectionOptions.HubServerTimeoutSeconds);
         _hubConnection.On<MessageModel>(nameof(ReceiveMessage), ReceiveMessage);
 
         await _hubConnection.StartAsync();

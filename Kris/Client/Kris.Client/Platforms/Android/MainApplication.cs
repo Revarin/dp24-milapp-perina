@@ -11,7 +11,9 @@ namespace Kris.Client
 #endif
     public class MainApplication : MauiApplication
     {
-        public static readonly string KrisChannelId = "krisBackgroundServiceChannel";
+        public static readonly string KrisNotificationGroupId = "krisNotificationGroup";
+        public static readonly string KrisBackgroundServiceChannelId = "krisBackgroundServiceChannel";
+        public static readonly string KrisMessageChannelId = "krisMessageChannel";
 
         public MainApplication(IntPtr handle, JniHandleOwnership ownership)
             : base(handle, ownership)
@@ -27,11 +29,17 @@ namespace Kris.Client
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
-                var serviceChannel = new NotificationChannel(KrisChannelId, "Kris Background Service Channel", NotificationImportance.High);
+                var group = new NotificationChannelGroup(KrisNotificationGroupId, "Kris");
+                var backgroundChannel = new NotificationChannel(KrisBackgroundServiceChannelId, "Kris Background Services", NotificationImportance.Low);
+                var messageChannel = new NotificationChannel(KrisMessageChannelId, "Kris Messages", NotificationImportance.Default);
+                messageChannel.Group = KrisNotificationGroupId;
+                backgroundChannel.Group = KrisNotificationGroupId;
 
                 if (GetSystemService(NotificationService) is NotificationManager manager)
                 {
-                    manager.CreateNotificationChannel(serviceChannel);
+                    manager.CreateNotificationChannelGroup(group);
+                    manager.CreateNotificationChannel(backgroundChannel);
+                    manager.CreateNotificationChannel(messageChannel);
                 }
             }
         }

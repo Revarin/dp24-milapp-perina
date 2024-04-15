@@ -52,7 +52,7 @@ public sealed partial class MapViewModel : PageViewModelBase
     [ObservableProperty]
     private KrisMapStyle _krisMapStyle = null;
     [ObservableProperty]
-    private ObservableCollection<KrisMapPinViewModel> _allMapPins = new ObservableCollection<KrisMapPinViewModel>();
+    private ICollection<KrisMapPinViewModel> _allMapPins = new ObservableCollection<KrisMapPinViewModel>();
 
     private CancellationTokenSource _backgroundHandlersCTS;
     private Task _userPositionsBackgroundTask;
@@ -104,8 +104,8 @@ public sealed partial class MapViewModel : PageViewModelBase
 
     private void OnCurrentPositionChanged(object sender, UserPositionEventArgs e) => AddCurrentUserPositionToMap(e.Position);
     private void OnUserPositionsChanged(object sender, UserPositionsEventArgs e) => AddOtherUserPositionsToMap(e.Positions);
-    private void OnMapObjectsChanged(object sender, MapObjectsEventArgs e) => AddMapObjectsToMap(e.MapPoints);
-    private async void OnMessageReceived(object sender, MessageReceivedEventArgs e) => await ShowMessageNotification(e.SenderName, e.Body);
+    private void OnMapObjectsChanged(object sender, MapObjectsEventArgs e) => AddMapObjectsToMap(e.MapPoints, e.DeletedMapPoints);
+    private async void OnMessageReceived(object sender, MessageReceivedEventArgs e) => await ShowMessageNotification(e.Id, e.SenderName, e.Body);
 
     // CORE
     private void StartBackgroudListeners()
@@ -338,20 +338,24 @@ public sealed partial class MapViewModel : PageViewModelBase
     private void AddOtherUserPositionsToMap(IEnumerable<UserPositionModel> userPositions)
     {
         var userPins = userPositions.Select(p => _krisMapObjectFactory.CreateUserPositionPin(p, KrisPinType.User));
-        AllMapPins = userPins.UnionBy(AllMapPins, pin => new { pin.Id, pin.KrisPinType }).ToObservableCollection();
+        UpdateMapPins(userPins);
     }
 
-    private void AddMapObjectsToMap(IEnumerable<MapPointListModel> mapPoints)
+    private void AddMapObjectsToMap(IEnumerable<MapPointListModel> mapPoints, IEnumerable<Guid> deletedPoints)
     {
         var pointPins = mapPoints.Select(_krisMapObjectFactory.CreateMapPoint);
-        AllMapPins = pointPins.UnionBy(AllMapPins, pin => new { pin.Id, pin.KrisPinType }).ToObservableCollection();
+        UpdateMapPins(pointPins);
+        foreach (var deletedPoint in deletedPoints)
+        {
+            var pin = AllMapPins.FirstOrDefault(pin => pin.Id == deletedPoint);
+            if (pin != null) AllMapPins.Remove(pin);
+        }
     }
 
-    private async Task ShowMessageNotification(string sender, string message)
+    private async Task ShowMessageNotification(Guid id, string sender, string message)
     {
-        // TODO: Better notification
         if (Shell.Current.CurrentPage is ChatView) return;
-        await _alertService.ShowToastAsync($"{sender}: {message}");
+        await _alertService.ShowNotificationAsync(id.GetHashCode(), sender, string.Empty, message);
     }
 
     // MISC
@@ -418,6 +422,7 @@ public sealed partial class MapViewModel : PageViewModelBase
         _mapTileRepository?.Dispose();
 
         AllMapPins.Clear();
+        OnPropertyChanged(nameof(AllMapPins));
     }
 
     private async void OnBackgroundContextChanged(object sender, MessageBase message)
@@ -429,9 +434,30 @@ public sealed partial class MapViewModel : PageViewModelBase
         if (message is CurrentSessionChangedMessage)
         {
             AllMapPins.Clear();
+            OnPropertyChanged(nameof(AllMapPins));
 
             await _messageReceiver.Disconnect();
             await _messageReceiver.Connect();
+        }
+    }
+
+    private void UpdateMapPins(IEnumerable<KrisMapPinViewModel> newPins)
+    {
+        foreach (var pin in newPins)
+        {
+            var oldPin = AllMapPins.FirstOrDefault(p => p.Id == pin.Id && p.KrisPinType == pin.KrisPinType);
+            if (oldPin == null)
+            {
+                AllMapPins.Add(pin);
+            }
+            else
+            {
+                if (oldPin.TimeStamp < pin.TimeStamp)
+                {
+                    AllMapPins.Remove(oldPin);
+                    AllMapPins.Add(pin);
+                }
+            }
         }
     }
 }

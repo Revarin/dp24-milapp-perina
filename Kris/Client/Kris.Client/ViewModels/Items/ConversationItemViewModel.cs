@@ -22,7 +22,7 @@ public sealed partial class ConversationItemViewModel : ControllViewModelBase
         Id = model.Id;
         Name = model.Name;
         MessageCount = model.MessageCount;
-        LastMessage = model.LastMessage;
+        LastMessage = model.LastMessage.HasValue ? TimeZoneInfo.ConvertTimeFromUtc(model.LastMessage.Value, TimeZoneInfo.Local) : null;
     }
 
     [RelayCommand]

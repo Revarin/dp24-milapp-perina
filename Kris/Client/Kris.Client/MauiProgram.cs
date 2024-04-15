@@ -25,6 +25,7 @@ using Kris.Client.Data.Database;
 using Kris.Client.Components.Utility;
 using Kris.Client.ViewModels.Utility;
 using Kris.Client.Core.Background;
+using Plugin.LocalNotification;
 
 namespace Kris.Client
 {
@@ -38,6 +39,7 @@ namespace Kris.Client
                 .UseSkiaSharp()
                 .UseMauiMaps()
                 .UseMauiCommunityToolkit()
+                .UseLocalNotification()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

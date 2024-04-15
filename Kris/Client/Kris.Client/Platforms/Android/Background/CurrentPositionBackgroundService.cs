@@ -46,9 +46,8 @@ public sealed class CurrentPositionBackgroundService : Service
         var notificationIntent = new Intent(this, typeof(MainActivity));
         var pendingIntent = PendingIntent.GetActivity(this, 0, notificationIntent, PendingIntentFlags.Immutable);
 
-        var notification = new NotificationCompat.Builder(this, MainApplication.KrisChannelId)
+        var notification = new NotificationCompat.Builder(this, MainApplication.KrisBackgroundServiceChannelId)
             .SetContentText("Current positions GPS")
-            .SetSmallIcon(Resource.Drawable.maui_splash)
             .SetContentIntent(pendingIntent);
 
         StartForeground(_id, notification.Build());
