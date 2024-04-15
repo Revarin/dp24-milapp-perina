@@ -8,4 +8,5 @@ public sealed class SettingsOptions : IOptions
 
     public required string ApiKey { get; init; }
     public required int SignalRKeepAliveSeconds { get; init; }
+    public required int SignalRTimeoutSeconds { get; init; }
 }

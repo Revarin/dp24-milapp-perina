@@ -36,8 +36,8 @@ public class Program
             var settingsOptions = builder.Configuration.GetSection(SettingsOptions.Section).Get<SettingsOptions>();
             if (settingsOptions == null) throw new Exception(nameof(settingsOptions));
 
-            options.ClientTimeoutInterval = TimeSpan.FromSeconds(settingsOptions.SignalRKeepAliveSeconds * 2);
-            options.HandshakeTimeout = TimeSpan.FromSeconds(settingsOptions.SignalRKeepAliveSeconds);
+            options.ClientTimeoutInterval = TimeSpan.FromSeconds(settingsOptions.SignalRTimeoutSeconds);
+            options.HandshakeTimeout = TimeSpan.FromSeconds(settingsOptions.SignalRTimeoutSeconds);
             options.KeepAliveInterval = TimeSpan.FromSeconds(settingsOptions.SignalRKeepAliveSeconds);
         });
 
