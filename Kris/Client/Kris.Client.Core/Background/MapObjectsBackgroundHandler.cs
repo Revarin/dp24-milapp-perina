@@ -38,7 +38,7 @@ public sealed class MapObjectsBackgroundHandler : BackgroundHandler, IMapObjects
             else OnErrorOccured(Result.Fail(new ServerError(response.Message)));
         }
 
-        OnMapObjectsChanged(response.MapPoints.Select(_mapObjectsMapper.MapPoint), response.Resolved);
+        OnMapObjectsChanged(response.MapPoints.Select(_mapObjectsMapper.MapPoint), response.DeletedMapPoints, response.Resolved);
         _lastUpdate = response.Resolved;
     }
 
@@ -51,8 +51,8 @@ public sealed class MapObjectsBackgroundHandler : BackgroundHandler, IMapObjects
         _lastUpdate = DateTime.MinValue;
     }
 
-    private void OnMapObjectsChanged(IEnumerable<MapPointListModel> mapPoints, DateTime loaded)
+    private void OnMapObjectsChanged(IEnumerable<MapPointListModel> mapPoints, IEnumerable<Guid> deletedMapPoints, DateTime loaded)
     {
-        Application.Current.Dispatcher.Dispatch(() => MapObjectsChanged?.Invoke(this, new MapObjectsEventArgs(mapPoints, loaded)));
+        Application.Current.Dispatcher.Dispatch(() => MapObjectsChanged?.Invoke(this, new MapObjectsEventArgs(mapPoints, deletedMapPoints, loaded)));
     }
 }

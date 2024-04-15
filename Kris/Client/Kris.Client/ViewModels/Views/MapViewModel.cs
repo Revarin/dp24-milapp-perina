@@ -104,7 +104,7 @@ public sealed partial class MapViewModel : PageViewModelBase
 
     private void OnCurrentPositionChanged(object sender, UserPositionEventArgs e) => AddCurrentUserPositionToMap(e.Position);
     private void OnUserPositionsChanged(object sender, UserPositionsEventArgs e) => AddOtherUserPositionsToMap(e.Positions);
-    private void OnMapObjectsChanged(object sender, MapObjectsEventArgs e) => AddMapObjectsToMap(e.MapPoints);
+    private void OnMapObjectsChanged(object sender, MapObjectsEventArgs e) => AddMapObjectsToMap(e.MapPoints, e.DeletedMapPoints);
     private async void OnMessageReceived(object sender, MessageReceivedEventArgs e) => await ShowMessageNotification(e.Id, e.SenderName, e.Body);
 
     // CORE
@@ -231,7 +231,6 @@ public sealed partial class MapViewModel : PageViewModelBase
         {
             await _alertService.ShowToastAsync("Map point created");
             AllMapPins.Add(_krisMapObjectFactory.CreateMapPoint(result.Value));
-            OnPropertyChanged(nameof(AllMapPins));
         }
     }
 
@@ -295,7 +294,6 @@ public sealed partial class MapViewModel : PageViewModelBase
                 var pinToRemove = AllMapPins.FirstOrDefault(p => p.KrisPinType == KrisPinType.Point && p.Id == result.Value.Id);
                 AllMapPins.Remove(pinToRemove);
                 AllMapPins.Add(_krisMapObjectFactory.CreateMapPoint(result.Value));
-                OnPropertyChanged(nameof(AllMapPins));
             }
         }
         else if (resultArgs is DeleteResultEventArgs deleteResult)
@@ -322,7 +320,6 @@ public sealed partial class MapViewModel : PageViewModelBase
                 await _alertService.ShowToastAsync("Point deleted");
                 var pinToRemove = AllMapPins.FirstOrDefault(p => p.KrisPinType == KrisPinType.Point && p.Id == pin.KrisId);
                 AllMapPins.Remove(pinToRemove);
-                OnPropertyChanged(nameof(AllMapPins));
             }
         }
     }
@@ -336,28 +333,27 @@ public sealed partial class MapViewModel : PageViewModelBase
         var oldUserPin = AllMapPins.FirstOrDefault(p => p.KrisPinType == KrisPinType.Self && p.Id == userPosition.UserId);
         AllMapPins.Remove(oldUserPin);
         AllMapPins.Add(userPin);
-        OnPropertyChanged(nameof(AllMapPins));
     }
     
     private void AddOtherUserPositionsToMap(IEnumerable<UserPositionModel> userPositions)
     {
         var userPins = userPositions.Select(p => _krisMapObjectFactory.CreateUserPositionPin(p, KrisPinType.User));
-        //AllMapPins = userPins.UnionBy(AllMapPins, pin => new { pin.Id, pin.KrisPinType }).ToList();
         UpdateMapPins(userPins);
-        OnPropertyChanged(nameof(AllMapPins));
     }
 
-    private void AddMapObjectsToMap(IEnumerable<MapPointListModel> mapPoints)
+    private void AddMapObjectsToMap(IEnumerable<MapPointListModel> mapPoints, IEnumerable<Guid> deletedPoints)
     {
         var pointPins = mapPoints.Select(_krisMapObjectFactory.CreateMapPoint);
-        //AllMapPins = pointPins.UnionBy(AllMapPins, pin => new { pin.Id, pin.KrisPinType }).ToList();
         UpdateMapPins(pointPins);
-        OnPropertyChanged(nameof(AllMapPins));
+        foreach (var deletedPoint in deletedPoints)
+        {
+            var pin = AllMapPins.FirstOrDefault(pin => pin.Id == deletedPoint);
+            if (pin != null) AllMapPins.Remove(pin);
+        }
     }
 
     private async Task ShowMessageNotification(Guid id, string sender, string message)
     {
-        // TODO: Better notification
         if (Shell.Current.CurrentPage is ChatView) return;
         await _alertService.ShowNotificationAsync(id.GetHashCode(), sender, string.Empty, message);
     }
