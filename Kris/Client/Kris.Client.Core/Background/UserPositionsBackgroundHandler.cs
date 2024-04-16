@@ -5,6 +5,8 @@ using Kris.Client.Core.Mappers;
 using Kris.Client.Core.Models;
 using Kris.Client.Data.Cache;
 using Kris.Interface.Controllers;
+using Kris.Interface.Responses;
+using System.Net;
 
 namespace Kris.Client.Core.Background;
 
@@ -31,7 +33,16 @@ public sealed class UserPositionsBackgroundHandler : BackgroundHandler, IUserPos
         if (ReloadSettings) LoadSettings();
         if (_userIdentity.CurrentSession == null) return;
 
-        var response = await _positionClient.GetPositions(_lastUpdate, ct);
+        GetPositionsResponse response;
+
+        try
+        {
+            response = await _positionClient.GetPositions(_lastUpdate, ct);
+        }
+        catch (WebException)
+        {
+            return;
+        }
 
         if (!response.IsSuccess())
         {

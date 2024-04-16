@@ -6,7 +6,9 @@ using Kris.Common.Models;
 using Kris.Interface.Controllers;
 using Kris.Interface.Models;
 using Kris.Interface.Requests;
+using Kris.Interface.Responses;
 using MediatR;
+using System.Net;
 
 namespace Kris.Client.Core.Handlers.MapObjects;
 
@@ -46,7 +48,16 @@ public sealed class CreateMapPointCommandHandler : MapObjectsHandler, IRequestHa
                 Base64Bytes = Convert.ToBase64String(_imageAttachmentComposer.ComposeScaledImageAttachment(attachment).ToArray())
             }).ToList()
         };
-        var response = await _mapObjectClient.AddMapPoint(httpRequest, cancellationToken);
+        GetOneResponse<Guid> response;
+
+        try
+        {
+            response = await _mapObjectClient.AddMapPoint(httpRequest, cancellationToken);
+        }
+        catch (WebException)
+        {
+            return Result.Fail(new ConnectionError());
+        }
 
         if (!response.IsSuccess())
         {

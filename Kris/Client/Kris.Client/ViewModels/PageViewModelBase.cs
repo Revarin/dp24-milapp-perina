@@ -92,6 +92,9 @@ public abstract partial class PageViewModelBase : ObservableValidator
         var loadingPopupTask = _popupService.ShowPopupAsync<LoadingPopupViewModel>(vm => closeLoadingPopup = vm.Close);
         var result = await _mediator.Send(request, ct);
 
+        // Otherwise NullReferenceException when disconnected from network
+        await Task.Delay(100);
+
         closeLoadingPopup();
         await loadingPopupTask;
         return result;

@@ -2,15 +2,19 @@
 using Kris.Client.Common.Errors;
 using Kris.Client.Common.Options;
 using Kris.Client.Core.Mappers;
-using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Interface.Controllers;
+using Kris.Interface.Responses;
 using MediatR;
 using Microsoft.Extensions.Options;
+using System.Net;
+
+using ClientMessageModel = Kris.Client.Core.Models.MessageModel;
+using InterfaceMessageModel = Kris.Interface.Models.MessageModel;
 
 namespace Kris.Client.Core.Handlers.Conversation;
 
-public sealed class GetMessagesQueryHandler : ConversationHandler, IRequestHandler<GetMessagesQuery, Result<IEnumerable<MessageModel>>>
+public sealed class GetMessagesQueryHandler : ConversationHandler, IRequestHandler<GetMessagesQuery, Result<IEnumerable<ClientMessageModel>>>
 {
     private readonly SettingsOptions _settingsOptions;
     private readonly IMessageMapper _messageMapper;
@@ -23,11 +27,20 @@ public sealed class GetMessagesQueryHandler : ConversationHandler, IRequestHandl
         _messageMapper = messageMapper;
     }
 
-    public async Task<Result<IEnumerable<MessageModel>>> Handle(GetMessagesQuery request, CancellationToken cancellationToken)
+    public async Task<Result<IEnumerable<ClientMessageModel>>> Handle(GetMessagesQuery request, CancellationToken cancellationToken)
     {
         var from = _settingsOptions.ChatMessagesPageSize * request.Page;
         var count = _settingsOptions.ChatMessagesPageSize;
-        var response = await _conversationClient.GetMessages(request.ConversationId, count, from, cancellationToken);
+        GetManyResponse<InterfaceMessageModel> response;
+
+        try
+        {
+            response = await _conversationClient.GetMessages(request.ConversationId, count, from, cancellationToken);
+        }
+        catch (WebException)
+        {
+            return Result.Fail(new ConnectionError());
+        }
 
         if (!response.IsSuccess())
         {

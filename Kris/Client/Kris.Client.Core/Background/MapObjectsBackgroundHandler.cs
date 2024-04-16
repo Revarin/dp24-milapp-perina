@@ -5,6 +5,8 @@ using Kris.Client.Core.Mappers;
 using Kris.Client.Core.Models;
 using Kris.Client.Data.Cache;
 using Kris.Interface.Controllers;
+using Kris.Interface.Responses;
+using System.Net;
 
 namespace Kris.Client.Core.Background;
 
@@ -30,7 +32,16 @@ public sealed class MapObjectsBackgroundHandler : BackgroundHandler, IMapObjects
         if (ReloadSettings) LoadSettings();
         if (_userIdentity.CurrentSession == null) return;
 
-        var response = await _mapObjectClient.GetMapObjects(_lastUpdate, ct);
+        GetMapObjectsResponse response;
+
+        try
+        {
+            response = await _mapObjectClient.GetMapObjects(_lastUpdate, ct);
+        }
+        catch (WebException)
+        {
+            return;
+        }
 
         if (!response.IsSuccess())
         {

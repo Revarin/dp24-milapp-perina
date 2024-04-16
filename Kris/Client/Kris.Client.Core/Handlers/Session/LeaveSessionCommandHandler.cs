@@ -4,7 +4,9 @@ using Kris.Client.Core.Mappers;
 using Kris.Client.Core.Requests;
 using Kris.Client.Data.Cache;
 using Kris.Interface.Controllers;
+using Kris.Interface.Responses;
 using MediatR;
+using System.Net;
 
 namespace Kris.Client.Core.Handlers.Session;
 
@@ -17,7 +19,16 @@ public sealed class LeaveSessionCommandHandler : SessionHandler, IRequestHandler
 
     public async Task<Result> Handle(LeaveSessionCommand request, CancellationToken cancellationToken)
     {
-        var response = await _sessionClient.LeaveSession(request.SessionId, cancellationToken);
+        IdentityResponse response;
+
+        try
+        {
+            response = await _sessionClient.LeaveSession(request.SessionId, cancellationToken);
+        }
+        catch (WebException)
+        {
+            return Result.Fail(new ConnectionError());
+        }
 
         if (!response.IsSuccess())
         {

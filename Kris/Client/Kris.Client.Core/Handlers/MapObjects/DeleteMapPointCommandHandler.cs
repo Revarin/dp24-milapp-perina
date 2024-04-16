@@ -2,7 +2,9 @@
 using Kris.Client.Common.Errors;
 using Kris.Client.Core.Requests;
 using Kris.Interface.Controllers;
+using Kris.Interface.Responses;
 using MediatR;
+using System.Net;
 
 namespace Kris.Client.Core.Handlers.MapObjects;
 
@@ -15,7 +17,16 @@ public sealed class DeleteMapPointCommandHandler : MapObjectsHandler, IRequestHa
 
     public async Task<Result> Handle(DeleteMapPointCommand request, CancellationToken cancellationToken)
     {
-        var response = await _mapObjectClient.DeleteMapPoint(request.Id, cancellationToken);
+        Response response;
+        
+        try
+        {
+            response = await _mapObjectClient.DeleteMapPoint(request.Id, cancellationToken);
+        }
+        catch (WebException)
+        {
+            return Result.Fail(new ConnectionError());
+        }
 
         if (!response.IsSuccess())
         {

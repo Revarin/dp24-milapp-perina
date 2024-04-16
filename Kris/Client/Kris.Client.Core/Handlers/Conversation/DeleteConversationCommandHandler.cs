@@ -2,7 +2,9 @@
 using Kris.Client.Common.Errors;
 using Kris.Client.Core.Requests;
 using Kris.Interface.Controllers;
+using Kris.Interface.Responses;
 using MediatR;
+using System.Net;
 
 namespace Kris.Client.Core.Handlers.Conversation;
 
@@ -15,7 +17,16 @@ public sealed class DeleteConversationCommandHandler : ConversationHandler, IReq
 
     public async Task<Result> Handle(DeleteConversationCommand request, CancellationToken cancellationToken)
     {
-        var response = await _conversationClient.DeleteConversation(request.ConversationId, cancellationToken);
+        Response response;
+
+        try
+        {
+            response = await _conversationClient.DeleteConversation(request.ConversationId, cancellationToken);
+        }
+        catch (WebException)
+        {
+            return Result.Fail(new ConnectionError());
+        }
 
         if (!response.IsSuccess())
         {

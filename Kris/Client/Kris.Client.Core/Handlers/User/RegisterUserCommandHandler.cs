@@ -4,7 +4,9 @@ using Kris.Client.Core.Mappers;
 using Kris.Client.Core.Requests;
 using Kris.Interface.Controllers;
 using Kris.Interface.Requests;
+using Kris.Interface.Responses;
 using MediatR;
+using System.Net;
 
 namespace Kris.Client.Core.Handlers.User;
 
@@ -22,7 +24,16 @@ public sealed class RegisterUserCommandHandler : UserHandler, IRequestHandler<Re
             Login = request.Login,
             Password = request.Password
         };
-        var response = await _userClient.RegisterUser(registerRequest, cancellationToken);
+        Response response;
+
+        try
+        {
+            response = await _userClient.RegisterUser(registerRequest, cancellationToken);
+        }
+        catch (WebException)
+        {
+            return Result.Fail(new ConnectionError());
+        }
 
         if (!response.IsSuccess())
         {

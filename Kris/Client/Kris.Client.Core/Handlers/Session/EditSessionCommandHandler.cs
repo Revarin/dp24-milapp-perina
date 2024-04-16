@@ -5,7 +5,9 @@ using Kris.Client.Core.Requests;
 using Kris.Client.Data.Cache;
 using Kris.Interface.Controllers;
 using Kris.Interface.Requests;
+using Kris.Interface.Responses;
 using MediatR;
+using System.Net;
 
 namespace Kris.Client.Core.Handlers.Session;
 
@@ -24,16 +26,24 @@ public sealed class EditSessionCommandHandler : SessionHandler, IRequestHandler<
             NewPassword = request.NewPassword,
             Password = request.Password
         };
-        var result = await _sessionClient.EditSession(httpRequest, cancellationToken);
+        Response response;
 
-        if (!result.IsSuccess())
+        try
         {
-            if (result.IsUnauthorized()) return Result.Fail(new UnauthorizedError());
-            else if (result.IsForbidden()) return Result.Fail(new ForbiddenError());
-            else return Result.Fail(new ServerError(result.Message));
+            response = await _sessionClient.EditSession(httpRequest, cancellationToken);
+        }
+        catch (WebException)
+        {
+            return Result.Fail(new ConnectionError());
+        }
+
+        if (!response.IsSuccess())
+        {
+            if (response.IsUnauthorized()) return Result.Fail(new UnauthorizedError());
+            else if (response.IsForbidden()) return Result.Fail(new ForbiddenError());
+            else return Result.Fail(new ServerError(response.Message));
         }
 
         return Result.Ok();
-        throw new NotImplementedException();
     }
 }

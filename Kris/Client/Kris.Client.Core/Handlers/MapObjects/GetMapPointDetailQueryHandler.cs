@@ -1,14 +1,18 @@
 ﻿using FluentResults;
 using Kris.Client.Common.Errors;
 using Kris.Client.Core.Mappers;
-using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Interface.Controllers;
+using Kris.Interface.Responses;
 using MediatR;
+using System.Net;
+
+using ClientMapPointDetailModel = Kris.Client.Core.Models.MapPointDetailModel;
+using InterfaceMapPointDetailModel = Kris.Interface.Models.MapPointDetailModel;
 
 namespace Kris.Client.Core.Handlers.MapObjects;
 
-public sealed class GetMapPointDetailQueryHandler : MapObjectsHandler, IRequestHandler<GetMapPointDetailQuery, Result<MapPointDetailModel>>
+public sealed class GetMapPointDetailQueryHandler : MapObjectsHandler, IRequestHandler<GetMapPointDetailQuery, Result<ClientMapPointDetailModel>>
 {
     private readonly IMapObjectsMapper _mapObjectsMapper;
 
@@ -19,9 +23,18 @@ public sealed class GetMapPointDetailQueryHandler : MapObjectsHandler, IRequestH
         _mapObjectsMapper = mapObjectsMapper;
     }
 
-    public async Task<Result<MapPointDetailModel>> Handle(GetMapPointDetailQuery request, CancellationToken cancellationToken)
+    public async Task<Result<ClientMapPointDetailModel>> Handle(GetMapPointDetailQuery request, CancellationToken cancellationToken)
     {
-        var response = await _mapObjectClient.GetMapPoint(request.PointId, cancellationToken);
+        GetOneResponse<InterfaceMapPointDetailModel> response;
+
+        try
+        {
+            response = await _mapObjectClient.GetMapPoint(request.PointId, cancellationToken);
+        }
+        catch (WebException)
+        {
+            return Result.Fail(new ConnectionError());
+        }
 
         if (!response.IsSuccess())
         {

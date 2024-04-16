@@ -45,6 +45,10 @@ public sealed partial class ContactsViewModel : PageViewModelBase
                 await _alertService.ShowToastAsync("Login expired");
                 await LogoutUser();
             }
+            else if (result.HasError<ConnectionError>())
+            {
+                await _alertService.ShowToastAsync("No connection to server");
+            }
             else
             {
                 await _alertService.ShowToastAsync(result.Errors.FirstMessage());

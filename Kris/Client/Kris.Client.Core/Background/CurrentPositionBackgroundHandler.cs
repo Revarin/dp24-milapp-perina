@@ -9,6 +9,8 @@ using Kris.Common.Enums;
 using Kris.Common.Models;
 using Kris.Interface.Controllers;
 using Kris.Interface.Requests;
+using Kris.Interface.Responses;
+using System.Net;
 
 namespace Kris.Client.Core.Background;
 
@@ -80,7 +82,16 @@ public sealed class CurrentPositionBackgroundHandler : BackgroundHandler, ICurre
             {
                 Position = _positionMapper.Map(location)
             };
-            var response = await _positionClient.SavePosition(httpRequest, ct);
+            Response response;
+
+            try
+            {
+                response = await _positionClient.SavePosition(httpRequest, ct);
+            }
+            catch (WebException)
+            {
+                return;
+            }
 
             if (!response.IsSuccess())
             {

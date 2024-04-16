@@ -102,6 +102,11 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
                 await _alertService.ShowToastAsync("Conversation does not exists");
                 await GoToContactsAsync();
             }
+            else if (result.HasError<ConnectionError>())
+            {
+                await _alertService.ShowToastAsync("No connection to server");
+                await GoToContactsAsync();
+            }
             else
             {
                 await _alertService.ShowToastAsync(result.Errors.FirstMessage());
@@ -139,6 +144,10 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
                 await _alertService.ShowToastAsync("Conversation does not exists");
                 await GoToContactsAsync();
             }
+            else if (result.HasError<ConnectionError>())
+            {
+                await _alertService.ShowToastAsync("No connection to server");
+            }
             else
             {
                 await _alertService.ShowToastAsync(result.Errors.FirstMessage());
@@ -174,6 +183,10 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
             else if (result.HasError<ForbiddenError>())
             {
                 await _alertService.ShowToastAsync("Cannot delete conversation with active users");
+            }
+            else if (result.HasError<ConnectionError>())
+            {
+                await _alertService.ShowToastAsync("No connection to server");
             }
             else
             {

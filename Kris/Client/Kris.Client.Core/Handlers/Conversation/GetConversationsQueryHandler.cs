@@ -5,7 +5,10 @@ using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Common.Enums;
 using Kris.Interface.Controllers;
+using Kris.Interface.Models;
+using Kris.Interface.Responses;
 using MediatR;
+using System.Net;
 
 namespace Kris.Client.Core.Handlers.Conversation;
 
@@ -21,7 +24,16 @@ public sealed class GetConversationsQueryHandler : ConversationHandler, IRequest
 
     public async Task<Result<AvailableConversationsModel>> Handle(GetConversationsQuery request, CancellationToken cancellationToken)
     {
-        var response = await _conversationClient.GetConversations(cancellationToken);
+        GetManyResponse<ConversationListModel> response;
+
+        try
+        {
+            response = await _conversationClient.GetConversations(cancellationToken);
+        }
+        catch (WebException)
+        {
+            return Result.Fail(new ConnectionError());
+        }
 
         if (!response.IsSuccess())
         {

@@ -117,6 +117,7 @@ public sealed partial class EditSessionPopupViewModel : PopupViewModel
         if (result.IsFailed)
         {
             LoadErrorClosing?.Invoke(this, new LoadResultEventArgs<SessionDetailModel>(result));
+            return;
         }
 
         SessionName = result.Value.Name;
@@ -204,11 +205,15 @@ public sealed partial class EditSessionPopupViewModel : PopupViewModel
                 await _alertService.ShowToastAsync("Cannot change role of this user");
                 SessionUsers.FirstOrDefault(su => su.Id == userId)?.RevertUserType(newRole);
             }
+            else if (result.HasError<ConnectionError>())
+            {
+                await _alertService.ShowToastAsync("No connection to server");
+                SessionUsers.FirstOrDefault(su => su.Id == userId)?.RevertUserType(newRole);
+            }
             else
             {
                 UpdatedClosing?.Invoke(this, new UpdateResultEventArgs(result));
             }
-
         }
     }
 
@@ -226,6 +231,10 @@ public sealed partial class EditSessionPopupViewModel : PopupViewModel
             if (result.HasError<ForbiddenError>())
             {
                 await _alertService.ShowToastAsync("Cannot kick this user");
+            }
+            else if (result.HasError<ConnectionError>())
+            {
+                await _alertService.ShowToastAsync("No connection to server");
             }
             else
             {

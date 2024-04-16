@@ -56,6 +56,11 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
                 await _alertService.ShowToastAsync("Login expired");
                 await LogoutUser();
             }
+            if (result.HasError<ConnectionError>())
+            {
+                await _alertService.ShowToastAsync("No connection to server");
+                await _navigationService.GoBackAsync();
+            }
             else
             {
                 await _alertService.ShowToastAsync(result.Errors.FirstMessage());
@@ -147,6 +152,10 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
                 await _alertService.ShowToastAsync("Session not found, refreshing session list...");
                 await OnAppearing();
             }
+            else if (result.HasError<ConnectionError>())
+            {
+                await _alertService.ShowToastAsync("No connection to server");
+            }
             else
             {
                 await _alertService.ShowToastAsync(result.Errors.FirstMessage());
@@ -180,6 +189,10 @@ public sealed partial class SessionSettingsViewModel : PageViewModelBase
             {
                 await _alertService.ShowToastAsync(result.Errors.FirstMessage());
                 await OnAppearing();
+            }
+            else if (result.HasError<ConnectionError>())
+            {
+                await _alertService.ShowToastAsync("No connection to server");
             }
             else
             {
