@@ -50,7 +50,10 @@ public class Program
 
         builder.Services.AddDbContext<DataContext>(options =>
         {
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), options =>
+            {
+                options.EnableRetryOnFailure();
+            });
         });
 
         builder.Services.AddMediatR(options =>
