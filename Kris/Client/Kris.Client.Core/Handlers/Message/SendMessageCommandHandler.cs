@@ -3,7 +3,9 @@ using Kris.Client.Common.Errors;
 using Kris.Client.Core.Requests;
 using Kris.Interface.Controllers;
 using Kris.Interface.Requests;
+using Kris.Interface.Responses;
 using MediatR;
+using System.Net;
 
 namespace Kris.Client.Core.Handlers.Message;
 
@@ -24,7 +26,17 @@ public sealed class SendMessageCommandHandler : MessageHandler, IRequestHandler<
             Message = request.Body,
             Sent = DateTime.UtcNow
         };
-        var response = await _messageClient.SendMessage(httpRequest);
+        Response response;
+
+        try
+        {
+            response = await _messageClient.SendMessage(httpRequest);
+        }
+        catch (WebException)
+        {
+            return Result.Fail(new ConnectionError());
+        }
+
         if (response == null) return Result.Fail(new ServerError("No response"));
 
         if (!response.IsSuccess())

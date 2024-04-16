@@ -5,7 +5,9 @@ using Kris.Client.Core.Requests;
 using Kris.Client.Data.Cache;
 using Kris.Interface.Controllers;
 using Kris.Interface.Requests;
+using Kris.Interface.Responses;
 using MediatR;
+using System.Net;
 
 namespace Kris.Client.Core.Handlers.Session;
 
@@ -23,7 +25,16 @@ public sealed class JoinSessionCommandHandler : SessionHandler, IRequestHandler<
             Id = request.SessionId,
             Password = request.Password
         };
-        var response = await _sessionClient.JoinSession(httpRequest, cancellationToken);
+        IdentityResponse response;
+
+        try
+        {
+            response = await _sessionClient.JoinSession(httpRequest, cancellationToken);
+        }
+        catch (WebException)
+        {
+            return Result.Fail(new ConnectionError());
+        }
 
         if (!response.IsSuccess())
         {

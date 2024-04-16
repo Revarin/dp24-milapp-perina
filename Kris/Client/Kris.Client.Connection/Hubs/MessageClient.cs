@@ -9,6 +9,7 @@ using Kris.Interface.Requests;
 using Kris.Interface.Responses;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Options;
+using System.Net;
 
 namespace Kris.Client.Connection.Hubs;
 
@@ -23,6 +24,7 @@ public sealed class MessageClient : IMessageHub, IMessageReceiver
     public bool IsConnected { get; private set; }
 
     private HubConnection _hubConnection;
+    private Timer _timer;
 
     public MessageClient(IOptions<ConnectionOptions> options, IIdentityStore identityStore)
     {
@@ -43,11 +45,18 @@ public sealed class MessageClient : IMessageHub, IMessageReceiver
             .WithAutomaticReconnect()
             .Build();
 
-        //_hubConnection.KeepAliveInterval = TimeSpan.FromSeconds(_connectionOptions.HubKeepAliveSeconds);
-        //_hubConnection.ServerTimeout = TimeSpan.FromSeconds(_connectionOptions.HubServerTimeoutSeconds);
         _hubConnection.On<MessageModel>(nameof(ReceiveMessage), ReceiveMessage);
+        _timer = new Timer(PingConnection, null, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
 
-        await _hubConnection.StartAsync();
+        try
+        {
+            await _hubConnection.StartAsync();
+        }
+        catch (WebException)
+        {
+            return;
+        }
+
         IsConnected = true;
     }
 
@@ -62,6 +71,12 @@ public sealed class MessageClient : IMessageHub, IMessageReceiver
             await _hubConnection.DisposeAsync();
             _hubConnection = null;
         }
+        
+        if (_timer != null)
+        {
+            _timer.Dispose();
+            _timer = null;
+        }
 
         IsConnected = false;
     }
@@ -70,7 +85,14 @@ public sealed class MessageClient : IMessageHub, IMessageReceiver
     {
         if (_hubConnection.State != HubConnectionState.Connected)
         {
-            await _hubConnection.StartAsync();
+            try
+            {
+                await _hubConnection.StartAsync();
+            }
+            catch (WebException)
+            {
+                return null;
+            }
         }
 
         return await _hubConnection.InvokeAsync<Response>("SendMessage", request);
@@ -82,5 +104,20 @@ public sealed class MessageClient : IMessageHub, IMessageReceiver
         {
             MessageReceived?.Invoke(this, new MessageReceivedEventArgs(message));
         });
+    }
+
+    private async void PingConnection(object state)
+    {
+        if (_hubConnection.State != HubConnectionState.Connected)
+        {
+            try
+            {
+                await _hubConnection.StartAsync();
+            }
+            catch (WebException)
+            {
+                return;
+            }
+        }
     }
 }

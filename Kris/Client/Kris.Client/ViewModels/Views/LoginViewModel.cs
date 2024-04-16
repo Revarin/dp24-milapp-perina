@@ -68,6 +68,10 @@ public sealed partial class LoginViewModel : PageViewModelBase
             {
                 AddCustomError(nameof(Password), "Invalid credentials");
             }
+            else if (result.HasError<ConnectionError>())
+            {
+                await _alertService.ShowToastAsync("No connection to server");
+            }
             else
             {
                 await _alertService.ShowToastAsync("Server error");

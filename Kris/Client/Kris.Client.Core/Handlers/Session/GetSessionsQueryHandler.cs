@@ -5,7 +5,12 @@ using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
 using Kris.Client.Data.Cache;
 using Kris.Interface.Controllers;
+using Kris.Interface.Responses;
 using MediatR;
+using System.Net;
+
+using ClientSessionListModel = Kris.Client.Core.Models.SessionListModel;
+using InterfaceSessionListModel = Kris.Interface.Models.SessionListModel;
 
 namespace Kris.Client.Core.Handlers.Session;
 
@@ -22,7 +27,16 @@ public sealed class GetSessionsQueryHandler : SessionHandler, IRequestHandler<Ge
 
     public async Task<Result<AvailableSessionsModel>> Handle(GetSessionsQuery request, CancellationToken cancellationToken)
     {
-        var response = await _sessionClient.GetSessions(cancellationToken);
+        GetManyResponse<InterfaceSessionListModel> response;
+
+        try
+        {
+            response = await _sessionClient.GetSessions(cancellationToken);
+        }
+        catch (WebException)
+        {
+            return Result.Fail(new ConnectionError());
+        }
 
         if (!response.IsSuccess())
         {
@@ -38,13 +52,13 @@ public sealed class GetSessionsQueryHandler : SessionHandler, IRequestHandler<Ge
         var joinedSessions = allSession.IntersectBy(sessions, s => s.Id).Where(s => user.CurrentSession?.Id != s.Id).ToList();
         var otherSessions = allSession.ExceptBy(sessions, s => s.Id).Where(s => user.CurrentSession?.Id != s.Id).ToList();
 
-        var x = Result.Ok(new AvailableSessionsModel
+        var result = Result.Ok(new AvailableSessionsModel
         {
             UserType = user.CurrentSession?.UserType,
             CurrentSession = currentSession,
             JoinedSessions = joinedSessions,
             OtherSessions = otherSessions
         });
-        return x;
+        return result;
     }
 }

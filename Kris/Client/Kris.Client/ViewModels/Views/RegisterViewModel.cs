@@ -48,6 +48,10 @@ public sealed partial class RegisterViewModel : PageViewModelBase
             {
                 AddCustomError(nameof(Login), "User already exists");
             }
+            else if (result.HasError<ConnectionError>())
+            {
+                await _alertService.ShowToastAsync("No connection to server");
+            }
             else
             {
                 await _alertService.ShowToastAsync(result.Errors.FirstMessage());

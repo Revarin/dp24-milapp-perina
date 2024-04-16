@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CoordinateSharp;
 using FluentResults;
+using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
 using Kris.Client.Converters;
 using Kris.Client.Core.Models;
@@ -126,6 +127,7 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
         if (result.IsFailed)
         {
             LoadErrorClosing?.Invoke(this, new LoadResultEventArgs<MapPointDetailModel>(result));
+            return;
         }
 
         var mapPoint = result.Value;
@@ -233,6 +235,12 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
         };
         var result = await MediatorSendAsync(command, ct);
 
+        if (result.IsFailed && result.HasError<ConnectionError>())
+        {
+            await _alertService.ShowToastAsync("No connection to server");
+            return;
+        }
+
         var returnResult = result.IsSuccess
             ? Result.Ok(new MapPointListModel
             {
@@ -265,6 +273,12 @@ public sealed partial class EditMapPointPopupViewModel : PopupViewModel
         var ct = new CancellationToken();
         var command = new DeleteMapPointCommand { Id = PointId };
         var result = await MediatorSendAsync(command, ct);
+
+        if (result.IsFailed && result.HasError<ConnectionError>())
+        {
+            await _alertService.ShowToastAsync("No connection to server");
+            return;
+        }
 
         DeletedClosing?.Invoke(this, new DeleteResultEventArgs(result));
     }

@@ -102,6 +102,10 @@ public sealed partial class MapSettingsViewModel : PageViewModelBase
                 await _alertService.ShowToastAsync("Login expired");
                 await LogoutUser();
             }
+            else if (result.HasError<ConnectionError>())
+            {
+                await _alertService.ShowToastAsync("No connection to server, setting will not persist after logout");
+            }
             else
             {
                 await _alertService.ShowToastAsync(result.Errors.FirstMessage());

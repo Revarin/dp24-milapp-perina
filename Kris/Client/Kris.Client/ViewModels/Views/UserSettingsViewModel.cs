@@ -95,6 +95,10 @@ public sealed partial class UserSettingsViewModel : PageViewModelBase
                 await _alertService.ShowToastAsync("Login expired");
                 await LogoutUser();
             }
+            else if (result.HasError<ConnectionError>())
+            {
+                await _alertService.ShowToastAsync("No connection to server, setting will not persist after logout");
+            }
             else
             {
                 await _alertService.ShowToastAsync(result.Errors.FirstMessage());
@@ -127,6 +131,10 @@ public sealed partial class UserSettingsViewModel : PageViewModelBase
             else if (result.HasError<ForbiddenError>())
             {
                 await _alertService.ShowToastAsync("Wrong password");
+            }
+            else if (result.HasError<ConnectionError>())
+            {
+                await _alertService.ShowToastAsync("No connection to server");
             }
             else
             {

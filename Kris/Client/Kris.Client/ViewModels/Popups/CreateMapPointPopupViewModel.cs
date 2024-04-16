@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CoordinateSharp;
 using FluentResults;
+using Kris.Client.Common.Errors;
 using Kris.Client.Common.Events;
 using Kris.Client.Converters;
 using Kris.Client.Core.Models;
@@ -189,6 +190,12 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
             Attachments = ImageAttachments.Select(attachment => attachment.FilePath).ToList(),
         };
         var result = await MediatorSendAsync(command, ct);
+
+        if (result.IsFailed && result.HasError<ConnectionError>())
+        {
+            await _alertService.ShowToastAsync("No connection to server");
+            return;
+        }
 
         var returnResult = result.IsSuccess
             ? Result.Ok(new MapPointListModel
