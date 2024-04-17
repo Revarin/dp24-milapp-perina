@@ -39,6 +39,8 @@ public sealed class KrisMap : MauiMap, IKrisMap
         set { SetValue(KrisMapStyleProperty, value); }
     }
 
+    private uint _currentRegionChangedCounter = 0;
+
     public KrisMap()
     {
     }
@@ -58,7 +60,9 @@ public sealed class KrisMap : MauiMap, IKrisMap
         if (propertyName == nameof(VisibleRegion))
         {
             CurrentRegion = VisibleRegion;
-            CurrentRegionChanged?.Invoke(this, new CurrentRegionChangedEventArgs(CurrentRegion));
+            // Bad optimalization
+            if (_currentRegionChangedCounter % 5 == 0) CurrentRegionChanged?.Invoke(this, new CurrentRegionChangedEventArgs(CurrentRegion));
+            _currentRegionChangedCounter++;
         }
 
         base.OnPropertyChanged(propertyName);

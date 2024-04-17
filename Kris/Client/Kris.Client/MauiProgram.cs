@@ -26,6 +26,7 @@ using Kris.Client.Components.Utility;
 using Kris.Client.ViewModels.Utility;
 using Kris.Client.Core.Background;
 using Plugin.LocalNotification;
+using Kris.Client.Core.Platforms;
 
 namespace Kris.Client
 {
@@ -101,6 +102,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<ISymbolImageComposer, SymbolImageComposer>();
             builder.Services.AddSingleton<IKrisMapObjectFactory, KrisMapObjectFactory>();
             builder.Services.AddTransient<IImageAttachmentComposer, ImageAttachmentComposer>();
+            builder.Services.AddTransient<IImageService, ImageService>();
 
             builder.Services.AddSingleton<IUserMapper, UserMapper>();
             builder.Services.AddSingleton<ISessionMapper, SessionMapper>();

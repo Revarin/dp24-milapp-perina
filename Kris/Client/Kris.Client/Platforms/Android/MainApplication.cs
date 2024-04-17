@@ -29,15 +29,11 @@ namespace Kris.Client
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
-                var group = new NotificationChannelGroup(KrisNotificationGroupId, "Kris");
                 var backgroundChannel = new NotificationChannel(KrisBackgroundServiceChannelId, "Kris Background Services", NotificationImportance.Low);
-                var messageChannel = new NotificationChannel(KrisMessageChannelId, "Kris Messages", NotificationImportance.Default);
-                messageChannel.Group = KrisNotificationGroupId;
-                backgroundChannel.Group = KrisNotificationGroupId;
+                var messageChannel = new NotificationChannel(KrisMessageChannelId, "Kris Messages", NotificationImportance.High);
 
                 if (GetSystemService(NotificationService) is NotificationManager manager)
                 {
-                    manager.CreateNotificationChannelGroup(group);
                     manager.CreateNotificationChannel(backgroundChannel);
                     manager.CreateNotificationChannel(messageChannel);
                 }
