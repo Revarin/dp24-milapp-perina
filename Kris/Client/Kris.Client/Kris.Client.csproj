@@ -45,6 +45,7 @@
 		<MauiImage Include="Resources\Images\Icons\photo.png" />
 		<MauiImage Include="Resources\Images\Icons\image.png" />
 		<MauiImage Include="Resources\Images\Icons\close.png" />
+		<MauiImage Include="Resources\Images\crosshair.png" />
 
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />

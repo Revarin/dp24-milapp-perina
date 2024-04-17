@@ -29,12 +29,14 @@
             <cmpMap:KrisMap VerticalOptions="FillAndExpand"
                             KrisMapStyle="{Binding KrisMapStyle}"
                             ItemsSource="{Binding AllMapPins}"
-                            CurrentRegion="{Binding CurrentRegion}"
                             MoveToRegionRequest="{Binding MoveToRegion}" >
                 <cmpMap:KrisMap.Behaviors>
                     <tk:EventToCommandBehavior EventName="Loaded" Command="{Binding MapLoadedCommand}" />
                     <tk:EventToCommandBehavior EventName="MapLongClicked" Command="{Binding MapLongClickedCommand}"
                                                x:TypeArguments="cmpEvent:MapLongClickedEventArgs" />
+                    <tk:EventToCommandBehavior EventName="CurrentRegionChanged" Command="{Binding MapCurrentRegionChangedCommand}"
+                                               x:TypeArguments="cmpEvent:CurrentRegionChangedEventArgs" />
+                    <tk:EventToCommandBehavior EventName="CameraMoveStarted" Command="{Binding MapCameraManualMoveStartedCommand}" />
                 </cmpMap:KrisMap.Behaviors>
                 <cmpMap:KrisMap.ItemTemplate>
                     <DataTemplate x:DataType="{x:Type cmpMap:KrisMapPin}">
@@ -54,7 +56,7 @@
                          HorizontalOptions="FillAndExpand"
                          VerticalOptions="Start"
                          Style="{StaticResource CoordinateOverlayStack}">
-                <Label Text="{Binding CurrentPosition, Converter={StaticResource LocationToCoordinates}}"
+                <Label Text="{Binding CurrentRegion, Converter={StaticResource LocationToCoordinates}}"
                        HorizontalOptions="StartAndExpand"
                        Style="{StaticResource CoordinateLabel}">
                 </Label>
@@ -66,6 +68,11 @@
                     </ImageButton.Behaviors>
                 </ImageButton>
             </StackLayout>
+
+            <Image Source="crosshair.png"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   TranslationY="-10"/>
         </Grid>
 
         <StackLayout Orientation="{Binding DisplayOrientation, Converter={StaticResource OrientationToInverseOrientation}}"

@@ -1,5 +1,4 @@
 ﻿using Kris.Client.Components.Events;
-using Kris.Client.Data.Cache;
 using Kris.Client.Utility;
 using Microsoft.Maui.Maps;
 using System.Runtime.CompilerServices;
@@ -11,6 +10,8 @@ namespace Kris.Client.Components.Map;
 public sealed class KrisMap : MauiMap, IKrisMap
 {
     public event EventHandler<MapLongClickedEventArgs> MapLongClicked;
+    public event EventHandler<CurrentRegionChangedEventArgs> CurrentRegionChanged;
+    public event EventHandler<EventArgs> CameraMoveStarted;
 
     public static readonly BindableProperty CurrentRegionProperty = BindableProperty.Create(
         "CurrentRegion", typeof(MapSpan), typeof(KrisMap), default(MapSpan), BindingMode.OneWayToSource);
@@ -47,11 +48,17 @@ public sealed class KrisMap : MauiMap, IKrisMap
         MapLongClicked?.Invoke(this, new MapLongClickedEventArgs(location));
     }
 
+    public void MoveStarted()
+    {
+        CameraMoveStarted?.Invoke(this, EventArgs.Empty);
+    }
+
     protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
         if (propertyName == nameof(VisibleRegion))
         {
             CurrentRegion = VisibleRegion;
+            CurrentRegionChanged?.Invoke(this, new CurrentRegionChangedEventArgs(CurrentRegion));
         }
 
         base.OnPropertyChanged(propertyName);

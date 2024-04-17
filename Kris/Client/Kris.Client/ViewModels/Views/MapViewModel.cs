@@ -45,11 +45,12 @@ public sealed partial class MapViewModel : PageViewModelBase
     [ObservableProperty]
     private DisplayOrientation _displayOrientation;
     [ObservableProperty]
-    private MapSpan _currentRegion;
-    [ObservableProperty]
     private IViewRequest<MapSpan> _moveToRegion = new MoveToRegionRequest();
     [ObservableProperty]
     private LocationCoordinates _currentPosition = new LocationCoordinates();
+    [ObservableProperty]
+    private LocationCoordinates _currentRegion = new LocationCoordinates();
+    private Distance? _currentRadius;
 
     [ObservableProperty]
     private KrisMapStyle _krisMapStyle = null;
@@ -63,6 +64,8 @@ public sealed partial class MapViewModel : PageViewModelBase
     private IMapTileRepository _mapTileRepository;
     private CoordinateSystem _coordinateSystem;
     private KrisMapType _krisMapType;
+
+    private bool _isFollowingUser = true;
 
     public MapViewModel(IMapSettingsDataProvider mapSettingsDataProvider, IRepositoryFactory repositoryFactory, IKrisMapObjectFactory krisMapObjectFactory,
         ICurrentPositionBackgroundHandler currentPositionBackgroundHandler, IUserPositionsBackgroundHandler userPositionsBackgroundHandler,
@@ -99,7 +102,23 @@ public sealed partial class MapViewModel : PageViewModelBase
     [RelayCommand]
     private async Task OnMapLoaded() => await MoveToCurrentPositionAsync();
     [RelayCommand]
-    private async Task OnCurrentPositionButtonClicked() => await MoveToCurrentPositionAsync();
+    private async Task OnCurrentPositionButtonClicked()
+    {
+        _isFollowingUser = true;
+        await MoveToCurrentPositionAsync();
+    }
+    [RelayCommand]
+    private void OnMapCurrentRegionChanged(CurrentRegionChangedEventArgs e)
+    {
+        _currentRadius = e.CurrentRegion.Radius;
+        CurrentRegion.Location = e.CurrentRegion.Center;
+        OnPropertyChanged(nameof(CurrentRegion));
+    }
+    [RelayCommand]
+    private void OnMapCameraManualMoveStarted()
+    {
+        _isFollowingUser = false;
+    }
     [RelayCommand]
     private async Task OnMapLongClicked(MapLongClickedEventArgs e) => await ShowCreateMapPointPopupAsync(e.Location);
     public async Task OnKrisPinClicked(KrisMapPin sender, PinClickedEventArgs e)
@@ -179,6 +198,8 @@ public sealed partial class MapViewModel : PageViewModelBase
 
         CurrentPosition.CoordinateSystem = _coordinateSystem;
         OnPropertyChanged(nameof(CurrentPosition));
+        CurrentRegion.CoordinateSystem = _coordinateSystem;
+        OnPropertyChanged(nameof(CurrentRegion));
     }
 
     private async Task MoveToCurrentPositionAsync()
@@ -192,7 +213,7 @@ public sealed partial class MapViewModel : PageViewModelBase
         }
         else
         {
-            var newRegion = MapSpan.FromCenterAndRadius(currentPosition, CurrentRegion?.Radius ?? Distance.FromKilometers(5));
+            var newRegion = MapSpan.FromCenterAndRadius(currentPosition, _currentRadius ?? Distance.FromKilometers(5));
             MoveToRegion.Execute(newRegion);
         }
     }
@@ -333,6 +354,11 @@ public sealed partial class MapViewModel : PageViewModelBase
         var oldUserPin = AllMapPins.FirstOrDefault(p => p.KrisPinType == KrisPinType.Self && p.Id == userPosition.UserId);
         AllMapPins.Remove(oldUserPin);
         AllMapPins.Add(userPin);
+
+        if (_isFollowingUser)
+        {
+            MoveToRegion.Execute(MapSpan.FromCenterAndRadius(CurrentPosition.Location, _currentRadius ?? Distance.FromKilometers(5)));
+        }
     }
     
     private void AddOtherUserPositionsToMap(IEnumerable<UserPositionModel> userPositions)

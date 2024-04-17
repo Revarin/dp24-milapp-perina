@@ -1,7 +1,6 @@
 ﻿using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
 using Android.Graphics;
-using Java.Lang;
 using Kris.Client.Platforms.Callbacks;
 using Kris.Client.Platforms.Listeners;
 using Kris.Client.Platforms.Map;
@@ -18,6 +17,7 @@ public partial class KrisMapHandler
     public List<Marker> Markers { get; } = new();
 
     private readonly MapLongClickListener _mapLongClickListener = new();
+    private readonly MapCameraMoveStartedListener _mapCameraMoveStartedListener = new();
     private TileOverlay _tileOverlay;
 
     protected GoogleMap NativeMap { get; private set; }
@@ -35,6 +35,8 @@ public partial class KrisMapHandler
         {
             _mapLongClickListener.Handler = this;
             nativeMap.SetOnMapLongClickListener(_mapLongClickListener);
+            _mapCameraMoveStartedListener.Handler = this;
+            nativeMap.SetOnCameraMoveStartedListener(_mapCameraMoveStartedListener);
         }
     }
 
@@ -44,6 +46,7 @@ public partial class KrisMapHandler
         if (nativeMap != null)
         {
             nativeMap.SetOnMapLongClickListener(null);
+            nativeMap.SetOnCameraMoveStartedListener(null);
         }
 
         base.DisconnectHandler(platformView);
