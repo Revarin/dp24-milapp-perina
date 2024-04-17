@@ -10,17 +10,20 @@
              xmlns:cmpEvent="clr-namespace:Kris.Client.Components.Events"
              x:Class="Kris.Client.Views.MapView"
              x:DataType="vm:MapViewModel"
-             Title="Map">
+             Title="">
     <ContentPage.Behaviors>
         <tk:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}" />
     </ContentPage.Behaviors>
     
     <ContentPage.Resources>
         <conv:LocationToCoordinatesConverter x:Key="LocationToCoordinates" />
+        <conv:DeviceOrientationToStackOrientationConverter x:Key="OrientationToOrientation" />
+        <conv:DeviceOrientationToStackOrientationInverseConverter x:Key="OrientationToInverseOrientation" />
     </ContentPage.Resources>
 
-    <StackLayout Orientation="Vertical"
-                 VerticalOptions="FillAndExpand">
+    <StackLayout Orientation="{Binding DisplayOrientation, Converter={StaticResource OrientationToOrientation}}"
+                 VerticalOptions="FillAndExpand"
+                 HorizontalOptions="FillAndExpand">
 
         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
             <cmpMap:KrisMap VerticalOptions="FillAndExpand"
@@ -52,22 +55,25 @@
                          VerticalOptions="Start"
                          Style="{StaticResource CoordinateOverlayStack}">
                 <Label Text="{Binding CurrentPosition, Converter={StaticResource LocationToCoordinates}}"
+                       HorizontalOptions="StartAndExpand"
                        Style="{StaticResource CoordinateLabel}">
                 </Label>
                 <ImageButton Source="location.png"
-                             HorizontalOptions="EndAndExpand">
+                             HorizontalOptions="End"
+                             Style="{StaticResource CoordinateImageButton}">
                     <ImageButton.Behaviors>
                         <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding CurrentPositionButtonClickedCommand}" />
                     </ImageButton.Behaviors>
                 </ImageButton>
             </StackLayout>
         </Grid>
-            
-        <StackLayout Orientation="Horizontal"
-                     HorizontalOptions="FillAndExpand"
-                     VerticalOptions="End">
+
+        <StackLayout Orientation="{Binding DisplayOrientation, Converter={StaticResource OrientationToInverseOrientation}}"
+                     HorizontalOptions="Fill"
+                     VerticalOptions="Fill">
             <Button Text="Map"
                     HorizontalOptions="FillAndExpand"
+                    VerticalOptions="FillAndExpand"
                     Style="{StaticResource NavigationButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MapButtonClickedCommand}" />
@@ -75,6 +81,7 @@
             </Button>
             <Button Text="Menu"
                     HorizontalOptions="FillAndExpand"
+                    VerticalOptions="FillAndExpand"
                     Style="{StaticResource NavigationButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MenuButtonClickedCommand}" />

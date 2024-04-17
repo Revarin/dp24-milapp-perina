@@ -11,7 +11,7 @@
           Style="{StaticResource FullScreenPopup}">
 
     <tk:Popup.Resources>
-        <conv:LocationToCoordinatesConverter x:Key="LocationToCoordinates" />
+        <conv:LocationToFormatedCoordinatesConverter x:Key="LocationToCoordinates" />
     </tk:Popup.Resources>
 
     <StackLayout Orientation="Vertical"

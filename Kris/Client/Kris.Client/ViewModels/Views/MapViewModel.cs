@@ -43,6 +43,8 @@ public sealed partial class MapViewModel : PageViewModelBase
     private readonly IMessageReceiver _messageReceiver;
 
     [ObservableProperty]
+    private DisplayOrientation _displayOrientation;
+    [ObservableProperty]
     private MapSpan _currentRegion;
     [ObservableProperty]
     private IViewRequest<MapSpan> _moveToRegion = new MoveToRegionRequest();
@@ -80,7 +82,11 @@ public sealed partial class MapViewModel : PageViewModelBase
         _messageService.Register<CurrentSessionChangedMessage>(this, OnBackgroundContextChanged);
         _messageService.Register<ConnectionSettingsChangedMessage>(this, OnBackgroundContextChanged);
         _messageService.Register<MapSettingsChangedMessage>(this, async (sender, msg) => await LoadMapSettingsAsync(true));
+
+        DisplayOrientation = DeviceDisplay.Current.MainDisplayInfo.Orientation;
+        DeviceDisplay.Current.MainDisplayInfoChanged += MainDisplayInfoChanged;
     }
+
 
     // HANDLERS
     [RelayCommand]
@@ -106,6 +112,11 @@ public sealed partial class MapViewModel : PageViewModelBase
     private void OnUserPositionsChanged(object sender, UserPositionsEventArgs e) => AddOtherUserPositionsToMap(e.Positions);
     private void OnMapObjectsChanged(object sender, MapObjectsEventArgs e) => AddMapObjectsToMap(e.MapPoints, e.DeletedMapPoints);
     private async void OnMessageReceived(object sender, MessageReceivedEventArgs e) => await ShowMessageNotification(e.Id, e.SenderName, e.Body);
+
+    private void MainDisplayInfoChanged(object sender, DisplayInfoChangedEventArgs e)
+    {
+        DisplayOrientation = e.DisplayInfo.Orientation;
+    }
 
     // CORE
     private void StartBackgroudListeners()
