@@ -123,7 +123,6 @@ namespace Kris.Client
             builder.Services.AddSingleton<IMediaService, MediaService>();
 
             builder.Services.AddSingleton<IIdentityStore, IdentityStore>();
-            builder.Services.AddSingleton<ILocationStore, LocationStore>();
             builder.Services.AddSingleton<ISettingsStore, SettingsStore>();
             builder.Services.AddSingleton<IFileStore, FileStore>();
 

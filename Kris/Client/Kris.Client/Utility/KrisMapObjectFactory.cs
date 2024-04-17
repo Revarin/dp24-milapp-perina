@@ -7,6 +7,8 @@ namespace Kris.Client.Utility;
 
 public sealed class KrisMapObjectFactory : IKrisMapObjectFactory
 {
+    private const string ImageResourcePath = "Kris.Client.Resources.Images.Point";
+
     private readonly ISymbolImageComposer _symbolImageComposer;
     private readonly IFileStore _symbolImageCache;
 
@@ -19,12 +21,25 @@ public sealed class KrisMapObjectFactory : IKrisMapObjectFactory
     public KrisMapPinViewModel CreateUserPositionPin(UserPositionModel userPosition, KrisPinType krisPinType)
     {
         var symbol = userPosition.Symbol;
-        var symbolName = $"point_{symbol.Shape}_{symbol.Color}_{symbol.Sign}.png";
+        string symbolName;
 
-        if (!_symbolImageCache.CacheExists(symbolName))
+        if (krisPinType == KrisPinType.Self)
         {
-            var imageStream = _symbolImageComposer.ComposeMapPointSymbol(symbol.Shape, symbol.Color, symbol.Sign);
-            _symbolImageCache.SaveToCache(symbolName, imageStream);
+            symbolName = $"point_current_user.png";
+            if (!_symbolImageCache.CacheExists(symbolName))
+            {
+                var imageStream = typeof(App).Assembly.GetManifestResourceStream($"{ImageResourcePath}.{symbolName}");
+                _symbolImageCache.SaveToCache(symbolName, imageStream);
+            }
+        }
+        else
+        {
+            symbolName = $"point_{symbol.Shape}_{symbol.Color}_{symbol.Sign}.png";
+            if (!_symbolImageCache.CacheExists(symbolName))
+            {
+                var imageStream = _symbolImageComposer.ComposeMapPointSymbol(symbol.Shape, symbol.Color, symbol.Sign);
+                _symbolImageCache.SaveToCache(symbolName, imageStream);
+            }
         }
 
         var pin = new KrisMapPinViewModel

@@ -10,8 +10,6 @@ namespace Kris.Client.Components.Map;
 
 public sealed class KrisMap : MauiMap, IKrisMap
 {
-    private readonly ILocationStore _locationStore;
-
     public event EventHandler<MapLongClickedEventArgs> MapLongClicked;
 
     public static readonly BindableProperty CurrentRegionProperty = BindableProperty.Create(
@@ -40,11 +38,8 @@ public sealed class KrisMap : MauiMap, IKrisMap
         set { SetValue(KrisMapStyleProperty, value); }
     }
 
-    private DateTime _nextSave = DateTime.MinValue;
-
     public KrisMap()
     {
-        _locationStore = ServiceHelper.GetService<ILocationStore>();
     }
 
     public void LongClicked(Location location)
@@ -57,13 +52,6 @@ public sealed class KrisMap : MauiMap, IKrisMap
         if (propertyName == nameof(VisibleRegion))
         {
             CurrentRegion = VisibleRegion;
-
-            // Storing location here is not good, but simple
-            if (DateTime.Now > _nextSave)
-            {
-                _locationStore.StoreCurrentRegion(CurrentRegion);
-                _nextSave = DateTime.Now.AddSeconds(5);
-            }
         }
 
         base.OnPropertyChanged(propertyName);

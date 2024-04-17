@@ -97,7 +97,7 @@ public sealed partial class MapViewModel : PageViewModelBase
         await LoadMapSettingsAsync(false);
     }
     [RelayCommand]
-    private async Task OnMapLoaded() => await MoveToCurrentRegionAsync();
+    private async Task OnMapLoaded() => await MoveToCurrentPositionAsync();
     [RelayCommand]
     private async Task OnCurrentPositionButtonClicked() => await MoveToCurrentPositionAsync();
     [RelayCommand]
@@ -181,17 +181,6 @@ public sealed partial class MapViewModel : PageViewModelBase
         OnPropertyChanged(nameof(CurrentPosition));
     }
 
-    private async Task MoveToCurrentRegionAsync()
-    {
-        var query = new GetCurrentRegionQuery();
-        var currentRegion = await MediatorSendAsync(query, CancellationToken.None);
-
-        if (currentRegion != null)
-        {
-            MoveToRegion.Execute(currentRegion);
-        }
-    }
-
     private async Task MoveToCurrentPositionAsync()
     {
         var query = new GetCurrentPositionQuery();
@@ -203,7 +192,7 @@ public sealed partial class MapViewModel : PageViewModelBase
         }
         else
         {
-            var newRegion = MapSpan.FromCenterAndRadius(currentPosition, CurrentRegion.Radius);
+            var newRegion = MapSpan.FromCenterAndRadius(currentPosition, CurrentRegion?.Radius ?? Distance.FromKilometers(5));
             MoveToRegion.Execute(newRegion);
         }
     }
