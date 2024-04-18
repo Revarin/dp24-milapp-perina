@@ -26,6 +26,7 @@ using Kris.Client.Components.Utility;
 using Kris.Client.ViewModels.Utility;
 using Kris.Client.Core.Background;
 using Plugin.LocalNotification;
+using Kris.Client.Core.Platforms;
 
 namespace Kris.Client
 {
@@ -40,6 +41,15 @@ namespace Kris.Client
                 .UseMauiMaps()
                 .UseMauiCommunityToolkit()
                 .UseLocalNotification()
+                .UseSentry(options =>
+                {
+                    options.Dsn = "TODO";
+                    options.TracesSampleRate = 0.2;
+                    options.ExperimentalMetrics = new ExperimentalMetricsOptions
+                    {
+                        EnableCodeLocations = true
+                    };
+                })
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -101,6 +111,7 @@ namespace Kris.Client
             builder.Services.AddSingleton<ISymbolImageComposer, SymbolImageComposer>();
             builder.Services.AddSingleton<IKrisMapObjectFactory, KrisMapObjectFactory>();
             builder.Services.AddTransient<IImageAttachmentComposer, ImageAttachmentComposer>();
+            builder.Services.AddTransient<IImageService, ImageService>();
 
             builder.Services.AddSingleton<IUserMapper, UserMapper>();
             builder.Services.AddSingleton<ISessionMapper, SessionMapper>();
@@ -123,7 +134,6 @@ namespace Kris.Client
             builder.Services.AddSingleton<IMediaService, MediaService>();
 
             builder.Services.AddSingleton<IIdentityStore, IdentityStore>();
-            builder.Services.AddSingleton<ILocationStore, LocationStore>();
             builder.Services.AddSingleton<ISettingsStore, SettingsStore>();
             builder.Services.AddSingleton<IFileStore, FileStore>();
 
@@ -133,7 +143,7 @@ namespace Kris.Client
             builder.Services.AddTransient<IMapPointSymbolDataProvider, MapPointSymbolDataProvider>();
             builder.Services.AddTransient<IMapSettingsDataProvider, MapSettingsDataProvider>();
 
-            builder.Services.AddSingleton<IHttpClientFactory, HttpClientFactory>();
+            builder.Services.AddSingleton<Connection.IHttpClientFactory, HttpClientFactory>();
             builder.Services.AddTransient<IUserController, UserClient>();
             builder.Services.AddTransient<ISessionController, SessionClient>();
             builder.Services.AddTransient<IPositionController, PositionClient>();

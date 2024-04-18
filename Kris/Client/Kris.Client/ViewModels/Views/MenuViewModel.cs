@@ -37,6 +37,7 @@ public sealed partial class MenuViewModel : PageViewModelBase
     {
         var confirmation = await _popupService.ShowPopupAsync<ConfirmationPopupViewModel>(vm => vm.Message = "Do you want to logout?") as ConfirmationEventArgs;
         if (confirmation == null || !confirmation.IsConfirmed) return;
+        Common.Metrics.SentryMetrics.CounterIncrement("CorrectLogoutUser");
         await LogoutUser();
     }
 

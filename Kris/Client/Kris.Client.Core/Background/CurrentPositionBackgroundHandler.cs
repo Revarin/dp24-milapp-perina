@@ -44,6 +44,7 @@ public sealed class CurrentPositionBackgroundHandler : BackgroundHandler, ICurre
         if (_permissionStatus == PermissionStatus.Denied || _permissionStatus == PermissionStatus.Disabled) return;
         if (_permissionStatus == PermissionStatus.Unknown) await AskForGpsPermissionAsync();
 
+        using var t = Common.Metrics.SentryMetrics.TimerStart("CurrentPositionBackgroundHandler");
         Location location = null;
 
         try

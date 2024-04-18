@@ -20,6 +20,7 @@ public sealed class EndSessionCommandHandler : SessionHandler, IRequestHandler<E
 
     public async Task<Result> Handle(EndSessionCommand request, CancellationToken cancellationToken)
     {
+        using var t = Common.Metrics.SentryMetrics.TimerStart("RequestHandler");
         var httpRequest = new PasswordRequest { Password = request.Password };
         Response response;
 

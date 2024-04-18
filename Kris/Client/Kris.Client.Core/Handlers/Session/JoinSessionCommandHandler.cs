@@ -20,6 +20,7 @@ public sealed class JoinSessionCommandHandler : SessionHandler, IRequestHandler<
 
     public async Task<Result> Handle(JoinSessionCommand request, CancellationToken cancellationToken)
     {
+        using var t = Common.Metrics.SentryMetrics.TimerStart("RequestHandler");
         var httpRequest = new JoinSessionRequest
         {
             Id = request.SessionId,

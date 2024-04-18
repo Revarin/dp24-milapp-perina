@@ -1,4 +1,5 @@
 ﻿using Kris.Client.Common.Events;
+using Kris.Client.Common.Metrics;
 using Kris.Client.Common.Options;
 using Kris.Client.Connection.Hubs.Events;
 using Kris.Client.Data.Cache;
@@ -95,6 +96,7 @@ public sealed class MessageClient : IMessageHub, IMessageReceiver
             }
         }
 
+        SentryMetrics.CounterIncrement("SendMessage");
         return await _hubConnection.InvokeAsync<Response>("SendMessage", request);
     }
 

@@ -81,6 +81,12 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
         MapPointColorItems = _symbolDataProvider.GetMapPointSymbolColorItems().ToObservableCollection();
         MapPointShapeItems = _symbolDataProvider.GetMapPointSymbolShapeItems().ToObservableCollection();
         MapPointSignItems = _symbolDataProvider.GetMapPointSymbolSignItems().ToObservableCollection();
+
+        PointName = "New point";
+        MapPointShapeSelectedItem = MapPointShapeItems.FirstOrDefault(shape => shape.Value == MapPointSymbolShape.Circle);
+        MapPointColorSelectedItem = MapPointColorItems.FirstOrDefault(color => color.Value == MapPointSymbolColor.Yellow);
+        MapPointSignSelectedItem = MapPointSignItems.FirstOrDefault(sign => sign.Value == MapPointSymbolSign.None);
+        RedrawSymbol();
     }
 
     // HANDLERS
@@ -135,6 +141,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     {
         var fileResult = await _filePickerService.PickImageAsync();
         if (fileResult == null) return;
+        Common.Metrics.SentryMetrics.CounterIncrement("PickImage");
         AddImageAttachment(fileResult);
     }
 
@@ -142,6 +149,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     {
         var fileResult = await _filePickerService.TakePhotoAsync();
         if (fileResult == null) return;
+        Common.Metrics.SentryMetrics.CounterIncrement("TakeImage");
         AddImageAttachment(fileResult);
     }
 

@@ -1,4 +1,5 @@
-﻿using Kris.Client.Data.Cache;
+﻿using Kris.Client.Common.Metrics;
+using Kris.Client.Data.Cache;
 using Kris.Common.Extensions;
 using Kris.Interface.Controllers;
 using Kris.Interface.Models;
@@ -19,6 +20,7 @@ public sealed class MapObjectClient : ClientBase, IMapObjectController
     {
         var jwt = _identityStore.GetJwtToken();
         using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        SentryMetrics.CounterIncrement("AddMapPoint");
         return await PostAsync<AddMapPointRequest, GetOneResponse<Guid>>(httpClient, "Point", request, ct);
     }
 
@@ -26,6 +28,7 @@ public sealed class MapObjectClient : ClientBase, IMapObjectController
     {
         var jwt = _identityStore.GetJwtToken();
         using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        SentryMetrics.CounterIncrement("DeleteMapPoint");
         return await DeleteAsync<Response>(httpClient, $"Point/{pointId}", ct);
     }
 
@@ -33,6 +36,7 @@ public sealed class MapObjectClient : ClientBase, IMapObjectController
     {
         var jwt = _identityStore.GetJwtToken();
         using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        SentryMetrics.CounterIncrement("EditMapPoint");
         return await PutAsync<EditMapPointRequest, Response>(httpClient, "Point", request, ct);
     }
 
@@ -42,6 +46,8 @@ public sealed class MapObjectClient : ClientBase, IMapObjectController
         using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
         var query = HttpUtility.ParseQueryString(string.Empty);
         if (from.HasValue) query[nameof(from)] = from.Value.ToISOString();
+
+        SentryMetrics.CounterIncrement("GetMapObjects");
         var result = await GetAsync<GetMapObjectsResponse>(httpClient, string.Empty, query.ToString(), ct);
 
         if (ct.IsCancellationRequested) ct.ThrowIfCancellationRequested();
@@ -52,6 +58,7 @@ public sealed class MapObjectClient : ClientBase, IMapObjectController
     {
         var jwt = _identityStore.GetJwtToken();
         using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        SentryMetrics.CounterIncrement("GetMapPoint");
         return await GetAsync<GetOneResponse<MapPointDetailModel>>(httpClient, $"Point/{pointId}", ct);
     }
 }

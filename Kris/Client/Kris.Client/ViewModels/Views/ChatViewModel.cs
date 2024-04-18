@@ -27,6 +27,8 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
     private readonly IMessageReceiver _messageReceiver;
 
     [ObservableProperty]
+    private DisplayOrientation _displayOrientation;
+    [ObservableProperty]
     private IViewRequest<int> _scrollTo = new Client.Utility.ScrollToRequest();
 
     [ObservableProperty]
@@ -47,6 +49,7 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
     {
         _settingsOptions = options.Value;
         _messageReceiver = messageReceiver;
+        DisplayOrientation = DeviceDisplay.Current.MainDisplayInfo.Orientation;
     }
 
     // HANDLERS
@@ -59,6 +62,7 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
     [RelayCommand]
     private async Task OnAppearing()
     {
+        DeviceDisplay.Current.MainDisplayInfoChanged += MainDisplayInfoChanged;
         _messageReceiver.MessageReceived += OnMessageReceived;
         await LoadMessagesAsync(0);
         await Task.Delay(1000).ContinueWith(_ =>
@@ -81,6 +85,11 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
         var lastMessage = Messages.Count - 1;
         await LoadMessagesAsync(Messages.Count / _settingsOptions.ChatMessagesPageSize);
         ScrollTo.Execute(lastMessage);
+    }
+
+    private void MainDisplayInfoChanged(object sender, DisplayInfoChangedEventArgs e)
+    {
+        DisplayOrientation = e.DisplayInfo.Orientation;
     }
 
     // CORE
@@ -217,24 +226,28 @@ public sealed partial class ChatViewModel : PageViewModelBase, IQueryAttributabl
     // MISC
     protected override Task OnMapButtonClicked()
     {
+        DeviceDisplay.Current.MainDisplayInfoChanged -= MainDisplayInfoChanged;
         _messageReceiver.MessageReceived -= OnMessageReceived;
         return base.OnMapButtonClicked();
     }
 
     protected override Task OnMenuButtonClicked()
     {
+        DeviceDisplay.Current.MainDisplayInfoChanged -= MainDisplayInfoChanged;
         _messageReceiver.MessageReceived -= OnMessageReceived;
         return base.OnMenuButtonClicked();
     }
 
     protected override Task LogoutUser()
     {
+        DeviceDisplay.Current.MainDisplayInfoChanged -= MainDisplayInfoChanged;
         _messageReceiver.MessageReceived -= OnMessageReceived;
         return base.LogoutUser();
     }
 
     private async Task GoToContactsAsync()
     {
+        DeviceDisplay.Current.MainDisplayInfoChanged -= MainDisplayInfoChanged;
         _messageReceiver.MessageReceived -= OnMessageReceived;
         await _navigationService.GoBackAsync();
     }

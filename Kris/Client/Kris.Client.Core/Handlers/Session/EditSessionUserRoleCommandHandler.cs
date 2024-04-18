@@ -20,6 +20,7 @@ public sealed class EditSessionUserRoleCommandHandler : SessionHandler, IRequest
 
     public async Task<Result> Handle(EditSessionUserRoleCommand request, CancellationToken cancellationToken)
     {
+        using var t = Common.Metrics.SentryMetrics.TimerStart("RequestHandler");
         var httpRequest = new EditSessionUserRoleRequest
         {
             UserId = request.UserId,

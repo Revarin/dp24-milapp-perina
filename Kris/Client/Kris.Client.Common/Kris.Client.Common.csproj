@@ -22,6 +22,7 @@
 	<ItemGroup>
 	  <PackageReference Include="FluentResults" />
 	  <PackageReference Include="Microsoft.Maui.Controls.Maps" />
+	  <PackageReference Include="Sentry.Maui" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -20,6 +20,8 @@ public sealed class UpdateConnectionSettingsCommandHandler : SettingsHandler, IR
 
     public async Task<Result> Handle(UpdateConnectionSettingsCommand request, CancellationToken cancellationToken)
     {
+        Common.Metrics.SentryMetrics.CounterIncrement("ConnectionSettingsUpdate");
+        using var t = Common.Metrics.SentryMetrics.TimerStart("RequestHandler");
         _settingsStore.StoreConnectionSettings(request.ConnectionSettings);
 
         var httpRequest = new StoreUserSettingsRequest

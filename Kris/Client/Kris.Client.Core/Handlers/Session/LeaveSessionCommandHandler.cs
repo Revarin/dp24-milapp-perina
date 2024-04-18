@@ -19,6 +19,7 @@ public sealed class LeaveSessionCommandHandler : SessionHandler, IRequestHandler
 
     public async Task<Result> Handle(LeaveSessionCommand request, CancellationToken cancellationToken)
     {
+        using var t = Common.Metrics.SentryMetrics.TimerStart("RequestHandler");
         IdentityResponse response;
 
         try

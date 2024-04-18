@@ -195,6 +195,7 @@
                 </Button.Behaviors>
             </Button>
             <Button Text="Save changes"
+                    IsVisible="{Binding UserType, Converter={StaticResource UserTypeAdminConverter}}"
                     HorizontalOptions="FillAndExpand">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding AdminSaveButtonClickedCommand}" />

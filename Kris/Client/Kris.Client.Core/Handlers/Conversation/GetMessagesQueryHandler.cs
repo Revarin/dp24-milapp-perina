@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using Kris.Client.Common.Errors;
+using Kris.Client.Common.Metrics;
 using Kris.Client.Common.Options;
 using Kris.Client.Core.Mappers;
 using Kris.Client.Core.Requests;
@@ -29,6 +30,7 @@ public sealed class GetMessagesQueryHandler : ConversationHandler, IRequestHandl
 
     public async Task<Result<IEnumerable<ClientMessageModel>>> Handle(GetMessagesQuery request, CancellationToken cancellationToken)
     {
+        using var t = SentryMetrics.TimerStart("RequestHandler");
         var from = _settingsOptions.ChatMessagesPageSize * request.Page;
         var count = _settingsOptions.ChatMessagesPageSize;
         GetManyResponse<InterfaceMessageModel> response;

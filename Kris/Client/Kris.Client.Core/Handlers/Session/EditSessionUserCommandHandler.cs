@@ -20,6 +20,7 @@ public sealed class EditSessionUserCommandHandler : SessionHandler, IRequestHand
 
     public async Task<Result> Handle(EditSessionUserCommand request, CancellationToken cancellationToken)
     {
+        using var t = Common.Metrics.SentryMetrics.TimerStart("RequestHandler");
         var httpRequest = new EditSessionUserRequest
         {
             Nickname = request.UserName,

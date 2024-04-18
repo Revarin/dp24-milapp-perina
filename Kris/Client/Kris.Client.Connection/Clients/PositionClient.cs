@@ -1,4 +1,5 @@
-﻿using Kris.Client.Data.Cache;
+﻿using Kris.Client.Common.Metrics;
+using Kris.Client.Data.Cache;
 using Kris.Common.Extensions;
 using Kris.Interface.Controllers;
 using Kris.Interface.Requests;
@@ -20,6 +21,8 @@ public sealed class PositionClient : ClientBase, IPositionController
         var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
         var query = HttpUtility.ParseQueryString(string.Empty);
         if (from.HasValue) query[nameof(from)] = from.Value.ToISOString();
+
+        SentryMetrics.CounterIncrement("GetPositions");
         var result = await GetAsync<GetPositionsResponse>(httpClient, string.Empty, query.ToString(), ct);
 
         if (ct.IsCancellationRequested) ct.ThrowIfCancellationRequested();
@@ -30,6 +33,8 @@ public sealed class PositionClient : ClientBase, IPositionController
     {
         var jwt = _identityStore.GetJwtToken();
         var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+
+        SentryMetrics.CounterIncrement("SavePosition");
         var result = await PostAsync<SavePositionRequest, Response>(httpClient, string.Empty, request, ct);
 
         if (ct.IsCancellationRequested) ct.ThrowIfCancellationRequested();

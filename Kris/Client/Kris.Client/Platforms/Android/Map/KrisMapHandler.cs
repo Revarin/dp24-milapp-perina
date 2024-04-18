@@ -1,6 +1,6 @@
 ﻿using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
-using Java.Lang;
+using Android.Graphics;
 using Kris.Client.Platforms.Callbacks;
 using Kris.Client.Platforms.Listeners;
 using Kris.Client.Platforms.Map;
@@ -17,6 +17,7 @@ public partial class KrisMapHandler
     public List<Marker> Markers { get; } = new();
 
     private readonly MapLongClickListener _mapLongClickListener = new();
+    private readonly MapCameraMoveStartedListener _mapCameraMoveStartedListener = new();
     private TileOverlay _tileOverlay;
 
     protected GoogleMap NativeMap { get; private set; }
@@ -34,6 +35,8 @@ public partial class KrisMapHandler
         {
             _mapLongClickListener.Handler = this;
             nativeMap.SetOnMapLongClickListener(_mapLongClickListener);
+            _mapCameraMoveStartedListener.Handler = this;
+            nativeMap.SetOnCameraMoveStartedListener(_mapCameraMoveStartedListener);
         }
     }
 
@@ -43,6 +46,7 @@ public partial class KrisMapHandler
         if (nativeMap != null)
         {
             nativeMap.SetOnMapLongClickListener(null);
+            nativeMap.SetOnCameraMoveStartedListener(null);
         }
 
         base.DisconnectHandler(platformView);
@@ -85,15 +89,27 @@ public partial class KrisMapHandler
                     else
                     {
                         var markerOption = mapPinHandler.PlatformView;
-                        var bitmap = PinIconDrawer.DrawImageWithLabel(krisPin.ImageName, krisPin.Label, false, Context);
+                        Bitmap bitmap;
+
+                        if (krisPin.KrisType == Common.Enums.KrisPinType.Self)
+                        {
+                            bitmap = PinIconDrawer.DrawImage(krisPin.ImageName, 1.0f, Context);
+                        }
+                        else
+                        {
+                            bitmap = PinIconDrawer.DrawImageWithLabel(krisPin.ImageName, krisPin.Label, 1.5f, Context);
+                        }
+
                         var bitmapDesc = BitmapDescriptorFactory.FromBitmap(bitmap);
                         markerOption.SetIcon(bitmapDesc);
-
                         var marker = NativeMap.AddMarker(markerOption);
+                        if (krisPin.KrisType == Common.Enums.KrisPinType.Self) marker.ZIndex = 999f;
+
                         krisPin.MarkerId = marker.Id;
                         krisPin.Updated = false;
                         confirmedMarkers.Add(krisPin.MarkerId as string);
                         Markers.Add(marker);
+                        Common.Metrics.SentryMetrics.CounterIncrement("MarkerRender");
                     }
                 }
             }
@@ -103,35 +119,6 @@ public partial class KrisMapHandler
         foreach (var dm in deletedMarkers)
         {
             dm.Remove();
-        }
-    }
-
-    [Deprecated]
-    private void AddPins(IEnumerable<IMapPin> mapPins, KrisMapStyle style)
-    {
-        if (NativeMap is null || MauiContext is null) return;
-
-        var lightMap = style != null
-            ? style.KrisMapType == KrisMapType.StreetLight || style.KrisMapType == KrisMapType.Military
-            : true;
-
-        foreach (var pin in mapPins)
-        {
-            var pinHandler = pin.ToHandler(MauiContext);
-            if (pinHandler is IMapPinHandler mapPinHandler)
-            {
-                var markerOption = mapPinHandler.PlatformView;
-                if (pin is IKrisMapPin krisPin)
-                {
-                    var bitmap = PinIconDrawer.DrawImageWithLabel(krisPin.ImageName, krisPin.Label, lightMap, Context);
-                    var bitmapDesc = BitmapDescriptorFactory.FromBitmap(bitmap);
-                    markerOption.SetIcon(bitmapDesc);
-
-                    var marker = NativeMap.AddMarker(markerOption);
-                    krisPin.MarkerId = marker.Id;
-                    Markers.Add(marker);
-                }
-            }
         }
     }
 

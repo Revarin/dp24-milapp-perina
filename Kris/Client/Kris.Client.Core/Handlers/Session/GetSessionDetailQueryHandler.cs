@@ -23,6 +23,7 @@ public sealed class GetSessionDetailQueryHandler : SessionHandler, IRequestHandl
 
     public async Task<Result<ClientSessionDetailModel>> Handle(GetSessionDetailQuery request, CancellationToken cancellationToken)
     {
+        using var t = Common.Metrics.SentryMetrics.TimerStart("RequestHandler");
         GetOneResponse<InterfaceSessionDetailModel> response;
 
         try

@@ -25,6 +25,7 @@ public sealed class CreateMapPointCommandHandler : MapObjectsHandler, IRequestHa
 
     public async Task<Result<Guid>> Handle(CreateMapPointCommand request, CancellationToken cancellationToken)
     {
+        using var t = Common.Metrics.SentryMetrics.TimerStart("RequestHandler");
         var httpRequest = new AddMapPointRequest
         {
             Name = request.Name,

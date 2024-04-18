@@ -25,6 +25,7 @@ public sealed class GetMapPointDetailQueryHandler : MapObjectsHandler, IRequestH
 
     public async Task<Result<ClientMapPointDetailModel>> Handle(GetMapPointDetailQuery request, CancellationToken cancellationToken)
     {
+        using var t = Common.Metrics.SentryMetrics.TimerStart("RequestHandler");
         GetOneResponse<InterfaceMapPointDetailModel> response;
 
         try

@@ -19,6 +19,7 @@ public sealed class RegisterUserCommandHandler : UserHandler, IRequestHandler<Re
 
     public async Task<Result> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
+        using var t = Common.Metrics.SentryMetrics.TimerStart("RequestHandler");
         var registerRequest = new RegisterUserRequest
         {
             Login = request.Login,

@@ -14,12 +14,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Folder Include="Platforms\Android\" />
-	  <Folder Include="Platforms\iOS\" />
-	  <Folder Include="Platforms\Windows\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <PackageReference Include="CommunityToolkit.Maui" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" />
 	  <PackageReference Include="FluentResults" />

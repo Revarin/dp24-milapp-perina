@@ -2,6 +2,13 @@
 
 public sealed class MediaService : IMediaService
 {
+    private readonly IImageService _imageService;
+
+    public MediaService(IImageService imageService)
+    {
+        _imageService = imageService;
+    }
+
     public async Task<FileResult> PickImageAsync()
     {
         if (!MediaPicker.Default.IsCaptureSupported) return null;
@@ -26,7 +33,7 @@ public sealed class MediaService : IMediaService
     public async Task<FileResult> TakePhotoAsync()
     {
         if (!MediaPicker.Default.IsCaptureSupported) return null;
-        var result = await MediaPicker.Default.CapturePhotoAsync();
+        var result = await _imageService.CapturePhotoAsync();
         return result;
     }
 }

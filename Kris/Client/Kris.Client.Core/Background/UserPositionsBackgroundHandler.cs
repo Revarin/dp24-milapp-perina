@@ -33,6 +33,7 @@ public sealed class UserPositionsBackgroundHandler : BackgroundHandler, IUserPos
         if (ReloadSettings) LoadSettings();
         if (_userIdentity.CurrentSession == null) return;
 
+        using var t = Common.Metrics.SentryMetrics.TimerStart("UserPositionsBackgroundHandler");
         GetPositionsResponse response;
 
         try

@@ -27,6 +27,7 @@ public sealed class GetSessionsQueryHandler : SessionHandler, IRequestHandler<Ge
 
     public async Task<Result<AvailableSessionsModel>> Handle(GetSessionsQuery request, CancellationToken cancellationToken)
     {
+        using var t = Common.Metrics.SentryMetrics.TimerStart("RequestHandler");
         GetManyResponse<InterfaceSessionListModel> response;
 
         try

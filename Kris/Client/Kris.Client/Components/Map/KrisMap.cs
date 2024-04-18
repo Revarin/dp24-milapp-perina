@@ -1,5 +1,4 @@
 ﻿using Kris.Client.Components.Events;
-using Kris.Client.Data.Cache;
 using Kris.Client.Utility;
 using Microsoft.Maui.Maps;
 using System.Runtime.CompilerServices;
@@ -10,9 +9,9 @@ namespace Kris.Client.Components.Map;
 
 public sealed class KrisMap : MauiMap, IKrisMap
 {
-    private readonly ILocationStore _locationStore;
-
     public event EventHandler<MapLongClickedEventArgs> MapLongClicked;
+    public event EventHandler<CurrentRegionChangedEventArgs> CurrentRegionChanged;
+    public event EventHandler<EventArgs> CameraMoveStarted;
 
     public static readonly BindableProperty CurrentRegionProperty = BindableProperty.Create(
         "CurrentRegion", typeof(MapSpan), typeof(KrisMap), default(MapSpan), BindingMode.OneWayToSource);
@@ -40,11 +39,10 @@ public sealed class KrisMap : MauiMap, IKrisMap
         set { SetValue(KrisMapStyleProperty, value); }
     }
 
-    private DateTime _nextSave = DateTime.MinValue;
+    private uint _currentRegionChangedCounter = 0;
 
     public KrisMap()
     {
-        _locationStore = ServiceHelper.GetService<ILocationStore>();
     }
 
     public void LongClicked(Location location)
@@ -52,18 +50,19 @@ public sealed class KrisMap : MauiMap, IKrisMap
         MapLongClicked?.Invoke(this, new MapLongClickedEventArgs(location));
     }
 
+    public void MoveStarted()
+    {
+        CameraMoveStarted?.Invoke(this, EventArgs.Empty);
+    }
+
     protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
         if (propertyName == nameof(VisibleRegion))
         {
             CurrentRegion = VisibleRegion;
-
-            // Storing location here is not good, but simple
-            if (DateTime.Now > _nextSave)
-            {
-                _locationStore.StoreCurrentRegion(CurrentRegion);
-                _nextSave = DateTime.Now.AddSeconds(5);
-            }
+            // Bad optimalization
+            if (_currentRegionChangedCounter % 8 == 0) CurrentRegionChanged?.Invoke(this, new CurrentRegionChangedEventArgs(CurrentRegion));
+            _currentRegionChangedCounter++;
         }
 
         base.OnPropertyChanged(propertyName);

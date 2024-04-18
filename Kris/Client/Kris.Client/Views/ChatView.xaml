@@ -5,10 +5,15 @@
              xmlns:vm="clr-namespace:Kris.Client.ViewModels.Views"
              xmlns:item="clr-namespace:Kris.Client.Components.Items"
              xmlns:behaviors="clr-namespace:Kris.Client.Behaviors"
+             xmlns:conv="clr-namespace:Kris.Client.Converters"
              x:Class="Kris.Client.Views.ChatView"
              x:DataType="vm:ChatViewModel"
              Title="{Binding ConversationName}">
 
+    <ContentPage.Resources>
+        <conv:DeviceOrientationToStackOrientationConverter x:Key="OrientationToOrientation" />
+        <conv:DeviceOrientationToStackOrientationInverseConverter x:Key="OrientationToInverseOrientation" />
+    </ContentPage.Resources>
     <ContentPage.Behaviors>
         <tk:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}" />
     </ContentPage.Behaviors>
@@ -16,71 +21,77 @@
         <BackButtonBehavior Command="{Binding BackButtonClickedCommand}" />
     </Shell.BackButtonBehavior>
 
-    <StackLayout Orientation="Vertical"
-                 VerticalOptions="FillAndExpand">
-
-        <ImageButton Source="delete.png"
-                     HorizontalOptions="End"
-                     Style="{StaticResource BigImageButton}">
-            <ImageButton.Behaviors>
-                <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding DeleteButtonClickedCommand}" />
-            </ImageButton.Behaviors>
-        </ImageButton>
-
-        <StackLayout Orientation="Vertical"
-                     VerticalOptions="FillAndExpand"
-                     Style="{StaticResource MainStack}">
-
-            <CollectionView ItemsSource="{Binding Messages}"
-                            VerticalOptions="EndAndExpand"
-                            HorizontalOptions="FillAndExpand"
-                            SelectionMode="None"
-                            Rotation="180"
-                            VerticalScrollBarVisibility="Always"
-                            RemainingItemsThreshold="{Binding MessageThreshold}">
-                <CollectionView.ItemsLayout>
-                    <LinearItemsLayout Orientation="Vertical"
-                                       ItemSpacing="3"
-                                       SnapPointsType="None"
-                                       SnapPointsAlignment="Center"/>
-                </CollectionView.ItemsLayout>
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <item:MessageItem BindingContext="{Binding .}" Rotation="180" />
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-                <CollectionView.Behaviors>
-                    <behaviors:CollectionViewScrollToBehavior Request="{Binding ScrollTo}" />
-                    <tk:EventToCommandBehavior EventName="RemainingItemsThresholdReached" Command="{Binding CollectionItemsThresholdReachedCommand}" />
-                </CollectionView.Behaviors>
-            </CollectionView>
-
-            <StackLayout Orientation="Horizontal"
+    <StackLayout Orientation="{Binding DisplayOrientation, Converter={StaticResource OrientationToOrientation}}"
+                 VerticalOptions="FillAndExpand"
+                 HorizontalOptions="FillAndExpand">
+        
+        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+            <StackLayout Orientation="Vertical"
+                         VerticalOptions="FillAndExpand"
                          HorizontalOptions="FillAndExpand"
-                         VerticalOptions="End"
-                         Style="{StaticResource TertiaryStack}">
+                         Spacing="5"
+                         Style="{StaticResource MainStack}">
 
-                <Entry HorizontalOptions="FillAndExpand"
-                       Placeholder="Send message..."
-                       Keyboard="Chat"
-                       Text="{Binding MessageBody}">
-                </Entry>
+                <CollectionView ItemsSource="{Binding Messages}"
+                                HorizontalOptions="FillAndExpand"
+                                VerticalOptions="EndAndExpand"
+                                SelectionMode="None"
+                                Rotation="180"
+                                VerticalScrollBarVisibility="Always"
+                                RemainingItemsThreshold="{Binding MessageThreshold}">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical"
+                                           ItemSpacing="3"
+                                           SnapPointsType="None"
+                                           SnapPointsAlignment="Center"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <item:MessageItem BindingContext="{Binding .}" Rotation="180" />
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                    <CollectionView.Behaviors>
+                        <behaviors:CollectionViewScrollToBehavior Request="{Binding ScrollTo}" />
+                        <tk:EventToCommandBehavior EventName="RemainingItemsThresholdReached" Command="{Binding CollectionItemsThresholdReachedCommand}" />
+                    </CollectionView.Behaviors>
+                </CollectionView>
 
-                <ImageButton Source="send.png"
-                             HorizontalOptions="End"
-                             Style="{StaticResource BigImageButton}">
-                    <ImageButton.Behaviors>
-                        <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SendButtonClickedCommand}" />
-                    </ImageButton.Behaviors>
-                </ImageButton>
+                <StackLayout Orientation="Horizontal"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="End"
+                             Style="{StaticResource TertiaryStack}">
+
+                    <Editor HorizontalOptions="FillAndExpand"
+                            Placeholder="Send message..."
+                            Keyboard="Chat"
+                            Text="{Binding MessageBody}">
+                    </Editor>
+
+                    <ImageButton Source="send.png"
+                                 HorizontalOptions="End"
+                                 Style="{StaticResource BigImageButton}">
+                        <ImageButton.Behaviors>
+                            <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding SendButtonClickedCommand}" />
+                        </ImageButton.Behaviors>
+                    </ImageButton>
+                </StackLayout>
             </StackLayout>
-        </StackLayout>
+            
+            <ImageButton Source="delete.png"
+                         HorizontalOptions="End"
+                         VerticalOptions="Start">
+                <ImageButton.Behaviors>
+                    <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding DeleteButtonClickedCommand}" />
+                </ImageButton.Behaviors>
+            </ImageButton>
+        </Grid>
 
-        <StackLayout Orientation="Horizontal"
-                     HorizontalOptions="FillAndExpand"
-                     VerticalOptions="End">
+        <StackLayout Orientation="{Binding DisplayOrientation, Converter={StaticResource OrientationToInverseOrientation}}"
+                     HorizontalOptions="Fill"
+                     VerticalOptions="Fill">
             <Button Text="Map"
                     HorizontalOptions="FillAndExpand"
+                    VerticalOptions="FillAndExpand"
                     Style="{StaticResource NavigationButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MapButtonClickedCommand}" />
@@ -88,6 +99,7 @@
             </Button>
             <Button Text="Menu"
                     HorizontalOptions="FillAndExpand"
+                    VerticalOptions="FillAndExpand"
                     Style="{StaticResource NavigationButton}">
                 <Button.Behaviors>
                     <tk:EventToCommandBehavior EventName="Clicked" Command="{Binding MenuButtonClickedCommand}" />
