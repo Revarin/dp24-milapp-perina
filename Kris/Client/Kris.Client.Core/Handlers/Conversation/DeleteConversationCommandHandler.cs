@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using Kris.Client.Common.Errors;
+using Kris.Client.Common.Metrics;
 using Kris.Client.Core.Requests;
 using Kris.Interface.Controllers;
 using Kris.Interface.Responses;
@@ -17,6 +18,7 @@ public sealed class DeleteConversationCommandHandler : ConversationHandler, IReq
 
     public async Task<Result> Handle(DeleteConversationCommand request, CancellationToken cancellationToken)
     {
+        using var t = SentryMetrics.TimerStart("RequestHandler");
         Response response;
 
         try

@@ -15,6 +15,8 @@ public sealed class ImageAttachmentComposer : IImageAttachmentComposer
 
     public MemoryStream ComposeScaledImageAttachment(string path, SKEncodedImageFormat imageFormat = SKEncodedImageFormat.Jpeg)
     {
+        Common.Metrics.SentryMetrics.CounterIncrement("ComposeScaledImage");
+
         using var imageFileStream = File.OpenRead(path);
         var image = SKBitmap.Decode(imageFileStream);
         SKBitmap resultImage;

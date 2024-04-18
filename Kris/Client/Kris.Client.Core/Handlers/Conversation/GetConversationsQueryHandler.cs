@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using Kris.Client.Common.Errors;
+using Kris.Client.Common.Metrics;
 using Kris.Client.Core.Mappers;
 using Kris.Client.Core.Models;
 using Kris.Client.Core.Requests;
@@ -24,6 +25,7 @@ public sealed class GetConversationsQueryHandler : ConversationHandler, IRequest
 
     public async Task<Result<AvailableConversationsModel>> Handle(GetConversationsQuery request, CancellationToken cancellationToken)
     {
+        using var t = SentryMetrics.TimerStart("RequestHandler");
         GetManyResponse<ConversationListModel> response;
 
         try

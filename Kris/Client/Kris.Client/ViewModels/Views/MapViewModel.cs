@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Maui.Core;
-using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kris.Client.Common.Enums;
@@ -90,11 +89,11 @@ public sealed partial class MapViewModel : PageViewModelBase
         DeviceDisplay.Current.MainDisplayInfoChanged += MainDisplayInfoChanged;
     }
 
-
     // HANDLERS
     [RelayCommand]
     private async Task OnAppearing()
     {
+        using var t = Common.Metrics.SentryMetrics.TimerStart("MapAppearing");
         StartBackgroudListeners();
         await StartMessageListenerAsync();
         await LoadMapSettingsAsync(false);
@@ -269,6 +268,7 @@ public sealed partial class MapViewModel : PageViewModelBase
 
         var resultArgs = await _popupService.ShowPopupAsync<EditMapPointPopupViewModel>(async vm =>
         {
+            using var t = Common.Metrics.SentryMetrics.TimerStart("EditPointShowTime");
             vm.Setup(pin.KrisId, currentUser.Id, currentUser.Login, currentUser.UserType.Value);
             await vm.LoadMapPointDetailAsync();
         });

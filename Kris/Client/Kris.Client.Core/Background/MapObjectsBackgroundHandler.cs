@@ -32,6 +32,7 @@ public sealed class MapObjectsBackgroundHandler : BackgroundHandler, IMapObjects
         if (ReloadSettings) LoadSettings();
         if (_userIdentity.CurrentSession == null) return;
 
+        using var t = Common.Metrics.SentryMetrics.TimerStart("MapObjectsBackgroundHandler");
         GetMapObjectsResponse response;
 
         try

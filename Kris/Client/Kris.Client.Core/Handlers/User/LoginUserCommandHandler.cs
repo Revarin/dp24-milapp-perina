@@ -34,6 +34,7 @@ public sealed class LoginUserCommandHandler : UserHandler, IRequestHandler<Login
 
     public async Task<Result> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
+        using var t = Common.Metrics.SentryMetrics.TimerStart("RequestHandler");
         var loginRequest = new LoginUserRequest
         {
             Login = request.Login,

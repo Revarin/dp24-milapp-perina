@@ -17,6 +17,7 @@ public sealed class DeleteMapPointCommandHandler : MapObjectsHandler, IRequestHa
 
     public async Task<Result> Handle(DeleteMapPointCommand request, CancellationToken cancellationToken)
     {
+        using var t = Common.Metrics.SentryMetrics.TimerStart("RequestHandler");
         Response response;
         
         try

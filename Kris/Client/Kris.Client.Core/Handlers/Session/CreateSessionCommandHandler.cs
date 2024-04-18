@@ -20,6 +20,7 @@ public sealed class CreateSessionCommandHandler : SessionHandler, IRequestHandle
 
     public async Task<Result> Handle(CreateSessionCommand request, CancellationToken cancellationToken)
     {
+        using var t = Common.Metrics.SentryMetrics.TimerStart("RequestHandler");
         var httpRequest = new CreateSessionRequest
         {
             Name = request.Name,

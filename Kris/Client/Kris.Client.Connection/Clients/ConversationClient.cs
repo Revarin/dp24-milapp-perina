@@ -1,4 +1,5 @@
-﻿using Kris.Client.Data.Cache;
+﻿using Kris.Client.Common.Metrics;
+using Kris.Client.Data.Cache;
 using Kris.Interface.Controllers;
 using Kris.Interface.Models;
 using Kris.Interface.Responses;
@@ -17,6 +18,7 @@ public sealed class ConversationClient : ClientBase, IConversationController
     {
         var jwt = _identityStore.GetJwtToken();
         using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        SentryMetrics.CounterIncrement("DeleteConversation");
         return await DeleteAsync<Response>(httpClient, conversationId.ToString(), ct);
     }
 
@@ -24,6 +26,7 @@ public sealed class ConversationClient : ClientBase, IConversationController
     {
         var jwt = _identityStore.GetJwtToken();
         using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        SentryMetrics.CounterIncrement("GetConversations");
         return await GetAsync<GetManyResponse<ConversationListModel>>(httpClient, string.Empty, ct);
     }
 
@@ -36,6 +39,7 @@ public sealed class ConversationClient : ClientBase, IConversationController
         if (count.HasValue) query[nameof(count)] = count.Value.ToString();
         if (offset.HasValue) query[nameof(offset)] = offset.Value.ToString();
 
+        SentryMetrics.CounterIncrement("GetMessages");
         return await GetAsync<GetManyResponse<MessageModel>>(httpClient, conversationId.ToString(), query.ToString(), ct);
     }
 }

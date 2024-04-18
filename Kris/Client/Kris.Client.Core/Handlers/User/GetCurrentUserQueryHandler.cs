@@ -20,6 +20,7 @@ public sealed class GetCurrentUserQueryHandler : UserHandler, IRequestHandler<Ge
 
     public Task<CurrentUserModel> Handle(GetCurrentUserQuery request, CancellationToken cancellationToken)
     {
+        using var t = Common.Metrics.SentryMetrics.TimerStart("RequestHandler");
         var identity = _identityStore.GetIdentity();
         var expiration = _identityStore.GetLoginExpiration();
 

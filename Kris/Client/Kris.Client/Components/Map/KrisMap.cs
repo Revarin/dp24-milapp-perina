@@ -61,7 +61,7 @@ public sealed class KrisMap : MauiMap, IKrisMap
         {
             CurrentRegion = VisibleRegion;
             // Bad optimalization
-            if (_currentRegionChangedCounter % 5 == 0) CurrentRegionChanged?.Invoke(this, new CurrentRegionChangedEventArgs(CurrentRegion));
+            if (_currentRegionChangedCounter % 8 == 0) CurrentRegionChanged?.Invoke(this, new CurrentRegionChangedEventArgs(CurrentRegion));
             _currentRegionChangedCounter++;
         }
 

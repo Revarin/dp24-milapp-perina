@@ -20,6 +20,7 @@ public sealed class SendMessageCommandHandler : MessageHandler, IRequestHandler<
 
     public async Task<Result> Handle(SendMessageCommand request, CancellationToken cancellationToken)
     {
+        using var t = Common.Metrics.SentryMetrics.TimerStart("RequestHandler");
         var httpRequest = new SendMessageRequest
         {
             ConversationId = request.ConversationId,

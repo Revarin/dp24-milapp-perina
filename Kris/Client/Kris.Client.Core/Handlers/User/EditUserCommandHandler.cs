@@ -24,6 +24,7 @@ public sealed class EditUserCommandHandler : UserHandler, IRequestHandler<EditUs
 
     public async Task<Result> Handle(EditUserCommand request, CancellationToken cancellationToken)
     {
+        using var t = Common.Metrics.SentryMetrics.TimerStart("RequestHandler");
         var httpRequest = new EditUserRequest
         {
             NewPassword = request.NewPassword,

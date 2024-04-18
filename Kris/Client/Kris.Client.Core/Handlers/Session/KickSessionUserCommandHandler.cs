@@ -19,6 +19,7 @@ public sealed class KickSessionUserCommandHandler : SessionHandler, IRequestHand
 
     public async Task<Result> Handle(KickSessionUserCommand request, CancellationToken cancellationToken)
     {
+        using var t = Common.Metrics.SentryMetrics.TimerStart("RequestHandler");
         Response response;
 
         try

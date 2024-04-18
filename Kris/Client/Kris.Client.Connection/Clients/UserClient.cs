@@ -1,4 +1,5 @@
-﻿using Kris.Client.Data.Cache;
+﻿using Kris.Client.Common.Metrics;
+using Kris.Client.Data.Cache;
 using Kris.Interface.Controllers;
 using Kris.Interface.Requests;
 using Kris.Interface.Responses;
@@ -15,12 +16,14 @@ public sealed class UserClient : ClientBase, IUserController
     public async Task<Response> RegisterUser(RegisterUserRequest request, CancellationToken ct)
     {
         using var httpClient = _httpClientFactory.CreateHttpClient(_controller);
+        SentryMetrics.CounterIncrement("RegisterUser");
         return await PostAsync<RegisterUserRequest, Response>(httpClient, "Register", request, ct);
     }
 
     public async Task<LoginResponse> LoginUser(LoginUserRequest request, CancellationToken ct)
     {
         using var httpClient = _httpClientFactory.CreateHttpClient(_controller);
+        SentryMetrics.CounterIncrement("LoginUser");
         return await PostAsync<LoginUserRequest, LoginResponse>(httpClient, "Login", request, ct);
     }
 
@@ -33,6 +36,7 @@ public sealed class UserClient : ClientBase, IUserController
     {
         var jwt = _identityStore.GetJwtToken();
         using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        SentryMetrics.CounterIncrement("EditUser");
         return await PutAsync<EditUserRequest, IdentityResponse>(httpClient, "", request, ct);
     }
 
@@ -41,6 +45,7 @@ public sealed class UserClient : ClientBase, IUserController
     {
         var jwt = _identityStore.GetJwtToken();
         using var httpClient = _httpClientFactory.CreateAuthentizedHttpClient(_controller, jwt);
+        SentryMetrics.CounterIncrement("StoreUserSettings");
         return await PostAsync<StoreUserSettingsRequest, Response>(httpClient, "Settings", request, ct);
     }
 }

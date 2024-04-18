@@ -20,6 +20,8 @@ public sealed class UpdateMapSettingsCommandHandler : SettingsHandler, IRequestH
 
     public async Task<Result> Handle(UpdateMapSettingsCommand request, CancellationToken cancellationToken)
     {
+        Common.Metrics.SentryMetrics.CounterIncrement("MapSettingsUpdate");
+        using var t = Common.Metrics.SentryMetrics.TimerStart("RequestHandler");
         _settingsStore.StoreMapSettings(request.MapSettings);
         if (request.CustomMapTilesDatabasePath != null)
         {

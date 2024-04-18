@@ -18,6 +18,7 @@ public sealed class LogoutUserCommandHandler : UserHandler, IRequestHandler<Logo
 
     public Task Handle(LogoutUserCommand request, CancellationToken cancellationToken)
     {
+        Common.Metrics.SentryMetrics.CounterIncrement("LogoutHandler");
         _identityStore.ClearIdentity();
         return Task.CompletedTask;
     }

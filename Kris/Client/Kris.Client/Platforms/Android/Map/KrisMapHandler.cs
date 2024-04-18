@@ -109,6 +109,7 @@ public partial class KrisMapHandler
                         krisPin.Updated = false;
                         confirmedMarkers.Add(krisPin.MarkerId as string);
                         Markers.Add(marker);
+                        Common.Metrics.SentryMetrics.CounterIncrement("MarkerRender");
                     }
                 }
             }

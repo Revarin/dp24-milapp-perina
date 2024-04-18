@@ -141,6 +141,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     {
         var fileResult = await _filePickerService.PickImageAsync();
         if (fileResult == null) return;
+        Common.Metrics.SentryMetrics.CounterIncrement("PickImage");
         AddImageAttachment(fileResult);
     }
 
@@ -148,6 +149,7 @@ public sealed partial class CreateMapPointPopupViewModel : PopupViewModel
     {
         var fileResult = await _filePickerService.TakePhotoAsync();
         if (fileResult == null) return;
+        Common.Metrics.SentryMetrics.CounterIncrement("TakeImage");
         AddImageAttachment(fileResult);
     }
 

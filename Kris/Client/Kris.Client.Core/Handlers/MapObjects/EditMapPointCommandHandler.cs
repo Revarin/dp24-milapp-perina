@@ -25,6 +25,7 @@ public sealed class EditMapPointCommandHandler : MapObjectsHandler, IRequestHand
 
     public async Task<Result> Handle(EditMapPointCommand request, CancellationToken cancellationToken)
     {
+        using var t = Common.Metrics.SentryMetrics.TimerStart("RequestHandler");
         var httpRequest = new EditMapPointRequest
         {
             Id = request.PointId,

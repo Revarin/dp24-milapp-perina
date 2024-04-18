@@ -39,6 +39,7 @@ public abstract partial class PageViewModelBase : ObservableValidator
 
     protected virtual async Task LogoutUser()
     {
+        Common.Metrics.SentryMetrics.CounterIncrement("LogoutUser");
         _messageService.Send(new LogoutMessage());
         await _mediator.Send(new LogoutUserCommand(), CancellationToken.None);
         await _navigationService.GoToAsync(nameof(LoginView), RouterNavigationType.ReplaceUpward);

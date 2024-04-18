@@ -41,6 +41,15 @@ namespace Kris.Client
                 .UseMauiMaps()
                 .UseMauiCommunityToolkit()
                 .UseLocalNotification()
+                .UseSentry(options =>
+                {
+                    options.Dsn = "TODO";
+                    options.TracesSampleRate = 0.2;
+                    options.ExperimentalMetrics = new ExperimentalMetricsOptions
+                    {
+                        EnableCodeLocations = true
+                    };
+                })
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -134,7 +143,7 @@ namespace Kris.Client
             builder.Services.AddTransient<IMapPointSymbolDataProvider, MapPointSymbolDataProvider>();
             builder.Services.AddTransient<IMapSettingsDataProvider, MapSettingsDataProvider>();
 
-            builder.Services.AddSingleton<IHttpClientFactory, HttpClientFactory>();
+            builder.Services.AddSingleton<Connection.IHttpClientFactory, HttpClientFactory>();
             builder.Services.AddTransient<IUserController, UserClient>();
             builder.Services.AddTransient<ISessionController, SessionClient>();
             builder.Services.AddTransient<IPositionController, PositionClient>();
