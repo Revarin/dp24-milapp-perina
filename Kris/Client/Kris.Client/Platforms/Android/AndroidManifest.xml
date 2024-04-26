@@ -19,7 +19,7 @@
 	
 	<application android:allowBackup="true" android:icon="@mipmap/appicon" android:roundIcon="@mipmap/appicon_round"
 				 android:supportsRtl="true" android:debuggable="true">
-		<meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyA1j_QZp16jxz4sdgU930By8fRUqG0xfl4" />
+		<meta-data android:name="com.google.android.geo.API_KEY" android:value="TODO" />
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 	</application>
 
