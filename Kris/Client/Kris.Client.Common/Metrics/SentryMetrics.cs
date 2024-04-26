@@ -2,7 +2,7 @@
 
 public static class SentryMetrics
 {
-    private const bool Disabled = false;
+    private const bool Disabled = true;
 
     public static void CounterIncrement(string key)
     {

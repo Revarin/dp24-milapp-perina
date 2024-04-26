@@ -84,7 +84,7 @@ public sealed class MessageClient : IMessageHub, IMessageReceiver
 
     public async Task<Response> SendMessage(SendMessageRequest request)
     {
-        if (_hubConnection.State != HubConnectionState.Connected)
+        if (_hubConnection.State == HubConnectionState.Disconnected)
         {
             try
             {
@@ -110,7 +110,7 @@ public sealed class MessageClient : IMessageHub, IMessageReceiver
 
     private async void PingConnection(object state)
     {
-        if (_hubConnection.State != HubConnectionState.Connected)
+        if (_hubConnection.State == HubConnectionState.Disconnected)
         {
             try
             {
